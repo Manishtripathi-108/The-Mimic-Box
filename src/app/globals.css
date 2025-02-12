@@ -1,19 +1,538 @@
 @import 'tailwindcss';
 
-:root {
-    --background: #ffffff;
-    --foreground: #171717;
-}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
+@theme {
+    --spacing-header-height: 64px;
+    --spacing-calc-full-height: calc(100vh - var(--spacing-header-height) - 2px);
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Colors                                   */
+    /* -------------------------------------------------------------------------- */
+    --color-theme-primary: #ffb6b9;
+    --color-theme-secondary: #ffe6e6;
+    --color-theme-text-primary: #333333;
+    --color-theme-text-secondary: #666666;
+    --color-theme-accent: #dc2626;
+    --color-theme-highlight: #4169e1;
+    /* --------------------------------- Shadows -------------------------------- */
+    --lower-shadow: #db9d9f;
+    --upper-shadow: #ffcfd3;
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Shadows                                  */
+    /* -------------------------------------------------------------------------- */
+    --shadow-neumorphic-xs: 3px 3px 5px var(--lower-shadow), -3px -3px 5px var(--upper-shadow);
+    --shadow-neumorphic-sm: 5px 5px 10px var(--lower-shadow), -5px -5px 10px var(--upper-shadow);
+    --shadow-neumorphic-md: 6px 6px 12px var(--lower-shadow), -6px -6px 12px var(--upper-shadow);
+    --shadow-neumorphic-lg: 10px 10px 20px var(--lower-shadow), -10px -10px 20px var(--upper-shadow);
+    --shadow-neumorphic-xl: 20px 20px 40px var(--lower-shadow), -20px -20px 40px var(--upper-shadow);
+    --shadow-neumorphic-inset-xs: inset 3px 3px 7px var(--lower-shadow), inset -3px -3px 7px var(--upper-shadow);
+    --shadow-neumorphic-inset-sm: inset 5px 5px 10px var(--lower-shadow), inset -5px -5px 10px var(--upper-shadow);
+    --shadow-neumorphic-inset-md: inset 6px 6px 12px var(--lower-shadow), inset -6px -6px 12px var(--upper-shadow);
+    --shadow-neumorphic-inset-lg: inset 10px 10px 20px var(--lower-shadow), inset -10px -10px 20px var(--upper-shadow);
+    --shadow-neumorphic-inset-xl: inset 20px 20px 40px var(--lower-shadow), inset -20px -20px 40px var(--upper-shadow);
+
+    /* -------------------------------------------------------------------------- */
+    /*                                  Animation                                 */
+    /* -------------------------------------------------------------------------- */
+    --animate-blob: blob 10s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    --animate-loader-circle: loader-circle 0.5s alternate infinite ease-in;
+    --animate-loader-shadow: loader-shadow 0.5s alternate infinite ease-in;
+    --animate-pulse-slow: pulse-slow 1s ease-in-out infinite alternate;
+    --animate-progress-after: progress-after 1s infinite linear;
+    --animate-shimmer-ray: shimmer-ray 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+    --animate-slide-left: slide-left 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
+    --animate-slide-left-return: slide-left-return 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
+    --animate-wipe-in-down: wipe-in-down 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
+    --animate-wipe-out-down: wipe-out-down 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
+    --animate-zoom-in: zoom-in 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
+    --animate-zoom-out: zoom-out 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
+    --animate-waves: waves 5s linear infinite;
+
+    @keyframes shimmer-ray {
+        0% {
+            left: -30%;
+            opacity: 0;
+            width: 0;
+        }
+
+        100% {
+            left: 100%;
+            opacity: 1;
+            width: 35%;
+        }
+    }
+
+    @keyframes pulse-slow {
+        0% {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        to {
+            opacity: 0.5;
+            transform: scale(0.8);
+        }
+    }
+
+    @keyframes slide-left-return {
+        0% {
+            transform-origin: 0 0;
+            transform: translate(-100%);
+        }
+
+        100% {
+            transform-origin: 0 0;
+            transform: translate(0);
+        }
+    }
+
+    @keyframes slide-left {
+        0% {
+            transform-origin: 0 0;
+            transform: translate(0);
+        }
+
+        100% {
+            transform-origin: 0 0;
+            transform: translate(-100%);
+        }
+    }
+
+    @keyframes wipe-in-down {
+        0% {
+            clip-path: inset(0 0 100% 0);
+            display: none;
+        }
+
+        100% {
+            clip-path: inset(0 0 0 0);
+            display: block;
+        }
+    }
+
+    @keyframes wipe-out-down {
+        0% {
+            clip-path: inset(0 0 0 0);
+            display: block;
+        }
+
+        100% {
+            clip-path: inset(0 0 100% 0);
+            display: none;
+        }
+    }
+
+    @keyframes zoom-in {
+        0% {
+            transform: scale(0);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes zoom-out {
+        0% {
+            transform: scale(1);
+        }
+
+        100% {
+            transform: scale(0);
+        }
+    }
+
+    @keyframes blob {
+        0% {
+            border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+        }
+
+        25% {
+            border-radius: 60% 40% 45% 55% / 55% 60% 40% 45%;
+        }
+
+        50% {
+            border-radius: 50% 50% 60% 40% / 45% 55% 50% 60%;
+        }
+
+        75% {
+            border-radius: 45% 55% 50% 50% / 60% 40% 55% 45%;
+        }
+
+        100% {
+            border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+        }
+    }
+
+    @keyframes loader-shadow {
+        0% {
+            transform: scaleX(0.2);
+            opacity: 0.4;
+        }
+
+        80% {
+            transform: scaleX(1);
+            opacity: 0.7;
+        }
+
+        100% {
+            transform: scaleX(1.5);
+        }
+    }
+
+    @keyframes loader-circle {
+        0% {
+            bottom: calc(var(--loader-base-height) + var(--loader-jump-height));
+        }
+
+        80% {
+            height: var(--loader-circle-size);
+            border-radius: 50%;
+            transform: scaleX(1);
+        }
+
+        100% {
+            bottom: var(--loader-base-height);
+            height: 5px;
+            border-radius: 50px 50px 25px 25px;
+            transform: scaleX(1.7);
+        }
+    }
+
+    @keyframes progress-after {
+        0% {
+            background-position: 0 100%;
+        }
+
+        100% {
+            background-position: 30px 100%;
+        }
+    }
+
+    @keyframes waves {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
     }
 }
 
-body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: Arial, Helvetica, sans-serif;
+[data-theme='dark'] {
+    --color-theme-primary: #1f2937;
+    --color-theme-secondary: #334155;
+    --color-theme-text-primary: #ffffff;
+    --color-theme-text-secondary: #9ca3af;
+    --color-theme-accent: #ff6347;
+    --color-theme-highlight: #1e90ff;
+
+    /* --------------------------------- Shadows -------------------------------- */
+    --lower-shadow: #0c1016;
+    --upper-shadow: #324258;
+}
+
+@theme inline {
+    --font-karla: var(--font-karla), serif;
+    --font-aladin: var(--font-aladin), serif;
+    --color-primary: var(--color-theme-primary);
+    --color-secondary: var(--color-theme-secondary);
+    --color-text-primary: var(--color-theme-text-primary);
+    --color-text-secondary: var(--color-theme-text-secondary);
+    --color-accent: var(--color-theme-accent);
+    --color-highlight: var(--color-theme-highlight);
+}
+
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-secondary, currentColor);
+
+        &:where(.dark, .dark *) {
+            border-color: var(--color-secondary, currentColor);
+        }
+    }
+}
+
+@utility bg-layer-gradient {
+    --gradient-dark: var(--color-primary);
+    --gradient-light: var(--color-secondary);
+
+    background-image: linear-gradient(
+        to left,
+        var(--gradient-dark) 0%,
+        var(--gradient-light) 10%,
+        var(--gradient-light) 90%,
+        var(--gradient-dark) 100%
+    );
+}
+
+@utility scrollbar-thin {
+    &::-webkit-scrollbar {
+        width: 6px;
+        /* Set the width of the scrollbar */
+        height: 6px;
+        /* Set the height of the scrollbar for vertical scrollbar */
+    }
+
+    /* Set the color of the scrollbar thumb */
+    &::-webkit-scrollbar-thumb {
+        @apply bg-secondary dark:bg-secondary rounded-lg;
+    }
+
+    /* Set the color of the scrollbar thumb on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        @apply bg-highlight dark:bg-highlight;
+    }
+
+    &::-webkit-scrollbar-track {
+        @apply bg-gray-50 dark:bg-gray-700;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   Button                                   */
+/* -------------------------------------------------------------------------- */
+@utility button {
+    @apply text-text-secondary bg-primary shadow-neumorphic-xs flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-4 py-2 text-center text-sm transition-all duration-300;
+
+    &.active,
+    &:active {
+        @apply text-text-primary shadow-neumorphic-inset-xs;
+    }
+
+    &:hover:not(.active),
+    &:focus:not(.active) {
+        @apply text-text-primary scale-105 transform;
+    }
+
+    /*----------------------------------- button Sizes -------------------------------- */
+    &.button-sm {
+        @apply px-2 py-1 text-xs;
+    }
+
+    &.button-base {
+        @apply px-4 py-2 text-sm;
+    }
+
+    &.button-lg {
+        @apply px-4 py-3 text-base;
+    }
+
+    &.button-xl {
+        @apply px-5 py-4 text-lg;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                    Form                                    */
+/* -------------------------------------------------------------------------- */
+@utility form-group {
+    @apply w-full space-y-2;
+
+    &:has(.form-field:not(:placeholder-shown)) label,
+    &:has(.form-field:hover) label,
+    &:has(.form-field:focus) label {
+        @apply text-text-primary;
+    }
+}
+
+@utility form-text {
+    @apply text-text-secondary text-xs leading-3 capitalize transition-all duration-300;
+}
+
+/* ---------------------------------- Field --------------------------------- */
+@utility form-field {
+    @apply bg-primary text-text-primary placeholder:text-text-secondary shadow-neumorphic-xs focus:shadow-neumorphic-inset-xs file:bg-accent field-sizing-content w-full appearance-none rounded-xl border px-3 py-2 text-sm outline-hidden transition duration-300 file:mr-5 file:cursor-pointer file:rounded-lg file:border-none file:px-3 file:py-2 file:text-white file:transition file:duration-200 file:ease-in-out;
+
+    select& {
+        @apply cursor-pointer bg-no-repeat pr-10 ring-black focus-visible:ring-1 dark:ring-white;
+
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path fill="%23767676" d="M8.037 11.166L14.5 22.36c.825 1.43 2.175 1.43 3 0l6.463-11.195c.826-1.43.15-2.598-1.5-2.598H9.537c-1.65 0-2.326 1.17-1.5 2.6z"/></svg>');
+        background-position: right 0.5rem center;
+        background-size: 1.5rem 1.5rem;
+    }
+
+    textarea& {
+        @apply min-h-5;
+    }
+
+    input[type='range']& {
+        @apply shadow-neumorphic-inset-xs flex h-fit cursor-pointer items-center justify-center rounded-full p-0;
+
+        &,
+        &::-webkit-slider-runnable-track,
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+        }
+
+        &::-webkit-slider-container {
+            /* --value-percentage: ((value - min) / (max - min)) * 100 */
+
+            @apply m-1.5 h-3 rounded-full;
+            background:
+                linear-gradient(var(--color-theme-accent), #aa1a00) 0 / var(--value-percentage) no-repeat,
+                linear-gradient(#ffd4d6, #e49fa2);
+        }
+
+        @variant dark {
+            &::-webkit-slider-container {
+                background:
+                    linear-gradient(var(--color-theme-accent), #aa1a00) 0 / var(--value-percentage) no-repeat,
+                    linear-gradient(#334760, #141b26);
+            }
+        }
+
+        &::-webkit-slider-runnable-track {
+            -webkit-user-modify: read-write !important;
+            margin: -0.375em;
+        }
+
+        &::-webkit-slider-thumb {
+            @apply size-6 cursor-ew-resize rounded-full border-5 border-transparent shadow-xs shadow-black transition-transform duration-500;
+            background:
+                linear-gradient(#d72100, var(--color-theme-accent)) padding-box,
+                linear-gradient(var(--color-theme-accent), #aa1a00) border-box;
+        }
+
+        &:focus {
+            outline: none;
+
+            &::-webkit-slider-thumb {
+                @apply scale-120;
+            }
+        }
+
+        &:focus-visible::-webkit-slider-thumb {
+            @apply outline;
+        }
+    }
+
+    &:user-invalid,
+    &[data-error='true'] {
+        @apply border-red-500 text-red-500 dark:border-red-500 dark:text-red-500;
+    }
+}
+
+@utility form-field-wrapper {
+    @apply shadow-neumorphic-xs text-text-secondary hover:text-text-primary focus-within:text-text-primary flex w-full items-center justify-center divide-x rounded-lg border;
+
+    & .form-field {
+        @apply my-0.5 rounded-md border-none text-inherit shadow-none;
+    }
+
+    & .form-icon {
+        @apply size-10 shrink-0 px-2 text-inherit transition-colors;
+    }
+
+    &:has(.form-icon + .form-field) .form-field {
+        @apply mr-0.5 rounded-l-none;
+    }
+
+    &:has(.form-field + .form-icon) .form-field {
+        @apply ml-0.5 rounded-r-none;
+    }
+
+    &:has(.form-field + .form-icon) .form-icon {
+        @apply border-l;
+    }
+
+    &:focus-within .form-field {
+        @apply shadow-neumorphic-inset-xs;
+    }
+
+    &:has(.form-field:not(:placeholder-shown)) .form-icon {
+        @apply text-text-primary;
+    }
+
+    &:has(.form-field:user-invalid) .form-icon {
+        @apply text-red-500 dark:text-red-500;
+    }
+}
+
+/* ---------------------------------- Radio --------------------------------- */
+@utility form-radio {
+    @apply inline-flex cursor-pointer items-center;
+
+    .form-text {
+        @apply ml-2;
+    }
+
+    .radio-field {
+        @apply appearance-none;
+
+        &:not(:disabled, :checked):focus-visible ~ .radio-indicator {
+            @apply outline;
+        }
+
+        &:checked ~ .form-text {
+            @apply text-highlight translate-x-2;
+        }
+
+        &:checked ~ .radio-indicator:before {
+            @apply shadow-neumorphic-inset-xs;
+        }
+
+        &:not(:disabled, :checked):focus ~ .form-text {
+            @apply text-text-primary translate-x-2;
+        }
+    }
+
+    .radio-indicator {
+        @apply shadow-neumorphic-xs before:shadow-neumorphic-xs relative size-5 overflow-hidden rounded-full before:absolute before:top-[10%] before:left-[10%] before:size-4/5 before:rounded-full;
+    }
+
+    &:hover .radio-field:not(:disabled, :checked) ~ .form-text {
+        @apply text-text-primary translate-x-2;
+    }
+}
+
+/* -------------------------------- Checkbox -------------------------------- */
+@utility form-checkbox {
+    @apply inline-flex cursor-pointer items-center;
+
+    .form-text {
+        @apply ml-2 cursor-pointer;
+    }
+
+    .checkbox-field {
+        @apply bg-primary checked:shadow-neumorphic-inset-xs disabled:bg-secondary checked:text-text-primary flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center overflow-hidden rounded-sm border text-center text-xs transition-shadow duration-300 ease-in-out checked:after:size-full checked:after:font-bold checked:after:content-['\2713'];
+
+        &:checked ~ .form-text {
+            @apply text-highlight translate-x-2;
+        }
+
+        &:not(:disabled, :checked):focus ~ .form-text {
+            @apply text-text-primary translate-x-2;
+        }
+    }
+
+    &:hover .checkbox-field:not(:disabled, :checked) ~ .form-text {
+        @apply text-text-primary translate-x-2;
+    }
+}
+
+/* ------------------------------- slider ------------------------------- */
+@utility range-slider {
+    @apply bg-primary shadow-neumorphic-xs relative h-2 w-full appearance-none rounded-full outline-hidden;
+
+    &::-webkit-slider-thumb {
+        @apply bg-accent shadow-neumorphic-xs h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
+    }
+
+    &::-moz-range-thumb {
+        @apply bg-accent shadow-neumorphic-xs relative h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
+    }
 }
