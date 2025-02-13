@@ -3,7 +3,7 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme {
-    --spacing-header-height: 64px;
+    --spacing-header-height: 60px;
     --spacing-calc-full-height: calc(100vh - var(--spacing-header-height) - 2px);
 
     /* -------------------------------------------------------------------------- */

@@ -1,4 +1,4 @@
-export enum ICONS {
+enum ICON_SET {
     ANIME = 'custom:anime',
     MANGA = 'custom:manga',
     MUSIC_CONVERT = 'custom:musicConvert',
@@ -28,6 +28,7 @@ export enum ICONS {
     LIST = 'tabler:list',
     LOADING = 'line-md:loading-loop',
     LOGOUT = 'majesticons:logout',
+    MENU = 'hugeicons:menu-02',
     MINUS = 'line-md:minus',
     MOON = 'meteocons:clear-night-fill',
     MORE_DOTS = 'pepicons-pop:dots-y',
@@ -53,3 +54,5 @@ export enum ICONS {
     USER = 'carbon:user-avatar-filled',
     WARNING = 'meteocons:code-yellow-fill',
 }
+
+export default ICON_SET;
