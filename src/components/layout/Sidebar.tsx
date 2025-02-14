@@ -1,11 +1,12 @@
 'use client';
 
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { Icon } from '@iconify/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 
 const sidebarMenuItems = [
     {
@@ -49,20 +50,33 @@ const sidebarMenuItems = [
 ];
 
 const Sidebar = () => {
+    const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+
+    // Close sidebar
     const closeSidebar = () => {
         const sidebar = document.getElementById('sidebar') as HTMLDialogElement;
         sidebar?.close();
+        setOpenMenus({});
+    };
+
+    const toggleMenu = (index: string) => {
+        setOpenMenus((prev) => ({
+            ...prev,
+            [index]: !prev[index],
+        }));
     };
 
     return (
         <dialog
             id="sidebar"
             className="bg-primary backdrop:bg-primary shadow-neumorphic-md my-auto flex h-screen max-h-dvh w-72 -translate-x-full -translate-y-full scale-0 flex-col overflow-hidden rounded-e-lg border-r opacity-0 transition-all transition-discrete duration-300 backdrop:opacity-65 backdrop:transition-opacity backdrop:transition-discrete backdrop:duration-300 open:translate-x-0 open:translate-y-0 open:scale-100 open:opacity-100 starting:open:-translate-x-full starting:open:-translate-y-full starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:opacity-0"
-            onClick={(e) => e.target === e.currentTarget && closeSidebar()}>
+            onClick={(e) => e.target === e.currentTarget && closeSidebar()}
+            role="dialog"
+            aria-modal="true">
             {/* Profile Section */}
-            <div className="flex items-center justify-between gap-4 border-b border-dotted p-4">
+            <div className="flex items-center justify-between gap-4 border-b p-4">
                 <div className="flex items-center gap-3">
-                    <Image className="h-12 w-12 rounded-full" width={48} height={48} src="https://picsum.photos/200" alt="Avatar" />
+                    <Image className="h-12 w-12 rounded-2xl" width={48} height={48} src="https://picsum.photos/200" alt="Avatar" />
                     <div>
                         <p className="text-text-primary font-semibold">Roronoa Zoro</p>
                         <p className="text-text-secondary text-sm">Sword Master</p>
@@ -70,101 +84,114 @@ const Sidebar = () => {
                 </div>
                 <button
                     type="button"
-                    aria-label="Close"
-                    title="Close"
-                    className="text-text-secondary hover:text-text-primary cursor-pointer"
-                    onClick={closeSidebar}>
-                    <Icon icon={ICON_SET.CLOSE} className="size-6" />
+                    title="Close sidebar"
+                    aria-label="Close sidebar"
+                    className="text-text-secondary hover:text-text-primary"
+                    onClick={() => closeSidebar()}>
+                    <Icon icon={ICON_SET.CLOSE} className="size-5" />
                 </button>
             </div>
 
             {/* Navigation Section */}
-            <nav className="scrollbar-thin space-y-1 overflow-y-auto p-4">
+            <nav className="overflow-y-auto px-4 py-2">
                 {sidebarMenuItems.map((item, index) => (
-                    <div key={index} className="group">
+                    <div key={index} className="group mb-1">
                         {item.link ? (
                             <Link
                                 href={item.link}
-                                onClick={closeSidebar}
-                                className="hover:text-text-primary text-text-secondary hover: hover:shadow-neumorphic-xs flex w-full cursor-pointer items-center justify-between rounded-lg border border-transparent bg-inherit p-3 text-left transition">
-                                <div className="flex items-center gap-3">
-                                    <Icon icon={item.icon} className="size-6" />
-                                    <span className="flex-1">{item.title}</span>
-                                </div>
+                                className="hover:bg-secondary text-text-secondary hover:text-text-primary flex items-center gap-2 rounded-lg p-2.5 transition"
+                                onClick={() => closeSidebar()}>
+                                <Icon icon={item.icon} className="size-5" />
+                                <span className="flex-1">{item.title}</span>
                                 {item.badge && <span className="ml-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">{item.badge}</span>}
                             </Link>
                         ) : (
-                            <>
-                                <input type="radio" name="menu" id={`menu-${index}`} className="peer hidden" />
-                                <label
-                                    htmlFor={`menu-${index}`}
-                                    className="peer-checked:text-text-primary hover:text-text-primary text-text-secondary hover: hover:shadow-neumorphic-xs peer-checked: peer-checked:shadow-neumorphic-xs dark:peer-checked:border-secondary flex w-full cursor-pointer items-center justify-between rounded-lg border border-transparent bg-inherit p-3 text-left transition">
-                                    <div className="flex items-center gap-3">
-                                        <Icon icon={item.icon} className="size-6" />
-                                        <span className="flex-1">{item.title}</span>
-                                    </div>
-                                    {item.children && <Icon icon={ICON_SET.DOWN} className="size-5 transition-transform peer-checked:rotate-180" />}
-                                    {item.badge && <span className="ml-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">{item.badge}</span>}
-                                </label>
-                            </>
+                            <button
+                                onClick={() => toggleMenu(`${index}`)}
+                                className="hover:bg-secondary text-text-secondary hover:text-text-primary flex w-full items-center justify-between rounded-lg p-2.5 transition"
+                                aria-expanded={openMenus[index]}>
+                                <div className="flex items-center gap-2">
+                                    <Icon icon={item.icon} className="size-5" />
+                                    <span className="flex-1">{item.title}</span>
+                                </div>
+                                {item.children && (
+                                    <Icon icon={ICON_SET.DOWN} className={`size-5 transition-transform ${openMenus[index] ? 'rotate-180' : ''}`} />
+                                )}
+                            </button>
                         )}
 
-                        {item.children && (
-                            <div className="max-h-0 overflow-hidden rounded-lg transition-all duration-300 ease-in-out peer-checked:max-h-screen peer-checked:px-1 peer-checked:py-2">
-                                {item.children.map((child, idx) => (
-                                    <div key={idx} className="group pl-4">
-                                        {child.link ? (
-                                            <Link
-                                                href={child.link}
-                                                onClick={closeSidebar}
-                                                className="text-text-secondary hover:text-text-primary hover: hover:shadow-neumorphic-xs flex w-full items-center gap-3 rounded-lg border border-transparent bg-inherit p-2 text-sm transition">
-                                                {child.name}
-                                            </Link>
-                                        ) : (
-                                            <>
-                                                <input type="radio" name="sub-menu" id={`sub-menu-${index}-${idx}`} className="peer hidden" />
-                                                <label
-                                                    htmlFor={`sub-menu-${index}-${idx}`}
-                                                    className="peer-checked:text-text-primary hover:text-text-primary text-text-secondary flex w-full items-center justify-between rounded-lg border border-transparent p-2 text-sm transition">
-                                                    <span className="flex-1">{child.name}</span>
+                        {/* Animated Child Menu */}
+                        <AnimatePresence>
+                            {item.children && openMenus[index] && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    className="pl-6">
+                                    {item.children.map((child, idx) => (
+                                        <div key={idx}>
+                                            {child.link ? (
+                                                <Link
+                                                    href={child.link}
+                                                    className="hover:bg-secondary text-text-secondary hover:text-text-primary block rounded-lg p-2 text-sm transition"
+                                                    onClick={() => closeSidebar()}>
+                                                    {child.name}
+                                                </Link>
+                                            ) : (
+                                                <button
+                                                    onClick={() => toggleMenu(`${index}-${idx}`)}
+                                                    className="hover:bg-secondary text-text-secondary hover:text-text-primary flex w-full items-center justify-between rounded-lg p-2 text-sm transition">
+                                                    <span className="flex-1 text-left">{child.name}</span>
                                                     {child.children && (
-                                                        <Icon icon={ICON_SET.DOWN} className="size-5 transition-transform peer-checked:rotate-180" />
+                                                        <Icon
+                                                            icon={ICON_SET.DOWN}
+                                                            className={`size-5 transition-transform ${openMenus[`${index}-${idx}`] ? 'rotate-180' : ''}`}
+                                                        />
                                                     )}
-                                                </label>
-                                            </>
-                                        )}
+                                                </button>
+                                            )}
 
-                                        {/* Sub-Children */}
-                                        {child.children && (
-                                            <div className="max-h-0 overflow-hidden rounded-lg transition-all duration-300 ease-in-out peer-checked:max-h-screen peer-checked:px-1 peer-checked:py-2">
-                                                {child.children.map((subChild, subIdx) => (
-                                                    <Link
-                                                        key={subIdx}
-                                                        href={subChild.link}
-                                                        onClick={closeSidebar}
-                                                        className="text-text-secondary hover:text-text-primary hover: hover:shadow-neumorphic-xs ml-4 block rounded-lg border border-transparent bg-inherit p-2 text-sm transition">
-                                                        {subChild.name}
-                                                    </Link>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                                            <AnimatePresence>
+                                                {child.children && openMenus[`${index}-${idx}`] && (
+                                                    <motion.div
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: 'auto', opacity: 1 }}
+                                                        exit={{ height: 0, opacity: 0 }}
+                                                        className="pl-6">
+                                                        {child.children.map((subChild, i) => (
+                                                            <Link
+                                                                key={i}
+                                                                href={subChild.link}
+                                                                className="hover:bg-secondary text-text-secondary hover:text-text-primary block rounded-lg p-2 text-sm transition"
+                                                                onClick={() => closeSidebar()}>
+                                                                {subChild.name}
+                                                            </Link>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 ))}
 
-                <div className="border-t border-dotted"></div>
+                {/* Divider */}
+                <div className="my-3 border-t"></div>
 
-                <Link href="/" onClick={closeSidebar} className="text-text-secondary flex items-center gap-3 p-3 transition">
-                    <Icon icon={ICON_SET.SETTINGS} className="size-6" />
-                    <span className="flex-1">Settings</span>
+                {/* Settings & Logout */}
+                <Link
+                    href="/"
+                    className="hover:bg-secondary text-text-secondary hover:text-text-primary mb-1 flex items-center gap-2 rounded-lg p-2.5 transition">
+                    <Icon icon={ICON_SET.SETTINGS} className="size-5" />
+                    <span>Settings</span>
                 </Link>
 
-                <Link href="#" onClick={closeSidebar} className="flex items-center gap-3 p-3 text-red-500 transition">
-                    <Icon icon={ICON_SET.LOGOUT} className="size-6" />
-                    <span className="flex-1">Log Out</span>
+                <Link href="#" className="flex items-center gap-2 rounded-lg p-2.5 text-red-500 transition hover:bg-red-700">
+                    <Icon icon={ICON_SET.LOGOUT} className="size-5" />
+                    <span>Log Out</span>
                 </Link>
             </nav>
         </dialog>
