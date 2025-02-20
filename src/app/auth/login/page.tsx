@@ -1,7 +1,10 @@
 'use client';
 
+import { loginAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
+import { loginSchema } from '@/lib/schema/auth.validations';
+import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
@@ -9,42 +12,38 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const signInSchema = z.object({
-    email: z.string().email({ message: 'Invalid email address' }),
-    password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-});
-
-type SignInFormData = z.infer<typeof signInSchema>;
-
 export default function SignInForm() {
     const [showPassword, setShowPassword] = useState(false);
     const {
         register,
         handleSubmit,
-        formState: { errors },
-    } = useForm<SignInFormData>({
-        resolver: zodResolver(signInSchema),
+        formState: { errors, isSubmitting },
+    } = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
     });
-
-    const onSubmit = (data: SignInFormData) => {
-        console.log('Sign In Data:', data);
-    };
 
     return (
         <>
             <h2 className="text-text-primary mt-2 text-2xl font-semibold">
                 <Icon icon={ICON_SET.EYE} className="mr-2 inline size-7" />
-                Welcome back
+                Welcome back!
             </h2>
             <p className="text-text-secondary text-sm">Please enter your details to sign in</p>
 
             <hr className="my-4" />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(loginAction)}>
                 <div className="form-group mb-3">
                     <label className="form-text">Email address</label>
-                    <input type="email" {...register('email')} className="form-field" placeholder="Enter your email" />
-                    {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+                    <input
+                        type="email"
+                        {...register('email')}
+                        disabled={isSubmitting}
+                        className="form-field"
+                        placeholder="Enter your email"
+                        data-invalid={!!errors.email}
+                    />
+                    <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="email" />
                 </div>
 
                 <div className="form-group mb-3">
@@ -53,8 +52,11 @@ export default function SignInForm() {
                         <input
                             type={showPassword ? 'text' : 'password'}
                             {...register('password')}
+                            disabled={isSubmitting}
                             className="form-field"
+                            data-invalid={!!errors.password}
                             placeholder="Enter your password"
+                            min={8}
                         />
                         <button
                             type="button"
@@ -63,12 +65,18 @@ export default function SignInForm() {
                             <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="size-6" />
                         </button>
                     </div>
-                    {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+                    <ErrorMessage errors={errors} as={'p'} className="text-xs text-red-500" name="password" />
                 </div>
 
                 <div className="flex items-center justify-between">
                     <label className="form-checkbox">
-                        <input type="checkbox" className="checkbox-field" />
+                        <input
+                            type="checkbox"
+                            {...register('remember')}
+                            disabled={isSubmitting}
+                            className="checkbox-field"
+                            data-invalid={!!errors.remember}
+                        />
                         <p className="form-text"> Remember for 30 days</p>
                     </label>
                     <Link href={APP_ROUTES.AUTH.FORGOT_PASSWORD} className="text-highlight text-xs hover:underline">
@@ -78,7 +86,7 @@ export default function SignInForm() {
 
                 <hr className="my-6" />
 
-                <button type="submit" className="button w-full">
+                <button type="submit" disabled={isSubmitting} className="button disabled:bg-secondary w-full">
                     Sign in
                 </button>
             </form>

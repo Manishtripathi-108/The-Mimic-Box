@@ -1,7 +1,10 @@
 'use client';
 
+import { registerAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
+import { registerSchema } from '@/lib/schema/auth.validations';
+import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
@@ -9,33 +12,15 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const registerSchema = z
-    .object({
-        email: z.string().email({ message: 'Invalid email address' }),
-        password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-        fullName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
-        confirmPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: 'Passwords do not match',
-        path: ['confirmPassword'],
-    });
-
-type RegisterData = z.infer<typeof registerSchema>;
-
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const {
         register,
         handleSubmit,
-        formState: { errors },
-    } = useForm<RegisterData>({
+        formState: { errors, isSubmitting },
+    } = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
     });
-
-    const onSubmit = (data: RegisterData) => {
-        console.log('Sign In Data:', data);
-    };
 
     return (
         <>
@@ -47,17 +32,31 @@ export default function Register() {
 
             <hr className="my-4" />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(registerAction)}>
                 <div className="form-group mb-3">
                     <label className="form-text">Full Name</label>
-                    <input type="text" {...register('fullName')} className="form-field" placeholder="Enter your full name" />
-                    {errors.fullName && <p className="text-xs text-red-500">{errors.fullName.message}</p>}
+                    <input
+                        type="text"
+                        {...register('fullName')}
+                        disabled={isSubmitting}
+                        className="form-field"
+                        placeholder="Enter your full name"
+                        data-invalid={!!errors.fullName}
+                    />
+                    <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="fullName" />
                 </div>
 
                 <div className="form-group mb-3">
                     <label className="form-text">Email address</label>
-                    <input type="email" {...register('email')} className="form-field" placeholder="Enter your email" />
-                    {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+                    <input
+                        type="email"
+                        {...register('email')}
+                        disabled={isSubmitting}
+                        className="form-field"
+                        placeholder="Enter your email"
+                        data-invalid={!!errors.email}
+                    />
+                    <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="email" />
                 </div>
 
                 <div className="form-group mb-3">
@@ -66,8 +65,10 @@ export default function Register() {
                         <input
                             type={showPassword ? 'text' : 'password'}
                             {...register('password')}
+                            disabled={isSubmitting}
                             className="form-field"
                             placeholder="Enter your password"
+                            data-invalid={!!errors.password}
                         />
                         <button
                             type="button"
@@ -76,7 +77,7 @@ export default function Register() {
                             <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="text-xl" />
                         </button>
                     </div>
-                    {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+                    <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="password" />
                 </div>
 
                 <div className="form-group mb-3">
@@ -84,15 +85,17 @@ export default function Register() {
                     <input
                         type={showPassword ? 'text' : 'password'}
                         {...register('confirmPassword')}
+                        disabled={isSubmitting}
                         className="form-field"
                         placeholder="Confirm your password"
+                        data-invalid={!!errors.confirmPassword}
                     />
-                    {errors.confirmPassword && <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>}
+                    <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="confirmPassword" />
                 </div>
 
                 <hr className="my-6" />
 
-                <button type="submit" className="button w-full">
+                <button type="submit" disabled={isSubmitting} className="button disabled:bg-secondary w-full">
                     Register
                 </button>
             </form>
