@@ -1,6 +1,13 @@
 export const APP_ROUTES = {
     INDEX: '/',
     SHADOWS: '/shadows',
+    AUTH: {
+        LOGIN: '/auth/login',
+        REGISTER: '/auth/register',
+        FORGOT_PASSWORD: '/auth/forgot-password',
+        RESET_PASSWORD: '/auth/reset-password',
+        VERIFY_EMAIL: '/auth/verify-email',
+    },
     AUDIO: {
         TAGS_EDITOR: '/audio/tags-editor',
         CONVERTER: '/audio/converter',
@@ -26,4 +33,4 @@ export const APP_ROUTES = {
         LOGIN: '/spotify/login',
     },
     NOT_FOUND: '*',
-};
+} as const;
