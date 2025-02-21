@@ -10,6 +10,7 @@ import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 export default function Register() {
@@ -17,10 +18,33 @@ export default function Register() {
     const {
         register,
         handleSubmit,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
     });
+
+    async function onSubmit(data: z.infer<typeof registerSchema>) {
+        const response = await registerAction(data);
+        console.log('Response:', response);
+
+        if (!response.success) {
+            if (response.errors) {
+                response.errors.forEach((err) => {
+                    setError(err.path[0] as 'fullName' | 'email' | 'password' | 'confirmPassword' | `root.${string}` | 'root', {
+                        message: err.message,
+                    });
+                });
+            }
+            if (response.message) {
+                setError('root.serverError', { message: response.message });
+            }
+        }
+
+        if (response.success) {
+            toast.success('Sign in successful');
+        }
+    }
 
     return (
         <>
@@ -32,7 +56,7 @@ export default function Register() {
 
             <hr className="my-4" />
 
-            <form onSubmit={handleSubmit(registerAction)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group mb-3">
                     <label className="form-text">Full Name</label>
                     <input
@@ -93,17 +117,24 @@ export default function Register() {
                     <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="confirmPassword" />
                 </div>
 
+                {errors.root?.serverError && (
+                    <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
+                        <Icon icon={ICON_SET.ERROR} className="size-7" />
+                        {errors.root.serverError.message}
+                    </p>
+                )}
+
                 <hr className="my-6" />
 
                 <button type="submit" disabled={isSubmitting} className="button disabled:bg-secondary w-full">
-                    Register
+                    {isSubmitting ? 'Submitting...' : 'Create an account'}
                 </button>
             </form>
 
             <p className="text-text-secondary mt-2 text-center text-sm">
                 Already have an account?{' '}
                 <Link href={APP_ROUTES.AUTH.LOGIN} className="text-highlight hover:underline">
-                    Sign in
+                    Login
                 </Link>
             </p>
         </>
