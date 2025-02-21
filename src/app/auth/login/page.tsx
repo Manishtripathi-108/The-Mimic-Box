@@ -10,17 +10,42 @@ import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 export default function SignInForm() {
     const [showPassword, setShowPassword] = useState(false);
+
     const {
         register,
         handleSubmit,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
     });
+
+    async function onSubmit(data: z.infer<typeof loginSchema>) {
+        const response = await loginAction(data);
+        console.log('Response:', response);
+
+        if (!response.success) {
+            if (response.errors) {
+                response.errors.forEach((err) => {
+                    setError(err.path[0] as 'email' | 'password' | 'remember' | `root.${string}` | 'root', {
+                        message: err.message,
+                    });
+                });
+            }
+            if (response.message) {
+                setError('root.serverError', { message: response.message });
+            }
+        }
+
+        if (response.success) {
+            toast.success('Sign in successful');
+        }
+    }
 
     return (
         <>
@@ -32,7 +57,7 @@ export default function SignInForm() {
 
             <hr className="my-4" />
 
-            <form onSubmit={handleSubmit(loginAction)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group mb-3">
                     <label className="form-text">Email address</label>
                     <input
@@ -43,7 +68,7 @@ export default function SignInForm() {
                         placeholder="Enter your email"
                         data-invalid={!!errors.email}
                     />
-                    <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="email" />
+                    <ErrorMessage errors={errors} as={'p'} className="text-xs text-red-500" name="email" />
                 </div>
 
                 <div className="form-group mb-3">
@@ -56,7 +81,6 @@ export default function SignInForm() {
                             className="form-field"
                             data-invalid={!!errors.password}
                             placeholder="Enter your password"
-                            min={8}
                         />
                         <button
                             type="button"
@@ -84,10 +108,13 @@ export default function SignInForm() {
                     </Link>
                 </div>
 
-                <hr className="my-6" />
+                {errors.root?.serverError && (
+                    <p className="mt-3 rounded-lg bg-red-400/20 px-3 py-2 text-xs text-red-500">{errors.root.serverError.message}</p>
+                )}
 
+                <hr className="my-6" />
                 <button type="submit" disabled={isSubmitting} className="button disabled:bg-secondary w-full">
-                    Sign in
+                    {isSubmitting ? 'Submitting...' : 'Sign in'}
                 </button>
             </form>
 
