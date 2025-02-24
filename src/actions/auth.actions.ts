@@ -3,8 +3,8 @@
 import { connectDB } from '@/lib/db';
 import { loginSchema, registerSchema } from '@/lib/schema/auth.validations';
 import User from '@/models/User';
+import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { verifyPassword } from '@/lib/utils/password';
 
 export const loginAction = async (data: z.infer<typeof loginSchema>) => {
     await connectDB();
@@ -24,7 +24,7 @@ export const loginAction = async (data: z.infer<typeof loginSchema>) => {
     }
 
     // Verify password
-    const isValidPassword = await verifyPassword(password, user.password);
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
         return { success: false, message: 'Incorrect email or password.' };
     }
@@ -49,8 +49,11 @@ export const registerAction = async (data: z.infer<typeof registerSchema>) => {
         return { success: false, message: 'This email is already registered.' };
     }
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     // Create new user
-    const user = new User({ email, fullName, password });
+    const user = new User({ email, fullName, password: hashedPassword });
     await user.save();
 
     return { success: true };
