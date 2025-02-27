@@ -4,10 +4,12 @@ import { loginAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { loginSchema } from '@/lib/schema/auth.validations';
+import { DEFAULT_AUTH_REDIRECT } from '@/routes';
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -29,21 +31,26 @@ export default function SignInForm() {
         const response = await loginAction(data);
         console.log('Response:', response);
 
-        if (!response.success) {
-            if (response.errors) {
-                response.errors.forEach((err) => {
-                    setError(err.path[0] as 'email' | 'password' | 'remember' | `root.${string}` | 'root', {
-                        message: err.message,
+        if (response) {
+            if (!response.success) {
+                if (response.errors) {
+                    response.errors.forEach((err) => {
+                        setError(err.path[0] as 'email' | 'password' | 'remember' | `root.${string}` | 'root', {
+                            message: err.message,
+                        });
                     });
-                });
+                }
+                if (response.message) {
+                    setError('root.serverError', { message: response.message });
+                }
             }
-            if (response.message) {
-                setError('root.serverError', { message: response.message });
-            }
-        }
 
-        if (response.success) {
-            toast.success('Sign in successful');
+            if (response.success) {
+                toast.success('Sign in successful');
+                redirect(DEFAULT_AUTH_REDIRECT);
+            }
+        } else {
+            setError('root.serverError', { message: 'Something went wrong. Please try again Later.' });
         }
     }
 
@@ -109,9 +116,10 @@ export default function SignInForm() {
                 </div>
 
                 {errors.root?.serverError && (
-                    <p className="mt-3 rounded-lg bg-red-400/10 px-3 flex items-center py- text-xs text-red-500">
-                        <Icon icon={ICON_SET.ERROR} className='size-7' />
-                        {errors.root.serverError.message}</p>
+                    <p className="py- mt-3 flex items-center rounded-lg bg-red-400/10 px-3 text-xs text-red-500">
+                        <Icon icon={ICON_SET.ERROR} className="size-7" />
+                        {errors.root.serverError.message}
+                    </p>
                 )}
 
                 <hr className="my-6" />
