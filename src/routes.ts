@@ -1,12 +1,12 @@
 /**
  * Array of routes accessible without authentication.
  */
-export const publicRoutes: string[] = ['/'];
+export const publicRoutes: string[] = ['/', '/auth/verify-email', '/auth/reset-password'];
 
 /**
  * Array of authentication-related routes.
  */
-export const authRoutes: string[] = ['/auth/login', '/auth/register'];
+export const authRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/error'];
 
 /**
  * Prefix for API authentication routes.

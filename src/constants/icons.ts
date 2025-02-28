@@ -35,6 +35,7 @@ enum ICON_SET {
     MINUS = 'line-md:minus',
     MOON = 'meteocons:clear-night-fill',
     MORE_DOTS = 'pepicons-pop:dots-y',
+    NOT_FOUND = 'tabler:error-404',
     MUSIC = 'solar:music-note-bold',
     PERSON = 'line-md:person-filled',
     PLAYER = 'game-icons:centurion-helmet',

@@ -26,7 +26,6 @@ export default function Register() {
 
     async function onSubmit(data: z.infer<typeof registerSchema>) {
         const response = await registerAction(data);
-        console.log('Response:', response);
 
         if (!response.success) {
             if (response.errors) {
@@ -42,7 +41,7 @@ export default function Register() {
         }
 
         if (response.success) {
-            toast.success('Sign in successful');
+            toast.success('Registration successful. Please check your email to verify your account.');
         }
     }
 
@@ -52,12 +51,11 @@ export default function Register() {
                 <Icon icon={ICON_SET.DESKTOP} className="mr-2 inline size-7" />
                 Create an account
             </h2>
-            <p className="text-text-secondary text-sm"> Please enter your details to Register</p>
 
             <hr className="my-4" />
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="form-group mb-3">
+                <div className="form-group">
                     <label className="form-text">Full Name</label>
                     <input
                         type="text"
@@ -70,7 +68,7 @@ export default function Register() {
                     <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="fullName" />
                 </div>
 
-                <div className="form-group mb-3">
+                <div className="form-group">
                     <label className="form-text">Email address</label>
                     <input
                         type="email"
@@ -83,7 +81,7 @@ export default function Register() {
                     <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="email" />
                 </div>
 
-                <div className="form-group mb-3">
+                <div className="form-group">
                     <label className="form-text">Password</label>
                     <div className="relative">
                         <input
@@ -104,7 +102,7 @@ export default function Register() {
                     <ErrorMessage as={'p'} className="text-xs text-red-500" errors={errors} name="password" />
                 </div>
 
-                <div className="form-group mb-3">
+                <div className="form-group">
                     <label className="form-text">Confirm Password</label>
                     <input
                         type={showPassword ? 'text' : 'password'}
@@ -124,8 +122,7 @@ export default function Register() {
                     </p>
                 )}
 
-                <hr className="my-6" />
-
+                <hr className="my-5" />
                 <button type="submit" disabled={isSubmitting} className="button disabled:bg-secondary w-full">
                     {isSubmitting ? 'Submitting...' : 'Create an account'}
                 </button>

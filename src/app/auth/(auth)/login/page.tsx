@@ -9,13 +9,15 @@ import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 export default function SignInForm() {
+    const searchParams = useSearchParams();
+    const UrlError = searchParams.get('error') === 'OAuthAccountNotLinked' ? true : false;
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -60,12 +62,11 @@ export default function SignInForm() {
                 <Icon icon={ICON_SET.EYE} className="mr-2 inline size-7" />
                 Welcome back!
             </h2>
-            <p className="text-text-secondary text-sm">Please enter your details to sign in</p>
 
             <hr className="my-4" />
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="form-group mb-3">
+                <div className="form-group">
                     <label className="form-text">Email address</label>
                     <input
                         type="email"
@@ -78,7 +79,7 @@ export default function SignInForm() {
                     <ErrorMessage errors={errors} as={'p'} className="text-xs text-red-500" name="email" />
                 </div>
 
-                <div className="form-group mb-3">
+                <div className="form-group">
                     <label className="form-text">Password</label>
                     <div className="relative">
                         <input
@@ -99,30 +100,19 @@ export default function SignInForm() {
                     <ErrorMessage errors={errors} as={'p'} className="text-xs text-red-500" name="password" />
                 </div>
 
-                <div className="flex items-center justify-between">
-                    <label className="form-checkbox">
-                        <input
-                            type="checkbox"
-                            {...register('remember')}
-                            disabled={isSubmitting}
-                            className="checkbox-field"
-                            data-invalid={!!errors.remember}
-                        />
-                        <p className="form-text"> Remember for 30 days</p>
-                    </label>
-                    <Link href={APP_ROUTES.AUTH.FORGOT_PASSWORD} className="text-highlight text-xs hover:underline">
-                        Forgot password?
-                    </Link>
-                </div>
+                <Link href={APP_ROUTES.AUTH.FORGOT_PASSWORD} className="text-highlight mt-2 block text-right text-xs hover:underline">
+                    Forgot password?
+                </Link>
 
-                {errors.root?.serverError && (
-                    <p className="py- mt-3 flex items-center rounded-lg bg-red-400/10 px-3 text-xs text-red-500">
-                        <Icon icon={ICON_SET.ERROR} className="size-7" />
-                        {errors.root.serverError.message}
+                {(errors.root?.serverError || UrlError) && (
+                    <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-sm text-red-500">
+                        <Icon icon={ICON_SET.ERROR} className="size-7 shrink-0" />
+                        {errors.root?.serverError.message ||
+                            'Email is already registered with another account. Please login with the correct account.'}
                     </p>
                 )}
 
-                <hr className="my-6" />
+                <hr className="my-5" />
                 <button type="submit" disabled={isSubmitting} className="button disabled:bg-secondary w-full">
                     {isSubmitting ? 'Submitting...' : 'Login'}
                 </button>

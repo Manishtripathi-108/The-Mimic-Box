@@ -3,6 +3,7 @@
 import { signIn } from '@/auth';
 import { db } from '@/lib/db';
 import { loginSchema, registerSchema } from '@/lib/schema/auth.validations';
+import { sendVerificationEmail } from '@/lib/services/auth.service';
 import { DEFAULT_AUTH_REDIRECT } from '@/routes';
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
@@ -30,7 +31,6 @@ export const loginAction = async (data: z.infer<typeof loginSchema>) => {
 
         return { success: true, redirect: DEFAULT_AUTH_REDIRECT };
     } catch (error) {
-        console.error('🔐 Sign in error:', error);
         if (error instanceof AuthError) {
             switch (error.type) {
                 case 'CredentialsSignin':
@@ -71,9 +71,46 @@ export const registerAction = async (data: z.infer<typeof registerSchema>) => {
             },
         });
 
+        // Create new verification token
+        const token = await db.verificationToken.create({
+            data: {
+                email,
+                token: crypto.randomUUID(),
+                expires: new Date(Date.now() + 15 * 60 * 1000),
+            },
+        });
+
+        // Send verification email
+        const response = await sendVerificationEmail(email, token.token);
+
+        return response;
+    } catch (error) {
+        return { success: false, message: 'Something went wrong. Please try again later.', error };
+    }
+};
+
+export const verifyEmailToken = async (token: string) => {
+    try {
+        const response = await db.verificationToken.findFirst({
+            where: { token },
+        });
+
+        if (!response || response.expires < new Date()) {
+            return { success: false, message: 'Verification token is invalid or has expired.' };
+        }
+
+        await db.verificationToken.delete({
+            where: { token },
+        });
+
+        await db.user.update({
+            where: { email: response.email },
+            data: { emailVerified: new Date() },
+        });
+
         return { success: true };
     } catch (error) {
-        console.error('🔐 Registration error:', error);
+        console.error('🔐 Verify email error:', error);
         return { success: false, message: 'Something went wrong. Please try again later.' };
     }
 };

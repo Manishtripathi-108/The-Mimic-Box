@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                     <div className="bg-secondary h-px flex-1"></div>
                 </div>
 
-                <div className="mt-6 flex gap-3">
+                <div className="mt-2 flex gap-3">
                     <button
                         onClick={() => signInSocial('google')}
                         className="shadow-neumorphic-xs text-text-secondary hover:text-text-primary flex w-full cursor-pointer items-center justify-center rounded-xl py-2 transition hover:scale-105">
