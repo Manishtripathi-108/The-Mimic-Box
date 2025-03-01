@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev --turbopack",
-        "build": "prisma generate && next build",
+        "build": "next build",
         "start": "next start",
         "lint": "next lint",
         "format": "prettier --write ."
@@ -17,7 +17,7 @@
         "@react-email/components": "^0.0.33",
         "@react-email/tailwind": "^1.0.4",
         "@tailwindcss/postcss": "^4.0.6",
-        "bcrypt": "^5.1.1",
+        "bcryptjs": "^3.0.2",
         "clsx": "^2.1.1",
         "motion": "^12.4.5",
         "next": "15.1.7",
@@ -36,7 +36,6 @@
     "devDependencies": {
         "@eslint/eslintrc": "^3",
         "@iconify/react": "^5.2.0",
-        "@types/bcrypt": "^5.0.2",
         "@types/node": "^20",
         "@types/nodemailer": "^6.4.17",
         "@types/react": "^19",
