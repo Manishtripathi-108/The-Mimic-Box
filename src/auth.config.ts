@@ -4,7 +4,7 @@ import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 import { loginSchema } from './lib/schema/auth.validations';
 import { db } from './lib/db';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 export default {
     providers: [
