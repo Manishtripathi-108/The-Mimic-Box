@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import React, { useEffect } from 'react';
-import ThemeToggleBtn from '../ui/buttons/ThemeToggleBtn';
 import ICON_SET from '@/constants/icons';
 import { Icon } from '@iconify/react';
 import Sidebar from './Sidebar';
+import ProfileDropdown from './ProfileDropdown';
 
 const Header = () => {
     useEffect(() => {
@@ -65,7 +65,7 @@ const Header = () => {
                     <AppName className="w-20" /> */}
                 </Link>
 
-                <ThemeToggleBtn />
+                <ProfileDropdown />
             </header>
 
             <Sidebar />

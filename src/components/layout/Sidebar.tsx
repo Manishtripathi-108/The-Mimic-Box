@@ -45,7 +45,7 @@ const sidebarMenuItems = [
         title: 'Profile',
         badge: 14,
         icon: ICON_SET.PERSON,
-        link: APP_ROUTES.SPOTIFY.LOGIN,
+        link: APP_ROUTES.DEV,
     },
 ];
 

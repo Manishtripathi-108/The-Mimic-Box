@@ -421,7 +421,7 @@
     }
 
     &:user-invalid,
-    &[data-error='true'] {
+    &[data-invalid='true'] {
         @apply border-red-500 text-red-500 dark:border-red-500 dark:text-red-500;
     }
 }
