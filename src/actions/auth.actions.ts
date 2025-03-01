@@ -18,6 +18,8 @@ export const loginAction = async (data: z.infer<typeof loginSchema>) => {
     try {
         const user = await db.user.findUnique({ where: { email } });
 
+        if (!user) return { success: false, message: 'No account found with this email.' };
+
         if (!user?.emailVerified) {
             const token = await generateVerificationToken(email);
             const response = await sendVerificationEmail(email, token.token);
