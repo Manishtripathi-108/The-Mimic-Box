@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Tailwind, Text } from '@react-email/components';
+import * as React from 'react';
 
 const VerifyEmail = ({ token }: { token: string }) => {
     const publicUrl = process.env.NEXT_PUBLIC_URL || 'https://the-mimic-box.com';
@@ -24,7 +24,8 @@ const VerifyEmail = ({ token }: { token: string }) => {
 
                         {/* Body Content */}
                         <Text className="mt-2 text-center text-gray-600">
-                            Thank you for signing up! Please verify your email address to activate your account.
+                            Thank you for signing up! Please verify your email address to activate your account. This link is only valid for 15
+                            minutes.
                         </Text>
 
                         {/* Verification Button */}

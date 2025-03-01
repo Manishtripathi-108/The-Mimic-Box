@@ -7,6 +7,8 @@ import { useActionState } from 'react';
 import { verifyEmailToken } from '@/actions/auth.actions';
 import { DEFAULT_AUTH_ROUTE } from '@/routes';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+import { APP_ROUTES } from '@/constants/routes.constants';
 
 export default function VerifyEmail() {
     const searchParams = useSearchParams();
@@ -44,7 +46,7 @@ export default function VerifyEmail() {
 
                 {token ? (
                     <div className="p-6">
-                        <Icon icon={ICON_SET.EMAIL} className="text-highlight mb-4 inline-block size-16" />
+                        <Icon icon={isPending ? ICON_SET.LOADING : ICON_SET.EMAIL} className="text-highlight mb-4 inline-block size-16" />
                         <h1 className="text-text-primary text-2xl font-bold">Confirm Your Email</h1>
                         <p className="text-text-secondary mt-2">Click the button below to verify your email and activate your account.</p>
 
@@ -67,9 +69,9 @@ export default function VerifyEmail() {
                         <h1 className="text-text-primary text-2xl font-bold">Token Not Found</h1>
                         <p className="text-text-secondary mt-2">The token is invalid or expired. Please request a new one.</p>
 
-                        <button type="button" className="button mt-4 w-full">
+                        <Link href={APP_ROUTES.AUTH.LOGIN} type="button" className="button mt-4 w-full">
                             Request New Token
-                        </button>
+                        </Link>
                     </div>
                 )}
             </div>
