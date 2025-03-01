@@ -2,8 +2,9 @@
 
 import { Icon } from '@iconify/react';
 import ICON_SET from '@/constants/icons';
-import { DEFAULT_AUTH_REDIRECT } from '@/routes';
+import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import { signIn } from 'next-auth/react';
+import { Suspense } from 'react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     const signInSocial = async (provider: 'google' | 'github') => {
@@ -15,8 +16,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     return (
         <div className="bg-primary h-calc-full-height flex items-center justify-center px-4">
             <div className="bg-primary shadow-neumorphic-sm w-full max-w-md rounded-2xl p-6">
-                {children}
-
+                <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>{children}</Suspense>
                 <div className="mt-2 flex items-center gap-2">
                     <div className="bg-secondary h-px flex-1"></div>
                     <span className="text-text-secondary text-sm">or</span>

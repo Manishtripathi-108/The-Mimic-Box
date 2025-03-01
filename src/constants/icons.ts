@@ -30,6 +30,7 @@ enum ICON_SET {
     LEFT_ARROW = 'line-md:arrow-left',
     LIST = 'tabler:list',
     LOADING = 'line-md:loading-loop',
+    LOGIN = 'majesticons:login',
     LOGOUT = 'majesticons:logout',
     MENU = 'hugeicons:menu-02',
     MINUS = 'line-md:minus',

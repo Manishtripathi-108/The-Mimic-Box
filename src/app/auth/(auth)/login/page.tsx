@@ -4,7 +4,7 @@ import { loginAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { loginSchema } from '@/lib/schema/auth.validations';
-import { DEFAULT_AUTH_REDIRECT } from '@/routes';
+import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';

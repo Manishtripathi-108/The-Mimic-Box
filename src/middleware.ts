@@ -1,6 +1,6 @@
 import authConfig from '@/auth.config';
 import NextAuth from 'next-auth';
-import { apiAuthPrefix, authRoutes, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE, publicRoutes } from '@/routes';
+import { API_AUTH_PREFIX, AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE, PUBLIC_ROUTES } from '@/constants/routes.constants';
 
 const { auth } = NextAuth(authConfig);
 
@@ -9,9 +9,9 @@ export default auth((req) => {
     console.log('🔐 Auth:', isAuthenticated);
     console.log('⚪ Path:', req.nextUrl.pathname);
 
-    const isApiAuthRoute = req.nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isPublicRoute = publicRoutes.includes(req.nextUrl.pathname);
-    const isAuthRoute = authRoutes.includes(req.nextUrl.pathname);
+    const isApiAuthRoute = req.nextUrl.pathname.startsWith(API_AUTH_PREFIX);
+    const isPublicRoute = PUBLIC_ROUTES.includes(req.nextUrl.pathname);
+    const isAuthRoute = AUTH_ROUTES.includes(req.nextUrl.pathname);
 
     if (isApiAuthRoute) {
         return undefined;

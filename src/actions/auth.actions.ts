@@ -4,7 +4,7 @@ import { signIn } from '@/auth';
 import { db } from '@/lib/db';
 import { loginSchema, registerSchema } from '@/lib/schema/auth.validations';
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/services/auth.service';
-import { DEFAULT_AUTH_REDIRECT } from '@/routes';
+import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';

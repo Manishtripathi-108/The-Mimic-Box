@@ -1,18 +1,26 @@
 'use client';
 
-import ICON_SET from '@/constants/icons';
-import { Icon } from '@iconify/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
 import { verifyEmailToken } from '@/actions/auth.actions';
-import { DEFAULT_AUTH_ROUTE } from '@/routes';
-import toast from 'react-hot-toast';
+import ICON_SET from '@/constants/icons';
+import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
+import { Icon } from '@iconify/react';
 import Link from 'next/link';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useActionState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function VerifyEmail() {
-    const searchParams = useSearchParams();
     const router = useRouter();
+
+    return (
+        <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>
+            <VerifyEmailContent router={router} />
+        </Suspense>
+    );
+}
+
+function VerifyEmailContent({ router }: { router: ReturnType<typeof useRouter> }) {
+    const searchParams = useSearchParams();
     const token = searchParams.get('token');
 
     // Define the action function
