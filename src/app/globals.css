@@ -9,22 +9,28 @@
     /* -------------------------------------------------------------------------- */
     /*                                   Colors                                   */
     /* -------------------------------------------------------------------------- */
-    --color-theme-primary: #ffb6b9;
-    --color-theme-secondary: #ffe6e6;
+    /* Base colors */
+    --color-theme-primary: #f0f0f3;
+    --color-theme-secondary: #e0e0e0;
+    --color-theme-tertiary: #f5f5f5;
     --color-theme-text-primary: #333333;
     --color-theme-text-secondary: #666666;
-    --color-theme-accent: #dc2626;
-    --color-theme-highlight: #4169e1;
-    /* --------------------------------- Shadows -------------------------------- */
-    --lower-shadow: #db9d9f;
-    --upper-shadow: #ffcfd3;
+
+    /* Accent colors */
+    --color-theme-accent: #3a8ee6;
+    --color-theme-highlight: #88aaff;
+
+    /* Neumorphic shadows */
+    --lower-shadow: rgba(0, 0, 0, 0.15);
+    --upper-shadow: rgba(255, 255, 255, 0.7);
 
     /* -------------------------------------------------------------------------- */
     /*                                   Shadows                                  */
     /* -------------------------------------------------------------------------- */
-    --shadow-neumorphic-xs: 3px 3px 5px var(--lower-shadow), -3px -3px 5px var(--upper-shadow);
-    --shadow-neumorphic-sm: 5px 5px 10px var(--lower-shadow), -5px -5px 10px var(--upper-shadow);
-    --shadow-neumorphic-md: 6px 6px 12px var(--lower-shadow), -6px -6px 12px var(--upper-shadow);
+
+    --shadow-neumorphic-xs: var(--lower-shadow) 2px 4px 4px, var(--upper-shadow) 1px 1px 2px inset;
+    --shadow-neumorphic-sm: var(--lower-shadow) 4px 8px 8px, var(--upper-shadow) 2px 2px 4px inset;
+    --shadow-neumorphic-md: 6px 6px 12px var(--lower-shadow), 3px 3px 6px var(--upper-shadow) inset;
     --shadow-neumorphic-lg: 10px 10px 20px var(--lower-shadow), -10px -10px 20px var(--upper-shadow);
     --shadow-neumorphic-xl: 20px 20px 40px var(--lower-shadow), -20px -20px 40px var(--upper-shadow);
     --shadow-neumorphic-inset-xs: inset 3px 3px 7px var(--lower-shadow), inset -3px -3px 7px var(--upper-shadow);
@@ -229,16 +235,20 @@
 }
 
 [data-theme='dark'] {
-    --color-theme-primary: #1f2937;
-    --color-theme-secondary: #334155;
+    /* Base colors */
+    --color-theme-primary: #191919;
+    --color-theme-secondary: #050505;
+    --color-theme-tertiary: #2a2a2a;
     --color-theme-text-primary: #ffffff;
-    --color-theme-text-secondary: #9ca3af;
-    --color-theme-accent: #ff6347;
-    --color-theme-highlight: #1e90ff;
+    --color-theme-text-secondary: #b3b3b3;
 
-    /* --------------------------------- Shadows -------------------------------- */
-    --lower-shadow: #0c1016;
-    --upper-shadow: #324258;
+    /* Accent colors */
+    --color-theme-accent: #bb86fc;
+    --color-theme-highlight: #3700b3;
+
+    /* Neumorphic shadows */
+    --lower-shadow: #00000073;
+    --upper-shadow: #ffffff26;
 }
 
 @theme inline {
@@ -246,6 +256,7 @@
     --font-aladin: var(--font-aladin), serif;
     --color-primary: var(--color-theme-primary);
     --color-secondary: var(--color-theme-secondary);
+    --color-tertiary: var(--color-theme-tertiary);
     --color-text-primary: var(--color-theme-text-primary);
     --color-text-secondary: var(--color-theme-text-secondary);
     --color-accent: var(--color-theme-accent);
@@ -277,6 +288,12 @@
         var(--gradient-light) 90%,
         var(--gradient-dark) 100%
     );
+}
+@utility bg-ui-gradient {
+    --gradient-light: var(--color-primary);
+    --gradient-dark: var(--color-secondary);
+
+    background-image: linear-gradient(145deg, var(--gradient-light) 15%, var(--gradient-dark) 85%);
 }
 
 @utility scrollbar-thin {
