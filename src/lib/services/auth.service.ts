@@ -1,4 +1,5 @@
 import { db } from '../db';
+import { v4 as uuidV4 } from 'uuid';
 import VerifyEmail from '@/components/emails/VerifyEmail';
 
 import { transporter } from '../email';
@@ -14,14 +15,12 @@ export const sendVerificationEmail = async (email: string, token: string) => {
         // Check User Existence
         const user = await db.user.findUnique({ where: { email } });
 
-        if (!user) {
-            return { success: false, message: 'No account found with this email.' };
-        }
+        if (!user) return { success: false, message: 'No account found with this email.' };
 
         // Ensure Resend API Key Exists
         if (!process.env.RESEND_API_KEY) {
             console.error('🚨 Missing RESEND_API_KEY in environment variables');
-            return { success: false, message: 'Email service configuration error. Please contact support.' };
+            return { success: false };
         }
 
         const emailHtml = await render(VerifyEmail({ token }));
@@ -34,19 +33,35 @@ export const sendVerificationEmail = async (email: string, token: string) => {
             html: emailHtml,
         });
 
-        console.log('📧 Email sent:', response);
-
         if (!response) {
             throw new Error('Failed to send email');
         }
 
-        return { success: true, message: 'Verification email sent successfully. Please check your inbox.' };
+        return { success: true };
     } catch (error) {
         console.error('🚨 Error sending verification email:', error);
 
-        return {
-            success: false,
-            message: 'Something went wrong while sending the email. Please try again later.',
-        };
+        return { success: false };
     }
+};
+
+export const generateVerificationToken = async (email: string) => {
+    const token = uuidV4();
+    const expires = new Date(Date.now() + 15 * 60 * 1000);
+
+    const existingToken = await db.verificationToken.findUnique({ where: { email } });
+
+    let response;
+    if (existingToken) {
+        response = await db.verificationToken.update({
+            where: { email },
+            data: { token, expires },
+        });
+    } else {
+        response = await db.verificationToken.create({
+            data: { email, token, expires },
+        });
+    }
+
+    return response;
 };

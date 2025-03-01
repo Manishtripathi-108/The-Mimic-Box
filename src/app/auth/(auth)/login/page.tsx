@@ -49,7 +49,7 @@ export default function SignInForm() {
 
             if (response.success) {
                 toast.success('Sign in successful');
-                redirect(DEFAULT_AUTH_REDIRECT);
+                redirect(response.redirect || DEFAULT_AUTH_REDIRECT);
             }
         } else {
             setError('root.serverError', { message: 'Something went wrong. Please try again Later.' });

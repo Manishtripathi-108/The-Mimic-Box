@@ -41,7 +41,7 @@ export default function Register() {
         }
 
         if (response.success) {
-            toast.success('Registration successful. Please check your email to verify your account.');
+            toast.success(response.message || 'Registration successful', { duration: 5000 });
         }
     }
 

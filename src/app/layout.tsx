@@ -42,13 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Toaster
                     toastOptions={{
                         success: {
-                            icon: <Icon icon={ICON_SET.SUCCESS} className="size-6 text-green-500" />,
+                            icon: <Icon icon={ICON_SET.SUCCESS} className="size-6 shrink-0 text-green-500" />,
                         },
                         error: {
-                            icon: <Icon icon={ICON_SET.ERROR} className="size-7" />,
+                            icon: <Icon icon={ICON_SET.ERROR} className="size-7 shrink-0" />,
                         },
                         loading: {
-                            icon: <Icon icon={ICON_SET.LOADING} className="text-accent size-5" />,
+                            icon: <Icon icon={ICON_SET.LOADING} className="text-accent size-5 shrink-0" />,
                         },
                     }}
                 />
