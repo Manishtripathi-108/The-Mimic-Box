@@ -1,4 +1,8 @@
 import nodemailer from 'nodemailer';
+import { render } from '@react-email/components';
+import React from 'react';
+
+const EMAIL_SENDER = 'The Mimic Box <noreply@themimicbox.com>';
 
 const mailConfig =
     process.env.NODE_ENV === 'production'
@@ -21,3 +25,21 @@ const mailConfig =
           };
 
 export const transporter = nodemailer.createTransport(mailConfig);
+
+export const sendEmail = async (to: string, subject: string, emailComponent: React.ReactElement) => {
+    if (!process.env.RESEND_API_KEY) {
+        console.error('🚨 Missing RESEND_API_KEY in environment variables');
+        return { success: false, message: 'Email service is unavailable.' };
+    }
+
+    try {
+        const html = await render(emailComponent);
+
+        const response = await transporter.sendMail({ from: EMAIL_SENDER, to, subject, html });
+        if (!response) throw new Error('Email sending failed');
+        return { success: true };
+    } catch (error) {
+        console.error(`🚨 Error sending email to ${to}:`, error);
+        return { success: false, message: 'Failed to send email.' };
+    }
+};

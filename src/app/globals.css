@@ -337,6 +337,10 @@
         @apply text-text-primary scale-105 transform;
     }
 
+    &:disabled {
+        @apply cursor-not-allowed bg-gray-200 text-gray-700;
+    }
+
     /*----------------------------------- button Sizes -------------------------------- */
     &.button-sm {
         @apply px-2 py-1 text-xs;
@@ -352,6 +356,23 @@
 
     &.button-xl {
         @apply px-5 py-4 text-lg;
+    }
+
+    /*----------------------------------- button Variants -------------------------------- */
+    &.button-secondary {
+        @apply bg-secondary;
+    }
+
+    &.button-tertiary {
+        @apply bg-tertiary;
+    }
+
+    &.button-highlight {
+        @apply bg-highlight text-black hover:text-black;
+    }
+
+    &.button-accent {
+        @apply bg-accent text-white hover:text-gray-200;
     }
 }
 
@@ -441,12 +462,12 @@
 
     &:user-invalid,
     &[data-invalid='true'] {
-        @apply border-red-500 text-red-500 dark:border-red-500 dark:text-red-500;
+        @apply border-red-500 text-red-500 dark:border-red-500;
     }
 }
 
 @utility form-field-wrapper {
-    @apply shadow-floating-xs text-text-secondary hover:text-text-primary focus-within:text-text-primary flex w-full items-center justify-center divide-x rounded-lg border;
+    @apply shadow-floating-xs bg-primary text-text-secondary hover:text-text-primary focus-within:text-text-primary flex w-full items-center justify-center divide-x rounded-lg border;
 
     & .form-field {
         @apply my-0.5 rounded-md border-none text-inherit shadow-none;
@@ -476,8 +497,9 @@
         @apply text-text-primary;
     }
 
-    &:has(.form-field:user-invalid) .form-icon {
-        @apply text-red-500 dark:text-red-500;
+    &:has(.form-field:user-invalid) .form-icon,
+    &:has(.form-field[data-invalid='true']) .form-icon {
+        @apply text-red-500;
     }
 }
 

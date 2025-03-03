@@ -20,9 +20,7 @@ export default function RegisterForm() {
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof registerSchema>>({
-        resolver: zodResolver(registerSchema),
-    });
+    } = useForm<z.infer<typeof registerSchema>>({ resolver: zodResolver(registerSchema) });
 
     async function onSubmit(data: z.infer<typeof registerSchema>) {
         const response = await registerAction(data);
@@ -39,7 +37,7 @@ export default function RegisterForm() {
                 setError('root.serverError', { message: response.message });
             }
         } else {
-            toast.success(response.message || 'Account created successfully.');
+            toast.success(response.message || 'Account created successfully.', { duration: 5000 });
         }
     }
 
@@ -61,16 +59,19 @@ export default function RegisterForm() {
                         <label htmlFor="fullName" className="form-text">
                             Full Name
                         </label>
-                        <input
-                            id="fullName"
-                            type="text"
-                            {...register('fullName')}
-                            className="form-field"
-                            placeholder="Enter your full name"
-                            data-invalid={!!errors.fullName}
-                            aria-invalid={!!errors.fullName}
-                            autoComplete="name"
-                        />
+                        <div className="form-field-wrapper">
+                            <Icon icon={ICON_SET.PERSON} className="form-icon" />
+                            <input
+                                id="fullName"
+                                type="text"
+                                {...register('fullName')}
+                                className="form-field"
+                                placeholder="Enter your full name"
+                                data-invalid={!!errors.fullName}
+                                aria-invalid={!!errors.fullName}
+                                autoComplete="name"
+                            />
+                        </div>
                         <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="fullName" aria-live="polite" />
                     </div>
 
@@ -79,16 +80,19 @@ export default function RegisterForm() {
                         <label htmlFor="email" className="form-text">
                             Email Address
                         </label>
-                        <input
-                            id="email"
-                            type="email"
-                            {...register('email')}
-                            className="form-field"
-                            placeholder="Enter your email"
-                            data-invalid={!!errors.email}
-                            aria-invalid={!!errors.email}
-                            autoComplete="email"
-                        />
+                        <div className="form-field-wrapper">
+                            <Icon icon={ICON_SET.EMAIL} className="form-icon" />
+                            <input
+                                id="email"
+                                type="email"
+                                {...register('email')}
+                                className="form-field"
+                                placeholder="Enter your email"
+                                data-invalid={!!errors.email}
+                                aria-invalid={!!errors.email}
+                                autoComplete="email"
+                            />
+                        </div>
                         <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="email" aria-live="polite" />
                     </div>
 
@@ -97,7 +101,15 @@ export default function RegisterForm() {
                         <label htmlFor="password" className="form-text">
                             Password
                         </label>
-                        <div className="relative">
+                        <div className="form-field-wrapper">
+                            <button
+                                type="button"
+                                title={showPassword ? 'Hide password' : 'Show password'}
+                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                className="form-icon"
+                                onClick={() => setShowPassword((prev) => !prev)}>
+                                <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="text-xl" />
+                            </button>{' '}
                             <input
                                 id="password"
                                 type={showPassword ? 'text' : 'password'}
@@ -108,13 +120,6 @@ export default function RegisterForm() {
                                 aria-invalid={!!errors.password}
                                 autoComplete="new-password"
                             />
-                            <button
-                                type="button"
-                                className="text-text-secondary hover:text-text-primary absolute inset-y-0 right-3 flex cursor-pointer items-center"
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                                <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="text-xl" />
-                            </button>
                         </div>
                         <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="password" aria-live="polite" />
                     </div>
@@ -124,16 +129,20 @@ export default function RegisterForm() {
                         <label htmlFor="confirmPassword" className="form-text">
                             Confirm Password
                         </label>
-                        <input
-                            id="confirmPassword"
-                            type={showPassword ? 'text' : 'password'}
-                            {...register('confirmPassword')}
-                            className="form-field"
-                            placeholder="Confirm your password"
-                            data-invalid={!!errors.confirmPassword}
-                            aria-invalid={!!errors.confirmPassword}
-                            autoComplete="new-password"
-                        />
+                        <div className="form-field-wrapper">
+                            <Icon icon={ICON_SET.LOCK} className="form-icon" />
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                title={showPassword ? 'Hide password' : 'Show password'}
+                                {...register('confirmPassword')}
+                                className="form-field"
+                                placeholder="Confirm your password"
+                                data-invalid={!!errors.confirmPassword}
+                                aria-invalid={!!errors.confirmPassword}
+                                autoComplete="new-password"
+                            />
+                        </div>
                         <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="confirmPassword" aria-live="polite" />
                     </div>
 
@@ -148,7 +157,7 @@ export default function RegisterForm() {
                     <hr className="my-5" />
 
                     {/* Submit Button */}
-                    <button type="submit" className="button bg-highlight w-full text-white" disabled={isSubmitting}>
+                    <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
                         {isSubmitting ? 'Submitting...' : 'Create an Account'}
                     </button>
                 </fieldset>
