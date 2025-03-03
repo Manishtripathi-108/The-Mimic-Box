@@ -39,6 +39,7 @@ enum ICON_SET {
     NOT_FOUND = 'tabler:error-404',
     MUSIC = 'solar:music-note-bold',
     PERSON = 'line-md:person-filled',
+    PERSON_ADD = 'line-md:person-add-filled',
     PLAYER = 'game-icons:centurion-helmet',
     PLUS = 'line-md:plus',
     RIGHT = 'formkit:right',
@@ -54,7 +55,6 @@ enum ICON_SET {
     TRASH = 'entypo:trash',
     UP = 'formkit:up',
     UPLOAD = 'line-md:cloud-alt-upload-filled-loop',
-    USER = 'carbon:user-avatar-filled',
     WARNING = 'meteocons:code-yellow-fill',
 }
 

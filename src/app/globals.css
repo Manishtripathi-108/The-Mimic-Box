@@ -10,34 +10,40 @@
     /*                                   Colors                                   */
     /* -------------------------------------------------------------------------- */
     /* Base colors */
-    --color-theme-primary: #f0f0f3;
-    --color-theme-secondary: #e0e0e0;
-    --color-theme-tertiary: #f5f5f5;
-    --color-theme-text-primary: #333333;
+    --color-theme-primary: #dfdfdf;
+    --color-theme-secondary: #efefef;
+    --color-theme-tertiary: #ffffff;
+    --color-theme-text-primary: #1d1d1f;
     --color-theme-text-secondary: #666666;
+    --color-theme-border: #d9d9d9;
 
     /* Accent colors */
-    --color-theme-accent: #3a8ee6;
-    --color-theme-highlight: #88aaff;
+    --color-theme-accent: #9d091d;
+    --color-theme-highlight: #005a5e;
 
     /* Neumorphic shadows */
-    --lower-shadow: rgba(0, 0, 0, 0.15);
-    --upper-shadow: rgba(255, 255, 255, 0.7);
+    --lower-shadow: #00000020;
+    --upper-shadow: #ffffffd5;
 
     /* -------------------------------------------------------------------------- */
     /*                                   Shadows                                  */
     /* -------------------------------------------------------------------------- */
 
-    --shadow-neumorphic-xs: var(--lower-shadow) 2px 4px 4px, var(--upper-shadow) 1px 1px 2px inset;
-    --shadow-neumorphic-sm: var(--lower-shadow) 4px 8px 8px, var(--upper-shadow) 2px 2px 4px inset;
-    --shadow-neumorphic-md: 6px 6px 12px var(--lower-shadow), 3px 3px 6px var(--upper-shadow) inset;
-    --shadow-neumorphic-lg: 10px 10px 20px var(--lower-shadow), -10px -10px 20px var(--upper-shadow);
-    --shadow-neumorphic-xl: 20px 20px 40px var(--lower-shadow), -20px -20px 40px var(--upper-shadow);
-    --shadow-neumorphic-inset-xs: inset 3px 3px 7px var(--lower-shadow), inset -3px -3px 7px var(--upper-shadow);
-    --shadow-neumorphic-inset-sm: inset 5px 5px 10px var(--lower-shadow), inset -5px -5px 10px var(--upper-shadow);
-    --shadow-neumorphic-inset-md: inset 6px 6px 12px var(--lower-shadow), inset -6px -6px 12px var(--upper-shadow);
-    --shadow-neumorphic-inset-lg: inset 10px 10px 20px var(--lower-shadow), inset -10px -10px 20px var(--upper-shadow);
-    --shadow-neumorphic-inset-xl: inset 20px 20px 40px var(--lower-shadow), inset -20px -20px 40px var(--upper-shadow);
+    --shadow-floating-xs: 2px 4px 4px var(--lower-shadow), 1px 1px 2px inset var(--upper-shadow);
+    --shadow-floating-sm: 4px 8px 8px var(--lower-shadow), 2px 2px 4px inset var(--upper-shadow);
+    --shadow-floating-md: 6px 6px 12px var(--lower-shadow), 3px 3px 6px inset var(--upper-shadow);
+
+    --shadow-raised-xs: 3px 3px 5px var(--lower-shadow), -3px -3px 5px var(--upper-shadow);
+    --shadow-raised-sm: 5px 5px 10px var(--lower-shadow), -5px -5px 10px var(--upper-shadow);
+    --shadow-raised-md: 6px 6px 12px var(--lower-shadow), -6px -6px 12px var(--upper-shadow);
+    --shadow-raised-lg: 10px 10px 20px var(--lower-shadow), -10px -10px 20px var(--upper-shadow);
+    --shadow-raised-xl: 20px 20px 40px var(--lower-shadow), -20px -20px 40px var(--upper-shadow);
+
+    --shadow-pressed-xs: inset 3px 3px 7px var(--lower-shadow), inset -3px -3px 7px var(--upper-shadow);
+    --shadow-pressed-sm: inset 5px 5px 10px var(--lower-shadow), inset -5px -5px 10px var(--upper-shadow);
+    --shadow-pressed-md: inset 6px 6px 12px var(--lower-shadow), inset -6px -6px 12px var(--upper-shadow);
+    --shadow-pressed-lg: inset 10px 10px 20px var(--lower-shadow), inset -10px -10px 20px var(--upper-shadow);
+    --shadow-pressed-xl: inset 20px 20px 40px var(--lower-shadow), inset -20px -20px 40px var(--upper-shadow);
 
     /* -------------------------------------------------------------------------- */
     /*                                  Animation                                 */
@@ -236,19 +242,20 @@
 
 [data-theme='dark'] {
     /* Base colors */
-    --color-theme-primary: #191919;
-    --color-theme-secondary: #050505;
-    --color-theme-tertiary: #2a2a2a;
+    --color-theme-primary: #292929;
+    --color-theme-secondary: #1c1c1c;
+    --color-theme-tertiary: #101010;
     --color-theme-text-primary: #ffffff;
     --color-theme-text-secondary: #b3b3b3;
+    --color-theme-border: #393939;
 
     /* Accent colors */
-    --color-theme-accent: #bb86fc;
-    --color-theme-highlight: #3700b3;
+    --color-theme-accent: #ff7043;
+    --color-theme-highlight: #4db6ac;
 
     /* Neumorphic shadows */
-    --lower-shadow: #00000073;
-    --upper-shadow: #ffffff26;
+    --lower-shadow: #00000070;
+    --upper-shadow: #ffffff3a;
 }
 
 @theme inline {
@@ -259,6 +266,7 @@
     --color-tertiary: var(--color-theme-tertiary);
     --color-text-primary: var(--color-theme-text-primary);
     --color-text-secondary: var(--color-theme-text-secondary);
+    --color-border: var(--color-theme-border);
     --color-accent: var(--color-theme-accent);
     --color-highlight: var(--color-theme-highlight);
 }
@@ -269,10 +277,10 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-secondary, currentColor);
+        border-color: var(--color-border, currentColor);
 
         &:where(.dark, .dark *) {
-            border-color: var(--color-secondary, currentColor);
+            border-color: var(--color-border, currentColor);
         }
     }
 }
@@ -288,12 +296,6 @@
         var(--gradient-light) 90%,
         var(--gradient-dark) 100%
     );
-}
-@utility bg-ui-gradient {
-    --gradient-light: var(--color-primary);
-    --gradient-dark: var(--color-secondary);
-
-    background-image: linear-gradient(145deg, var(--gradient-light) 15%, var(--gradient-dark) 85%);
 }
 
 @utility scrollbar-thin {
@@ -323,11 +325,11 @@
 /*                                   Button                                   */
 /* -------------------------------------------------------------------------- */
 @utility button {
-    @apply text-text-secondary bg-primary shadow-neumorphic-xs flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-4 py-2 text-center text-sm transition-all duration-300;
+    @apply text-text-secondary bg-primary shadow-floating-xs flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-4 py-2 text-center text-sm transition-all duration-300;
 
     &.active,
     &:active {
-        @apply text-text-primary shadow-neumorphic-inset-xs;
+        @apply text-text-primary shadow-pressed-xs;
     }
 
     &:hover:not(.active),
@@ -372,7 +374,7 @@
 
 /* ---------------------------------- Field --------------------------------- */
 @utility form-field {
-    @apply bg-primary text-text-primary placeholder:text-text-secondary shadow-neumorphic-xs focus:shadow-neumorphic-inset-xs file:bg-accent field-sizing-content w-full appearance-none rounded-xl border px-3 py-2 text-sm outline-hidden transition duration-300 file:mr-5 file:cursor-pointer file:rounded-lg file:border-none file:px-3 file:py-2 file:text-white file:transition file:duration-200 file:ease-in-out;
+    @apply bg-primary text-text-primary placeholder:text-text-secondary shadow-floating-xs focus:shadow-pressed-xs file:bg-accent field-sizing-content w-full appearance-none rounded-xl border px-3 py-2 text-sm outline-hidden transition duration-300 file:mr-5 file:cursor-pointer file:rounded-lg file:border-none file:px-3 file:py-2 file:text-white file:transition file:duration-200 file:ease-in-out;
 
     select& {
         @apply cursor-pointer bg-no-repeat pr-10 ring-black focus-visible:ring-1 dark:ring-white;
@@ -387,7 +389,7 @@
     }
 
     input[type='range']& {
-        @apply shadow-neumorphic-inset-xs flex h-fit cursor-pointer items-center justify-center rounded-full p-0;
+        @apply shadow-pressed-xs flex h-fit cursor-pointer items-center justify-center rounded-full p-0;
 
         &,
         &::-webkit-slider-runnable-track,
@@ -444,7 +446,7 @@
 }
 
 @utility form-field-wrapper {
-    @apply shadow-neumorphic-xs text-text-secondary hover:text-text-primary focus-within:text-text-primary flex w-full items-center justify-center divide-x rounded-lg border;
+    @apply shadow-floating-xs text-text-secondary hover:text-text-primary focus-within:text-text-primary flex w-full items-center justify-center divide-x rounded-lg border;
 
     & .form-field {
         @apply my-0.5 rounded-md border-none text-inherit shadow-none;
@@ -467,7 +469,7 @@
     }
 
     &:focus-within .form-field {
-        @apply shadow-neumorphic-inset-xs;
+        @apply shadow-pressed-xs;
     }
 
     &:has(.form-field:not(:placeholder-shown)) .form-icon {
@@ -499,7 +501,7 @@
         }
 
         &:checked ~ .radio-indicator:before {
-            @apply shadow-neumorphic-inset-xs;
+            @apply shadow-pressed-xs;
         }
 
         &:not(:disabled, :checked):focus ~ .form-text {
@@ -508,7 +510,7 @@
     }
 
     .radio-indicator {
-        @apply shadow-neumorphic-xs before:shadow-neumorphic-xs relative size-5 overflow-hidden rounded-full before:absolute before:top-[10%] before:left-[10%] before:size-4/5 before:rounded-full;
+        @apply shadow-floating-xs before:shadow-floating-xs relative size-5 overflow-hidden rounded-full before:absolute before:top-[10%] before:left-[10%] before:size-4/5 before:rounded-full;
     }
 
     &:hover .radio-field:not(:disabled, :checked) ~ .form-text {
@@ -525,7 +527,7 @@
     }
 
     .checkbox-field {
-        @apply bg-primary checked:shadow-neumorphic-inset-xs disabled:bg-secondary checked:text-text-primary flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center overflow-hidden rounded-sm border text-center text-xs transition-shadow duration-300 ease-in-out checked:after:size-full checked:after:font-bold checked:after:content-['\2713'];
+        @apply bg-primary checked:shadow-pressed-xs disabled:bg-secondary checked:text-text-primary flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center overflow-hidden rounded-sm border text-center text-xs transition-shadow duration-300 ease-in-out checked:after:size-full checked:after:font-bold checked:after:content-['\2713'];
 
         &:checked ~ .form-text {
             @apply text-highlight translate-x-2;
@@ -543,13 +545,13 @@
 
 /* ------------------------------- slider ------------------------------- */
 @utility range-slider {
-    @apply bg-primary shadow-neumorphic-xs relative h-2 w-full appearance-none rounded-full outline-hidden;
+    @apply bg-primary shadow-floating-xs relative h-2 w-full appearance-none rounded-full outline-hidden;
 
     &::-webkit-slider-thumb {
-        @apply bg-accent shadow-neumorphic-xs h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
+        @apply bg-accent shadow-floating-xs h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
     }
 
     &::-moz-range-thumb {
-        @apply bg-accent shadow-neumorphic-xs relative h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
+        @apply bg-accent shadow-floating-xs relative h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
     }
 }

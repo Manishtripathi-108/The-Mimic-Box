@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { Icon } from '@iconify/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
 const sidebarMenuItems = [
     {
@@ -69,7 +69,7 @@ const Sidebar = () => {
     return (
         <dialog
             id="sidebar"
-            className="bg-primary backdrop:bg-primary shadow-neumorphic-md my-auto flex h-screen max-h-dvh w-72 -translate-x-full -translate-y-full scale-0 flex-col overflow-hidden rounded-e-lg border-r opacity-0 transition-all transition-discrete duration-300 backdrop:opacity-65 backdrop:transition-opacity backdrop:transition-discrete backdrop:duration-300 open:translate-x-0 open:translate-y-0 open:scale-100 open:opacity-100 starting:open:-translate-x-full starting:open:-translate-y-full starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:opacity-0"
+            className="bg-primary backdrop:bg-primary shadow-floating-md my-auto flex h-screen max-h-dvh w-72 -translate-x-full -translate-y-full scale-0 flex-col overflow-hidden rounded-e-lg border-r opacity-0 transition-all transition-discrete duration-300 backdrop:opacity-65 backdrop:transition-opacity backdrop:transition-discrete backdrop:duration-300 open:translate-x-0 open:translate-y-0 open:scale-100 open:opacity-100 starting:open:-translate-x-full starting:open:-translate-y-full starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:opacity-0"
             onClick={(e) => e.target === e.currentTarget && closeSidebar()}
             role="dialog"
             aria-modal="true">

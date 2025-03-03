@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
-import React, { useEffect } from 'react';
 import ICON_SET from '@/constants/icons';
 import { Icon } from '@iconify/react';
-import Sidebar from './Sidebar';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
 import ProfileDropdown from './ProfileDropdown';
+import Sidebar from './Sidebar';
 
 const Header = () => {
     useEffect(() => {
@@ -48,7 +48,7 @@ const Header = () => {
         <>
             <header
                 id="page-header"
-                className="bg-primary shadow-neumorphic-xs h-header-height sticky top-0 z-50 mb-0.5 flex w-full items-center justify-between rounded-b-2xl p-2 transition-all duration-300 ease-in-out">
+                className="bg-primary shadow-floating-xs h-header-height sticky top-0 z-50 mb-0.5 flex w-full items-center justify-between rounded-b-2xl p-2 transition-all duration-300 ease-in-out">
                 <button
                     aria-label="Toggle Sidenav"
                     className="button size-10 rounded-xl p-2"
