@@ -368,7 +368,7 @@
     }
 
     &.button-highlight {
-        @apply bg-highlight text-black hover:text-black;
+        @apply bg-highlight text-white hover:text-white;
     }
 
     &.button-accent {
