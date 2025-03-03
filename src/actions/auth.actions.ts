@@ -2,7 +2,7 @@
 
 import { signIn } from '@/auth';
 import { db } from '@/lib/db';
-import { forgotPasswordSchema, loginSchema, registerSchema } from '@/lib/schema/auth.validations';
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '@/lib/schema/auth.validations';
 import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/auth.service';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import bcrypt from 'bcryptjs';
@@ -116,6 +116,34 @@ export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSc
         return response.success
             ? { success: true, message: 'Check your inbox to reset your password.' }
             : { success: false, message: 'Failed to send reset token email.' };
+    } catch {
+        return { success: false, message: 'Failed to reset password. Try again later.' };
+    }
+};
+
+export const resetPasswordAction = async (data: z.infer<typeof resetPasswordSchema>) => {
+    const parsed = resetPasswordSchema.safeParse(data);
+    if (!parsed.success) return { success: false, errors: parsed.error.errors };
+
+    const { token, password } = parsed.data;
+
+    try {
+        const response = await db.forgotPasswordToken.findUnique({ where: { token } });
+
+        if (!response || response.expires < new Date()) {
+            return { success: false, message: 'Invalid or expired reset token.' };
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await db.user.update({
+            where: { email: response.email },
+            data: { password: hashedPassword },
+        });
+
+        await db.forgotPasswordToken.delete({ where: { token } });
+
+        return { success: true, message: 'Password reset successfully!' };
     } catch {
         return { success: false, message: 'Failed to reset password. Try again later.' };
     }

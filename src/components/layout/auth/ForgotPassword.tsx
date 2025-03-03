@@ -19,9 +19,7 @@ const ForgotPasswordForm = () => {
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof forgotPasswordSchema>>({
-        resolver: zodResolver(forgotPasswordSchema),
-    });
+    } = useForm<z.infer<typeof forgotPasswordSchema>>({ resolver: zodResolver(forgotPasswordSchema) });
 
     async function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
         const response = await forgotPasswordAction(data);
@@ -51,7 +49,7 @@ const ForgotPasswordForm = () => {
                     <div className="shadow-floating-xs flex size-12 items-center justify-center rounded-full border">
                         <Icon icon={ICON_SET.AppLogo} className="size-6" />
                     </div>
-                    <h2 className="text-highlight text-lg font-semibold">The Mimic Box</h2>
+                    <h2 className="text-highlight text-lg font-semibold">Forgot Password</h2>
                 </header>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6">
@@ -59,16 +57,19 @@ const ForgotPasswordForm = () => {
                         <label htmlFor="email" className="form-text">
                             Enter your email
                         </label>
-                        <input
-                            {...register('email')}
-                            data-invalid={!!errors.email}
-                            aria-invalid={!!errors.email}
-                            disabled={isSubmitting}
-                            type="email"
-                            id="email"
-                            className="form-field"
-                            placeholder="Email"
-                        />
+                        <div className="form-field-wrapper">
+                            <Icon icon={ICON_SET.EMAIL} className="form-icon" />
+                            <input
+                                {...register('email')}
+                                data-invalid={!!errors.email}
+                                aria-invalid={!!errors.email}
+                                disabled={isSubmitting}
+                                type="email"
+                                id="email"
+                                className="form-field"
+                                placeholder="Email"
+                            />
+                        </div>
                         <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="email" aria-live="polite" />
                     </div>
 
@@ -80,7 +81,7 @@ const ForgotPasswordForm = () => {
                     )}
 
                     <button type="submit" disabled={isSubmitting} className="button button-highlight mt-4 w-full">
-                        Reset Password
+                        {isSubmitting ? 'Please wait...' : 'Reset Password'}
                     </button>
                 </form>
 

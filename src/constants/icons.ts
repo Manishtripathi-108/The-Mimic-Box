@@ -31,6 +31,7 @@ enum ICON_SET {
     LEFT_ARROW = 'line-md:arrow-left',
     LIST = 'tabler:list',
     LOADING = 'line-md:loading-loop',
+    LOCK = 'solar:lock-password-bold',
     LOGIN = 'majesticons:login',
     LOGOUT = 'majesticons:logout',
     MENU = 'hugeicons:menu-02',

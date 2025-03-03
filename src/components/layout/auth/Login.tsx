@@ -24,9 +24,7 @@ export default function LoginInForm() {
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof loginSchema>>({
-        resolver: zodResolver(loginSchema),
-    });
+    } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema) });
 
     async function onSubmit(data: z.infer<typeof loginSchema>) {
         const response = await loginAction(data);
@@ -72,16 +70,19 @@ export default function LoginInForm() {
                         <label htmlFor="email" className="form-text">
                             Email Address
                         </label>
-                        <input
-                            id="email"
-                            type="email"
-                            {...register('email')}
-                            className="form-field"
-                            placeholder="Enter your email"
-                            data-invalid={!!errors.email}
-                            aria-invalid={!!errors.email}
-                            autoComplete="email"
-                        />
+                        <div className="form-field-wrapper">
+                            <Icon icon={ICON_SET.EMAIL} className="form-icon" />
+                            <input
+                                id="email"
+                                type="email"
+                                {...register('email')}
+                                className="form-field"
+                                placeholder="Enter your email"
+                                data-invalid={!!errors.email}
+                                aria-invalid={!!errors.email}
+                                autoComplete="email"
+                            />
+                        </div>
                         <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="email" aria-live="polite" />
                     </div>
 
@@ -90,7 +91,16 @@ export default function LoginInForm() {
                         <label htmlFor="password" className="form-text">
                             Password
                         </label>
-                        <div className="relative">
+                        <div className="form-field-wrapper">
+                            <button
+                                type="button"
+                                title={showPassword ? 'Hide password' : 'Show password'}
+                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                className="form-icon"
+                                onClick={() => setShowPassword((prev) => !prev)}>
+                                <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="size-full" />
+                            </button>
+
                             <input
                                 id="password"
                                 type={showPassword ? 'text' : 'password'}
@@ -101,13 +111,6 @@ export default function LoginInForm() {
                                 aria-invalid={!!errors.password}
                                 autoComplete="current-password"
                             />
-                            <button
-                                type="button"
-                                className="text-text-secondary hover:text-text-primary absolute inset-y-0 right-3 flex cursor-pointer items-center"
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                                <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="text-xl" />
-                            </button>
                         </div>
                         <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="password" aria-live="polite" />
                     </div>
