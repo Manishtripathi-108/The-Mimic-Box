@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-    themeColor: '#FFB6B9',
+    themeColor: '#dfdfdf',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -34,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en" suppressHydrationWarning>
             <head>
                 <ThemeScript />
+                <meta name="apple-mobile-web-app-title" content="Mimic Box" />
             </head>
             <SessionProvider>
                 <body className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable}`}>
