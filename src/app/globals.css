@@ -337,6 +337,10 @@
         @apply text-text-primary scale-105 transform;
     }
 
+    &:disabled {
+        @apply cursor-not-allowed bg-gray-200 text-gray-700;
+    }
+
     /*----------------------------------- button Sizes -------------------------------- */
     &.button-sm {
         @apply px-2 py-1 text-xs;
@@ -352,6 +356,23 @@
 
     &.button-xl {
         @apply px-5 py-4 text-lg;
+    }
+
+    /*----------------------------------- button Variants -------------------------------- */
+    &.button-secondary {
+        @apply bg-secondary;
+    }
+
+    &.button-tertiary {
+        @apply bg-tertiary;
+    }
+
+    &.button-highlight {
+        @apply bg-highlight text-black hover:text-black;
+    }
+
+    &.button-accent {
+        @apply bg-accent text-white hover:text-gray-200;
     }
 }
 

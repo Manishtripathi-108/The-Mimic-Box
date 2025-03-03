@@ -128,7 +128,7 @@ export default function LoginInForm() {
 
                     <hr className="my-5" />
                     {/* Submit Button */}
-                    <button type="submit" className="button bg-highlight w-full text-white" disabled={isSubmitting}>
+                    <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
                         {isSubmitting ? 'Submitting...' : 'Login'}
                     </button>
                 </fieldset>

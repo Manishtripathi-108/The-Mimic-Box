@@ -2,12 +2,15 @@
 
 import { signIn } from '@/auth';
 import { db } from '@/lib/db';
-import { loginSchema, registerSchema } from '@/lib/schema/auth.validations';
-import { generateVerificationToken, sendVerificationEmail } from '@/lib/services/auth.service';
+import { forgotPasswordSchema, loginSchema, registerSchema } from '@/lib/schema/auth.validations';
+import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/auth.service';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
+import VerifyEmail_Mail from '@/components/emails/VerifyEmail_Mail';
+import ForgotPassword_Mail from '@/components/emails/ForgotPassword_Mail';
+import { sendEmail } from '@/lib/email';
 
 export const loginAction = async (data: z.infer<typeof loginSchema>) => {
     const parsed = loginSchema.safeParse(data);
@@ -18,9 +21,11 @@ export const loginAction = async (data: z.infer<typeof loginSchema>) => {
     try {
         const user = await db.user.findUnique({ where: { email } });
 
+        if (!user) return { success: false, message: 'No account found with this email.' };
+
         if (!user?.emailVerified) {
             const token = await generateVerificationToken(email);
-            const response = await sendVerificationEmail(email, token.token);
+            const response = await sendEmail(email, 'Verify Your Email', VerifyEmail_Mail({ token: token.token }));
 
             return response.success
                 ? { success: false, message: 'Check your inbox to verify your email first.' }
@@ -59,7 +64,7 @@ export const registerAction = async (data: z.infer<typeof registerSchema>) => {
         await db.user.create({ data: { email, name: fullName, password: hashedPassword } });
 
         const token = await generateVerificationToken(email);
-        const response = await sendVerificationEmail(email, token.token);
+        const response = await sendEmail(email, 'Verify Your Email', VerifyEmail_Mail({ token: token.token }));
 
         return response.success
             ? { success: true, message: 'Account created! To verify your email, check your inbox.' }
@@ -71,7 +76,7 @@ export const registerAction = async (data: z.infer<typeof registerSchema>) => {
 
 export const verifyEmailToken = async (token: string) => {
     try {
-        const response = await db.verificationToken.findFirst({ where: { token } });
+        const response = await db.verificationToken.findUnique({ where: { token } });
 
         if (!response || response.expires < new Date()) {
             return { success: false, message: 'Invalid or expired verification link.' };
@@ -87,5 +92,31 @@ export const verifyEmailToken = async (token: string) => {
         return { success: true, message: 'Email verified! You can now log in.' };
     } catch {
         return { success: false, message: 'Verification failed. Try again later.' };
+    }
+};
+
+export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSchema>) => {
+    const parsed = forgotPasswordSchema.safeParse(data);
+    if (!parsed.success) return { success: false, errors: parsed.error.errors };
+
+    const { email } = parsed.data;
+
+    try {
+        const user = await db.user.findUnique({ where: { email } });
+
+        if (!user) return { success: false, message: 'No account found with this email.' };
+
+        if (!user?.emailVerified) {
+            return { success: false, message: 'Email not verified. Verify your email first.' };
+        }
+
+        const token = await generateForgotPasswordToken(email);
+        const response = await sendEmail(email, 'Reset Your Password', ForgotPassword_Mail({ token: token.token }));
+
+        return response.success
+            ? { success: true, message: 'Check your inbox to reset your password.' }
+            : { success: false, message: 'Failed to send reset token email.' };
+    } catch {
+        return { success: false, message: 'Failed to reset password. Try again later.' };
     }
 };

@@ -39,7 +39,7 @@ export default function RegisterForm() {
                 setError('root.serverError', { message: response.message });
             }
         } else {
-            toast.success(response.message || 'Account created successfully.');
+            toast.success(response.message || 'Account created successfully.', { duration: 5000 });
         }
     }
 
@@ -148,7 +148,7 @@ export default function RegisterForm() {
                     <hr className="my-5" />
 
                     {/* Submit Button */}
-                    <button type="submit" className="button bg-highlight w-full text-white" disabled={isSubmitting}>
+                    <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
                         {isSubmitting ? 'Submitting...' : 'Create an Account'}
                     </button>
                 </fieldset>

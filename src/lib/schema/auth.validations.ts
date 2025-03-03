@@ -32,3 +32,7 @@ export const loginSchema = z.object({
         .regex(/[@$#!*]/, { message: 'Include at least one special character (@, $, #, !, *).' }),
     remember: z.boolean().optional(),
 });
+
+export const forgotPasswordSchema = z.object({
+    email: z.string().email({ message: 'Please enter a valid email address.' }),
+});
