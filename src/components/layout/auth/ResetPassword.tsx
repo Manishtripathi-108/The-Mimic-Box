@@ -52,13 +52,8 @@ function ResetPasswordFormContent() {
         register,
         handleSubmit,
         setError,
-        setValue,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof resetPasswordSchema>>({ resolver: zodResolver(resetPasswordSchema) });
-
-    if (token) {
-        setValue('token', token);
-    }
+    } = useForm<z.infer<typeof resetPasswordSchema>>({ defaultValues: { token: token || undefined }, resolver: zodResolver(resetPasswordSchema) });
 
     return (
         <main className="bg-primary h-calc-full-height flex items-center justify-center">

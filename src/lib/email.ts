@@ -27,11 +27,6 @@ const mailConfig =
 export const transporter = nodemailer.createTransport(mailConfig);
 
 export const sendEmail = async (to: string, subject: string, emailComponent: React.ReactElement) => {
-    if (!process.env.RESEND_API_KEY) {
-        console.error('🚨 Missing RESEND_API_KEY in environment variables');
-        return { success: false, message: 'Email service is unavailable.' };
-    }
-
     try {
         const html = await render(emailComponent);
 

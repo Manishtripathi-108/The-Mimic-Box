@@ -1,47 +1,16 @@
+import AuthEmailTemplate from '@/components/emails/AuthEmailTemplate';
 import React from 'react';
 
 const DevOnly = () => {
     return (
-        <div className="grid w-full">
-            <div className="bg-primary w-full">
-                <span className="text-text-primary">primary</span>
-                <span className="text-text-secondary">secondary</span>
-                <span className="text-accent">accent</span>
-                <span className="text-highlight">highlight</span>
-            </div>
-            <div className="bg-secondary text-highlight w-full">
-                <span className="text-text-primary">primary</span>
-                <span className="text-text-secondary">secondary</span>
-                <span className="text-accent">accent</span>
-                <span className="text-highlight">highlight</span>
-            </div>
-            <div className="bg-tertiary text-text-primary w-full">
-                <span className="text-text-primary">primary</span>
-                <span className="text-text-secondary">secondary</span>
-                <span className="text-accent">accent</span>
-                <span className="text-highlight">highlight</span>
-            </div>
-            <div className="mx-auto flex w-fit gap-5">
-                <div className="bg-primary shadow-floating-sm mx-auto mt-5 flex aspect-square w-64 items-center justify-center rounded-lg">
-                    <span className="text-text-primary">primary</span>
-                    <span className="text-text-secondary">secondary</span>
-                    <span className="text-accent">accent</span>
-                    <span className="text-highlight">highlight</span>
-                </div>
-                <div className="bg-secondary shadow-floating-sm mx-auto mt-5 flex aspect-square w-64 items-center justify-center rounded-lg">
-                    <span className="text-text-primary">primary</span>
-                    <span className="text-text-secondary">secondary</span>
-                    <span className="text-accent">accent</span>
-                    <span className="text-highlight">highlight</span>
-                </div>
-                <div className="bg-tertiary shadow-floating-sm mx-auto mt-5 flex aspect-square w-64 items-center justify-center rounded-lg">
-                    <span className="text-text-primary">primary</span>
-                    <span className="text-text-secondary">secondary</span>
-                    <span className="text-accent">accent</span>
-                    <span className="text-highlight">highlight</span>
-                </div>
-            </div>
-        </div>
+        <AuthEmailTemplate
+            heading="Verify Your Email Address"
+            preview="Confirm your email to activate your account"
+            body="Thank you for creating an account with The Mimic Box. Please click the link below to confirm your email address. This link is valid for 15 minutes."
+            buttonText="Verify Email"
+            footerText="If you didn’t request this, you can safely ignore this email."
+            url={'hello'}
+        />
     );
 };
 

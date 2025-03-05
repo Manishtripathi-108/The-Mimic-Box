@@ -8,9 +8,8 @@ import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
-import VerifyEmail_Mail from '@/components/emails/VerifyEmail_Mail';
-import ForgotPassword_Mail from '@/components/emails/ForgotPassword_Mail';
 import { sendEmail } from '@/lib/email';
+import { generateEmailVerificationEmail, generatePasswordResetEmail } from '@/components/emails/AuthEmailTemplate';
 
 export const loginAction = async (data: z.infer<typeof loginSchema>) => {
     const parsed = loginSchema.safeParse(data);
@@ -25,7 +24,7 @@ export const loginAction = async (data: z.infer<typeof loginSchema>) => {
 
         if (!user?.emailVerified) {
             const token = await generateVerificationToken(email);
-            const response = await sendEmail(email, 'Verify Your Email', VerifyEmail_Mail({ token: token.token }));
+            const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
             return response.success
                 ? { success: false, message: 'Check your inbox to verify your email first.' }
@@ -64,7 +63,7 @@ export const registerAction = async (data: z.infer<typeof registerSchema>) => {
         await db.user.create({ data: { email, name: fullName, password: hashedPassword } });
 
         const token = await generateVerificationToken(email);
-        const response = await sendEmail(email, 'Verify Your Email', VerifyEmail_Mail({ token: token.token }));
+        const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
         return response.success
             ? { success: true, message: 'Account created! To verify your email, check your inbox.' }
@@ -111,7 +110,7 @@ export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSc
         }
 
         const token = await generateForgotPasswordToken(email);
-        const response = await sendEmail(email, 'Reset Your Password', ForgotPassword_Mail({ token: token.token }));
+        const response = await sendEmail(email, 'Reset Your Password', generatePasswordResetEmail(token.token));
 
         return response.success
             ? { success: true, message: 'Check your inbox to reset your password.' }
