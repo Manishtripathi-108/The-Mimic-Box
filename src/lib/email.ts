@@ -5,7 +5,7 @@ import React from 'react';
 const EMAIL_SENDER = 'The Mimic Box <noreply@themimicbox.com>';
 
 const mailConfig =
-    process.env.NODE_ENV !== 'production'
+    process.env.NODE_ENV === 'production'
         ? {
               host: 'smtp.gmail.com',
               port: 465,

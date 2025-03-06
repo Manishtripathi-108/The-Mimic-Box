@@ -12,8 +12,8 @@ import { useEffect, useRef, useState } from 'react';
 
 const ProfileDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { theme, setTheme } = useTheme();
-    const session = useSession();
+    const { cycleTheme, nextTheme } = useTheme();
+    const { data: session, status } = useSession();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Close dropdown when clicking outside
@@ -33,12 +33,13 @@ const ProfileDropdown = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen]);
 
+    // Show nothing until session is loaded to prevent flicker
+    if (status === 'loading') return null;
+
     // If user is NOT logged in, show only the login button
-    if (!session.data) {
+    if (!session) {
         return (
-            <Link
-                href={DEFAULT_AUTH_ROUTE}
-                className="bg-primary hover:text-text-primary text-text-secondary shadow-floating-xs flex cursor-pointer items-center gap-x-1 rounded-full px-4 py-2">
+            <Link href={DEFAULT_AUTH_ROUTE} className="button rounded-full">
                 <Icon icon={ICON_SET.LOGIN} className="size-5" />
                 <span>Login</span>
             </Link>
@@ -48,13 +49,15 @@ const ProfileDropdown = () => {
     return (
         <div className="relative" ref={dropdownRef}>
             {/* Profile Button */}
-            <button onClick={() => setIsOpen(!isOpen)} className="relative flex w-fit cursor-pointer items-center rounded-full">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="shadow-floating-xs relative flex w-fit cursor-pointer items-center justify-center rounded-full border p-0.5">
                 <Image
-                    src={session.data?.user?.image || 'https://picsum.photos/200'}
+                    src={session.user?.image || 'https://picsum.photos/200'}
                     alt="Profile"
-                    width={40}
-                    height={40}
-                    className="text-text-secondary rounded-full object-cover"
+                    width={36}
+                    height={36}
+                    className="text-text-secondary size-9 rounded-full object-cover"
                 />
             </button>
 
@@ -69,15 +72,15 @@ const ProfileDropdown = () => {
                         <div className="shadow-pressed-xs mb-2 flex aspect-[4/3] w-full flex-col items-center justify-center rounded-2xl border">
                             <div className="shadow-floating-xs mb-2 flex items-center justify-center rounded-3xl border p-2">
                                 <Image
-                                    src={session.data?.user?.image || 'https://picsum.photos/200'}
+                                    src={session.user?.image || 'https://picsum.photos/200'}
                                     alt="Profile"
                                     width={72}
                                     height={72}
-                                    className="text-text-secondary aspect-square w-18 rounded-2xl object-cover"
+                                    className="text-text-secondary size-18 rounded-2xl object-cover"
                                 />
                             </div>
-                            <h3 className="text-text-primary text-lg font-semibold">{session.data?.user?.name}</h3>
-                            <p className="text-text-secondary text-sm">{session.data?.user?.email}</p>
+                            <h3 className="text-text-primary text-lg font-semibold">{session.user?.name}</h3>
+                            <p className="text-text-secondary text-sm">{session.user?.email}</p>
                         </div>
 
                         <div className="text-text-secondary">
@@ -94,10 +97,13 @@ const ProfileDropdown = () => {
                                 <span>Settings</span>
                             </button>
                             <button
-                                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                                onClick={() => cycleTheme()}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
-                                <Icon icon={ICON_SET[theme === 'dark' ? 'SUN' : 'MOON']} className="size-5" />
-                                <span>Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
+                                <Icon
+                                    icon={ICON_SET[nextTheme === 'system' ? 'DESKTOP' : nextTheme === 'dark' ? 'MOON' : 'SUN']}
+                                    className="size-5"
+                                />
+                                <span>Switch to {nextTheme} Mode</span>
                             </button>
                         </div>
 
