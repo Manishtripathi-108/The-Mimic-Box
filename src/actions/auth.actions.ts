@@ -109,6 +109,10 @@ export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSc
             return { success: false, message: 'Email not verified. Verify your email first.' };
         }
 
+        if (!user?.password) {
+            return { success: false, message: 'No password set for this account.' };
+        }
+
         const token = await generateForgotPasswordToken(email);
         const response = await sendEmail(email, 'Reset Your Password', generatePasswordResetEmail(token.token));
 

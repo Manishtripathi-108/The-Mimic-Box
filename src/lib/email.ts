@@ -5,9 +5,9 @@ import React from 'react';
 const EMAIL_SENDER = 'The Mimic Box <noreply@themimicbox.com>';
 
 const mailConfig =
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV !== 'production'
         ? {
-              host: 'smtp.forwardemail.net',
+              host: 'smtp.gmail.com',
               port: 465,
               secure: true,
               auth: {
@@ -34,7 +34,7 @@ export const sendEmail = async (to: string, subject: string, emailComponent: Rea
         if (!response) throw new Error('Email sending failed');
         return { success: true };
     } catch (error) {
-        console.error(`🚨 Error sending email to ${to}:`, error);
+        console.error(`Error sending email to ${to}:`, error);
         return { success: false, message: 'Failed to send email.' };
     }
 };
