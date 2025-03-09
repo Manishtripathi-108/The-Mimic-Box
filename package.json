@@ -17,6 +17,7 @@
         "@react-email/components": "^0.0.33",
         "@react-email/tailwind": "^1.0.4",
         "@tailwindcss/postcss": "^4.0.6",
+        "axios": "^1.8.2",
         "bcryptjs": "^3.0.2",
         "clsx": "^2.1.1",
         "motion": "^12.4.5",

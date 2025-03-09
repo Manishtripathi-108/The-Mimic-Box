@@ -12,13 +12,10 @@ export default {
         Github,
         Credentials({
             async authorize(Credentials) {
-                console.log('🔐 Authorizing...');
-
                 // Validate input
                 const parsed = loginSchema.safeParse(Credentials);
                 if (parsed.success) {
                     const { email, password } = parsed.data;
-                    console.log('🔐 Email:', email);
 
                     // Check if user exists
                     const user = await db.user.findUnique({ where: { email } });
@@ -28,7 +25,15 @@ export default {
 
                     // Verify password
                     const isValidPassword = await bcrypt.compare(password, user.password);
-                    if (isValidPassword) return user;
+                    if (isValidPassword) {
+                        return {
+                            id: user.id,
+                            name: user.name,
+                            email: user.email,
+                            emailVerified: user.emailVerified || undefined,
+                            image: user.image,
+                        };
+                    }
                 }
 
                 return null;

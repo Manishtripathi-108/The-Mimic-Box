@@ -37,6 +37,15 @@ export const APP_ROUTES = {
     NOT_FOUND: '*',
 } as const;
 
+export const API_ROUTES = {
+    AUTH_LINK_ACCOUNT: {
+        SPOTIFY: {
+            CALLBACK: '/api/auth-link-account/spotify/callback',
+            ROOT: '/api/auth-link-account/spotify',
+        },
+    },
+} as const;
+
 /**
  * Array of routes accessible without authentication.
  */
@@ -46,6 +55,8 @@ export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.AUTH.VERIFY_EMAIL,
     APP_ROUTES.AUTH.FORGOT_PASSWORD,
     APP_ROUTES.AUTH.RESET_PASSWORD,
+    API_ROUTES.AUTH_LINK_ACCOUNT.SPOTIFY.CALLBACK,
+    API_ROUTES.AUTH_LINK_ACCOUNT.SPOTIFY.ROOT,
 ];
 
 /**

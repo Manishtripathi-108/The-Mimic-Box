@@ -1,34 +1,43 @@
 import authConfig from '@/auth.config';
-import NextAuth from 'next-auth';
 import { API_AUTH_PREFIX, AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE, PUBLIC_ROUTES } from '@/constants/routes.constants';
+import NextAuth from 'next-auth';
 
 const { auth } = NextAuth(authConfig);
 
+const ENABLE_LOGGING = process.env.NODE_ENV !== 'production';
+
 export default auth((req) => {
+    const { pathname, search } = req.nextUrl;
     const isAuthenticated = !!req.auth;
-    console.log('🔐 Auth:', isAuthenticated);
-    console.log('⚪ Path:', req.nextUrl.pathname);
 
-    const isApiAuthRoute = req.nextUrl.pathname.startsWith(API_AUTH_PREFIX);
-    const isPublicRoute = PUBLIC_ROUTES.includes(req.nextUrl.pathname);
-    const isAuthRoute = AUTH_ROUTES.includes(req.nextUrl.pathname);
+    if (ENABLE_LOGGING) {
+        console.log('------------------------------------------------------');
+        console.log(`🔗 Path: ${pathname}`);
+        console.log(`🔐 Authenticated: ${isAuthenticated}`);
+    }
 
-    if (isApiAuthRoute) {
-        return undefined;
+    const isApiAuthRoute = pathname.startsWith(API_AUTH_PREFIX);
+    const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+    const isAuthRoute = AUTH_ROUTES.includes(pathname);
+    const isLinkAccountRoute = pathname === '/auth/auth-link-account';
+
+    if (isApiAuthRoute) return undefined;
+
+    const redirectTo = (destination: string) => Response.redirect(new URL(destination, req.nextUrl));
+
+    if (isLinkAccountRoute && !isAuthenticated) {
+        const callbackUrl = encodeURIComponent(`${pathname}${search}`);
+        return redirectTo(`${DEFAULT_AUTH_ROUTE}/?callbackUrl=${callbackUrl}`);
     }
 
     if (isAuthRoute) {
-        console.log('🔒 Auth Route:', req.nextUrl.pathname);
-        if (isAuthenticated) {
-            console.log('🔓 Authenticated');
-            return Response.redirect(new URL(DEFAULT_AUTH_REDIRECT, req.nextUrl));
-        }
+        if (isAuthenticated) return redirectTo(DEFAULT_AUTH_REDIRECT);
         return undefined;
     }
 
     if (!isAuthenticated && !isPublicRoute) {
-        console.log('🔒 Protected Route:', req.nextUrl.pathname);
-        return Response.redirect(new URL(DEFAULT_AUTH_ROUTE, req.nextUrl));
+        const callbackUrl = encodeURIComponent(`${pathname}${search}`);
+        return redirectTo(`${DEFAULT_AUTH_ROUTE}/?callbackUrl=${callbackUrl}`);
     }
 
     return undefined;
