@@ -28,29 +28,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
             return true;
         },
-
-        async jwt({ token, account, user }) {
-            console.log('jwtUser', account, user);
-
+        async jwt({ token }) {
             const linkedAccounts = await db.linkedAccount.findMany({
-                where: {
-                    userId: token.sub,
-                },
+                where: { userId: token.sub },
             });
 
-            console.log('linkedAccounts', linkedAccounts);
+            token.linkedAccounts = {};
+            linkedAccounts.forEach((account) => {
+                token.linkedAccounts![account.provider] = {
+                    id: account.providerAccountId,
+                    imageUrl: account.imageUrl ?? undefined,
+                    bannerUrl: account.bannerUrl ?? undefined,
+                    displayName: account.displayName ?? undefined,
+                    username: account.username ?? undefined,
+                    tokenType: account.token_type ?? 'Bearer',
+                    accessToken: account.access_token ?? '',
+                    refreshToken: account.refresh_token ?? '',
+                    expiresAt: account.expires_at ?? 0,
+                };
+            });
 
             return token;
         },
-
         async session({ token, session }) {
-            console.log('session', token);
+            console.log('🌟 Session called 🌟');
 
             if (session.user) {
                 session.user.id = token.sub as string;
-                session.user.spotifyAccessToken = token.spotifyAccessToken;
-                session.user.spotifyRefreshToken = token.spotifyRefreshToken;
-                session.user.spotifyExpiresAt = token.spotifyExpiresAt ?? Date.now();
+                if (token.linkedAccounts) {
+                    session.user.linkedAccounts = token.linkedAccounts;
+                }
             }
             return session;
         },

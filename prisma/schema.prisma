@@ -63,8 +63,8 @@ model LinkedAccount {
   scope             String?
   displayName       String?
   username          String?
-  image             String?
-  bannerImage       String?
+  imageUrl          String?
+  bannerUrl         String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
