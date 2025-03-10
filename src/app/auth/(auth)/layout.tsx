@@ -8,6 +8,14 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" aria-hidden="true" />}>
+            <AuthLayoutWrapper>{children}</AuthLayoutWrapper>
+        </Suspense>
+    );
+}
+
+const AuthLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const searchParams = useSearchParams();
     const callBackUrl = searchParams.get('callbackUrl');
 
@@ -51,4 +59,4 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </div>
         </section>
     );
-}
+};
