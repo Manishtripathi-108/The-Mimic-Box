@@ -1,53 +1,66 @@
-// import { NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
+import { isAxiosError } from 'axios';
 
-// export const successResponse = (res: NextApiResponse, data: object) => {
-//     res.status(200).json({ success: true, ...data });
-// };
+export const successResponse = <T>({ message = 'Success', status = 200, data }: { message?: string; status?: number; data?: T }) => {
+    return NextResponse.json(
+        {
+            success: true,
+            message,
+            ...data,
+        },
+        { status }
+    );
+};
 
-// /**
-//  * Sends an error response with a specified HTTP status code, logs the error, and
-//  * includes the error message in the response.
-//  *
-//  * @param res - The Next.js response object.
-//  * @param message - The error message to log and send in the response.
-//  * @param error - The error object to log.
-//  * @param status - The HTTP status code to send in the response.
-//  */
-// export const errorResponse = (
-//     res: NextApiResponse,
-//     message: string = 'Internal Server Error',
-//     { error, status = 500 }: { error?: Error; status?: number }
-// ) => {
-//     if (error) console.error(error);
-//     res.status(status).json({ success: false, message });
-// };
+export const errorResponse = ({
+    message = 'Internal Server Error',
+    status = 500,
+    error,
+    extraData = {},
+}: {
+    message: string;
+    status?: number;
+    error?: unknown;
+    extraData?: Record<string, unknown>;
+}) => {
+    if (error) console.error(error);
 
-// /**
-//  * Sends an error response with a specified HTTP status code, logs the error, and
-//  * includes retry-after and x-ratelimit-remaining headers from the AniList API error
-//  * response.
-//  *
-//  * @param res - The Next.js response object.
-//  * @param message - The error message to send in the response.
-//  * @param error - The error object to log.
-//  */
-// export const anilistErrorResponse = (res: NextApiResponse, message: string, error: any) => {
-//     const retryAfterSeconds = error.response?.headers['retry-after'];
-//     const remainingRateLimit = error.response?.headers['x-ratelimit-remaining'];
+    return NextResponse.json(
+        {
+            success: false,
+            message,
+            ...(error ? { error } : {}),
+            ...extraData,
+        },
+        { status }
+    );
+};
 
-//     if (error.response?.status === 401 || error.response?.status === 400) {
-//         return res.status(error.response?.status || 400).json({
-//             message: error?.response?.data.hint || 'Session expired. Please log in again.',
-//             error: error?.response?.data || 'Invalid or expired token.',
-//             retryAfterSeconds,
-//             remainingRateLimit,
-//         });
-//     }
+/**
+ * Handles an error response from Anilist, extracting the retry-after and
+ * x-ratelimit-remaining headers if available and including them in the
+ * response. Logs the error and includes the error message in the response.
+ */
+export const anilistErrorResponse = (message: string, error?: unknown) => {
+    if (isAxiosError(error)) {
+        if (error.response) {
+            const retryAfterSeconds = error.response?.headers?.['retry-after'];
+            const remainingRateLimit = error.response?.headers?.['x-ratelimit-remaining'];
 
-//     res.status(500).json({
-//         message,
-//         error: error || 'Unexpected server error.',
-//         retryAfterSeconds,
-//         remainingRateLimit,
-//     });
-// };
+            return errorResponse({
+                message: error.response?.data?.hint || message,
+                status: error.response?.status,
+                error: error.response?.data || message,
+                extraData: { retryAfterSeconds, remainingRateLimit },
+            });
+        } else {
+            return errorResponse({ message, error, status: error.status });
+        }
+    }
+
+    if (error instanceof Error) {
+        return errorResponse({ message: error.message });
+    }
+
+    return errorResponse({ message });
+};

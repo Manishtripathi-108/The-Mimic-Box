@@ -22,7 +22,7 @@ const DevOnly = () => {
     return (
         <div className="h-calc-full-height grid place-items-center p-6">
             <button onClick={handleSpotifyAuth} type="button" className="button" disabled={loading}>
-                {loading ? 'Redirecting...' : 'Spotify'}
+                {loading ? 'Redirecting...' : 'Anilist'}
             </button>
         </div>
     );

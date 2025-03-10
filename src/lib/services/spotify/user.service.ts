@@ -1,19 +1,25 @@
+import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { SpotifyUserProfile, SpotifyUserProfileErrors } from '@/lib/types/spotify.types';
+import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import axios from 'axios';
 
-export const getSpotifyUserProfile = async (accessToken: string): Promise<SpotifyUserProfile> => {
-    try {
-        const { data } = await axios.get('https://api.spotify.com/v1/me', {
+export const getSpotifyUserProfile = async (accessToken: string): Promise<[string | null, SpotifyUserProfile | null]> => {
+    const [error, data] = await safeAwait(
+        axios.get<SpotifyUserProfile>(EXTERNAL_ROUTES.SPOTIFY.USER_PROFILE, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
-        });
-        return data;
-    } catch (error) {
+        })
+    );
+
+    if (error || !data) {
         if (axios.isAxiosError(error)) {
             const errors = error.response?.data as SpotifyUserProfileErrors;
-            throw new Error(errors.error.message);
+            return [errors.error.message, null];
         }
-        throw new Error('Failed to fetch Spotify user profile');
+
+        return ['Failed to fetch user profile', null];
     }
+
+    return [null, data?.data];
 };

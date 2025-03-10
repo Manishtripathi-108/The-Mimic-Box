@@ -19,6 +19,7 @@ export default function LoginInForm() {
     const { update } = useSession();
     const searchParams = useSearchParams();
     const UrlError = searchParams.get('error') === 'OAuthAccountNotLinked';
+    const callBackUrl = searchParams.get('callbackUrl');
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -46,9 +47,9 @@ export default function LoginInForm() {
             }
 
             if (response.success) {
-                toast.success('Sign in successful');
+                toast.success('Login successful');
                 update();
-                redirect(response.redirect || DEFAULT_AUTH_REDIRECT);
+                redirect(callBackUrl ? decodeURIComponent(callBackUrl) : response.redirect || DEFAULT_AUTH_REDIRECT);
             }
         } else {
             setError('root.serverError', { message: 'Something went wrong. Please try again Later.' });

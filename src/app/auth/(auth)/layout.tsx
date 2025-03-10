@@ -4,12 +4,16 @@ import ICON_SET from '@/constants/icons';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import { Icon } from '@iconify/react';
 import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
+    const searchParams = useSearchParams();
+    const callBackUrl = searchParams.get('callbackUrl');
+
     const signInSocial = async (provider: 'google' | 'github') => {
         await signIn(provider, {
-            callbackUrl: DEFAULT_AUTH_REDIRECT,
+            callbackUrl: callBackUrl ? decodeURIComponent(callBackUrl) : DEFAULT_AUTH_REDIRECT,
         });
     };
 

@@ -1,16 +1,16 @@
 import { auth } from '@/auth';
-import { API_ROUTES, APP_ROUTES } from '@/constants/routes.constants';
+import { API_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import { errorResponse } from '@/lib/utils/response.utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
     const session = await auth();
-    const searchParams = req.nextUrl.searchParams;
 
     if (!session || !session.user?.id) {
-        return NextResponse.redirect(new URL(APP_ROUTES.AUTH.LOGIN, req.nextUrl));
+        return errorResponse({ message: 'Unauthorized, please login', status: 401 });
     }
 
-    const SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize';
+    const searchParams = req.nextUrl.searchParams;
     const params = new URLSearchParams({
         client_id: process.env.AUTH_SPOTIFY_ID!,
         response_type: 'code',
@@ -19,5 +19,5 @@ export async function GET(req: NextRequest) {
         state: searchParams.get('callbackUrl') || '',
     });
 
-    return NextResponse.json({ success: true, redirectUrl: `${SPOTIFY_AUTH_URL}?${params.toString()}` });
+    return NextResponse.json({ success: true, redirectUrl: `${EXTERNAL_ROUTES.SPOTIFY.AUTH}?${params.toString()}` });
 }

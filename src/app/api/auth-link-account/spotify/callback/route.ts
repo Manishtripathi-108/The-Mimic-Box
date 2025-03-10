@@ -1,7 +1,9 @@
 import { auth } from '@/auth';
-import { API_ROUTES, APP_ROUTES } from '@/constants/routes.constants';
+import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_REDIRECT, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getSpotifyUserProfile } from '@/lib/services/spotify/user.service';
+import { errorResponse } from '@/lib/utils/response.utils';
+import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -17,24 +19,19 @@ export async function GET(req: NextRequest) {
     const state = searchParams.get('state');
 
     if (!code || !state) {
-        return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
+        return errorResponse({ message: 'Missing required parameters', status: 400 });
     }
 
     const clientId = process.env.AUTH_SPOTIFY_ID;
     const clientSecret = process.env.AUTH_SPOTIFY_SECRET;
     const redirectUri = `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LINK_ACCOUNT.SPOTIFY.CALLBACK}`;
 
-    if (!clientId || !clientSecret) {
-        console.error('Missing Spotify client credentials.');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 300 });
-    }
-
     const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
-    try {
-        // Exchange authorization code for access token
-        const response = await axios.post(
-            'https://accounts.spotify.com/api/token',
+    // Exchange authorization code for access token
+    const [exchError, exchResponse] = await safeAwait(
+        axios.post(
+            EXTERNAL_ROUTES.SPOTIFY.EXCHANGE_TOKEN,
             new URLSearchParams({
                 grant_type: 'authorization_code',
                 code,
@@ -46,21 +43,27 @@ export async function GET(req: NextRequest) {
                     Authorization: `Basic ${authHeader}`,
                 },
             }
-        );
+        )
+    );
 
-        if (!response.status || response.status !== 200) {
-            if (response.data.error === 'invalid_grant') {
-                return NextResponse.json({ success: false, error: 'Invalid authorization code' }, { status: 400 });
-            }
-            throw new Error('Failed to sign in with Spotify');
-        }
+    if (exchError || !exchResponse || exchResponse.status !== 200) {
+        return errorResponse({
+            message: exchResponse?.data?.error === 'invalid_grant' ? 'Invalid authorization code' : 'Failed to authenticate with Spotify',
+            status: 400,
+            error: exchError,
+        });
+    }
 
-        const tokens = response.data;
-        const userProfile = await getSpotifyUserProfile(tokens.access_token);
+    const tokens = exchResponse.data;
+    const [error, userProfile] = await getSpotifyUserProfile(tokens.access_token);
 
-        const userId = session.user.id;
-        // Store tokens in the database
-        await db.linkedAccount.upsert({
+    if (error || !userProfile) {
+        return errorResponse({ message: 'Failed to link Spotify account', status: 400 });
+    }
+
+    const userId = session.user.id;
+    const [dbError] = await safeAwait(
+        db.linkedAccount.upsert({
             where: { userId_provider: { userId, provider: 'spotify' } },
             update: {
                 providerAccountId: userProfile.id,
@@ -87,10 +90,12 @@ export async function GET(req: NextRequest) {
                 refresh_token: tokens.refresh_token,
                 expires_at: Math.floor(Date.now() / 1000) + tokens.expires_in,
             },
-        });
+        })
+    );
 
-        return NextResponse.redirect(new URL(decodeURIComponent(state), req.nextUrl));
-    } catch (error) {
-        return NextResponse.json({ success: false, error }, { status: 300 });
+    if (dbError) {
+        return errorResponse({ message: 'Failed to link Spotify account', error: dbError, status: 400 });
     }
+
+    return NextResponse.redirect(new URL(decodeURIComponent(state) || DEFAULT_AUTH_REDIRECT, req.nextUrl));
 }

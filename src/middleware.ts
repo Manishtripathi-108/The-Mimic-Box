@@ -19,16 +19,10 @@ export default auth((req) => {
     const isApiAuthRoute = pathname.startsWith(API_AUTH_PREFIX);
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
     const isAuthRoute = AUTH_ROUTES.includes(pathname);
-    const isLinkAccountRoute = pathname === '/auth/auth-link-account';
 
     if (isApiAuthRoute) return undefined;
 
     const redirectTo = (destination: string) => Response.redirect(new URL(destination, req.nextUrl));
-
-    if (isLinkAccountRoute && !isAuthenticated) {
-        const callbackUrl = encodeURIComponent(`${pathname}${search}`);
-        return redirectTo(`${DEFAULT_AUTH_ROUTE}/?callbackUrl=${callbackUrl}`);
-    }
 
     if (isAuthRoute) {
         if (isAuthenticated) return redirectTo(DEFAULT_AUTH_REDIRECT);
