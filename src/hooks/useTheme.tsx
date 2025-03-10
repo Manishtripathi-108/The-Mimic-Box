@@ -1,37 +1,62 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+
+type ThemeType = 'light' | 'dark' | 'system';
+
+const THEME_KEY = 'theme';
 
 const useTheme = () => {
-    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    const [theme, setTheme] = useState<ThemeType>(() => {
+        if (typeof window === 'undefined') return 'system';
+        return (localStorage.getItem(THEME_KEY) as ThemeType) || 'system';
+    });
 
-    // Load theme from localStorage on mount
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
+    // Compute next theme dynamically
+    const nextTheme: ThemeType = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
 
-        const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-        const initialTheme = storedTheme || 'light';
+    // Apply theme to DOM
+    const applyTheme = useCallback((newTheme: ThemeType) => {
+        const root = document.documentElement;
+        if (newTheme === 'system') {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            newTheme = prefersDark ? 'dark' : 'light';
+        }
 
-        setTheme(initialTheme);
-        applyTheme(initialTheme);
+        root.setAttribute('data-theme', newTheme);
+        root.classList.toggle('dark', newTheme === 'dark');
+
+        // Update theme-color meta tag
+        const primaryColor = getComputedStyle(root).getPropertyValue('--color-primary');
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', primaryColor);
     }, []);
 
-    // Save theme to localStorage and apply it
+    // Load theme on mount and listen for system changes if needed
     useEffect(() => {
-        if (!theme || typeof window === 'undefined') return;
-        localStorage.setItem('theme', theme);
+        if (typeof window === 'undefined') return;
+        console.log('theme', theme);
+
         applyTheme(theme);
-    }, [theme]);
 
-    const applyTheme = (newTheme: 'light' | 'dark') => {
-        document.documentElement.setAttribute('data-theme', newTheme);
-        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+        if (theme === 'system') {
+            const systemThemeListener = window.matchMedia('(prefers-color-scheme: dark)');
+            const handleSystemChange = () => applyTheme('system');
 
-        const color = getComputedStyle(document.documentElement).getPropertyValue('--color-primary');
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color);
-    };
+            systemThemeListener.addEventListener('change', handleSystemChange);
+            return () => systemThemeListener.removeEventListener('change', handleSystemChange);
+        }
+    }, [theme, applyTheme]);
 
-    return { theme, setTheme };
+    // Cycle through themes
+    const cycleTheme = useCallback(() => {
+        setTheme((current) => {
+            const newTheme = current === 'light' ? 'dark' : current === 'dark' ? 'system' : 'light';
+            localStorage.setItem(THEME_KEY, newTheme);
+            return newTheme;
+        });
+    }, []);
+
+    return { theme, cycleTheme, nextTheme, setTheme };
 };
 
 export default useTheme;

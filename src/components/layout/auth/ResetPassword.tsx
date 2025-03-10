@@ -52,22 +52,17 @@ function ResetPasswordFormContent() {
         register,
         handleSubmit,
         setError,
-        setValue,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof resetPasswordSchema>>({ resolver: zodResolver(resetPasswordSchema) });
-
-    if (token) {
-        setValue('token', token);
-    }
+    } = useForm<z.infer<typeof resetPasswordSchema>>({ defaultValues: { token: token || undefined }, resolver: zodResolver(resetPasswordSchema) });
 
     return (
         <main className="bg-primary h-calc-full-height flex items-center justify-center">
             <article className="shadow-floating-sm from-secondary to-tertiary w-full max-w-md overflow-hidden rounded-2xl bg-linear-150 from-15% to-85%">
-                <header className="shadow-raised-xs flex items-center justify-center gap-2 border-b p-4">
+                <header className="shadow-raised-xs text-highlight flex items-center justify-center gap-2 border-b p-4">
                     <div className="shadow-floating-xs flex size-12 items-center justify-center rounded-full border">
                         <Icon icon={ICON_SET.AppLogo} className="size-6" />
                     </div>
-                    <h2 className="text-highlight text-lg font-semibold">Reset Password</h2>
+                    <h2 className="text-lg font-semibold">Reset Password</h2>
                 </header>
 
                 <div className="p-6">

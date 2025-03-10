@@ -1,46 +1,29 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 const DevOnly = () => {
+    const [loading, setLoading] = useState(false);
+
+    const handleSpotifyAuth = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get('/api/auth-link-account/spotify?callbackUrl=/dev');
+            if (res.data.success) {
+                window.location.href = res.data.redirectUrl;
+            }
+        } catch (error) {
+            console.error('Spotify Auth Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="grid w-full">
-            <div className="bg-primary w-full">
-                <span className="text-text-primary">primary</span>
-                <span className="text-text-secondary">secondary</span>
-                <span className="text-accent">accent</span>
-                <span className="text-highlight">highlight</span>
-            </div>
-            <div className="bg-secondary text-highlight w-full">
-                <span className="text-text-primary">primary</span>
-                <span className="text-text-secondary">secondary</span>
-                <span className="text-accent">accent</span>
-                <span className="text-highlight">highlight</span>
-            </div>
-            <div className="bg-tertiary text-text-primary w-full">
-                <span className="text-text-primary">primary</span>
-                <span className="text-text-secondary">secondary</span>
-                <span className="text-accent">accent</span>
-                <span className="text-highlight">highlight</span>
-            </div>
-            <div className="mx-auto flex w-fit gap-5">
-                <div className="bg-primary shadow-floating-sm mx-auto mt-5 flex aspect-square w-64 items-center justify-center rounded-lg">
-                    <span className="text-text-primary">primary</span>
-                    <span className="text-text-secondary">secondary</span>
-                    <span className="text-accent">accent</span>
-                    <span className="text-highlight">highlight</span>
-                </div>
-                <div className="bg-secondary shadow-floating-sm mx-auto mt-5 flex aspect-square w-64 items-center justify-center rounded-lg">
-                    <span className="text-text-primary">primary</span>
-                    <span className="text-text-secondary">secondary</span>
-                    <span className="text-accent">accent</span>
-                    <span className="text-highlight">highlight</span>
-                </div>
-                <div className="bg-tertiary shadow-floating-sm mx-auto mt-5 flex aspect-square w-64 items-center justify-center rounded-lg">
-                    <span className="text-text-primary">primary</span>
-                    <span className="text-text-secondary">secondary</span>
-                    <span className="text-accent">accent</span>
-                    <span className="text-highlight">highlight</span>
-                </div>
-            </div>
+        <div className="h-calc-full-height grid place-items-center p-6">
+            <button onClick={handleSpotifyAuth} type="button" className="button" disabled={loading}>
+                {loading ? 'Redirecting...' : 'Anilist'}
+            </button>
         </div>
     );
 };

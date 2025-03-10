@@ -7,6 +7,7 @@ import { loginSchema } from '@/lib/schema/auth.validations';
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -15,8 +16,10 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 export default function LoginInForm() {
+    const { update } = useSession();
     const searchParams = useSearchParams();
     const UrlError = searchParams.get('error') === 'OAuthAccountNotLinked';
+    const callBackUrl = searchParams.get('callbackUrl');
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -44,8 +47,9 @@ export default function LoginInForm() {
             }
 
             if (response.success) {
-                toast.success('Sign in successful');
-                redirect(response.redirect || DEFAULT_AUTH_REDIRECT);
+                toast.success('Login successful');
+                update();
+                redirect(callBackUrl ? decodeURIComponent(callBackUrl) : response.redirect || DEFAULT_AUTH_REDIRECT);
             }
         } else {
             setError('root.serverError', { message: 'Something went wrong. Please try again Later.' });
