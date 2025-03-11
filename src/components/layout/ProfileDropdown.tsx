@@ -1,14 +1,15 @@
 'use client';
 
 import ICON_SET from '@/constants/icons';
-import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
+import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import useTheme from '@/hooks/useTheme';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'motion/react';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import LogoutButton from '../ui/LogoutButton';
 
 const ProfileDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -84,18 +85,27 @@ const ProfileDropdown = () => {
                         </div>
 
                         <div className="text-text-secondary">
-                            <button className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
+                            <Link
+                                onClick={() => setIsOpen(false)}
+                                href={APP_ROUTES.USER.PROFILE}
+                                className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon={ICON_SET.PERSON} className="size-5" />
                                 <span>My Profile</span>
-                            </button>
-                            <button className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
-                                <Icon icon={ICON_SET.EMAIL} className="size-5" />
-                                <span>Email Settings</span>
-                            </button>
-                            <button className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
+                            </Link>
+                            <Link
+                                onClick={() => setIsOpen(false)}
+                                href={APP_ROUTES.USER.LINKED_ACCOUNTS}
+                                className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
+                                <Icon icon={ICON_SET.LINK} className="size-5" />
+                                <span>Linked Accounts</span>
+                            </Link>
+                            <Link
+                                onClick={() => setIsOpen(false)}
+                                href={APP_ROUTES.USER.SETTINGS}
+                                className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon={ICON_SET.SETTINGS} className="size-5" />
                                 <span>Settings</span>
-                            </button>
+                            </Link>
                             <button
                                 onClick={() => cycleTheme()}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
@@ -109,12 +119,10 @@ const ProfileDropdown = () => {
 
                         <hr className="my-2" />
 
-                        <button
-                            onClick={() => signOut()}
-                            className="hover:bg-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2 text-red-500">
+                        <LogoutButton className="hover:bg-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2 text-red-500">
                             <Icon icon={ICON_SET.LOGOUT} className="size-5" />
                             <span>Logout</span>
-                        </button>
+                        </LogoutButton>
 
                         <hr className="mt-2 mb-1" />
 

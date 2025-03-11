@@ -1,13 +1,12 @@
 import { auth } from '@/auth';
 import { API_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
-import { errorResponse } from '@/lib/utils/response.utils';
-import { NextResponse } from 'next/server';
+import { createErrorResponse, createSuccessResponse } from '@/lib/utils/response.utils';
 
 export async function GET() {
     const session = await auth();
 
     if (!session || !session.user?.id) {
-        return errorResponse({ message: 'Unauthorized, please login', status: 401 });
+        return createErrorResponse({ message: 'Unauthorized, please login', status: 401 });
     }
 
     const params = new URLSearchParams({
@@ -16,5 +15,6 @@ export async function GET() {
         response_type: 'code',
     });
 
-    return NextResponse.json({ success: true, redirectUrl: `${EXTERNAL_ROUTES.ANILIST.AUTH}?${params.toString()}` });
+    // return NextResponse.json({ success: true, redirectUrl: `${EXTERNAL_ROUTES.ANILIST.AUTH}?${params.toString()}` });
+    return createSuccessResponse({ message: 'Redirecting to Anilist', payload: `${EXTERNAL_ROUTES.ANILIST.AUTH}?${params.toString()}` });
 }

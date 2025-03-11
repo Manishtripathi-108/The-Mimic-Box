@@ -18,12 +18,12 @@
     --color-theme-border: #d9d9d9;
 
     /* Accent colors */
-    --color-theme-accent: #9d091d;
+    --color-theme-accent: #e1102c;
     --color-theme-highlight: #005a5e;
 
     /* Neumorphic shadows */
-    --lower-shadow: #00000020;
-    --upper-shadow: #ffffffd5;
+    --lower-shadow: #0000003a;
+    --upper-shadow: #ffffffea;
 
     /* -------------------------------------------------------------------------- */
     /*                                   Shadows                                  */
@@ -254,13 +254,14 @@
     --color-theme-highlight: #4db6ac;
 
     /* Neumorphic shadows */
-    --lower-shadow: #00000070;
-    --upper-shadow: #ffffff3a;
+    --lower-shadow: #000000b0;
+    --upper-shadow: #ffffff51;
 }
 
 @theme inline {
     --font-karla: var(--font-karla), serif;
     --font-aladin: var(--font-aladin), serif;
+    --font-alegreya: var(--font-alegreya), serif;
     --color-primary: var(--color-theme-primary);
     --color-secondary: var(--color-theme-secondary);
     --color-tertiary: var(--color-theme-tertiary);
@@ -325,7 +326,7 @@
 /*                                   Button                                   */
 /* -------------------------------------------------------------------------- */
 @utility button {
-    @apply text-text-secondary bg-primary shadow-floating-xs flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-4 py-2 text-center text-sm transition-all duration-300;
+    @apply text-text-secondary bg-primary shadow-floating-xs flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-center text-sm transition-all duration-300;
 
     &.active,
     &:active {
@@ -368,11 +369,15 @@
     }
 
     &.button-highlight {
-        @apply bg-highlight text-white hover:text-white;
+        @apply from-highlight bg-linear-150 from-25% to-[#003032] to-75% text-white hover:text-white dark:to-[#1a676a];
     }
 
     &.button-accent {
-        @apply bg-accent text-white hover:text-gray-200;
+        @apply from-accent bg-linear-150 from-25% to-[#af1e32] to-75% text-white hover:text-gray-200 dark:to-[#ff0022];
+    }
+
+    &.button-danger {
+        @apply bg-linear-150 from-red-500 from-25% to-red-900 to-75% text-white hover:text-gray-200 dark:to-[#ff0022];
     }
 }
 

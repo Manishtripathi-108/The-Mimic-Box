@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_REDIRECT, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getSpotifyUserProfile } from '@/lib/services/spotify/user.service';
-import { errorResponse } from '@/lib/utils/response.utils';
+import { createErrorResponse } from '@/lib/utils/response.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     const state = searchParams.get('state');
 
     if (!code || !state) {
-        return errorResponse({ message: 'Missing required parameters', status: 400 });
+        return createErrorResponse({ message: 'Missing required parameters', status: 400 });
     }
 
     const clientId = process.env.AUTH_SPOTIFY_ID;
@@ -47,10 +47,10 @@ export async function GET(req: NextRequest) {
     );
 
     if (exchError || !exchResponse || exchResponse.status !== 200) {
-        return errorResponse({
+        return createErrorResponse({
             message: exchResponse?.data?.error === 'invalid_grant' ? 'Invalid authorization code' : 'Failed to authenticate with Spotify',
             status: 400,
-            error: exchError,
+            error: exchError || new Error(String(exchResponse)),
         });
     }
 
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     const [error, userProfile] = await getSpotifyUserProfile(tokens.access_token);
 
     if (error || !userProfile) {
-        return errorResponse({ message: 'Failed to link Spotify account', status: 400 });
+        return createErrorResponse({ message: 'Failed to link Spotify account', status: 400 });
     }
 
     const userId = session.user.id;
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
     );
 
     if (dbError) {
-        return errorResponse({ message: 'Failed to link Spotify account', error: dbError, status: 400 });
+        return createErrorResponse({ message: 'Failed to link Spotify account', error: dbError, status: 400 });
     }
 
     return NextResponse.redirect(new URL(decodeURIComponent(state) || DEFAULT_AUTH_REDIRECT, req.nextUrl));

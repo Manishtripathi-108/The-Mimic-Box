@@ -6,7 +6,7 @@ import { ThemeScript } from '@/lib/utils/theme';
 import { Icon } from '@iconify/react';
 import type { Metadata, Viewport } from 'next';
 import { SessionProvider } from 'next-auth/react';
-import { Aladin, Karla } from 'next/font/google';
+import { Aladin, Karla, Alegreya } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 
 const fontKarla = Karla({
@@ -18,6 +18,11 @@ const fontAladin = Aladin({
     variable: '--font-aladin',
     subsets: ['latin'],
     weight: '400',
+});
+
+const fontAlegreya = Alegreya({
+    variable: '--font-alegreya',
+    subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +42,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <meta name="apple-mobile-web-app-title" content="Mimic Box" />
             </head>
             <SessionProvider>
-                <body className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable}`}>
+                <body
+                    className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable} ${fontAlegreya.variable}`}>
                     <Header />
                     {children}
 

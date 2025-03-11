@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_REDIRECT, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getAnilistUserProfile } from '@/lib/services/anilist/user.service';
-import { anilistErrorResponse, errorResponse } from '@/lib/utils/response.utils';
+import { createAnilistError, createErrorResponse } from '@/lib/utils/response.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const code = searchParams.get('code');
 
     if (!code) {
-        return errorResponse({ message: 'Missing required parameters', status: 400 });
+        return createErrorResponse({ message: 'Missing required parameters', status: 400 });
     }
 
     // Exchange authorization code for access token
@@ -33,14 +33,14 @@ export async function GET(req: NextRequest) {
     );
 
     if (exchError) {
-        return anilistErrorResponse('Failed to Setup Anilist Account', exchError);
+        return createAnilistError('Failed to Setup Anilist Account', exchError);
     }
 
     const tokens = exchResponse?.data;
     const userProfile = await getAnilistUserProfile(tokens.access_token);
 
     if (!userProfile) {
-        return errorResponse({ message: 'Failed to Setup Anilist Account', status: 400 });
+        return createErrorResponse({ message: 'Failed to Setup Anilist Account', status: 400 });
     }
 
     // Store tokens in the database
@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
     );
 
     if (dbError) {
-        return errorResponse({ message: 'Failed to Setup Anilist Account', error: dbError, status: 400 });
+        return createErrorResponse({ message: 'Failed to Setup Anilist Account', error: dbError, status: 400 });
     }
 
     return NextResponse.redirect(new URL(DEFAULT_AUTH_REDIRECT, req.nextUrl));

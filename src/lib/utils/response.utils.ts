@@ -1,66 +1,60 @@
 import { NextResponse } from 'next/server';
 import { isAxiosError } from 'axios';
+import { SuccessResponseInput, SuccessResponseOutput, ErrorResponseInput, ErrorResponseOutput } from '../types/response.types';
 
-export const successResponse = <T>({ message = 'Success', status = 200, data }: { message?: string; status?: number; data?: T }) => {
-    return NextResponse.json(
+/**
+ * Creates a standardized success response.
+ */
+export const createSuccessResponse = <T>({ message, status = 200, payload }: SuccessResponseInput<T>): NextResponse => {
+    return NextResponse.json<SuccessResponseOutput<T>>(
         {
             success: true,
             message,
-            ...data,
-        },
-        { status }
-    );
-};
-
-export const errorResponse = ({
-    message = 'Internal Server Error',
-    status = 500,
-    error,
-    extraData = {},
-}: {
-    message: string;
-    status?: number;
-    error?: unknown;
-    extraData?: Record<string, unknown>;
-}) => {
-    if (error) console.error(error);
-
-    return NextResponse.json(
-        {
-            success: false,
-            message,
-            ...(error ? { error } : {}),
-            ...extraData,
+            payload,
         },
         { status }
     );
 };
 
 /**
- * Handles an error response from Anilist, extracting the retry-after and
- * x-ratelimit-remaining headers if available and including them in the
- * response. Logs the error and includes the error message in the response.
+ * Creates a standardized error response.
  */
-export const anilistErrorResponse = (message: string, error?: unknown) => {
+export const createErrorResponse = ({ message = 'Internal Server Error', status = 500, error, extraData = {} }: ErrorResponseInput): NextResponse => {
+    if (error) console.error('[API Error]:', error);
+
+    return NextResponse.json<ErrorResponseOutput>(
+        {
+            success: false,
+            message,
+            error,
+            extraData,
+        },
+        { status }
+    );
+};
+
+/**
+ * Handles API errors from Anilist, extracting rate limit headers if available.
+ */
+export const createAnilistError = (message: string, error?: unknown): NextResponse => {
     if (isAxiosError(error)) {
         if (error.response) {
             const retryAfterSeconds = error.response?.headers?.['retry-after'];
             const remainingRateLimit = error.response?.headers?.['x-ratelimit-remaining'];
 
-            return errorResponse({
+            return createErrorResponse({
                 message: error.response?.data?.hint || message,
                 status: error.response?.status,
                 error: error.response?.data || message,
                 extraData: { retryAfterSeconds, remainingRateLimit },
             });
-        } else {
-            return errorResponse({ message, error, status: error.status });
         }
+        return createErrorResponse({ message, error, status: error.status });
     }
 
     if (error instanceof Error) {
-        return errorResponse({ message: error.message });
+        return createErrorResponse({ message: error.message });
     }
 
-    return errorResponse({ message });
+    return createErrorResponse({ message });
 };

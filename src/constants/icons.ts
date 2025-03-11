@@ -29,6 +29,7 @@ enum ICON_SET {
     INFO_OUTLINED = 'carbon:information',
     LEFT = 'formkit:left',
     LEFT_ARROW = 'line-md:arrow-left',
+    LINK = 'line-md:link',
     LIST = 'tabler:list',
     LOADING = 'line-md:loading-loop',
     LOCK = 'solar:lock-password-bold',
@@ -56,6 +57,7 @@ enum ICON_SET {
     SUN = 'meteocons:clear-day-fill',
     TRASH = 'entypo:trash',
     UP = 'formkit:up',
+    UNLINK = 'octicon:unlink-16',
     UPLOAD = 'line-md:cloud-alt-upload-filled-loop',
     WARNING = 'meteocons:code-yellow-fill',
 }

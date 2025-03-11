@@ -33,6 +33,12 @@ export const APP_ROUTES = {
         INDEX: '/',
         LOGIN: '/spotify/login',
     },
+    USER: {
+        PROFILE: '/user/profile',
+        EDIT_PROFILE: '/user/profile/edit',
+        SETTINGS: '/user/settings',
+        LINKED_ACCOUNTS: '/user/linked-accounts',
+    },
     DEV: '/dev',
     NOT_FOUND: '*',
 } as const;
