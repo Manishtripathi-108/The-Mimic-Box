@@ -1,6 +1,8 @@
 import { auth } from '@/auth';
 import LogoutButton from '@/components/ui/LogoutButton';
+import { APP_ROUTES } from '@/constants/routes.constants';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 const UserProfile = async () => {
@@ -36,9 +38,9 @@ const UserProfile = async () => {
                         </div>
 
                         <div className="mt-6 flex items-center justify-between px-4">
-                            <button type="button" className="button button-highlight">
+                            <Link href={APP_ROUTES.USER.EDIT_PROFILE} className="button button-highlight">
                                 Edit
-                            </button>
+                            </Link>
                             <LogoutButton className="button button-danger" />
                         </div>
                     </div>

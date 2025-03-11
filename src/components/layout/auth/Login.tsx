@@ -70,7 +70,7 @@ export default function LoginInForm() {
                     <legend className="sr-only">Login Form</legend>
 
                     {/* Email Field */}
-                    <div>
+                    <div className="form-group">
                         <label htmlFor="email" className="form-text">
                             Email Address
                         </label>
@@ -91,7 +91,7 @@ export default function LoginInForm() {
                     </div>
 
                     {/* Password Field */}
-                    <div>
+                    <div className="form-group">
                         <label htmlFor="password" className="form-text">
                             Password
                         </label>

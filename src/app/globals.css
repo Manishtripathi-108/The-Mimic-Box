@@ -400,7 +400,7 @@
 
 /* ---------------------------------- Field --------------------------------- */
 @utility form-field {
-    @apply bg-primary text-text-primary placeholder:text-text-secondary shadow-floating-xs focus:shadow-pressed-xs file:bg-accent field-sizing-content w-full appearance-none rounded-xl border px-3 py-2 text-sm outline-hidden transition duration-300 file:mr-5 file:cursor-pointer file:rounded-lg file:border-none file:px-3 file:py-2 file:text-white file:transition file:duration-200 file:ease-in-out;
+    @apply bg-primary text-text-primary placeholder:text-text-secondary shadow-floating-xs focus:shadow-pressed-xs file:bg-accent w-full appearance-none rounded-xl border px-3 py-2 text-sm outline-hidden transition duration-300 file:mr-5 file:cursor-pointer file:rounded-lg file:border-none file:px-3 file:py-2 file:text-white file:transition file:duration-200 file:ease-in-out;
 
     select& {
         @apply cursor-pointer bg-no-repeat pr-10 ring-black focus-visible:ring-1 dark:ring-white;
@@ -498,7 +498,8 @@
         @apply shadow-pressed-xs;
     }
 
-    &:has(.form-field:not(:placeholder-shown)) .form-icon {
+    &:has(.form-field:not(:placeholder-shown)) .form-icon,
+    &:has(.form-field:not(:placeholder-shown)) .form-field {
         @apply text-text-primary;
     }
 
