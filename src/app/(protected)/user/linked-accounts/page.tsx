@@ -4,6 +4,7 @@ import ICON_SET from '@/constants/icons';
 import { auth } from '@/auth';
 import { LinkedAccountProvider } from '@prisma/client';
 import { ConnectAccount, DisconnectAccount } from '@/components/ui/LinkedAccountButtons';
+import { APP_ROUTES } from '@/constants/routes.constants';
 
 const UserLinkedAccounts = async () => {
     const session = await auth();
@@ -42,6 +43,7 @@ const UserLinkedAccounts = async () => {
                                         Not Connected
                                     </span>
                                     <ConnectAccount
+                                        callBackUrl={APP_ROUTES.USER.LINKED_ACCOUNTS}
                                         className="w-20 cursor-pointer text-center text-green-500 capitalize disabled:text-green-600"
                                         account={account}>
                                         Connect

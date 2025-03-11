@@ -45,6 +45,7 @@ export const APP_ROUTES = {
 
 export const API_ROUTES = {
     AUTH_LINK_ACCOUNT: {
+        ROOT: '/api/auth-link-account',
         SPOTIFY: {
             CALLBACK: '/api/auth-link-account/spotify/callback',
             ROOT: '/api/auth-link-account/spotify',
@@ -52,6 +53,10 @@ export const API_ROUTES = {
         ANILIST: {
             CALLBACK: '/api/auth-link-account/anilist/callback',
             ROOT: '/api/auth-link-account/anilist',
+        },
+        MYANIMELIST: {
+            CALLBACK: '/api/auth-link-account/myanimelist/callback',
+            ROOT: '/api/auth-link-account/myanimelist',
         },
     },
 } as const;

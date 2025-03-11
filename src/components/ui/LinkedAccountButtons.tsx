@@ -12,16 +12,18 @@ export const ConnectAccount = ({
     className,
     children,
     account,
+    callBackUrl = '/',
 }: {
     className?: string;
     children?: React.ReactNode;
     account: LinkedAccountProvider;
+    callBackUrl: string;
 }) => {
     const { isPending, makeApiCall } = useSafeAwaitClient<{ provider: LinkedAccountProvider }, string>();
 
     const handleConnect = async () => {
         await makeApiCall({
-            url: API_ROUTES.AUTH_LINK_ACCOUNT[account.toUpperCase() as keyof typeof API_ROUTES.AUTH_LINK_ACCOUNT].ROOT,
+            url: `${(API_ROUTES.AUTH_LINK_ACCOUNT[account.toUpperCase() as keyof typeof API_ROUTES.AUTH_LINK_ACCOUNT] as { ROOT: string }).ROOT}?callbackUrl=${callBackUrl}`,
             data: { provider: account },
             onError() {
                 toast.error(`Failed to connect ${account}`);
