@@ -8,6 +8,7 @@ import type { Metadata, Viewport } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { Aladin, Karla, Alegreya } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
+import { ReactScan } from '@/components/ReactScan';
 
 const fontKarla = Karla({
     variable: '--font-karla',
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
+                {/* <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" /> */}
                 <ThemeScript />
                 <meta name="apple-mobile-web-app-title" content="Mimic Box" />
             </head>
@@ -45,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <body
                     className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable} ${fontAlegreya.variable}`}>
                     <Header />
+                    <ReactScan />
                     {children}
 
                     {/* ✅ Global Toaster with Custom Icons */}

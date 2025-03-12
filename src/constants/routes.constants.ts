@@ -104,4 +104,4 @@ export const DEFAULT_AUTH_ROUTE: string = APP_ROUTES.AUTH.LOGIN;
 /**
  * Default route for the dashboard.
  */
-export const DEFAULT_AUTH_REDIRECT: string = '/pro';
+export const DEFAULT_AUTH_REDIRECT: string = APP_ROUTES.INDEX;
