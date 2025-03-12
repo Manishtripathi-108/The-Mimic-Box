@@ -1,5 +1,6 @@
-import VerifyEmail from '@/components/layout/auth/VerifyEmail';
 import { Metadata } from 'next';
+
+import VerifyEmail from '@/components/layout/auth/VerifyEmail';
 
 export const metadata: Metadata = {
     title: 'Verify Your Email | The Mimic Box',

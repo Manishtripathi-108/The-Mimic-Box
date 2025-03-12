@@ -1,12 +1,15 @@
 'use client';
 
-import ICON_SET from '@/constants/icons';
-import { APP_ROUTES } from '@/constants/routes.constants';
-import { Icon } from '@iconify/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+
+import { Icon } from '@iconify/react';
+import { AnimatePresence, motion } from 'framer-motion';
+
+import ICON_SET from '@/constants/icons';
+import { APP_ROUTES } from '@/constants/routes.constants';
 
 const sidebarMenuItems = [
     {

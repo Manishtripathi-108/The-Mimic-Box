@@ -1,16 +1,19 @@
 'use client';
 
-import { resetPasswordAction } from '@/actions/auth.actions';
-import ICON_SET from '@/constants/icons';
-import { resetPasswordSchema } from '@/lib/schema/auth.validations';
+import { Suspense, useState } from 'react';
+
+import { useSearchParams } from 'next/navigation';
+
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
+
+import { resetPasswordAction } from '@/actions/auth.actions';
+import ICON_SET from '@/constants/icons';
+import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
 export default function ResetPasswordForm() {
     return (

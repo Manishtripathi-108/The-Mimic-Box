@@ -5,5 +5,8 @@
     "tabWidth": 4,
     "bracketSameLine": true,
     "printWidth": 150,
-    "plugins": ["prettier-plugin-tailwindcss"]
+    "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+    "importOrder": ["^react-scan$", "^react$", "^next$", "^next/(.*)$", "^react-dom$", "^@?\\w", "^[@/]", "^[./]", "^[../]"],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
 }

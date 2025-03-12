@@ -1,7 +1,9 @@
+import Link from 'next/link';
+
+import { Icon } from '@iconify/react/dist/iconify.js';
+
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { Icon } from '@iconify/react/dist/iconify.js';
-import Link from 'next/link';
 
 export default function AuthError() {
     return (

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+
 import { isAxiosError } from 'axios';
-import { SuccessResponseInput, SuccessResponseOutput, ErrorResponseInput, ErrorResponseOutput } from '../types/response.types';
+
+import { ErrorResponseInput, ErrorResponseOutput, SuccessResponseInput, SuccessResponseOutput } from '../types/response.types';
 
 /**
  * Creates a standardized success response.

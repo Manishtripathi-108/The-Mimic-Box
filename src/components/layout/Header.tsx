@@ -1,9 +1,13 @@
 'use client';
 
-import ICON_SET from '@/constants/icons';
-import { Icon } from '@iconify/react';
-import Link from 'next/link';
 import React, { useEffect } from 'react';
+
+import Link from 'next/link';
+
+import { Icon } from '@iconify/react';
+
+import ICON_SET from '@/constants/icons';
+
 import ProfileDropdown from './ProfileDropdown';
 import Sidebar from './Sidebar';
 

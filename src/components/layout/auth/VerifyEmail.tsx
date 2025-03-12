@@ -1,13 +1,16 @@
 'use client';
 
+import { Suspense, useActionState } from 'react';
+
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { Icon } from '@iconify/react';
+import toast from 'react-hot-toast';
+
 import { verifyEmailToken } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
-import { Icon } from '@iconify/react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useActionState } from 'react';
-import toast from 'react-hot-toast';
 
 export default function VerifyEmail() {
     const router = useRouter();

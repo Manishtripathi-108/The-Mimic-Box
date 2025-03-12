@@ -1,7 +1,8 @@
+import axios from 'axios';
+
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { SpotifyUserProfile, SpotifyUserProfileErrors } from '@/lib/types/spotify.types';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
-import axios from 'axios';
 
 export const getSpotifyUserProfile = async (accessToken: string): Promise<[string | null, SpotifyUserProfile | null]> => {
     const [error, data] = await safeAwait(

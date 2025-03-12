@@ -1,6 +1,7 @@
+import { Metadata } from 'next';
+
 import RegisterForm from '@/components/layout/auth/Register';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Register | The Mimic Box',

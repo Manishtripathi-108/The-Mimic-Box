@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { Icon } from '@iconify/react/dist/iconify.js';
-import ICON_SET from '@/constants/icons';
-import { auth } from '@/auth';
 import { LinkedAccountProvider } from '@prisma/client';
+
+import { auth } from '@/auth';
 import { ConnectAccount, DisconnectAccount } from '@/components/ui/LinkedAccountButtons';
+import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const UserLinkedAccounts = async () => {

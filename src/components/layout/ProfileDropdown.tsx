@@ -1,14 +1,18 @@
 'use client';
 
-import ICON_SET from '@/constants/icons';
-import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
-import useTheme from '@/hooks/useTheme';
+import { useEffect, useRef, useState } from 'react';
+
+import Image from 'next/image';
+import Link from 'next/link';
+
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSession } from 'next-auth/react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+
+import ICON_SET from '@/constants/icons';
+import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
+import useTheme from '@/hooks/useTheme';
+
 import LogoutButton from '../ui/LogoutButton';
 
 const ProfileDropdown = () => {

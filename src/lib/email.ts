@@ -1,6 +1,7 @@
-import nodemailer from 'nodemailer';
-import { render } from '@react-email/components';
 import React from 'react';
+
+import { render } from '@react-email/components';
+import nodemailer from 'nodemailer';
 
 const EMAIL_SENDER = 'The Mimic Box <noreply@themimicbox.com>';
 

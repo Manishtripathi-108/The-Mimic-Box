@@ -1,15 +1,16 @@
 'use server';
 
-import { signIn } from '@/auth';
-import { db } from '@/lib/db';
-import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '@/lib/schema/auth.validations';
-import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/auth.service';
-import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
-import { sendEmail } from '@/lib/email';
+
+import { signIn } from '@/auth';
 import { generateEmailVerificationEmail, generatePasswordResetEmail } from '@/components/emails/AuthEmailTemplate';
+import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
+import { db } from '@/lib/db';
+import { sendEmail } from '@/lib/email';
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '@/lib/schema/auth.validations';
+import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/auth.service';
 
 export const loginAction = async (data: z.infer<typeof loginSchema>) => {
     const parsed = loginSchema.safeParse(data);

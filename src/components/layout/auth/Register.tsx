@@ -1,17 +1,20 @@
 'use client';
 
+import { useState } from 'react';
+
+import Link from 'next/link';
+
+import { ErrorMessage } from '@hookform/error-message';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Icon } from '@iconify/react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
+
 import { registerAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { registerSchema } from '@/lib/schema/auth.validations';
-import { ErrorMessage } from '@hookform/error-message';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { z } from 'zod';
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);

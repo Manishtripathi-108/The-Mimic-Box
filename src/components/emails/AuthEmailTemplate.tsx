@@ -1,6 +1,8 @@
-import { APP_ROUTES } from '@/constants/routes.constants';
-import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Tailwind, Text } from '@react-email/components';
 import * as React from 'react';
+
+import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Tailwind, Text } from '@react-email/components';
+
+import { APP_ROUTES } from '@/constants/routes.constants';
 
 // Load public URL from environment variables
 const PUBLIC_URL = process.env.NEXT_PUBLIC_URL || 'https://the-mimic-box.com';
@@ -35,7 +37,7 @@ const AuthEmailTemplate: React.FC<AuthEmailTemplateProps> = ({ heading, preview,
                     className="bg-[#dfdfdf] p-6 font-sans">
                     <Container className="mx-auto max-w-lg overflow-hidden rounded-2xl bg-[linear-gradient(150deg_in_oklab,#efefef_15%,#ffffff_85%)] shadow-[2px_4px_4px_var(--lower-shadow),_1px_1px_2px_inset_var(--upper-shadow)]">
                         {/* Header */}
-                        <div className="flex w-full items-center justify-center gap-2 text-center border-b p-4 text-[##005a5e] shadow-[3px_3px_5px_var(--lower-shadow),_-3px_-3px_5px_var(--upper-shadow)]">
+                        <div className="flex w-full items-center justify-center gap-2 border-b p-4 text-center text-[##005a5e] shadow-[3px_3px_5px_var(--lower-shadow),_-3px_-3px_5px_var(--upper-shadow)]">
                             <div className="flex size-12 items-center justify-center rounded-full border p-2 shadow-[2px_4px_4px_var(--lower-shadow),_1px_1px_2px_inset_var(--upper-shadow)]">
                                 <img src="/logo-no-bg.png" alt="Mimic Box" />
                             </div>

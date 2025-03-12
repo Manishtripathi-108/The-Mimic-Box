@@ -1,7 +1,9 @@
+import React from 'react';
+
+import Image from 'next/image';
+
 import { auth } from '@/auth';
 import LogoutButton from '@/components/ui/LogoutButton';
-import Image from 'next/image';
-import React from 'react';
 
 const UserProfile = async () => {
     const session = await auth();

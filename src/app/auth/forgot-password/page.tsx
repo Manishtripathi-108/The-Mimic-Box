@@ -1,5 +1,6 @@
-import ForgotPasswordForm from '@/components/layout/auth/ForgotPassword';
 import { Metadata } from 'next';
+
+import ForgotPasswordForm from '@/components/layout/auth/ForgotPassword';
 
 export const metadata: Metadata = {
     title: 'Forgot Password | The Mimic Box',

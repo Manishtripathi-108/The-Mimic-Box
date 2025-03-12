@@ -1,5 +1,6 @@
-import ResetPasswordForm from '@/components/layout/auth/ResetPassword';
 import { Metadata } from 'next';
+
+import ResetPasswordForm from '@/components/layout/auth/ResetPassword';
 
 export const metadata: Metadata = {
     title: 'Reset Password | The Mimic Box',

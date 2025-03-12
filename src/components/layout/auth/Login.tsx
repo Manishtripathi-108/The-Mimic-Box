@@ -1,19 +1,22 @@
 'use client';
 
-import { loginAction } from '@/actions/auth.actions';
-import ICON_SET from '@/constants/icons';
-import { APP_ROUTES, DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
-import { loginSchema } from '@/lib/schema/auth.validations';
+import { useState } from 'react';
+
+import Link from 'next/link';
+import { redirect, useSearchParams } from 'next/navigation';
+
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { redirect, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
+
+import { loginAction } from '@/actions/auth.actions';
+import ICON_SET from '@/constants/icons';
+import { APP_ROUTES, DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
+import { loginSchema } from '@/lib/schema/auth.validations';
 
 export default function LoginInForm() {
     const { update } = useSession();

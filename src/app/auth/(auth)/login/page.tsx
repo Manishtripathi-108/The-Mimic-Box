@@ -1,5 +1,6 @@
-import LoginInForm from '@/components/layout/auth/Login';
 import { Metadata } from 'next';
+
+import LoginInForm from '@/components/layout/auth/Login';
 
 export const metadata: Metadata = {
     title: 'Login | The Mimic Box',

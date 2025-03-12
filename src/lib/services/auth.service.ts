@@ -1,5 +1,6 @@
-import { db } from '../db';
 import { v4 as uuidV4 } from 'uuid';
+
+import { db } from '../db';
 
 const TOKEN_EXPIRY_MS = 15 * 60 * 1000;
 

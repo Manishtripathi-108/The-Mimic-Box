@@ -1,11 +1,14 @@
 'use client';
 
-import ICON_SET from '@/constants/icons';
-import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
+import { Suspense } from 'react';
+
+import { useSearchParams } from 'next/navigation';
+
 import { Icon } from '@iconify/react';
 import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+
+import ICON_SET from '@/constants/icons';
+import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (

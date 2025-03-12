@@ -1,12 +1,14 @@
 'use client';
 
+import React, { useCallback, useTransition } from 'react';
+
+import { LinkedAccountProvider } from '@prisma/client';
+import toast from 'react-hot-toast';
+
 import { removeLinkedAccount } from '@/actions/linkedAccount.actions';
 import { API_ROUTES } from '@/constants/routes.constants';
 import useSafeAwaitClient from '@/hooks/useSafeAwaitClient';
 import cn from '@/lib/utils/cn';
-import { LinkedAccountProvider } from '@prisma/client';
-import React, { useCallback, useTransition } from 'react';
-import toast from 'react-hot-toast';
 
 export const ConnectAccount = ({
     className,

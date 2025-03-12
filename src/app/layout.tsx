@@ -1,14 +1,17 @@
+import type { Metadata, Viewport } from 'next';
+
+import { Aladin, Alegreya, Karla } from 'next/font/google';
+
+import { Icon } from '@iconify/react';
+import { SessionProvider } from 'next-auth/react';
+import { Toaster } from 'react-hot-toast';
+
 import '@/app/globals.css';
+import { ReactScan } from '@/components/ReactScan';
 import Header from '@/components/layout/Header';
 import '@/constants/iconSetup';
 import ICON_SET from '@/constants/icons';
 import { ThemeScript } from '@/lib/utils/theme';
-import { Icon } from '@iconify/react';
-import type { Metadata, Viewport } from 'next';
-import { SessionProvider } from 'next-auth/react';
-import { Aladin, Karla, Alegreya } from 'next/font/google';
-import { Toaster } from 'react-hot-toast';
-import { ReactScan } from '@/components/ReactScan';
 
 const fontKarla = Karla({
     variable: '--font-karla',

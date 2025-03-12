@@ -1,7 +1,8 @@
+import { NextRequest } from 'next/server';
+
 import { auth } from '@/auth';
 import { API_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils/response.utils';
-import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
     const session = await auth();
