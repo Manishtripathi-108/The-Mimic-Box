@@ -27,21 +27,16 @@ const ForgotPasswordForm = () => {
     async function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
         const response = await forgotPasswordAction(data);
 
-        console.log(response);
-
-        if (!response.success) {
-            if (response.errors) {
-                response.errors.forEach((err) => {
-                    setError(err.path[0] as 'email', {
-                        message: err.message,
-                    });
-                });
-            }
-            if (response.message) {
-                setError('root.serverError', { message: response.message });
-            }
+        if (response.success) {
+            toast.success(response.message || 'Check your inbox to reset your password.', { duration: 3000 });
         } else {
-            toast.success(response.message || 'Check your inbox to reset your password.', { duration: 5000 });
+            response?.extraData?.forEach((err) => {
+                setError(err.path[0] as 'email', {
+                    message: err.message,
+                });
+            });
+
+            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     }
 

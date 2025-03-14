@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 
 import Image from 'next/image';
 
+import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import { useSession } from 'next-auth/react';
@@ -11,23 +12,9 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as z from 'zod';
 
+import { editProfileAction } from '@/actions/user.actions';
 import ICON_SET from '@/constants/icons';
-
-const fileSizeLimit = 5 * 1024 * 1024; // 5MB
-
-const profileSchema = z.object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Invalid email address'),
-    image: z
-        .instanceof(File)
-        .refine((file) => ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/gif'].includes(file.type), {
-            message: 'Invalid image file type',
-        })
-        .refine((file) => file.size <= fileSizeLimit, {
-            message: 'File size should not exceed 5MB',
-        })
-        .nullable(),
-});
+import { profileSchema } from '@/lib/schema/user.validation';
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
@@ -39,6 +26,7 @@ const UserProfileEdit = () => {
         register,
         handleSubmit,
         setValue,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<ProfileFormData>({
         resolver: zodResolver(profileSchema),
@@ -60,28 +48,20 @@ const UserProfileEdit = () => {
     };
 
     const onSubmit = async (data: ProfileFormData) => {
-        try {
-            const formData = new FormData();
-            formData.append('name', data.name);
-            if (data.image) {
-                formData.append('image', data.image);
-            }
+        const response = await editProfileAction(data);
+        console.log('Profile update response:', response);
 
-            const response = await fetch('/api/profile', {
-                method: 'POST',
-                body: formData,
+        if (response.success) {
+            toast.success(response.message || 'Profile updated successfully');
+            update();
+        } else {
+            response?.extraData?.forEach((err) => {
+                setError(err.path[0] as 'name' | 'email' | 'image', {
+                    message: err.message,
+                });
             });
 
-            const result = await response.json();
-            if (response.ok) {
-                toast.success('Profile updated successfully!');
-                update();
-            } else {
-                toast.error(result.message || 'Failed to update profile');
-            }
-        } catch (error) {
-            toast.error('Something went wrong. Please try again.');
-            console.error('Profile update error:', error);
+            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     };
 
@@ -117,7 +97,7 @@ const UserProfileEdit = () => {
                                 aria-invalid={!!errors.name}
                             />
                         </div>
-                        {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="name" aria-live="polite" />
                     </div>
 
                     {/* Email Field (Read-only) */}
@@ -132,11 +112,12 @@ const UserProfileEdit = () => {
                                 type="email"
                                 {...register('email')}
                                 placeholder="Enter your email"
+                                className="form-field"
                                 data-invalid={!!errors.email}
                                 aria-invalid={!!errors.email}
-                                className="form-field"
                             />
                         </div>
+                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="email" aria-live="polite" />
                     </div>
 
                     {/* Profile Image Upload */}
@@ -159,9 +140,21 @@ const UserProfileEdit = () => {
                                 </button>
                             </div>
                         )}
-                        <input type="file" accept="image/*" onChange={handleImageChange} className="form-field" />
-                        {errors.image && <p className="text-xs text-red-500">{errors.image.message}</p>}
+                        <input type="file" onChange={handleImageChange} className="form-field" />
+                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="image" aria-live="polite" />
                     </div>
+
+                    <ErrorMessage
+                        as="p"
+                        errors={errors}
+                        name="root.serverError"
+                        render={({ message }) => (
+                            <p aria-live="polite" className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
+                                <Icon icon={ICON_SET.ERROR} className="size-7 shrink-0" />
+                                {message}
+                            </p>
+                        )}
+                    />
 
                     <hr className="my-5" />
 

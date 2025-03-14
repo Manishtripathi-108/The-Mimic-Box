@@ -9,11 +9,10 @@ import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSession } from 'next-auth/react';
 
+import LogoutButton from '@/components/ui/LogoutButton';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import useTheme from '@/hooks/useTheme';
-
-import LogoutButton from '../ui/LogoutButton';
 
 const ProfileDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);

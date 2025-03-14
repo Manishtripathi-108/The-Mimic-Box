@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -16,38 +16,24 @@ import ICON_SET from '@/constants/icons';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
 export default function ResetPasswordForm() {
-    return (
-        <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>
-            <ResetPasswordFormContent />
-        </Suspense>
-    );
-}
-
-function ResetPasswordFormContent() {
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
     const [showPassword, setShowPassword] = useState(false);
 
     // Define the action function
     async function handleReset(data: z.infer<typeof resetPasswordSchema>) {
-        try {
-            const response = await resetPasswordAction(data);
-            if (!response.success) {
-                if (response.errors) {
-                    response.errors.forEach((err) => {
-                        setError(err.path[0] as 'token' | 'password' | 'confirmPassword' | `root.${string}` | 'root', {
-                            message: err.message,
-                        });
-                    });
-                }
-                if (response.message) {
-                    setError('root.serverError', { message: response.message });
-                }
-            } else {
-                toast.success(response.message || 'Password reset successfully.', { duration: 5000 });
-            }
-        } catch {
-            return { success: false, message: 'Password reset failed. Please try again.' };
+        const response = await resetPasswordAction(data);
+
+        if (response.success) {
+            toast.success(response.message || 'Password reset successfully.', { duration: 3000 });
+        } else {
+            response?.extraData?.forEach((err) => {
+                setError(err.path[0] as 'token' | 'password' | 'confirmPassword', {
+                    message: err.message,
+                });
+            });
+
+            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     }
 

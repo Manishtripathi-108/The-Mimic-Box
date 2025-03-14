@@ -1,28 +1,19 @@
 'use client';
 
-import { Suspense, useActionState } from 'react';
+import { useActionState } from 'react';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 
 import { Icon } from '@iconify/react';
 import toast from 'react-hot-toast';
 
 import { verifyEmailToken } from '@/actions/auth.actions';
+import { verifyEmailChangeToken } from '@/actions/user.actions';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 
-export default function VerifyEmail() {
-    const router = useRouter();
-
-    return (
-        <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>
-            <VerifyEmailContent router={router} />
-        </Suspense>
-    );
-}
-
-function VerifyEmailContent({ router }: { router: ReturnType<typeof useRouter> }) {
+export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
 
@@ -31,12 +22,14 @@ function VerifyEmailContent({ router }: { router: ReturnType<typeof useRouter> }
         if (!token) return { success: false, message: 'Token missing' };
 
         try {
-            const response = await verifyEmailToken(token);
+            const actionFn = type === 'verify' ? verifyEmailToken : verifyEmailChangeToken;
+            const response = await actionFn(token);
             if (response.success) {
-                toast.success('Email verified. You can now log in.');
-                router.push(DEFAULT_AUTH_ROUTE);
+                toast.success(response.message || 'Email verified successfully');
+                if (type === 'verify') {
+                    redirect(DEFAULT_AUTH_ROUTE);
+                }
             }
-            console.log('Response:', response);
 
             return response;
         } catch {
@@ -60,8 +53,10 @@ function VerifyEmailContent({ router }: { router: ReturnType<typeof useRouter> }
                 {token && (!state || state?.success) ? (
                     <div className="p-6">
                         <Icon icon={isPending ? ICON_SET.LOADING : ICON_SET.EMAIL} className="text-highlight mb-4 inline-block size-16" />
-                        <h1 className="text-text-primary text-2xl font-bold">Confirm Your Email</h1>
-                        <p className="text-text-secondary mt-2">Click the button below to verify your email and activate your account.</p>
+                        <h1 className="text-text-primary text-2xl font-bold">{type === 'verify' ? 'Verify Email' : 'Change Email'}</h1>
+                        <p className="text-text-secondary mt-2">
+                            Click the button below to {type === 'verify' ? 'verify your email and activate your account' : 'change your email'}.
+                        </p>
 
                         <form action={verifyAction}>
                             <button type="submit" className="button button-highlight mt-4 w-full" disabled={isPending}>

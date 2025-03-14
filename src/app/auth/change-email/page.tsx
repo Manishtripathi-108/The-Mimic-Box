@@ -4,18 +4,18 @@ import { Metadata } from 'next';
 
 import { Icon } from '@iconify/react/dist/iconify.js';
 
-import ResetPasswordForm from '@/components/layout/auth/ResetPassword';
+import VerifyEmail from '@/components/layout/auth/VerifyEmail';
 import ICON_SET from '@/constants/icons';
 
 export const metadata: Metadata = {
-    title: 'Reset Password | The Mimic Box',
-    description: 'Reset your password',
+    title: 'Verify Your Email | The Mimic Box',
+    description: 'Verify your email to change your email on The Mimic Box.',
 };
 
-export default function ResetPassword() {
+export default function VerifyEmailPage() {
     return (
         <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>
-            <ResetPasswordForm />
+            <VerifyEmail type="change" />
         </Suspense>
     );
 }

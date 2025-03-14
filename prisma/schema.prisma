@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum LinkedAccountProvider {
+  spotify
+  anilist
+  myanimelist
+}
+
 model User {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
@@ -42,12 +48,6 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-}
-
-enum LinkedAccountProvider {
-  spotify
-  anilist
-  myanimelist
 }
 
 model LinkedAccount {
@@ -97,4 +97,12 @@ model ForgotPasswordToken {
   email   String   @unique
   token   String   @unique
   expires DateTime
+}
+
+model changeEmailToken {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  currentEmail String   @unique
+  newEmail     String   @unique
+  token        String   @unique
+  expires      DateTime
 }

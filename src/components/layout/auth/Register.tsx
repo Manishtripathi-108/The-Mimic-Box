@@ -28,19 +28,16 @@ export default function RegisterForm() {
     async function onSubmit(data: z.infer<typeof registerSchema>) {
         const response = await registerAction(data);
 
-        if (!response.success) {
-            if (response.errors) {
-                response.errors.forEach((err) => {
-                    setError(err.path[0] as 'fullName' | 'email' | 'password' | 'confirmPassword' | `root.${string}` | 'root', {
-                        message: err.message,
-                    });
-                });
-            }
-            if (response.message) {
-                setError('root.serverError', { message: response.message });
-            }
+        if (response.success) {
+            toast.success(response.message || 'Account created successfully.', { duration: 3000 });
         } else {
-            toast.success(response.message || 'Account created successfully.', { duration: 5000 });
+            response?.extraData?.forEach((err) => {
+                setError(err.path[0] as 'fullName' | 'email' | 'password' | 'confirmPassword', {
+                    message: err.message,
+                });
+            });
+
+            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     }
 

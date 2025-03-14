@@ -2,6 +2,7 @@ export const APP_ROUTES = {
     INDEX: '/',
     SHADOWS: '/shadows',
     AUTH: {
+        CHANGE_EMAIL: '/auth/change-email',
         LOGIN: '/auth/login',
         REGISTER: '/auth/register',
         FORGOT_PASSWORD: '/auth/forgot-password',

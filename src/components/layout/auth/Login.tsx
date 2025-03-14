@@ -35,27 +35,18 @@ export default function LoginInForm() {
     async function onSubmit(data: z.infer<typeof loginSchema>) {
         const response = await loginAction(data);
 
-        if (response) {
-            if (!response.success) {
-                if (response.errors) {
-                    response.errors.forEach((err) => {
-                        setError(err.path[0] as 'email' | 'password' | 'remember' | `root.${string}` | 'root', {
-                            message: err.message,
-                        });
-                    });
-                }
-                if (response.message) {
-                    setError('root.serverError', { message: response.message });
-                }
-            }
-
-            if (response.success) {
-                toast.success('Login successful');
-                update();
-                redirect(callBackUrl ? decodeURIComponent(callBackUrl) : response.redirect || DEFAULT_AUTH_REDIRECT);
-            }
+        if (response.success) {
+            toast.success(response.message || 'Login successful');
+            update();
+            redirect(callBackUrl ? decodeURIComponent(callBackUrl) : DEFAULT_AUTH_REDIRECT);
         } else {
-            setError('root.serverError', { message: 'Something went wrong. Please try again Later.' });
+            response?.extraData?.forEach((err) => {
+                setError(err.path[0] as 'email' | 'password', {
+                    message: err.message,
+                });
+            });
+
+            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     }
 

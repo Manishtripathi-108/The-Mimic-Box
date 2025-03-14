@@ -1,5 +1,5 @@
-import anilistConfig from '../config/anilist.config';
-import { safeAwait } from './safeAwait.utils';
+import anilistConfig from '@/lib/config/anilist.config';
+import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 export const fetchAniListData = async <T>(
     token: string,

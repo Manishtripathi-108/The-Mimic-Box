@@ -1,8 +1,7 @@
 import { v4 as uuidV4 } from 'uuid';
 
-import { db } from '../db';
-
-const TOKEN_EXPIRY_MS = 15 * 60 * 1000;
+import { TOKEN_EXPIRY_MS } from '@/constants/server.constants';
+import { db } from '@/lib/db';
 
 // Generate Verification Token
 export const generateVerificationToken = async (email: string) => {

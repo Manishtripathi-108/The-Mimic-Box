@@ -19,17 +19,17 @@ export interface SuccessResponseOutput<T = unknown> {
 }
 
 /** Input type for error responses */
-export interface ErrorResponseInput extends BaseResponse {
+export interface ErrorResponseInput<T> extends BaseResponse {
     error?: Record<string, unknown> | Error;
-    extraData?: Record<string, unknown>;
+    extraData?: T;
 }
 
 /** Output type for error responses */
-export interface ErrorResponseOutput {
+export interface ErrorResponseOutput<T = unknown> {
     success: false;
     message: string;
     error?: Record<string, unknown> | Error;
-    extraData?: Record<string, unknown>;
+    extraData?: T;
 }
 
 export type MakeApiCallType<TRequest, TResponse> = {

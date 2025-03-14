@@ -6,7 +6,7 @@ import { auth } from '@/auth';
 import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_REDIRECT, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getSpotifyUserProfile } from '@/lib/services/spotify/user.service';
-import { createErrorResponse } from '@/lib/utils/response.utils';
+import { createErrorResponse } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 export async function GET(req: NextRequest) {

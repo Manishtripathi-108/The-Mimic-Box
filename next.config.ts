@@ -1,7 +1,11 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-    /* config options here */
+    experimental: {
+        serverActions: {
+            bodySizeLimit: '100mb',
+        },
+    },
     images: {
         remotePatterns: [
             // picsum Image API
@@ -18,6 +22,11 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'https',
                 hostname: 'i.scdn.co',
+            },
+            // cloudinary Image API
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
             },
         ],
     },

@@ -503,8 +503,8 @@
         @apply text-text-primary;
     }
 
-    &:has(.form-field:user-invalid) .form-icon,
-    &:has(.form-field[data-invalid='true']) .form-icon {
+    &:has(.form-field:user-invalid),
+    &:has(.form-field[data-invalid='true']) {
         @apply text-red-500;
     }
 }

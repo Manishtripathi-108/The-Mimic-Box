@@ -104,3 +104,14 @@ export const generatePasswordResetEmail = (token: string) => (
         url={`${PUBLIC_URL}${APP_ROUTES.AUTH.RESET_PASSWORD}?token=${token}`}
     />
 );
+
+export const generateEmailChangeEmail = (token: string) => (
+    <AuthEmailTemplate
+        heading="Change Your Email Address"
+        preview="Change your email address for The Mimic Box"
+        body="We received a request to change the email address for your The Mimic Box account. If you did not make this request, please ignore this email. This link is valid for 15 minutes."
+        buttonText="Change Email"
+        footerText="If you didn’t request this, you can safely ignore this email."
+        url={`${PUBLIC_URL}${APP_ROUTES.AUTH.CHANGE_EMAIL}?token=${token}`}
+    />
+);
