@@ -34,10 +34,8 @@ const useTheme = () => {
     // Load theme on mount and listen for system changes if needed
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        console.log('theme', theme);
 
         applyTheme(theme);
-
         if (theme === 'system') {
             const systemThemeListener = window.matchMedia('(prefers-color-scheme: dark)');
             const handleSystemChange = () => applyTheme('system');

@@ -14,7 +14,9 @@ import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
-export const editProfileAction = async (data: z.infer<typeof profileSchema>): Promise<SuccessResponseOutput | ErrorResponseOutput<z.ZodIssue[]>> => {
+export const editProfileAction = async (
+    data: z.infer<typeof profileSchema>
+): Promise<SuccessResponseOutput<{ name: string; image: string | null | undefined; email: string }> | ErrorResponseOutput<z.ZodIssue[]>> => {
     const session = await auth();
     if (!session?.user) return createErrorReturn('Unauthorized, please login');
 
@@ -24,15 +26,13 @@ export const editProfileAction = async (data: z.infer<typeof profileSchema>): Pr
     const { name, email, image } = parsed.data;
     const { id: userId, name: currentName, email: currentEmail, image: currentImage } = session.user;
 
-    if (name === currentName && email === currentEmail && image === currentImage) {
+    if (name === currentName && email === currentEmail && image === undefined) {
         return createErrorReturn('No changes detected');
     }
 
     let imageUrl = currentImage;
 
     if (image) {
-        console.log('Uploading image...');
-
         const imageBuffer = await image.arrayBuffer();
 
         const uploadResponse = await uploadToCloud({
@@ -63,7 +63,7 @@ export const editProfileAction = async (data: z.infer<typeof profileSchema>): Pr
 
     if (updateError) return createErrorReturn('Failed to update profile', updateError);
 
-    return createSuccessReturn(emailResponse?.message || 'Profile updated successfully');
+    return createSuccessReturn(emailResponse?.message || 'Profile updated successfully', { name, image: imageUrl, email: currentEmail as string });
 };
 
 /**
@@ -103,14 +103,18 @@ export const verifyEmailChangeToken = async (token: string) => {
             return createErrorReturn('Invalid or expired verification link.');
         }
 
-        await db.user.update({
-            where: { email: response.currentEmail },
-            data: { email: response.newEmail },
-        });
+        const [updateError, responseS] = await safeAwait(
+            db.user.update({
+                where: { email: response.currentEmail },
+                data: { email: response.newEmail },
+            })
+        );
+
+        if (updateError || !responseS) throw new Error('Failed to update email');
 
         await db.changeEmailToken.delete({ where: { token } });
 
-        return createSuccessReturn('Email changed successfully.');
+        return createSuccessReturn('Email changed successfully.', { email: response.newEmail });
     } catch {
         return createErrorReturn('Verification failed. Try again later.');
     }

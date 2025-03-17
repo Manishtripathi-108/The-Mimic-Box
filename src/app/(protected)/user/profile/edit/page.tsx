@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -32,7 +32,7 @@ const UserProfileEdit = () => {
         resolver: zodResolver(profileSchema),
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (session?.user) {
             setValue('name', session.user.name || '');
             setValue('email', session.user.email || '');
@@ -49,11 +49,17 @@ const UserProfileEdit = () => {
 
     const onSubmit = async (data: ProfileFormData) => {
         const response = await editProfileAction(data);
-        console.log('Profile update response:', response);
 
         if (response.success) {
             toast.success(response.message || 'Profile updated successfully');
-            update();
+            update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    name: response.payload?.name || session?.user?.name,
+                    image: response.payload?.image || session?.user?.image,
+                },
+            });
         } else {
             response?.extraData?.forEach((err) => {
                 setError(err.path[0] as 'name' | 'email' | 'image', {

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 
 import { Icon } from '@iconify/react';
+import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { verifyEmailToken } from '@/actions/auth.actions';
@@ -14,6 +15,7 @@ import ICON_SET from '@/constants/icons';
 import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 
 export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
+    const { data: session, update } = useSession();
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
 
@@ -28,6 +30,14 @@ export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
                 toast.success(response.message || 'Email verified successfully');
                 if (type === 'verify') {
                     redirect(DEFAULT_AUTH_ROUTE);
+                } else {
+                    update({
+                        ...session,
+                        user: {
+                            ...session?.user,
+                            email: (response as { payload: { email: string } }).payload?.email || session?.user?.email,
+                        },
+                    });
                 }
             }
 

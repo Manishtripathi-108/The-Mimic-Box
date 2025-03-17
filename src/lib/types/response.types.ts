@@ -7,12 +7,12 @@ interface BaseResponse {
 }
 
 /** Input type for success responses */
-export interface SuccessResponseInput<T = unknown> extends BaseResponse {
+export interface SuccessResponseInput<T = undefined> extends BaseResponse {
     payload?: T;
 }
 
 /** Output type for success responses */
-export interface SuccessResponseOutput<T = unknown> {
+export interface SuccessResponseOutput<T = undefined> {
     success: true;
     message?: string;
     payload?: T;
@@ -25,7 +25,7 @@ export interface ErrorResponseInput<T> extends BaseResponse {
 }
 
 /** Output type for error responses */
-export interface ErrorResponseOutput<T = unknown> {
+export interface ErrorResponseOutput<T = undefined> {
     success: false;
     message: string;
     error?: Record<string, unknown> | Error;

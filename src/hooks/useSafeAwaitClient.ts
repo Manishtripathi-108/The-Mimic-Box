@@ -4,7 +4,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
 
 import { MakeApiCallType, SuccessResponseOutput } from '@/lib/types/response.types';
 
-const ENABLE_DEBUG_LOGS = true;
+const ENABLE_DEBUG_LOGS = process.env.NODE_ENV === 'development';
 
 function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
     apiClient = axios,
