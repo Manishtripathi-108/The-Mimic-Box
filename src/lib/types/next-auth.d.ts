@@ -17,6 +17,7 @@ export interface LinkedAccount {
 // Extend NextAuth types to support only the allowed linked account providers
 declare module 'next-auth' {
     interface User {
+        provider?: string;
         linkedAccounts?: Partial<Record<LinkedAccountProvider, LinkedAccount>>;
         emailVerified?: Date;
     }
@@ -24,6 +25,7 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
     interface JWT {
+        provider?: string;
         linkedAccounts?: Partial<Record<LinkedAccountProvider, LinkedAccount>>;
     }
 }

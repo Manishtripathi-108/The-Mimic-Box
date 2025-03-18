@@ -10,7 +10,7 @@ import { APP_ROUTES } from '@/constants/routes.constants';
 
 const UserLinkedAccounts = async () => {
     const session = await auth();
-    const linkedAccounts = session?.user?.linkedAccounts;
+    const linkedAccounts = session?.user?.linkedAccounts ?? {};
     return (
         <div className="shadow-floating-xs rounded-2xl p-6">
             <h1 className="text-text-primary font-alegreya mb-4 text-center text-xl tracking-wide">Linked Accounts</h1>

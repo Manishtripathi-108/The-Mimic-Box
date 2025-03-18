@@ -24,7 +24,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             if (account?.provider === 'credentials' && !user?.emailVerified) return false;
             return true;
         },
-        async jwt({ token, trigger, session }) {
+        async jwt({ token, trigger, session, account }) {
+            if (account) {
+                token.provider = account.provider;
+            }
+
             if (trigger === 'signIn' || trigger === 'update') {
                 const linkedAccounts = await getLinkedAccounts(token.sub);
                 token.linkedAccounts = linkedAccounts;
@@ -40,6 +44,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         async session({ token, session }) {
             if (session.user) {
                 session.user.id = token.sub as string;
+                session.user.provider = token.provider;
                 if (token.linkedAccounts) {
                     session.user.linkedAccounts = token.linkedAccounts;
                 }

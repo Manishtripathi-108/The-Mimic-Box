@@ -45,12 +45,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {/* <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" /> */}
                 <ThemeScript />
                 <meta name="apple-mobile-web-app-title" content="Mimic Box" />
+                <ReactScan />
             </head>
             <SessionProvider>
                 <body
                     className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable} ${fontAlegreya.variable}`}>
                     <Header />
-                    <ReactScan />
                     {children}
 
                     {/* ✅ Global Toaster with Custom Icons */}

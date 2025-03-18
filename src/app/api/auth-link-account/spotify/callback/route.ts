@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 import { auth } from '@/auth';
-import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_REDIRECT, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import { API_ROUTES, APP_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getSpotifyUserProfile } from '@/lib/services/spotify/user.service';
 import { createErrorResponse } from '@/lib/utils/createResponse.utils';
@@ -98,6 +98,5 @@ export async function GET(req: NextRequest) {
     if (dbError) {
         return createErrorResponse({ message: 'Failed to link Spotify account', error: dbError, status: 400 });
     }
-
-    return NextResponse.redirect(new URL(decodeURIComponent(state) || DEFAULT_AUTH_REDIRECT, req.nextUrl));
+    return NextResponse.redirect(new URL(`${APP_ROUTES.REDIRECT}?callbackUrl=${encodeURIComponent(state)}`, req.nextUrl));
 }

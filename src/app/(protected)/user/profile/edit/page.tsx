@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +15,7 @@ import * as z from 'zod';
 
 import { editProfileAction } from '@/actions/user.actions';
 import ICON_SET from '@/constants/icons';
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { profileSchema } from '@/lib/schema/user.validation';
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -33,6 +35,7 @@ const UserProfileEdit = () => {
     });
 
     useEffect(() => {
+        if (session?.user?.provider !== 'credentials') redirect(APP_ROUTES.USER.PROFILE);
         if (session?.user) {
             setValue('name', session.user.name || '');
             setValue('email', session.user.email || '');

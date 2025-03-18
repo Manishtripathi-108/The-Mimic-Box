@@ -20,6 +20,8 @@ export const editProfileAction = async (
     const session = await auth();
     if (!session?.user) return createErrorReturn('Unauthorized, please login');
 
+    if (session.user.provider !== 'credentials') return createErrorReturn('Cannot edit profile for social accounts');
+
     const parsed = profileSchema.safeParse(data);
     if (!parsed.success) return createErrorReturn('Invalid data!', undefined, parsed.error.errors);
 

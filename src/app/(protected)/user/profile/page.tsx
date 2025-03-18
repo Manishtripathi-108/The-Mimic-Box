@@ -9,12 +9,9 @@ import { APP_ROUTES } from '@/constants/routes.constants';
 
 const UserProfile = async () => {
     const session = await auth();
+    if (!session?.user) return null;
 
-    if (!session?.user) {
-        return null;
-    }
-
-    const { name, image, email } = session.user;
+    const { name, image, email, provider } = session.user;
 
     return (
         <div className="grid place-items-center">
@@ -40,10 +37,12 @@ const UserProfile = async () => {
                         </div>
 
                         <div className="mt-6 flex items-center justify-between px-4">
-                            <Link href={APP_ROUTES.USER.EDIT_PROFILE} className="button button-highlight">
-                                Edit
-                            </Link>
-                            <LogoutButton className="button button-danger" />
+                            {provider === 'credentials' && (
+                                <Link href={APP_ROUTES.USER.EDIT_PROFILE} className="button button-highlight">
+                                    Edit
+                                </Link>
+                            )}
+                            <LogoutButton className="button button-danger ml-auto" />
                         </div>
                     </div>
                 </div>

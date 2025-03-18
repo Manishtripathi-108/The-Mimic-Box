@@ -3,6 +3,7 @@
 import React, { useCallback, useTransition } from 'react';
 
 import { LinkedAccountProvider } from '@prisma/client';
+import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { removeLinkedAccount } from '@/actions/linkedAccount.actions';
@@ -27,6 +28,9 @@ export const ConnectAccount = ({
         await makeApiCall({
             url: `${(API_ROUTES.AUTH_LINK_ACCOUNT[account.toUpperCase() as keyof typeof API_ROUTES.AUTH_LINK_ACCOUNT] as { ROOT: string }).ROOT}?callbackUrl=${callBackUrl}`,
             data: { provider: account },
+            onStart() {
+                localStorage.setItem('callbackUrl', callBackUrl);
+            },
             onError() {
                 toast.error(`Failed to connect ${account}`);
             },
@@ -53,18 +57,20 @@ export const DisconnectAccount = ({
     account: LinkedAccountProvider;
 }) => {
     const [isPending, startTransition] = useTransition();
+    const { data: session, update } = useSession();
 
     const handleDisconnect = useCallback(() => {
         startTransition(async () => {
             const res = await removeLinkedAccount(account);
             if (res.success) {
                 toast.success(res.message);
+                await update(session);
                 window.location.reload();
             } else {
                 toast.error(res.message);
             }
         });
-    }, [account]);
+    }, [account, update, session]);
 
     return (
         <button type="button" onClick={handleDisconnect} disabled={isPending} className={cn(className)}>

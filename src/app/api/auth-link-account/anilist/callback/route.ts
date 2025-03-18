@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 import { auth } from '@/auth';
-import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_REDIRECT, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import { API_ROUTES, APP_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getAnilistUserProfile } from '@/lib/services/anilist/user.service';
 import { createAniListError, createErrorResponse } from '@/lib/utils/createResponse.utils';
@@ -82,5 +82,5 @@ export async function GET(req: NextRequest) {
         return createErrorResponse({ message: 'Failed to Setup Anilist Account', error: dbError, status: 400 });
     }
 
-    return NextResponse.redirect(new URL(DEFAULT_AUTH_REDIRECT, req.nextUrl));
+    return NextResponse.redirect(new URL(APP_ROUTES.REDIRECT, req.nextUrl));
 }

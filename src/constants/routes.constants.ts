@@ -1,6 +1,7 @@
 export const APP_ROUTES = {
     INDEX: '/',
     SHADOWS: '/shadows',
+    REDIRECT: '/redirect',
     AUTH: {
         CHANGE_EMAIL: '/auth/change-email',
         LOGIN: '/auth/login',
