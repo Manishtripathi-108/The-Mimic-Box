@@ -80,7 +80,7 @@ export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
                         <h1 className="text-text-primary text-2xl font-bold">Token Not Found</h1>
                         <p className="text-text-secondary mt-2">The token is invalid or expired. Please request a new one.</p>
 
-                        <Link href={APP_ROUTES.AUTH.LOGIN} replace className="button button-highlight mt-4 w-full">
+                        <Link href={APP_ROUTES.AUTH_LOGIN} replace className="button button-highlight mt-4 w-full">
                             Request New Token
                         </Link>
 

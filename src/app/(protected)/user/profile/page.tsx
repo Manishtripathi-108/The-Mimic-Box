@@ -38,7 +38,7 @@ const UserProfile = async () => {
 
                         <div className="mt-6 flex items-center justify-between px-4">
                             {provider === 'credentials' && (
-                                <Link href={APP_ROUTES.USER.EDIT_PROFILE} className="button button-highlight">
+                                <Link href={APP_ROUTES.USER_EDIT_PROFILE} className="button button-highlight">
                                     Edit
                                 </Link>
                             )}

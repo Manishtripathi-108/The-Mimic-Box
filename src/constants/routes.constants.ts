@@ -1,67 +1,59 @@
-export const APP_ROUTES = {
-    INDEX: '/',
-    SHADOWS: '/shadows',
-    REDIRECT: '/redirect',
-    AUTH: {
-        CHANGE_EMAIL: '/auth/change-email',
-        LOGIN: '/auth/login',
-        REGISTER: '/auth/register',
-        FORGOT_PASSWORD: '/auth/forgot-password',
-        RESET_PASSWORD: '/auth/reset-password',
-        VERIFY_EMAIL: '/auth/verify-email',
-        ERROR: '/auth/error',
-    },
-    AUDIO: {
-        TAGS_EDITOR: '/audio/tags-editor',
-        CONVERTER: '/audio/converter',
-    },
-    ANILIST: {
-        INDEX: '/anilist/anime',
-        // ANIME: (id: string) => `/anilist/anime/${id}`,
-        ANIME: '/anilist/anime',
-        MANGA: '/anilist/manga',
-        FAVOURITES: '/anilist/favourites',
-        IMPORT_EXPORT: '/anilist/import-export',
-        LOGIN: '/anilist/login',
-    },
-    GAMES: {
-        TIC_TAC_TOE: {
-            INDEX: '/games/tic-tac-toe/classic',
-            CLASSIC: '/games/tic-tac-toe/classic',
-            ULTIMATE: '/games/tic-tac-toe/ultimate',
-        },
-    },
-    SPOTIFY: {
-        INDEX: '/',
-        LOGIN: '/spotify/login',
-    },
-    USER: {
-        PROFILE: '/user/profile',
-        EDIT_PROFILE: '/user/profile/edit',
-        SETTINGS: '/user/settings',
-        LINKED_ACCOUNTS: '/user/linked-accounts',
-    },
-    DEV: '/dev',
-    NOT_FOUND: '*',
-} as const;
+export enum APP_ROUTES {
+    // General Routes
+    INDEX = '/',
+    REDIRECT = '/redirect',
+    DEV = '/dev',
+    NOT_FOUND = '*',
 
-export const API_ROUTES = {
-    AUTH_LINK_ACCOUNT: {
-        ROOT: '/api/auth-link-account',
-        SPOTIFY: {
-            CALLBACK: '/api/auth-link-account/spotify/callback',
-            ROOT: '/api/auth-link-account/spotify',
-        },
-        ANILIST: {
-            CALLBACK: '/api/auth-link-account/anilist/callback',
-            ROOT: '/api/auth-link-account/anilist',
-        },
-        MYANIMELIST: {
-            CALLBACK: '/api/auth-link-account/myanimelist/callback',
-            ROOT: '/api/auth-link-account/myanimelist',
-        },
-    },
-} as const;
+    // Authentication Routes
+    AUTH_CHANGE_EMAIL = '/auth/change-email',
+    AUTH_LOGIN = '/auth/login',
+    AUTH_REGISTER = '/auth/register',
+    AUTH_FORGOT_PASSWORD = '/auth/forgot-password',
+    AUTH_RESET_PASSWORD = '/auth/reset-password',
+    AUTH_VERIFY_EMAIL = '/auth/verify-email',
+    AUTH_ERROR = '/auth/error',
+
+    // Audio Routes
+    AUDIO_TAGS_EDITOR = '/audio/tags-editor',
+    AUDIO_CONVERTER = '/audio/converter',
+
+    // AniList Routes
+    ANILIST_INDEX = '/anilist',
+    ANILIST_ANIME = '/anilist/anime',
+    ANILIST_MANGA = '/anilist/manga',
+    ANILIST_FAVOURITES = '/anilist/favourites',
+    ANILIST_IMPORT_EXPORT = '/anilist/import-export',
+    ANILIST_LOGIN = '/anilist/login',
+
+    // Games Routes
+    GAMES_TIC_TAC_TOE_INDEX = '/games/tic-tac-toe',
+    GAMES_TIC_TAC_TOE_CLASSIC = '/games/tic-tac-toe/classic',
+    GAMES_TIC_TAC_TOE_ULTIMATE = '/games/tic-tac-toe/ultimate',
+
+    // User Routes
+    USER_PROFILE = '/user/profile',
+    USER_EDIT_PROFILE = '/user/profile/edit',
+    USER_SETTINGS = '/user/settings',
+    USER_LINKED_ACCOUNTS = '/user/linked-accounts',
+}
+
+export enum API_ROUTES {
+    /* ---------------------------- Auth Link Account --------------------------- */
+    AUTH_LA_ROOT = '/api/auth-link-account',
+
+    // Spotify Authentication
+    AUTH_LA_SPOTIFY_ROOT = '/api/auth-link-account/spotify',
+    AUTH_LA_SPOTIFY_CALLBACK = '/api/auth-link-account/spotify/callback',
+
+    // AniList Authentication
+    AUTH_LA_ANILIST_ROOT = '/api/auth-link-account/anilist',
+    AUTH_LA_ANILIST_CALLBACK = '/api/auth-link-account/anilist/callback',
+
+    // MyAnimeList Authentication
+    AUTH_LA_MYANIMELIST_ROOT = '/api/auth-link-account/myanimelist',
+    AUTH_LA_MYANIMELIST_CALLBACK = '/api/auth-link-account/myanimelist/callback',
+}
 
 export const EXTERNAL_ROUTES = {
     ANILIST: {
@@ -83,15 +75,15 @@ export const EXTERNAL_ROUTES = {
 export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.INDEX,
     APP_ROUTES.DEV,
-    APP_ROUTES.AUTH.VERIFY_EMAIL,
-    APP_ROUTES.AUTH.FORGOT_PASSWORD,
-    APP_ROUTES.AUTH.RESET_PASSWORD,
+    APP_ROUTES.AUTH_VERIFY_EMAIL,
+    APP_ROUTES.AUTH_FORGOT_PASSWORD,
+    APP_ROUTES.AUTH_RESET_PASSWORD,
 ];
 
 /**
  * Array of authentication-related routes.
  */
-export const AUTH_ROUTES: string[] = [APP_ROUTES.AUTH.LOGIN, APP_ROUTES.AUTH.REGISTER, APP_ROUTES.AUTH.FORGOT_PASSWORD, APP_ROUTES.AUTH.ERROR];
+export const AUTH_ROUTES: string[] = [APP_ROUTES.AUTH_LOGIN, APP_ROUTES.AUTH_REGISTER, APP_ROUTES.AUTH_FORGOT_PASSWORD, APP_ROUTES.AUTH_ERROR];
 
 /**
  * Prefix for API authentication routes.
@@ -101,7 +93,7 @@ export const API_AUTH_PREFIX: string = '/api/auth';
 /**
  * Default route for authentication.
  */
-export const DEFAULT_AUTH_ROUTE: string = APP_ROUTES.AUTH.LOGIN;
+export const DEFAULT_AUTH_ROUTE: string = APP_ROUTES.AUTH_LOGIN;
 
 /**
  * Default route for the dashboard.

@@ -83,7 +83,7 @@ const ForgotPasswordForm = () => {
                     </button>
                 </form>
 
-                <Link className="text-highlight mb-6 block text-center text-sm hover:underline" href={APP_ROUTES.AUTH.LOGIN}>
+                <Link className="text-highlight mb-6 block text-center text-sm hover:underline" href={APP_ROUTES.AUTH_LOGIN}>
                     Return to Login
                 </Link>
             </article>

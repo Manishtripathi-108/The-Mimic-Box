@@ -165,7 +165,7 @@ export default function RegisterForm() {
 
             <footer className="text-text-secondary mt-2 text-center text-sm">
                 Already have an account?{' '}
-                <Link href={APP_ROUTES.AUTH.LOGIN} className="text-highlight hover:underline">
+                <Link href={APP_ROUTES.AUTH_LOGIN} className="text-highlight hover:underline">
                     Login
                 </Link>
             </footer>

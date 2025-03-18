@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const session = await auth();
 
     if (!session || !session.user?.id) {
-        return NextResponse.redirect(new URL(APP_ROUTES.AUTH.LOGIN, req.nextUrl));
+        return NextResponse.redirect(new URL(APP_ROUTES.AUTH_LOGIN, req.nextUrl));
     }
 
     const searchParams = req.nextUrl.searchParams;
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
             grant_type: 'authorization_code',
             client_id: process.env.AUTH_ANILIST_ID,
             client_secret: process.env.AUTH_ANILIST_SECRET,
-            redirect_uri: `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LINK_ACCOUNT.ANILIST.CALLBACK}`,
+            redirect_uri: `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LA_ANILIST_CALLBACK}`,
             code: code,
         })
     );

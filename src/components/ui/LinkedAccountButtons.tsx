@@ -26,7 +26,7 @@ export const ConnectAccount = ({
 
     const handleConnect = async () => {
         await makeApiCall({
-            url: `${(API_ROUTES.AUTH_LINK_ACCOUNT[account.toUpperCase() as keyof typeof API_ROUTES.AUTH_LINK_ACCOUNT] as { ROOT: string }).ROOT}?callbackUrl=${callBackUrl}`,
+            url: `${API_ROUTES[`AUTH_LA_${account.toUpperCase()}_ROOT` as keyof typeof API_ROUTES]}?callbackUrl=${callBackUrl}`,
             data: { provider: account },
             onStart() {
                 localStorage.setItem('callbackUrl', callBackUrl);

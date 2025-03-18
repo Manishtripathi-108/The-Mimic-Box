@@ -16,10 +16,10 @@ const sidebarMenuItems = [
         title: 'AniList',
         icon: ICON_SET.ANIME,
         children: [
-            { name: 'Anime', link: APP_ROUTES.ANILIST.ANIME },
-            { name: 'Manga', link: APP_ROUTES.ANILIST.MANGA },
-            { name: 'Favourites', link: APP_ROUTES.ANILIST.FAVOURITES },
-            { name: 'Import/Export', link: APP_ROUTES.ANILIST.IMPORT_EXPORT },
+            { name: 'Anime', link: APP_ROUTES.ANILIST_ANIME },
+            { name: 'Manga', link: APP_ROUTES.ANILIST_MANGA },
+            { name: 'Favourites', link: APP_ROUTES.ANILIST_FAVOURITES },
+            { name: 'Import/Export', link: APP_ROUTES.ANILIST_IMPORT_EXPORT },
         ],
     },
     {
@@ -29,8 +29,8 @@ const sidebarMenuItems = [
             {
                 name: 'Tic Tac Toe',
                 children: [
-                    { name: 'Classic', link: APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC },
-                    { name: 'Ultimate', link: APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE },
+                    { name: 'Classic', link: APP_ROUTES.GAMES_TIC_TAC_TOE_CLASSIC },
+                    { name: 'Ultimate', link: APP_ROUTES.GAMES_TIC_TAC_TOE_ULTIMATE },
                 ],
             },
             { name: 'Ludo', link: '/games/ludo' },
@@ -40,8 +40,8 @@ const sidebarMenuItems = [
         title: 'Audio',
         icon: ICON_SET.MUSIC,
         children: [
-            { name: 'Converter', link: APP_ROUTES.AUDIO.CONVERTER },
-            { name: 'Tags Editor', link: APP_ROUTES.AUDIO.TAGS_EDITOR },
+            { name: 'Converter', link: APP_ROUTES.AUDIO_CONVERTER },
+            { name: 'Tags Editor', link: APP_ROUTES.AUDIO_TAGS_EDITOR },
         ],
     },
     {

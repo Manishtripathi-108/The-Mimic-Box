@@ -90,21 +90,21 @@ const ProfileDropdown = () => {
                         <div className="text-text-secondary">
                             <Link
                                 onClick={() => setIsOpen(false)}
-                                href={APP_ROUTES.USER.PROFILE}
+                                href={APP_ROUTES.USER_PROFILE}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon={ICON_SET.PERSON} className="size-5" />
                                 <span>My Profile</span>
                             </Link>
                             <Link
                                 onClick={() => setIsOpen(false)}
-                                href={APP_ROUTES.USER.LINKED_ACCOUNTS}
+                                href={APP_ROUTES.USER_LINKED_ACCOUNTS}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon={ICON_SET.LINK} className="size-5" />
                                 <span>Linked Accounts</span>
                             </Link>
                             <Link
                                 onClick={() => setIsOpen(false)}
-                                href={APP_ROUTES.USER.SETTINGS}
+                                href={APP_ROUTES.USER_SETTINGS}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon={ICON_SET.SETTINGS} className="size-5" />
                                 <span>Settings</span>

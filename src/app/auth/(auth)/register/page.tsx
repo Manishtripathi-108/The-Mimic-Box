@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'Register | The Mimic Box',
         description: 'Create an account on The Mimic Box to get started. Join us today!',
-        url: `${process.env.NEXT_PUBLIC_URL}${APP_ROUTES.AUTH.REGISTER}`,
+        url: `${process.env.NEXT_PUBLIC_URL}${APP_ROUTES.AUTH_REGISTER}`,
         type: 'website',
         images: [
             {

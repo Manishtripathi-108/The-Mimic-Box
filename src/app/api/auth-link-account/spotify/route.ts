@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const params = new URLSearchParams({
         client_id: process.env.AUTH_SPOTIFY_ID!,
         response_type: 'code',
-        redirect_uri: `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LINK_ACCOUNT.SPOTIFY.CALLBACK}`,
+        redirect_uri: `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LA_SPOTIFY_CALLBACK}`,
         scope: process.env.AUTH_SPOTIFY_SCOPES!,
         state: searchParams.get('callbackUrl') || '/',
     });

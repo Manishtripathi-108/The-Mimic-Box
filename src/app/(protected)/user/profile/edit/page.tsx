@@ -35,7 +35,7 @@ const UserProfileEdit = () => {
     });
 
     useEffect(() => {
-        if (session?.user?.provider !== 'credentials') redirect(APP_ROUTES.USER.PROFILE);
+        if (session?.user?.provider !== 'credentials') redirect(APP_ROUTES.USER_PROFILE);
         if (session?.user) {
             setValue('name', session.user.name || '');
             setValue('email', session.user.email || '');

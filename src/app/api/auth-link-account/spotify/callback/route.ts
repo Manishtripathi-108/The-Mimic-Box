@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const session = await auth();
 
     if (!session || !session.user?.id) {
-        return NextResponse.redirect(new URL(APP_ROUTES.AUTH.LOGIN, req.nextUrl));
+        return NextResponse.redirect(new URL(APP_ROUTES.AUTH_LOGIN, req.nextUrl));
     }
 
     const searchParams = req.nextUrl.searchParams;
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     const clientId = process.env.AUTH_SPOTIFY_ID;
     const clientSecret = process.env.AUTH_SPOTIFY_SECRET;
-    const redirectUri = `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LINK_ACCOUNT.SPOTIFY.CALLBACK}`;
+    const redirectUri = `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LA_SPOTIFY_CALLBACK}`;
 
     const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
