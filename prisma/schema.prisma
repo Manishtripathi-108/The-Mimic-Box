@@ -18,7 +18,7 @@ model User {
   name           String?
   email          String?         @unique
   emailVerified  DateTime?
-  image          String?
+  image          String          @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
   password       String?
   accounts       Account[]
   linkedAccounts LinkedAccount[]

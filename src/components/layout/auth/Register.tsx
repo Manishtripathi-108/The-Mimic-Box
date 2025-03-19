@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +14,7 @@ import { z } from 'zod';
 
 import { registerAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { registerSchema } from '@/lib/schema/auth.validations';
 
 export default function RegisterForm() {
@@ -30,6 +31,7 @@ export default function RegisterForm() {
 
         if (response.success) {
             toast.success(response.message || 'Account created successfully.', { duration: 3000 });
+            redirect(DEFAULT_AUTH_ROUTE);
         } else {
             response?.extraData?.forEach((err) => {
                 setError(err.path[0] as 'fullName' | 'email' | 'password' | 'confirmPassword', {

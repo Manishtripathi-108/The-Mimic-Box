@@ -1,11 +1,18 @@
 import React from 'react';
 
+import { Metadata } from 'next';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { auth } from '@/auth';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { APP_ROUTES } from '@/constants/routes.constants';
+
+export const metadata: Metadata = {
+    title: 'Profile | The Mimic Box',
+    description: 'View and manage your profile on The Mimic Box.',
+};
 
 const UserProfile = async () => {
     const session = await auth();
@@ -20,8 +27,8 @@ const UserProfile = async () => {
                     <div className="rounded-xl border p-3 sm:p-6">
                         <div className="from-secondary to-tertiary shadow-pressed-xs -mt-20 size-32 rounded-full border bg-linear-150 from-15% to-85% p-2 sm:-mt-24 sm:size-44">
                             <Image
-                                className="shadow-floating-xs size-full rounded-full border object-cover p-3"
-                                src={image || 'https://picsum.photos/200'}
+                                className="shadow-floating-xs from-secondary to-tertiary size-full rounded-full border bg-linear-150 from-15% to-85% object-cover p-3"
+                                src={image!}
                                 alt="Avatar"
                                 width={200}
                                 height={200}

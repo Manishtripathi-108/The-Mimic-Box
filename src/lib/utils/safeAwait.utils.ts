@@ -12,6 +12,8 @@ export async function safeAwait<T>(promise: Promise<T>, finallyFunc?: () => void
         const data = await promise;
         return [null, data];
     } catch (error: unknown) {
+        console.log('Error in safeAwait:', error);
+
         return [error instanceof Error ? error : new Error(String(error)), null];
     } finally {
         if (finallyFunc && typeof finallyFunc === 'function') {

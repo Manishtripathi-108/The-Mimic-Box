@@ -41,7 +41,7 @@ const ProfileDropdown = () => {
     if (status === 'loading') return null;
 
     // If user is NOT logged in, show only the login button
-    if (!session) {
+    if (!session?.user) {
         return (
             <Link href={DEFAULT_AUTH_ROUTE} className="button rounded-full">
                 <Icon icon={ICON_SET.LOGIN} className="size-5" />
@@ -50,19 +50,15 @@ const ProfileDropdown = () => {
         );
     }
 
+    const { name, email, image } = session.user;
+
     return (
         <div className="relative" ref={dropdownRef}>
             {/* Profile Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="shadow-floating-xs relative flex w-fit cursor-pointer items-center justify-center rounded-full border p-0.5">
-                <Image
-                    src={session.user?.image || 'https://picsum.photos/200'}
-                    alt="Profile"
-                    width={36}
-                    height={36}
-                    className="text-text-secondary size-9 rounded-full object-cover"
-                />
+                <Image src={image!} alt="Profile" width={36} height={36} className="text-text-secondary size-9 rounded-full object-cover" />
             </button>
 
             {/* Dropdown Menu */}
@@ -76,15 +72,15 @@ const ProfileDropdown = () => {
                         <div className="shadow-pressed-xs mb-2 flex aspect-[4/3] w-full flex-col items-center justify-center rounded-2xl border">
                             <div className="shadow-floating-xs mb-2 flex items-center justify-center rounded-3xl border p-2">
                                 <Image
-                                    src={session.user?.image || 'https://picsum.photos/200'}
+                                    src={image!}
                                     alt="Profile"
                                     width={72}
                                     height={72}
                                     className="text-text-secondary size-18 rounded-2xl object-cover"
                                 />
                             </div>
-                            <h3 className="text-text-primary text-lg font-semibold">{session.user?.name}</h3>
-                            <p className="text-text-secondary text-sm">{session.user?.email}</p>
+                            <h3 className="text-text-primary text-lg font-semibold">{name}</h3>
+                            <p className="text-text-secondary text-sm">{email}</p>
                         </div>
 
                         <div className="text-text-secondary">

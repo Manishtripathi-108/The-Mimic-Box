@@ -32,14 +32,14 @@ export const editProfileAction = async (
         return createErrorReturn('No changes detected');
     }
 
-    let imageUrl = currentImage;
+    let imageUrl = currentImage as string;
 
     if (image) {
         const imageBuffer = await image.arrayBuffer();
 
         const uploadResponse = await uploadToCloud({
             file: Buffer.from(imageBuffer),
-            destinationFolder: 'profile-images',
+            destinationFolder: 'mimic/profile-images',
             type: 'image',
         });
 
@@ -47,7 +47,7 @@ export const editProfileAction = async (
             return createErrorReturn('Failed to upload image', uploadResponse.error);
         }
 
-        imageUrl = uploadResponse.payload?.url || currentImage;
+        imageUrl = uploadResponse.payload?.url || (currentImage as string);
     }
 
     let emailResponse;

@@ -20,7 +20,6 @@ export default {
 
                     // Check if user exists
                     const user = await db.user.findUnique({ where: { email } });
-                    console.log('🔐 User:', user);
 
                     if (!user || !user.password) return null;
 

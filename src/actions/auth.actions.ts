@@ -31,7 +31,7 @@ export const loginAction = async (data: z.infer<typeof loginSchema>): ActionResp
             const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
             return response.success
-                ? createSuccessReturn('Account created! To verify your email, check your inbox.')
+                ? createErrorReturn('Email not verified. Verify your email first.')
                 : createErrorReturn('Failed to send verification email.');
         }
 
@@ -72,7 +72,7 @@ export const registerAction = async (data: z.infer<typeof registerSchema>): Acti
         const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
         return response.success
-            ? createSuccessReturn('Account created! To verify your email, check your inbox.')
+            ? createSuccessReturn('Account created! Check your inbox for verification link.')
             : createErrorReturn('Failed to send verification email.');
     } catch {
         return createErrorReturn('Registration failed. Try again later.');

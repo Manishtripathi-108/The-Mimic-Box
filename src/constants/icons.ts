@@ -1,5 +1,5 @@
 enum ICON_SET {
-    AppLogo = 'custom:AppLogo',
+    APP_LOGO = 'custom:APP_LOGO',
     ANIME = 'custom:anime',
     MANGA = 'custom:manga',
     MUSIC_CONVERT = 'custom:musicConvert',

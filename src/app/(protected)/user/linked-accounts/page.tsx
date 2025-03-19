@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Metadata } from 'next';
+
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { LinkedAccountProvider } from '@prisma/client';
 
@@ -7,6 +9,11 @@ import { auth } from '@/auth';
 import { ConnectAccount, DisconnectAccount } from '@/components/ui/LinkedAccountButtons';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
+
+export const metadata: Metadata = {
+    title: 'Linked Accounts | The Mimic Box',
+    description: 'Manage your linked accounts on The Mimic Box.',
+};
 
 const UserLinkedAccounts = async () => {
     const session = await auth();

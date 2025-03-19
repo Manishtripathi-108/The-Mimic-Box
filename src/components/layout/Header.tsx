@@ -65,7 +65,7 @@ const Header = () => {
 
                 <Link href="/" className="text-text-primary ml-5 flex items-center gap-2">
                     <p className="sr-only">Go to Home</p>
-                    <Icon icon={ICON_SET.AppLogo} className="size-8" />
+                    <Icon icon={ICON_SET.APP_LOGO} className="size-8" />
                 </Link>
 
                 <ProfileDropdown />
