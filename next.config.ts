@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
                 protocol: 'https',
                 hostname: 'i.scdn.co',
             },
+            // anilist Image API
+            {
+                protocol: 'https',
+                hostname: 's4.anilist.co',
+            },
             // cloudinary Image API
             {
                 protocol: 'https',

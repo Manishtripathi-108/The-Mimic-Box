@@ -8,7 +8,7 @@ import { generateEmailChangeEmail } from '@/components/emails/AuthEmailTemplate'
 import { TOKEN_EXPIRY_MS } from '@/constants/server.constants';
 import { db } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
-import { profileSchema } from '@/lib/schema/user.validation';
+import { profileSchema } from '@/lib/schema/user.validations';
 import { uploadToCloud } from '@/lib/services/cloud-storage.service';
 import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';

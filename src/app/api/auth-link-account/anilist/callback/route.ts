@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 import { auth } from '@/auth';
+import { PROFILE_IMAGE_URL } from '@/constants/client.constants';
 import { API_ROUTES, APP_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getAnilistUserProfile } from '@/lib/services/anilist/user.service';
@@ -49,7 +50,7 @@ export async function GET(req: NextRequest) {
     const userId = session.user.id;
     const anilistData = {
         providerAccountId: userProfile?.Viewer.id?.toString(),
-        imageUrl: userProfile?.Viewer.avatar.large,
+        imageUrl: userProfile?.Viewer.avatar.large || PROFILE_IMAGE_URL,
         bannerUrl: userProfile?.Viewer.bannerImage,
         displayName: userProfile?.Viewer.name,
         scope: tokens.scope,

@@ -1,6 +1,7 @@
 import { $Enums } from '@prisma/client';
 import { v4 as uuidV4 } from 'uuid';
 
+import { PROFILE_IMAGE_URL } from '@/constants/client.constants';
 import { TOKEN_EXPIRY_MS } from '@/constants/server.constants';
 import { db } from '@/lib/db';
 import { LinkedAccount } from '@/lib/types/next-auth';
@@ -51,7 +52,7 @@ export const getLinkedAccounts = async (userId: string | undefined) => {
     const transformedAccounts = linkedAccounts.reduce<Partial<Record<$Enums.LinkedAccountProvider, LinkedAccount>>>((map, account) => {
         map[account.provider] = {
             id: account.providerAccountId,
-            imageUrl: account.imageUrl ?? undefined,
+            imageUrl: account.imageUrl || PROFILE_IMAGE_URL,
             bannerUrl: account.bannerUrl ?? undefined,
             displayName: account.displayName ?? undefined,
             username: account.username ?? undefined,

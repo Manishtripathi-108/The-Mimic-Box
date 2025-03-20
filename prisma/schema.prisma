@@ -63,7 +63,7 @@ model LinkedAccount {
   scope             String?
   displayName       String?
   username          String?
-  imageUrl          String?
+  imageUrl          String                @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
   bannerUrl         String?
 
   createdAt DateTime @default(now())
