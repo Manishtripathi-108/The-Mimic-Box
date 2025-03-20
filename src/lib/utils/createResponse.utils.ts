@@ -38,22 +38,47 @@ export const createErrorReturn = <T>(message: string, error?: Record<string, unk
 };
 
 /**
+ * Extracts relevant rate limit headers from an Axios error response.
+ */
+const extractRateLimitHeaders = (error: unknown) => {
+    if (isAxiosError(error) && error.response?.headers) {
+        return {
+            retryAfterSeconds: parseInt(error.response.headers['retry-after'], 10) || 60,
+            remainingRateLimit: parseInt(error.response.headers['x-ratelimit-remaining'], 10) || 90,
+        };
+    }
+    return undefined;
+};
+
+/**
  * Handles API errors from AniList, extracting rate limit headers if available.
  */
 export const createAniListError = (message: string, error?: unknown): NextResponse => {
-    if (isAxiosError(error)) {
-        return error.response
-            ? createErrorResponse({
-                  message: error.response?.data?.hint || message,
-                  status: error.response?.status,
-                  error: error.response?.data || message,
-                  extraData: {
-                      retryAfterSeconds: error.response?.headers?.['retry-after'],
-                      remainingRateLimit: error.response?.headers?.['x-ratelimit-remaining'],
-                  },
-              })
-            : createErrorResponse({ message, error, status: error.status });
+    if (isAxiosError(error) && error.response) {
+        return createErrorResponse({
+            message: error.response.data?.hint || message,
+            status: error.response.status,
+            error: error.response.data || message,
+            extraData: extractRateLimitHeaders(error),
+        });
     }
 
-    return createErrorResponse({ message: error instanceof Error ? error.message : message });
+    return createErrorResponse({
+        message,
+        error: error instanceof Error ? error : new Error(String(error)),
+    });
+};
+
+/**
+ * Returns a structured error response for AniList API errors, with optional rate limit headers.
+ */
+export const createAniListErrorReturn = (
+    message: string,
+    error?: unknown
+): ErrorResponseOutput<{ retryAfterSeconds: number; remainingRateLimit: number } | undefined> => {
+    if (isAxiosError(error) && error.response) {
+        return createErrorReturn(error.response.data?.hint || message, error.response.data || message, extractRateLimitHeaders(error));
+    }
+
+    return createErrorReturn(message, error instanceof Error ? error : new Error(message));
 };

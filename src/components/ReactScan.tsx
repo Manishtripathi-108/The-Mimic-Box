@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 export function ReactScan() {
     useEffect(() => {
         scan({
-            enabled: process.env.NODE_ENV === 'development',
+            enabled: false,
         });
     }, []);
 

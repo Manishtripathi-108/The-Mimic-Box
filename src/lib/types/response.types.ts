@@ -14,7 +14,7 @@ export interface SuccessResponseInput<T = undefined> extends BaseResponse {
 /** Output type for success responses */
 export interface SuccessResponseOutput<T = undefined> {
     success: true;
-    message?: string;
+    message: string;
     payload?: T;
 }
 

@@ -64,33 +64,27 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = session.user.id;
+    const spotifyData = {
+        providerAccountId: userProfile.id,
+        imageUrl: userProfile.images.find((image) => image.width && image.width < 300)?.url || null,
+        bannerUrl: userProfile.images.find((image) => image.width && image.width >= 300)?.url || null,
+        displayName: userProfile.display_name,
+        scope: tokens.scope,
+        token_type: tokens.token_type,
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        expires_at: Date.now() + tokens.expires_in * 1000,
+    };
+
     const [dbError] = await safeAwait(
         db.linkedAccount.upsert({
             where: { userId_provider: { userId, provider: 'spotify' } },
-            update: {
-                providerAccountId: userProfile.id,
-                imageUrl: userProfile.images.find((image) => image.width && image.width < 300)?.url || null,
-                bannerUrl: userProfile.images.find((image) => image.width && image.width >= 300)?.url || null,
-                displayName: userProfile.display_name,
-                scope: tokens.scope,
-                token_type: tokens.token_type,
-                access_token: tokens.access_token,
-                refresh_token: tokens.refresh_token,
-                expires_at: Math.floor(Date.now() / 1000) + tokens.expires_in,
-            },
+            update: spotifyData,
             create: {
                 userId,
                 provider: 'spotify',
                 type: 'oauth',
-                providerAccountId: userProfile.id,
-                imageUrl: userProfile.images.find((image) => image.width && image.width < 300)?.url || null,
-                bannerUrl: userProfile.images.find((image) => image.width && image.width >= 300)?.url || null,
-                displayName: userProfile.display_name,
-                scope: tokens.scope,
-                token_type: tokens.token_type,
-                access_token: tokens.access_token,
-                refresh_token: tokens.refresh_token,
-                expires_at: Math.floor(Date.now() / 1000) + tokens.expires_in,
+                ...spotifyData,
             },
         })
     );

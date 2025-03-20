@@ -47,33 +47,27 @@ export async function GET(req: NextRequest) {
 
     // Store tokens in the database
     const userId = session.user.id;
+    const anilistData = {
+        providerAccountId: userProfile?.Viewer.id?.toString(),
+        imageUrl: userProfile?.Viewer.avatar.large,
+        bannerUrl: userProfile?.Viewer.bannerImage,
+        displayName: userProfile?.Viewer.name,
+        scope: tokens.scope,
+        token_type: tokens.token_type,
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        expires_at: Date.now() + tokens.expires_in,
+    };
+
     const [dbError] = await safeAwait(
         db.linkedAccount.upsert({
             where: { userId_provider: { userId, provider: 'anilist' } },
-            update: {
-                providerAccountId: userProfile?.Viewer.id?.toString(),
-                imageUrl: userProfile?.Viewer.avatar.large,
-                bannerUrl: userProfile?.Viewer.bannerImage,
-                displayName: userProfile?.Viewer.name,
-                scope: tokens.scope,
-                token_type: tokens.token_type,
-                access_token: tokens.access_token,
-                refresh_token: tokens.refresh_token,
-                expires_at: Math.floor(Date.now() / 1000) + tokens.expires_in,
-            },
+            update: anilistData,
             create: {
                 userId,
                 provider: 'anilist',
                 type: 'oauth',
-                providerAccountId: userProfile?.Viewer.id?.toString(),
-                imageUrl: userProfile?.Viewer.avatar.large,
-                bannerUrl: userProfile?.Viewer.bannerImage,
-                displayName: userProfile?.Viewer.name,
-                scope: tokens.scope,
-                token_type: tokens.token_type,
-                access_token: tokens.access_token,
-                refresh_token: tokens.refresh_token,
-                expires_at: Math.floor(Date.now() / 1000) + tokens.expires_in,
+                ...anilistData,
             },
         })
     );

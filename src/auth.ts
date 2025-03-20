@@ -1,6 +1,8 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { LinkedAccountProvider } from '@prisma/client';
 import NextAuth from 'next-auth';
 
+import { refreshToken } from '@/actions/linkedAccount.actions';
 import { getLinkedAccounts } from '@/lib/services/auth.service';
 
 import authConfig from './auth.config';
@@ -21,33 +23,53 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     callbacks: {
         async signIn({ user, account }) {
-            if (account?.provider === 'credentials' && !user?.emailVerified) return false;
-            return true;
+            return !(account?.provider === 'credentials' && !user?.emailVerified);
         },
+
         async jwt({ token, trigger, session, account }) {
-            if (account) {
-                token.provider = account.provider;
-            }
+            if (account) token.provider = account.provider;
 
             if (trigger === 'signIn' || trigger === 'update') {
-                const linkedAccounts = await getLinkedAccounts(token.sub);
-                token.linkedAccounts = linkedAccounts;
+                token.linkedAccounts = await getLinkedAccounts(token.sub);
             }
 
             if (trigger === 'update' && session) {
-                token.name = session.user.name;
-                token.email = session.user.email;
-                token.picture = session.user.image;
+                Object.assign(token, {
+                    name: session.user.name,
+                    email: session.user.email,
+                    picture: session.user.image,
+                });
             }
+
+            if (token.linkedAccounts && token.sub) {
+                for (const [provider, account] of Object.entries(token.linkedAccounts)) {
+                    if (!account) continue;
+
+                    if (account.expiresAt < Date.now()) {
+                        const tokens = await refreshToken(token.sub!, account.refreshToken, provider as LinkedAccountProvider);
+
+                        if (tokens.success) {
+                            token.linkedAccounts[provider as LinkedAccountProvider] = {
+                                ...account,
+                                ...tokens.payload,
+                            };
+                        } else {
+                            delete token.linkedAccounts[provider as LinkedAccountProvider];
+                        }
+                    }
+                }
+            }
+
             return token;
         },
+
         async session({ token, session }) {
             if (session.user) {
-                session.user.id = token.sub as string;
-                session.user.provider = token.provider;
-                if (token.linkedAccounts) {
-                    session.user.linkedAccounts = token.linkedAccounts;
-                }
+                Object.assign(session.user, {
+                    id: token.sub as string,
+                    provider: token.provider,
+                    linkedAccounts: token.linkedAccounts,
+                });
             }
             return session;
         },
