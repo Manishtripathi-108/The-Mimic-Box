@@ -39,18 +39,4 @@ export const FILTER_OPTIONS = {
 
 export const SORT_OPTIONS = ['Average Score', 'Last Added', 'Last Updated', 'Popularity', 'Progress', 'Score', 'Title'];
 export const VALID_STATUSES = ['COMPLETED', 'CURRENT', 'DROPPED', 'PAUSED', 'PLANNING', 'REPEATING'];
-export const ANILIST_ANIME_TABS = ['All', 'Watching', 'Paused', 'Planning', 'Dropped', 'Repeating', 'Completed'];
-export const ANILIST_MANGA_TABS = ['All', 'Reading', 'Paused', 'Planning', 'Dropped', 'Repeating', 'Completed'];
-
-export const getTabOptions = (mediaType: 'anime' | 'manga' | 'favourites') => {
-    switch (mediaType) {
-        case 'anime':
-            return ANILIST_ANIME_TABS;
-        case 'manga':
-            return ANILIST_MANGA_TABS;
-        case 'favourites':
-            return ['All', 'Anime', 'Manga'];
-        default:
-            return ANILIST_ANIME_TABS;
-    }
-};
+export const ANILIST_MEDIA_TAB = ['All', ...VALID_STATUSES];

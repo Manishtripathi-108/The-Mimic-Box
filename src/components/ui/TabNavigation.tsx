@@ -12,7 +12,7 @@ const TabNavigation = ({
     className = '',
 }: {
     tabs: string[];
-    currentTab: string;
+    currentTab?: string | null;
     onTabChange: (tab: string) => void;
     className?: string;
 }): React.JSX.Element => {
@@ -20,7 +20,7 @@ const TabNavigation = ({
     const buttonRefs = useRef<HTMLButtonElement[]>([]);
 
     useEffect(() => {
-        if (buttonRefs.current && buttonRefs.current.length > 0) {
+        if (currentTab && buttonRefs.current && buttonRefs.current.length > 0) {
             const currentButton = buttonRefs.current[tabs.indexOf(currentTab)];
             if (currentButton) {
                 setIndicatorStyle({
@@ -40,7 +40,11 @@ const TabNavigation = ({
     }, [currentTab, tabs]);
 
     return (
-        <nav className={cn('bg-primary shadow-neumorphic-xs relative flex w-fit flex-wrap gap-1 rounded-xl border p-1', className)}>
+        <nav
+            className={cn(
+                'from-secondary to-tertiary shadow-floating-xs relative flex w-fit flex-wrap gap-1 rounded-xl bg-linear-150 from-15% to-85% p-1',
+                className
+            )}>
             {tabs?.map((tab, index) => (
                 <button
                     key={index}
@@ -52,12 +56,12 @@ const TabNavigation = ({
                     data-selected={currentTab === tab}
                     aria-selected={currentTab === tab}
                     onClick={() => onTabChange(tab)}
-                    className="hover:text-text-primary text-text-secondary data-[selected=true]:text-text-primary z-30 flex-1 cursor-pointer rounded-lg px-4 py-2 font-medium transition-colors">
+                    className="hover:text-text-primary text-text-secondary data-[selected=true]:text-text-primary z-30 flex-1 cursor-pointer rounded-lg px-4 py-2 transition-colors">
                     {tab}
                 </button>
             ))}
             <div
-                className="bg-primary shadow-neumorphic-inset-xs absolute top-1 max-h-[calc(100%-0.5rem)] rounded-lg border transition-all duration-500 ease-out"
+                className="bg-primary shadow-pressed-xs absolute top-1 max-h-[calc(100%-0.5rem)] rounded-lg border transition-all duration-500 ease-out"
                 style={indicatorStyle}></div>
         </nav>
     );
