@@ -1,27 +1,30 @@
+'use client';
+
 import React, { memo, useEffect, useRef, useState } from 'react';
 
 import cn from '@/lib/utils/cn';
 
-/**
- * Tab navigation component with animated indicator
- */
-const TabNavigation = ({
+const TabNavigation = <T extends string>({
     tabs,
     currentTab,
     onTabChange,
     className = '',
+    buttonClassName = '',
 }: {
-    tabs: string[];
-    currentTab?: string | null;
-    onTabChange: (tab: string) => void;
+    tabs: T[];
+    currentTab?: T | null;
+    onTabChange: (tab: T) => void;
     className?: string;
+    buttonClassName?: string;
 }): React.JSX.Element => {
     const [indicatorStyle, setIndicatorStyle] = useState({});
     const buttonRefs = useRef<HTMLButtonElement[]>([]);
 
     useEffect(() => {
-        if (currentTab && buttonRefs.current && buttonRefs.current.length > 0) {
-            const currentButton = buttonRefs.current[tabs.indexOf(currentTab)];
+        if (currentTab && buttonRefs.current.length > 0) {
+            const currentIndex = tabs.indexOf(currentTab);
+            const currentButton = buttonRefs.current[currentIndex];
+
             if (currentButton) {
                 setIndicatorStyle({
                     height: `${currentButton.offsetHeight}px`,
@@ -30,13 +33,9 @@ const TabNavigation = ({
                     left: `${currentButton.offsetLeft}px`,
                 });
             }
+        } else {
+            setIndicatorStyle({ width: 0, height: 0 });
         }
-
-        if (!currentTab)
-            setIndicatorStyle({
-                width: 0,
-                height: 0,
-            });
     }, [currentTab, tabs]);
 
     return (
@@ -45,7 +44,7 @@ const TabNavigation = ({
                 'from-secondary to-tertiary shadow-floating-xs relative flex w-fit flex-wrap gap-1 rounded-xl bg-linear-150 from-15% to-85% p-1',
                 className
             )}>
-            {tabs?.map((tab, index) => (
+            {tabs.map((tab, index) => (
                 <button
                     key={index}
                     role="tab"
@@ -56,7 +55,10 @@ const TabNavigation = ({
                     data-selected={currentTab === tab}
                     aria-selected={currentTab === tab}
                     onClick={() => onTabChange(tab)}
-                    className="hover:text-text-primary text-text-secondary data-[selected=true]:text-text-primary z-30 flex-1 cursor-pointer rounded-lg px-4 py-2 transition-colors">
+                    className={cn(
+                        'hover:text-text-primary text-text-secondary data-[selected=true]:text-text-primary z-30 flex-1 cursor-pointer rounded-lg px-4 py-2 transition-colors',
+                        buttonClassName
+                    )}>
                     {tab}
                 </button>
             ))}
@@ -67,4 +69,10 @@ const TabNavigation = ({
     );
 };
 
-export default memo(TabNavigation);
+export default memo(TabNavigation) as <T extends string>(props: {
+    tabs: T[];
+    currentTab?: T | null;
+    onTabChange: (tab: T) => void;
+    className?: string;
+    buttonClassName?: string;
+}) => React.JSX.Element;

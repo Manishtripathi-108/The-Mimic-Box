@@ -1,7 +1,5 @@
 import React, { memo } from 'react';
 
-// import Image from 'next/image';
-
 import { Icon } from '@iconify/react';
 
 import { convertMonthNumberToName } from '@/constants/client.constants';
@@ -12,28 +10,28 @@ const MediaCard = ({ media }: { media: AnilistMedia }) => {
     return (
         <section
             style={{ backgroundImage: `url(${media?.coverImage?.large})` }}
-            className="shadow-floating-sm relative aspect-[5/7] rounded-lg border bg-cover bg-center bg-no-repeat"
+            className="shadow-floating-sm relative aspect-[5/7] overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat"
             aria-labelledby={`media-title-${media?.id}`}>
             {/* Title and Info */}
-            <header className="bg-tertiary/80 absolute bottom-0 grid h-11 w-full place-items-center p-2">
+            <header className="bg-tertiary/80 absolute bottom-0 grid h-11 w-full place-items-center p-2 text-nowrap">
                 <h2
                     id={`media-title-${media?.id}`}
                     className="text-text-primary font-karla w-full truncate text-sm leading-none font-normal capitalize">
                     {media?.title?.userPreferred || media?.title?.english || media?.title?.native || media?.title?.romaji || 'Unknown Title'}
                 </h2>
                 <p className="text-text-secondary w-full shrink-0 text-xs tracking-wider capitalize">
-                    {media?.format.toLowerCase()}{' '}
+                    {media?.format.replaceAll('_', ' ').toLowerCase()}{' '}
                     {media?.type === 'ANIME'
                         ? media?.format === 'MOVIE'
-                            ? `${media?.duration ?? '??'} min`
-                            : `${media?.episodes ?? '??'}  ${media?.duration ?? '??'}min/ep`
+                            ? `${media?.duration ?? '??'}min`
+                            : `${media?.episodes ?? '??'}, ${media?.duration ?? '??'}min/ep`
                         : `${media?.chapters ?? '??'} chapters`}
                 </p>
             </header>
 
             {/* Info Button */}
             <button
-                className="text-text-secondary hover:text-text-primary absolute right-1 bottom-10 cursor-pointer rounded-full bg-inherit p-1"
+                className="text-text-secondary bg-secondary/80 hover:text-text-primary absolute right-1 bottom-8 cursor-pointer rounded-full p-1"
                 // popovertarget={`description-popover-${media?.id}`}
                 // popovertargetaction="toggle"
                 aria-label="Show Description">

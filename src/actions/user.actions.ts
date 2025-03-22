@@ -47,7 +47,7 @@ export const editProfileAction = async (
             return createErrorReturn('Failed to upload image', uploadResponse.error);
         }
 
-        imageUrl = uploadResponse.payload?.url || (currentImage as string);
+        imageUrl = uploadResponse.payload?.url || imageUrl;
     }
 
     let emailResponse;

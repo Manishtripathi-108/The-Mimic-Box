@@ -1,3 +1,5 @@
+import { AnilistFavouritesTab, AnilistMediaListStatus, AnilistMediaTab } from '@/lib/types/anilist.types';
+
 export const PROFILE_IMAGE_URL = 'https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png';
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -12,31 +14,29 @@ export const convertMonthNumberToName = (monthNumber: number) => {
 /* -------------------------------------------------------------------------- */
 /*                                   Anilist                                  */
 /* -------------------------------------------------------------------------- */
-export const FILTER_OPTIONS = {
-    format: ['TV', 'Short', 'Movie', 'Special', 'OVA', 'ONA', 'Music'],
-    genres: [
-        'Action',
-        'Adventure',
-        'Comedy',
-        'Drama',
-        'Ecchi',
-        'Fantasy',
-        'Horror',
-        'Mahou Shoujo',
-        'Mecha',
-        'Music',
-        'Mystery',
-        'Psychological',
-        'Romance',
-        'Slice of Life',
-        'Sports',
-        'Supernatural',
-        'Thriller',
-    ],
-    status: ['Finished', 'Releasing', 'Not Yet Released', 'Cancelled'],
-    sort: ['Average Score', 'Last Added', 'Last Updated', 'Popularity', 'Progress', 'Score', 'Title'],
-};
-
-export const SORT_OPTIONS = ['Average Score', 'Last Added', 'Last Updated', 'Popularity', 'Progress', 'Score', 'Title'];
-export const VALID_STATUSES = ['COMPLETED', 'CURRENT', 'DROPPED', 'PAUSED', 'PLANNING', 'REPEATING'];
-export const ANILIST_MEDIA_TAB = ['All', ...VALID_STATUSES];
+//! Do not change Any of the following constants
+export const ANILIST_SORT_OPTIONS = ['Average Score', 'Popularity', 'Score', 'Title', 'Last Updated'];
+export const ANILIST_GENRES = [
+    'Action',
+    'Adventure',
+    'Comedy',
+    'Drama',
+    'Ecchi',
+    'Fantasy',
+    'Horror',
+    'Mahou Shoujo',
+    'Mecha',
+    'Music',
+    'Mystery',
+    'Psychological',
+    'Romance',
+    'Slice of Life',
+    'Sports',
+    'Supernatural',
+    'Thriller',
+];
+export const ANILIST_MEDIA_FORMATS = ['Tv', 'Tv Short', 'Movie', 'Special', 'Ova', 'Ona', 'Music', 'Manga', 'Novel', 'One Shot'];
+export const ANILIST_MEDIA_STATUSES = ['Finished', 'Releasing', 'Not yet Released', 'Cancelled', 'Hiatus'];
+export const ANILIST_VALID_STATUSES: AnilistMediaListStatus[] = ['COMPLETED', 'CURRENT', 'DROPPED', 'PAUSED', 'PLANNING', 'REPEATING'];
+export const ANILIST_MEDIA_TAB: AnilistMediaTab[] = ['All', ...ANILIST_VALID_STATUSES];
+export const ANILIST_FAVOURITE_TAB: AnilistFavouritesTab[] = ['All', 'Anime', 'Manga'];

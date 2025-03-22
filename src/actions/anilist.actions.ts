@@ -1,13 +1,13 @@
 'use server';
 
-import { AnilistFavorites, AnilistMediaCollection, AnilistMediaType } from '@/lib/types/anilist.types';
+import { AnilistMediaCollection, AnilistMediaType, AnilistUserFavourites } from '@/lib/types/anilist.types';
 import { createAniListErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { fetchAniListData } from '@/lib/utils/server.utils';
 
 export const getAnilistUserMedia = async (token: string, userId: string, mediaType: AnilistMediaType) => {
     const query = `
-        query ($userId: Int, $type: MediaType) {
-            MediaListCollection(userId: $userId, type: $type) {
+        query ($userId: Int, $type: MediaType, $sort: [MediaListSort]) {
+            MediaListCollection(userId: $userId, type: $type, sort: $sort) {
                 lists {
                     name
                     status
@@ -68,7 +68,11 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
     //     }
     // `;
 
-    const [error, mediaListCollection] = await fetchAniListData<AnilistMediaCollection>(token, query, { userId, type: mediaType });
+    const [error, mediaListCollection] = await fetchAniListData<AnilistMediaCollection>(token, query, {
+        userId,
+        type: mediaType,
+        sort: 'UPDATED_TIME',
+    });
     if (error || !mediaListCollection) {
         console.error('Error fetching user data:', error);
         return createAniListErrorReturn('Error fetching user media', error);
@@ -149,7 +153,7 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
         }
     `;
 
-    const [error, response] = await fetchAniListData<AnilistFavorites>(token, query, { userId });
+    const [error, response] = await fetchAniListData<AnilistUserFavourites>(token, query, { userId });
 
     if (error || !response) {
         console.error('Error fetching user data:', error);

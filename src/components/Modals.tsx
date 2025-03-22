@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import { Icon } from '@iconify/react';
@@ -5,12 +7,12 @@ import { Icon } from '@iconify/react';
 import ICON_SET from '@/constants/icons';
 import cn from '@/lib/utils/cn';
 
-const closeModal = (modalId: string) => {
+export const closeModal = (modalId: string) => {
     const modalElement = document.getElementById(modalId) as HTMLDialogElement;
     if (modalElement) modalElement.close();
 };
 
-const openModal = (modalId: string) => {
+export const openModal = (modalId: string) => {
     const modalElement = document.getElementById(modalId) as HTMLDialogElement;
     if (modalElement) modalElement.showModal();
 };
@@ -75,7 +77,7 @@ const Modal = ({
     );
 };
 
-const ConfirmationModal = ({
+export const ConfirmationModal = ({
     modalId,
     icon,
     onConfirm,
@@ -147,4 +149,3 @@ const ConfirmationModal = ({
 };
 
 export default Modal;
-export { ConfirmationModal, openModal, closeModal };

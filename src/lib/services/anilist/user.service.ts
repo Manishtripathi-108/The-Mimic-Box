@@ -1,7 +1,7 @@
-import { AnilistUserType } from '@/lib/types/anilist.types';
+import { AnilistUser } from '@/lib/types/anilist.types';
 import { fetchAniListData } from '@/lib/utils/server.utils';
 
-export const getAnilistUserProfile = async (token: string): Promise<AnilistUserType | null> => {
+export const getAnilistUserProfile = async (token: string): Promise<AnilistUser | null> => {
     const query = `
         query {
             Viewer {
@@ -13,7 +13,7 @@ export const getAnilistUserProfile = async (token: string): Promise<AnilistUserT
         }
     `;
 
-    const [error, response] = await fetchAniListData<AnilistUserType>(token, query);
+    const [error, response] = await fetchAniListData<AnilistUser>(token, query);
 
     if (error || !response) {
         console.error('Error fetching user data:', error);
