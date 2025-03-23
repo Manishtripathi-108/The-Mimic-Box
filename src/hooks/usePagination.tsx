@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import { Icon } from '@iconify/react';
 
@@ -37,7 +37,6 @@ const usePagination = <T,>(
 ) => {
     const [internalCurrent, setInternalCurrent] = useState(current || 1);
     const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
-    console.log('usePagination called');
 
     // Determine if we are using an external state handler
     const isExternalControl = typeof externalSetCurrent === 'function';
@@ -80,7 +79,10 @@ const usePagination = <T,>(
         return pages;
     };
 
-    const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const currentData = useMemo(() => {
+        console.log('currentData called');
+        return data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    }, [data, currentPage, itemsPerPage]);
 
     const Pagination = memo(({ className }: { className?: string }) => {
         if (totalPages <= 1) return null;

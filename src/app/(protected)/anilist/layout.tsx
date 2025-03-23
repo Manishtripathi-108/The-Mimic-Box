@@ -21,6 +21,7 @@ const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
         <main className="bg-primary">
             <AnilistHeader />
+
             <div className="container mx-auto p-6">
                 <Suspense fallback={<AnilistSkeleton />}>{children}</Suspense>
             </div>

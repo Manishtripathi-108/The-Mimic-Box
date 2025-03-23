@@ -1,3 +1,5 @@
+'use client';
+
 import React, { memo } from 'react';
 
 import { Icon } from '@iconify/react';
@@ -6,7 +8,7 @@ import { convertMonthNumberToName } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
 import { AnilistMedia } from '@/lib/types/anilist.types';
 
-const MediaCard = ({ media }: { media: AnilistMedia }) => {
+const AnilistMediaCard = ({ media, onEdit }: { media: AnilistMedia; onEdit: null | ((entry: AnilistMedia) => void) }) => {
     return (
         <section
             style={{ backgroundImage: `url(${media?.coverImage?.large})` }}
@@ -29,6 +31,18 @@ const MediaCard = ({ media }: { media: AnilistMedia }) => {
                 </p>
             </header>
 
+            {/* Edit Button */}
+            {onEdit && (
+                <button
+                    type="button"
+                    title="Edit"
+                    onClick={() => onEdit(media)}
+                    className="bg-secondary text-text-secondary hover:text-text-primary absolute top-1 right-1 flex cursor-pointer items-center justify-center rounded-lg p-0.5"
+                    aria-label="Edit">
+                    <Icon icon={ICON_SET.EDIT} className="size-4" />
+                </button>
+            )}
+
             {/* Info Button */}
             <button
                 className="text-text-secondary bg-secondary/80 hover:text-text-primary absolute right-1 bottom-8 cursor-pointer rounded-full p-1"
@@ -36,15 +50,6 @@ const MediaCard = ({ media }: { media: AnilistMedia }) => {
                 // popovertargetaction="toggle"
                 aria-label="Show Description">
                 <Icon icon={ICON_SET.INFO_OUTLINED} className="size-4" />
-            </button>
-            {/* Edit Button */}
-            <button
-                type="button"
-                title="Edit"
-                // onClick={() => setEditEntry(mediaItem)}
-                className="bg-secondary text-text-secondary hover:text-text-primary absolute top-1 right-1 flex cursor-pointer items-center justify-center rounded-lg p-0.5"
-                aria-label="Edit">
-                <Icon icon={ICON_SET.EDIT} className="size-4" />
             </button>
 
             {/* Description Popover */}
@@ -89,4 +94,4 @@ const MediaCard = ({ media }: { media: AnilistMedia }) => {
     );
 };
 
-export default memo(MediaCard);
+export default memo(AnilistMediaCard);

@@ -83,6 +83,23 @@ export type AnilistUserFavourites = {
     };
 };
 
+/** 📌 Represents the response from saving a media list entry */
+export type AnilistSaveMediaListEntry = {
+    id: number;
+    status: AnilistMediaListStatus;
+    progress: number;
+};
+
+/** 📌 Represents the response of Anilist Ids of MalIds */
+export type AnilistMediaIds = {
+    Page: {
+        media: {
+            id: number;
+            idMal: number;
+        }[];
+    };
+};
+
 /* ------------------------------- Client Side ------------------------------ */
 
 /** 📌 Represents the tabs for media lists */

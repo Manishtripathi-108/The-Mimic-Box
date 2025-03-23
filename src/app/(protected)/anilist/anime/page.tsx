@@ -17,7 +17,7 @@ const AnilistAnime = async () => {
 
     const response = await getAnilistUserMedia(anilist.accessToken, anilist.id, 'ANIME');
     if (response.success) {
-        return response.payload ? <AnilistMain mediaLists={response.payload} type="anime" /> : null;
+        return response.payload ? <AnilistMain token={anilist.accessToken} mediaLists={response.payload} type="anime" /> : null;
     } else {
         return <div>{JSON.stringify(response.error)}</div>;
     }

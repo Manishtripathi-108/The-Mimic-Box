@@ -1,9 +1,18 @@
 'use server';
 
-import { AnilistMediaCollection, AnilistMediaType, AnilistUserFavourites } from '@/lib/types/anilist.types';
+import {
+    AnilistMediaCollection,
+    AnilistMediaIds,
+    AnilistMediaType,
+    AnilistSaveMediaListEntry,
+    AnilistUserFavourites,
+} from '@/lib/types/anilist.types';
 import { createAniListErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { fetchAniListData } from '@/lib/utils/server.utils';
 
+/**
+ * Fetches a user's media list from Anilist.
+ */
 export const getAnilistUserMedia = async (token: string, userId: string, mediaType: AnilistMediaType) => {
     const query = `
         query ($userId: Int, $type: MediaType, $sort: [MediaListSort]) {
@@ -12,7 +21,7 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
                     name
                     status
                     entries {
-						id
+                        id
                         progress
                         status
                         updatedAt
@@ -21,10 +30,10 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
                             id
                             type
                             format
-                            chapters
                             status
                             description
                             duration
+                            chapters
                             episodes
                             genres
                             averageScore
@@ -73,14 +82,17 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
         type: mediaType,
         sort: 'UPDATED_TIME',
     });
+
     if (error || !mediaListCollection) {
-        console.error('Error fetching user data:', error);
         return createAniListErrorReturn('Error fetching user media', error);
     }
 
-    return createSuccessReturn('User media fetched successfully', mediaListCollection?.MediaListCollection.lists);
+    return createSuccessReturn('User media fetched successfully', mediaListCollection.MediaListCollection.lists);
 };
 
+/**
+ * Fetches a user's favourite anime & manga from Anilist.
+ */
 export const fetchUserFavourites = async (token: string, userId: string) => {
     const query = `
         query ($userId: Int) {
@@ -91,10 +103,10 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                             id
                             type
                             format
-                            chapters
                             status
                             description
                             duration
+                            chapters
                             episodes
                             genres
                             averageScore
@@ -122,10 +134,10 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                             id
                             type
                             format
-                            chapters
                             status
                             description
                             duration
+                            chapters
                             episodes
                             genres
                             averageScore
@@ -156,134 +168,110 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
     const [error, response] = await fetchAniListData<AnilistUserFavourites>(token, query, { userId });
 
     if (error || !response) {
-        console.error('Error fetching user data:', error);
         return createAniListErrorReturn('Error fetching user favourites', error);
     }
 
-    return createSuccessReturn('User favourites fetched successfully', response?.User.favourites);
+    return createSuccessReturn('User favourites fetched successfully', response.User.favourites);
 };
 
-// const fetchAniListIds = async (malIds, mediaType) => {
-//     const query = `
-//         query ($idMals: [Int], $type: MediaType) {
-//             Page {
-//                 media(idMal_in: $idMals, type: $type) {
-//                     id
-//                     idMal
-//                 }
-//             }
-//         }
-//     `;
+/**
+ * Fetches Anilist IDs for a list of MyAnimeList (MAL) IDs.
+ */
+export const fetchAniListIdsOfMAL = async (token: string, malIds: number[], mediaType: AnilistMediaType) => {
+    const query = `
+        query ($idMals: [Int], $type: MediaType) {
+            Page {
+                media(idMal_in: $idMals, type: $type) {
+                    id
+                    idMal
+                }
+            }
+        }
+    `;
 
-//     const response = await anilistConfig.post('/', {
-//         query,
-//         variables: {
-//             idMals: malIds,
-//             type: mediaType,
-//         },
-//     });
+    const [error, response] = await fetchAniListData<AnilistMediaIds>(token, query, { idMals: malIds, type: mediaType });
 
-//     return response;
-// };
+    if (error || !response) {
+        return createAniListErrorReturn('Error fetching Anilist IDs', error);
+    }
 
-// const saveMediaEntry = async (token, mediaId, status, progress) => {
-//     const mutation = `
-//         mutation($mediaId: Int, $status: MediaListStatus, $progress: Int) {
-//             SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress) {
-//                 id
-// 				status
-// 				progress
-//             }
-//         }
-//     `;
+    return createSuccessReturn('Anilist IDs fetched successfully', response.Page.media);
+};
 
-//     const response = await anilistConfig.post(
-//         '/',
-//         {
-//             query: mutation,
-//             variables: { mediaId, status, progress },
-//         },
-//         {
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//             },
-//         }
-//     );
+/**
+ * Saves or updates a media entry on Anilist.
+ */
+export const saveMediaEntry = async (token: string, mediaId: number, status: string, progress: number) => {
+    const mutation = `
+        mutation ($mediaId: Int, $status: MediaListStatus, $progress: Int) {
+            SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress) {
+                id
+                status
+                progress
+            }
+        }
+    `;
 
-//     return response;
-// };
+    const [error, response] = await fetchAniListData<{ SaveMediaListEntry: AnilistSaveMediaListEntry }>(token, mutation, {
+        mediaId,
+        status,
+        progress,
+    });
 
-// const toggleFavourite = async (token, mediaId, mediaType) => {
-//     // Mutation strings for Anime and Manga
-//     const mutationAnime = `
-// 		mutation ToggleFavourite($mediaId: Int) {
-// 			ToggleFavourite(animeId: $mediaId) {
-// 				anime {
-// 					nodes {
-// 						id
-// 					}
-// 				}
-// 			}
-// 		}
-// 	`;
+    if (error || !response) {
+        return createAniListErrorReturn('Error saving media entry', error);
+    }
 
-//     const mutationManga = `
-// 		mutation ToggleFavourite($mediaId: Int) {
-// 			ToggleFavourite(mangaId: $mediaId) {
-// 				manga {
-// 					nodes {
-// 						id
-// 					}
-// 				}
-// 			}
-// 		}
-// 	`;
+    return createSuccessReturn('Media entry saved successfully', response.SaveMediaListEntry);
+};
 
-//     // Choose the correct mutation based on mediaType
-//     const mutation = mediaType === 'anime' ? mutationAnime : mutationManga;
+/**
+ * Toggles the favourite status of a media item (anime or manga).
+ */
+export const toggleFavourite = async (token: string, mediaId: number, mediaType: AnilistMediaType) => {
+    const mutation = `
+        mutation ToggleFavourite($mediaId: Int) {
+            ToggleFavourite(${mediaType.toLowerCase()}Id: $mediaId) {
+                ${mediaType.toLowerCase()} {
+                    nodes {
+                        id
+                    }
+                }
+            }
+        }
+    `;
 
-//     const response = await anilistConfig.post(
-//         '/',
-//         {
-//             query: mutation,
-//             variables: { mediaId },
-//         },
-//         {
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//             },
-//         }
-//     );
+    const [error, response] = await fetchAniListData<{ ToggleFavourite: { [key: string]: { nodes: { id: number }[] } } }>(token, mutation, {
+        mediaId,
+    });
 
-//     // Extract favourite status from response
-//     const favouriteNodes = response.data.data.ToggleFavourite[mediaType].nodes;
-//     const isFavouriteNow = favouriteNodes.some((node) => node.id === mediaId);
+    if (error || !response) {
+        return createAniListErrorReturn('Error toggling favourite status', error);
+    }
 
-//     // Return the updated favourite status
-//     return isFavouriteNow;
-// };
+    const favouriteNodes = response.ToggleFavourite[mediaType.toLowerCase()]?.nodes || [];
+    const isFavouriteNow = favouriteNodes.some((node) => node.id === mediaId);
 
-// const deleteMediaEntry = async (token, entryId) => {
-//     const mutation = `
-// 		mutation DeleteMediaListEntry($entryId: Int) {
-// 			DeleteMediaListEntry(id: $entryId) {
-// 				deleted
-// 			}
-// 		}
-// 	`;
+    return createSuccessReturn(isFavouriteNow ? 'Favourite added successfully' : 'Favourite remove successfully', { isFavourite: isFavouriteNow });
+};
 
-//     const response = await anilistConfig.post(
-//         '/',
-//         {
-//             query: mutation,
-//             variables: { entryId },
-//         },
-//         {
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//             },
-//         }
-//     );
+/**
+ * Deletes a media entry from the user's list.
+ */
+export const deleteMediaEntry = async (token: string, entryId: number) => {
+    const mutation = `
+        mutation DeleteMediaListEntry($entryId: Int) {
+            DeleteMediaListEntry(id: $entryId) {
+                deleted
+            }
+        }
+    `;
 
-//     return response.data.data.DeleteMediaListEntry.deleted;
-// };
+    const [error, response] = await fetchAniListData<{ DeleteMediaListEntry: { deleted: boolean } }>(token, mutation, { entryId });
+
+    if (error || !response) {
+        return createAniListErrorReturn('Error deleting media entry', error);
+    }
+
+    return createSuccessReturn('Media entry deleted successfully', { deleted: response.DeleteMediaListEntry.deleted });
+};

@@ -16,7 +16,7 @@ const AnilistFavourites = async () => {
 
     const response = await fetchUserFavourites(anilist.accessToken, anilist.id);
     if (response.success) {
-        return response.payload ? <AnilistMain mediaLists={response.payload} type="favourites" /> : null;
+        return response.payload ? <AnilistMain token={anilist.accessToken} mediaLists={response.payload} type="favourites" /> : null;
     } else {
         return <div>{JSON.stringify(response.error)}</div>;
     }

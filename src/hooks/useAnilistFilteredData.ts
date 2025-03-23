@@ -11,7 +11,7 @@ import {
     AnilistMediaTab,
 } from '@/lib/types/anilist.types';
 
-const useFilteredData = (
+const useAnilistFilteredData = (
     lists: AnilistMediaList[] | AnilistFavourites,
     filters: AnilistMediaFilters,
     selectedList: AnilistFavouritesTab | AnilistMediaTab
@@ -20,9 +20,9 @@ const useFilteredData = (
     const isFavourite = !Array.isArray(lists);
 
     const filteredData = useMemo(() => {
+        console.log('filter called');
         if (!lists || (Array.isArray(lists) && lists.length === 0)) return [];
         let result: AnilistMedia[];
-        console.log('called');
 
         // Step 1: Filter by selected list
         if (selectedList !== 'All') {
@@ -102,9 +102,7 @@ const useFilteredData = (
         return result;
     }, [lists, filters, selectedList, deferredSearchTerm, isFavourite]);
 
-    console.log('Filtered data:', filteredData);
-
     return filteredData;
 };
 
-export default useFilteredData;
+export default useAnilistFilteredData;

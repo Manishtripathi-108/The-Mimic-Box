@@ -20,6 +20,7 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
         register,
         handleSubmit,
         setValue,
+        reset,
         watch,
         formState: { errors },
     } = useForm<FilterValues>({
@@ -138,16 +139,25 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 <button
                     type="button"
                     className="button button-danger"
-                    onClick={() =>
-                        setFilters({
+                    onClick={() => {
+                        reset({
                             search: '',
                             format: null,
-                            genres: null,
+                            genres: [],
                             year: null,
                             status: null,
                             sort: 'Last Updated',
-                        })
-                    }>
+                        });
+
+                        setFilters({
+                            search: '',
+                            format: null,
+                            genres: [],
+                            year: null,
+                            status: null,
+                            sort: 'Last Updated',
+                        });
+                    }}>
                     Clear Filters
                 </button>
             </div>
