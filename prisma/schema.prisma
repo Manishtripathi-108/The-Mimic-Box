@@ -56,9 +56,9 @@ model LinkedAccount {
   type              String // oauth, oidc
   provider          LinkedAccountProvider
   providerAccountId String
-  refresh_token     String?               @db.String
-  access_token      String?               @db.String
-  expires_at        Int?
+  refresh_token     String               @db.String
+  access_token      String               @db.String
+  expires_at        Int
   token_type        String? // bearer
   scope             String?
   displayName       String?
