@@ -555,7 +555,7 @@
     }
 
     .checkbox-field {
-        @apply bg-primary checked:shadow-pressed-xs disabled:bg-secondary checked:text-text-primary flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center overflow-hidden rounded-sm border text-center text-xs transition-shadow duration-300 ease-in-out checked:after:size-full checked:after:font-bold checked:after:content-['\2713'];
+        @apply bg-primary checked:shadow-pressed-xs disabled:bg-secondary checked:text-text-primary flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center overflow-hidden rounded-sm border border-tertiary text-center text-xs transition-shadow duration-300 ease-in-out checked:after:size-full checked:after:font-bold checked:after:content-['\2713'];
 
         &:checked ~ .form-text {
             @apply text-highlight translate-x-2;

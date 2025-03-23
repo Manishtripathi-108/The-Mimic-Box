@@ -43,9 +43,6 @@ const RedirectLogic = () => {
         const performRedirect = async () => {
             redirected = true;
             const callbackUrl = params?.get('callbackUrl') || callBackUrlLocal || DEFAULT_AUTH_REDIRECT;
-
-            console.log('Redirecting to:', callbackUrl);
-
             await update(session);
             router.replace(callbackUrl);
         };

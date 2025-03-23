@@ -1,63 +1,103 @@
 'use client';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Icon } from '@iconify/react';
 
 import Modal, { openModal } from '@/components/Modals';
+import AnilistEditMedia from '@/components/layout/anilist/AnilistEditMedia';
 import AnilistFilter from '@/components/layout/anilist/AnilistFIlter';
-import MediaCard from '@/components/layout/anilist/MediaCard';
+import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
 import TabNavigation from '@/components/ui/TabNavigation';
-import { ANILIST_MEDIA_TAB } from '@/constants/client.constants';
+import { ANILIST_FAVOURITE_TAB, ANILIST_MEDIA_TAB } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
-import useFilteredData from '@/hooks/useFilteredData';
-import { AnilistFavorites, AnilistMediaCollection, AnilistMediaListStatus } from '@/lib/types/anilist.types';
+import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
+import usePagination from '@/hooks/usePagination';
+import {
+    AnilistFavourites,
+    AnilistFavouritesTab,
+    AnilistMedia,
+    AnilistMediaEntry,
+    AnilistMediaFilters,
+    AnilistMediaList,
+    AnilistMediaTab,
+} from '@/lib/types/anilist.types';
+
+const ITEMS_PER_PAGE = 30;
 
 const AnilistMain = ({
     mediaLists,
     type,
+    token,
 }: {
-    mediaLists: AnilistMediaCollection['MediaListCollection']['lists'] | AnilistFavorites['User']['favourites'];
+    mediaLists: AnilistMediaList[] | AnilistFavourites;
     type: 'anime' | 'manga' | 'favourites';
+    token: string;
 }) => {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    /** Extracting query parameters with default values */
-    const selectedTab = (searchParams.get('tab') || 'All') as 'All' | AnilistMediaListStatus | 'Anime' | 'Manga';
-    const format = searchParams.get('format') || null;
-    const genres = searchParams.getAll('genres');
-    const year = parseInt(searchParams.get('year')!, 10) || null;
-    const status = searchParams.get('status') || null;
-    const sort = searchParams.get('sort') || 'Last Added';
+    const [editEntry, setEditEntry] = useState<AnilistMediaEntry | null>(null);
+    const [selectedTab, setSelectedTab] = useState<AnilistFavouritesTab | AnilistMediaTab>('All');
+    const [detailedView, setDetailedView] = useState(false);
+    const [filterData, setFilterData] = useState<AnilistMediaFilters>({
+        search: '',
+        format: null,
+        genres: null,
+        year: null,
+        status: null,
+        sort: 'Last Updated',
+    });
+
     const page = searchParams.has('page') ? parseInt(searchParams.get('page')!, 10) : 1;
 
-    /** Filters state */
-    const filters = useMemo(() => ({ format, genres, year, status, sort }), [format, genres, year, status, sort]);
-    const filteredData = useFilteredData(mediaLists, filters, selectedTab);
+    // Filter data
+    const filters = useMemo(() => filterData, [filterData]);
+    const filteredData = useAnilistFilteredData(mediaLists, filters, selectedTab);
 
-    /**
-     * Function to create query string while keeping existing parameters
-     */
-    const createQueryString = useCallback(
-        (name: string, value: string) => {
+    // Update search params
+    const updateSearchParams = useCallback(
+        (key: string, value: string | number | null) => {
             const params = new URLSearchParams(searchParams.toString());
-            params.set(name, value);
-            return params.toString();
+            if (value !== null) {
+                params.set(key, value.toString());
+            } else {
+                params.delete(key);
+            }
+            router.push(`${pathname}?${params.toString()}`);
         },
-        [searchParams]
+        [router, pathname, searchParams]
     );
 
-    /** Handle tab changes */
+    // Handles tab change
     const handleTabChange = useCallback(
-        (tab: string) => {
-            router.push(`${pathname}?${createQueryString('tab', tab)}`);
+        (tab: AnilistFavouritesTab | AnilistMediaTab) => {
+            setSelectedTab(tab);
         },
-        [pathname, createQueryString, router]
+        [setSelectedTab]
     );
+
+    // Handles edit button click
+    const handleEdit = useCallback(
+        (media: AnilistMedia) => {
+            if (!Array.isArray(mediaLists)) return;
+
+            const entry = mediaLists.flatMap((list) => list.entries).find((entry) => entry.media?.id === media.id) || null;
+
+            setEditEntry(entry);
+            openModal('modal-anilist-edit-media');
+        },
+        [mediaLists] // Dependencies: function will only re-create if `mediaLists` changes
+    );
+
+    // Handles pagination
+    const { currentData, Pagination } = usePagination(filteredData, ITEMS_PER_PAGE, {
+        current: page,
+        setCurrent: (newPage) => updateSearchParams('page', newPage),
+    });
 
     return (
         <>
@@ -67,62 +107,76 @@ const AnilistMain = ({
 
                 {/* Search Field */}
                 <div className="form-field-wrapper hidden max-w-86 sm:flex">
-                    <input type="text" name="search" placeholder="Search..." className="form-field" />
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search..."
+                        className="form-field"
+                        value={filterData.search!}
+                        onChange={(e) => {
+                            setFilterData({ ...filterData, search: e.target.value });
+                        }}
+                    />
                     <Icon role="button" icon={ICON_SET.SEARCH} className="form-icon" />
                 </div>
 
                 {/* View Mode & Filter Buttons */}
                 <div className="flex items-center justify-end pr-4">
-                    {['list', 'card'].map((mode) => (
-                        <button key={mode} className="text-text-primary button p-2 shadow-none">
-                            <Icon icon={mode === 'list' ? ICON_SET.LIST : ICON_SET.CARD} className="size-4" />
-                        </button>
-                    ))}
-                    <button onClick={() => openModal('filters-modal')} className="button text-highlight ml-4 size-8 rounded-xl p-2">
+                    <span className="flex w-fit items-center justify-center rounded-full border">
+                        {['detailed list', 'card'].map((mode) => (
+                            <button
+                                onClick={() => setDetailedView(mode === 'detailed list')}
+                                key={mode}
+                                className={`button p-2 shadow-none ${mode === 'detailed list' ? 'rounded-l-full' : 'rounded-r-full'} ${detailedView === (mode === 'detailed list') ? 'active' : ''}`}
+                                title={`View as ${mode}`}
+                                aria-label={`View as ${mode}`}>
+                                <Icon icon={mode === 'detailed list' ? ICON_SET.LIST : ICON_SET.CARD} className="size-4" />
+                            </button>
+                        ))}
+                    </span>
+                    <button onClick={() => openModal('anilist-filters-modal')} className="button text-highlight ml-4 size-8 rounded-xl p-2">
                         <Icon icon={ICON_SET.FILTER} className="size-full" />
                     </button>
                 </div>
             </div>
 
             {/* Tabs Navigation */}
-            <TabNavigation className="mb-6" tabs={ANILIST_MEDIA_TAB} currentTab={selectedTab} onTabChange={handleTabChange} />
+            <TabNavigation
+                className="mb-6"
+                tabs={type === 'favourites' ? ANILIST_FAVOURITE_TAB : ANILIST_MEDIA_TAB}
+                currentTab={selectedTab}
+                onTabChange={handleTabChange}
+            />
 
             {/* Anime Cards Grid */}
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
-                {filteredData?.map((entry) => <MediaCard key={entry.id} media={'media' in entry ? entry.media : entry} />)}
+            <div
+                className={`grid ${detailedView ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(380px,1fr))]' : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3'}`}>
+                {currentData?.map((entry) => (
+                    <AnilistMediaCard key={entry.id} detailed={detailedView} onEdit={type !== 'favourites' ? handleEdit : null} media={entry} />
+                ))}
             </div>
 
+            {/* Pagination */}
+            <Pagination className="mt-6" />
+
             {/* Filters Modal */}
-            <Modal modalId="filters-modal">
-                <AnilistFilter
-                    filters={filters}
-                    setFilters={(updatedFilters) => {
-                        const params = new URLSearchParams(searchParams.toString());
-
-                        Object.entries(updatedFilters).forEach(([key, value]) => {
-                            if (value) {
-                                if (Array.isArray(value)) {
-                                    if (value.length > 0) {
-                                        value.forEach((val) => params.append(key, val));
-                                    } else {
-                                        params.delete(key);
-                                    }
-                                    return;
-                                } else {
-                                    params.set(key, value.toString());
-                                }
-                            } else {
-                                params.delete(key);
-                            }
-                        });
-
-                        router.push(`${pathname}?${params.toString()}`);
-                    }}
-                />
+            <Modal modalId="anilist-filters-modal">
+                <AnilistFilter filters={filters} setFilters={(updatedFilters) => setFilterData(updatedFilters)} />
             </Modal>
 
-            {/* Pagination */}
-            <div className="text-center text-lg font-semibold">Page: {page}</div>
+            {/* Edit Modal */}
+            {type !== 'favourites' && (
+                <Modal modalId="modal-anilist-edit-media" onClose={() => setEditEntry(null)}>
+                    {editEntry ? (
+                        <AnilistEditMedia token={token} entry={editEntry} />
+                    ) : (
+                        <div className="grid place-items-center gap-5 text-red-500">
+                            <Icon icon={ICON_SET.ERROR} className="size-20" />
+                            <h2 className="text-xl">Please select a media to edit</h2>
+                        </div>
+                    )}
+                </Modal>
+            )}
         </>
     );
 };

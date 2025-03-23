@@ -39,12 +39,22 @@ export const refreshToken = async (
     if (!refreshToken) return createErrorReturn('Unauthorized: Please log in again.');
 
     try {
+        const dbProvider = await db.linkedAccount.findUnique({ where: { userId_provider: { userId, provider } } });
+        if (dbProvider && dbProvider.expires_at > Date.now())
+            return createSuccessReturn('Token is still valid', {
+                accessToken: dbProvider.access_token,
+                refreshToken: dbProvider.refresh_token,
+                expiresAt: dbProvider.expires_at,
+            });
+
         const requestConfig = getProviderConfig(provider, refreshToken);
         if (!requestConfig) return createErrorReturn('Unauthorized: Please log in again.');
 
         const response = await axios.post(requestConfig.url, requestConfig.data, { headers: requestConfig.headers });
 
         const { access_token, refresh_token: newRefreshToken, expires_in } = response.data;
+        if (!access_token) return createErrorReturn('Unauthorized: Please log in again.');
+
         const updatedRefreshToken = newRefreshToken || refreshToken;
         const expiresAt = Math.floor(Date.now()) + expires_in * (provider === 'anilist' ? 1 : 1000);
 
