@@ -5,10 +5,33 @@ import {
     AnilistMediaIds,
     AnilistMediaType,
     AnilistSaveMediaListEntry,
+    AnilistUser,
     AnilistUserFavourites,
 } from '@/lib/types/anilist.types';
 import { createAniListErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { fetchAniListData } from '@/lib/utils/server.utils';
+
+export const getAnilistUserProfile = async (token: string): Promise<AnilistUser | null> => {
+    const query = `
+        query {
+            Viewer {
+                id
+                name
+                avatar { large }
+                bannerImage
+            }
+        }
+    `;
+
+    const [error, response] = await fetchAniListData<AnilistUser>(token, query);
+
+    if (error || !response) {
+        console.error('Error fetching user data:', error);
+        return null;
+    }
+
+    return response;
+};
 
 /**
  * Fetches a user's media list from Anilist.
@@ -38,6 +61,7 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
                             genres
                             averageScore
                             popularity
+                            favourites
                             isFavourite
                             title {
                                 romaji
@@ -111,6 +135,7 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                             genres
                             averageScore
                             popularity
+                            favourites
                             isFavourite
                             title {
                                 romaji
@@ -142,6 +167,7 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                             genres
                             averageScore
                             popularity
+                            favourites
                             isFavourite
                             title {
                                 romaji

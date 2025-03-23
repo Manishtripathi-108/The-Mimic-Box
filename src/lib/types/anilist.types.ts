@@ -26,6 +26,7 @@ export type AnilistMedia = {
     genres: string[];
     averageScore: number;
     popularity: number;
+    favourites: number;
     isFavourite: boolean;
     bannerImage: string;
     coverImage: { large: string };

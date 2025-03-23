@@ -4,17 +4,20 @@ const AnilistSkeleton = () => {
     return (
         <>
             {/* Controls */}
-            <div className="mb-4 flex items-center justify-between *:animate-pulse">
+            <div className="mb-4 flex items-center justify-between gap-6 *:animate-pulse">
                 <div className="bg-tertiary h-8 w-48 rounded-lg"></div>
-                <div className="ml-3 flex items-center gap-3 *:rounded-lg">
-                    <div className="bg-tertiary h-10 w-10"></div>
-                    <div className="bg-tertiary h-10 w-10"></div>
-                    <div className="bg-tertiary h-10 w-10"></div>
+                <div className="bg-tertiary hidden h-8 w-md rounded-lg sm:block"></div>
+                <div className="flex items-center gap-3">
+                    <div className="flex divide-x overflow-hidden rounded-full">
+                        <div className="bg-tertiary size-7"></div>
+                        <div className="bg-tertiary size-7"></div>
+                    </div>
+                    <div className="bg-tertiary size-7 rounded-lg"></div>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-3 *:animate-pulse *:rounded-lg">
+            <div className="bg-secondary flex w-fit gap-3 rounded-xl p-2 *:animate-pulse *:rounded-lg">
                 <div className="bg-tertiary h-10 w-24"></div>
                 <div className="bg-tertiary h-10 w-24"></div>
                 <div className="bg-tertiary h-10 w-24"></div>

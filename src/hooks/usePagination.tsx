@@ -30,9 +30,11 @@ const usePagination = <T,>(
     {
         current = 1,
         setCurrent: externalSetCurrent,
+        scrollToTop = false,
     }: {
         current?: number;
         setCurrent?: (page: number) => void;
+        scrollToTop?: boolean;
     }
 ) => {
     const [internalCurrent, setInternalCurrent] = useState(current || 1);
@@ -57,7 +59,7 @@ const usePagination = <T,>(
     const handlePageChange = (page: number) => {
         if (page !== currentPage) {
             setCurrent(page);
-            scroll(0, 0); // Scroll to top on page change
+            if (scrollToTop) scroll(0, 0);
         }
     };
 

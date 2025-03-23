@@ -42,6 +42,7 @@ const AnilistMain = ({
 
     const [editEntry, setEditEntry] = useState<AnilistMediaEntry | null>(null);
     const [selectedTab, setSelectedTab] = useState<AnilistFavouritesTab | AnilistMediaTab>('All');
+    const [detailedView, setDetailedView] = useState(false);
     const [filterData, setFilterData] = useState<AnilistMediaFilters>({
         search: '',
         format: null,
@@ -121,11 +122,18 @@ const AnilistMain = ({
 
                 {/* View Mode & Filter Buttons */}
                 <div className="flex items-center justify-end pr-4">
-                    {['list', 'card'].map((mode) => (
-                        <button key={mode} className="text-text-primary button p-2 shadow-none">
-                            <Icon icon={mode === 'list' ? ICON_SET.LIST : ICON_SET.CARD} className="size-4" />
-                        </button>
-                    ))}
+                    <span className="flex w-fit items-center justify-center rounded-full border">
+                        {['detailed list', 'card'].map((mode) => (
+                            <button
+                                onClick={() => setDetailedView(mode === 'detailed list')}
+                                key={mode}
+                                className={`button p-2 shadow-none ${mode === 'detailed list' ? 'rounded-l-full' : 'rounded-r-full'} ${detailedView === (mode === 'detailed list') ? 'active' : ''}`}
+                                title={`View as ${mode}`}
+                                aria-label={`View as ${mode}`}>
+                                <Icon icon={mode === 'detailed list' ? ICON_SET.LIST : ICON_SET.CARD} className="size-4" />
+                            </button>
+                        ))}
+                    </span>
                     <button onClick={() => openModal('anilist-filters-modal')} className="button text-highlight ml-4 size-8 rounded-xl p-2">
                         <Icon icon={ICON_SET.FILTER} className="size-full" />
                     </button>
@@ -141,8 +149,11 @@ const AnilistMain = ({
             />
 
             {/* Anime Cards Grid */}
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
-                {currentData?.map((entry) => <AnilistMediaCard key={entry.id} onEdit={type !== 'favourites' ? handleEdit : null} media={entry} />)}
+            <div
+                className={`grid ${detailedView ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(380px,1fr))]' : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3'}`}>
+                {currentData?.map((entry) => (
+                    <AnilistMediaCard key={entry.id} detailed={detailedView} onEdit={type !== 'favourites' ? handleEdit : null} media={entry} />
+                ))}
             </div>
 
             {/* Pagination */}

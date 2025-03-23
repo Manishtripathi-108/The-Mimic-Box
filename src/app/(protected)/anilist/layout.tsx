@@ -17,7 +17,7 @@ const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
                 imageUrl={anilist.imageUrl}
             />
 
-            <div className="container mx-auto p-6">
+            <div className="container mx-auto p-2 sm:p-6">
                 <Suspense fallback={<AnilistSkeleton />}>{children}</Suspense>
             </div>
         </main>

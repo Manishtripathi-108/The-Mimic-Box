@@ -52,6 +52,7 @@ enum ICON_SET {
     SETTINGS = 'solar:settings-bold',
     SETTINGS_OUTLINED = 'solar:settings-outline',
     SHARE = 'solar:share-bold-duotone',
+    SMILE = 'line-md:emoji-smile',
     SPOTIFY = 'line-md:spotify-filled',
     SUCCESS = 'line-md:confirm-circle-filled',
     SUN = 'meteocons:clear-day-fill',
