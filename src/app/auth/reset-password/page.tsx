@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 
 import { Metadata } from 'next';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import ResetPasswordForm from '@/components/layout/auth/ResetPassword';
 import ICON_SET from '@/constants/icons';

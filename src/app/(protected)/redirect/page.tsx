@@ -4,7 +4,7 @@ import React, { Suspense, useEffect } from 'react';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 import { useSession } from 'next-auth/react';
 
 import ICON_SET from '@/constants/icons';

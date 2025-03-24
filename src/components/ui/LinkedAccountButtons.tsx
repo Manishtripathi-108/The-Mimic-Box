@@ -2,6 +2,8 @@
 
 import React, { useCallback, useTransition } from 'react';
 
+import { usePathname } from 'next/navigation';
+
 import { LinkedAccountProvider } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
@@ -15,21 +17,22 @@ export const ConnectAccount = ({
     className,
     children,
     account,
-    callBackUrl = '/',
+    callBackUrl,
 }: {
     className?: string;
     children?: React.ReactNode;
     account: LinkedAccountProvider;
-    callBackUrl: string;
+    callBackUrl?: string;
 }) => {
+    const pathName = usePathname();
     const { isPending, makeApiCall } = useSafeAwaitClient<{ provider: LinkedAccountProvider }, string>();
 
     const handleConnect = async () => {
         await makeApiCall({
-            url: `${API_ROUTES[`AUTH_LA_${account.toUpperCase()}_ROOT` as keyof typeof API_ROUTES]}?callbackUrl=${callBackUrl}`,
+            url: `${API_ROUTES[`AUTH_LA_${account.toUpperCase()}_ROOT` as keyof typeof API_ROUTES]}?callbackUrl=${callBackUrl || pathName}`,
             data: { provider: account },
             onStart() {
-                localStorage.setItem('callbackUrl', callBackUrl);
+                localStorage.setItem('callbackUrl', callBackUrl || pathName);
             },
             onError() {
                 toast.error(`Failed to connect ${account}`);

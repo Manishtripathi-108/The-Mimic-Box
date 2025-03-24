@@ -5,7 +5,7 @@ import 'next-auth/jwt';
 export interface LinkedAccount {
     id: string;
     imageUrl: string;
-    bannerUrl?: string;
+    bannerUrl: string;
     displayName?: string;
     username?: string;
     tokenType: string;

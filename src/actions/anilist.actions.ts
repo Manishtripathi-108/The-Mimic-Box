@@ -108,7 +108,7 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
     });
 
     if (error || !mediaListCollection) {
-        return createAniListErrorReturn('Error fetching user media', error);
+        return createAniListErrorReturn(`Failed to load ${mediaType.toLowerCase()}. Try again later!`, error);
     }
 
     return createSuccessReturn('User media fetched successfully', mediaListCollection.MediaListCollection.lists);

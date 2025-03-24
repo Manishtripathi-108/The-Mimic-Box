@@ -20,7 +20,6 @@ const useAnilistFilteredData = (
     const isFavourite = !Array.isArray(lists);
 
     const filteredData = useMemo(() => {
-        console.log('filter called');
         if (!lists || (Array.isArray(lists) && lists.length === 0)) return [];
         let result: AnilistMedia[];
 
