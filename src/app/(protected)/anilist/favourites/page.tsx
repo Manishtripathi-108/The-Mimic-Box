@@ -15,12 +15,13 @@ export const metadata: Metadata = {
 const AnilistFavourites = async () => {
     const session = await auth();
     const anilist = session?.user?.linkedAccounts?.anilist;
+    if (!anilist) return null;
 
-    const response = await fetchUserFavourites(anilist!.accessToken, anilist!.id);
+    const response = await fetchUserFavourites(anilist.accessToken, anilist.id);
 
     if (response.success) {
         return response.payload && (response.payload?.anime?.nodes?.length || response.payload?.manga?.nodes?.length || 0) > 0 ? (
-            <AnilistMain token={anilist!.accessToken} mediaLists={response.payload} type="favourites" />
+            <AnilistMain token={anilist.accessToken} mediaLists={response.payload} type="favourites" />
         ) : (
             <section className="shadow-floating-xs to-tertiary from-secondary grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
                 <Image src={IMAGE_URL.NO_DATA} alt="No favorites found" width={250} height={250} />

@@ -41,8 +41,9 @@ const AnilistMediaCard = ({
                 {/* Title Overlay */}
                 <header className="bg-secondary/75 absolute bottom-0 w-full p-2 backdrop-blur-sm">
                     <h2
+                        title={media.title.userPreferred || media.title.english || media.title.native || 'Unknown Title'}
                         className={`text-text-primary font-alegreya overflow-hidden leading-none tracking-wide capitalize ${detailed ? 'mb-1' : 'truncate'}`}>
-                        {media?.title?.userPreferred || media?.title?.english || 'Unknown Title'}
+                        {media.title.userPreferred || media.title.english || media.title.native || 'Unknown Title'}
                     </h2>
                     <p className="text-text-secondary text-xs capitalize">
                         {media?.format.replaceAll('_', ' ').toLowerCase()}{' '}

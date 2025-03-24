@@ -17,12 +17,13 @@ export const metadata: Metadata = {
 const AnilistManga = async () => {
     const session = await auth();
     const anilist = session?.user?.linkedAccounts?.anilist;
+    if (!anilist) return null;
 
-    const response = await getAnilistUserMedia(anilist!.accessToken, anilist!.id, 'MANGA');
+    const response = await getAnilistUserMedia(anilist.accessToken, anilist.id, 'MANGA');
 
     if (response.success) {
         return response.payload && response.payload.length > 0 ? (
-            <AnilistMain token={anilist!.accessToken} mediaLists={response.payload} type="manga" />
+            <AnilistMain token={anilist.accessToken} mediaLists={response.payload} type="manga" />
         ) : (
             <section className="shadow-floating-xs to-tertiary from-secondary grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
                 <Image src={IMAGE_URL.NO_DATA} alt="No manga found" width={250} height={250} />
