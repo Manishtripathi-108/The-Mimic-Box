@@ -19,7 +19,7 @@ const sidebarMenuItems = [
             { name: 'Anime', link: APP_ROUTES.ANILIST_ANIME },
             { name: 'Manga', link: APP_ROUTES.ANILIST_MANGA },
             { name: 'Favourites', link: APP_ROUTES.ANILIST_FAVOURITES },
-            { name: 'Import/Export', link: APP_ROUTES.ANILIST_IMPORT_EXPORT },
+            { name: 'Import/Export', link: APP_ROUTES.IMPORT_ANIME_MANGA },
         ],
     },
     {

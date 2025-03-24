@@ -36,6 +36,8 @@ export const refreshToken = async (
           expiresAt: number;
       }>
 > => {
+    console.log(provider);
+
     if (!refreshToken) return createErrorReturn('Unauthorized: Please log in again.');
 
     try {

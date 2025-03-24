@@ -56,15 +56,15 @@ model LinkedAccount {
   type              String // oauth, oidc
   provider          LinkedAccountProvider
   providerAccountId String
-  refresh_token     String               @db.String
-  access_token      String               @db.String
+  refresh_token     String                @db.String
+  access_token      String                @db.String
   expires_at        Int
   token_type        String? // bearer
   scope             String?
   displayName       String?
   username          String?
   imageUrl          String                @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
-  bannerUrl         String?
+  bannerUrl         String                @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742811780/scene-night-tree_raa1zn.jpg")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

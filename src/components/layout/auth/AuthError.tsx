@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';

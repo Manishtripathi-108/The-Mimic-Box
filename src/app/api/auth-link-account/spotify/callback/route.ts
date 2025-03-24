@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 import { auth } from '@/auth';
-import { PROFILE_IMAGE_URL } from '@/constants/client.constants';
 import { API_ROUTES, APP_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getSpotifyUserProfile } from '@/lib/services/spotify/user.service';
@@ -67,8 +66,8 @@ export async function GET(req: NextRequest) {
     const userId = session.user.id;
     const spotifyData = {
         providerAccountId: userProfile.id,
-        imageUrl: userProfile.images.find((image) => image.width && image.width < 300)?.url || PROFILE_IMAGE_URL,
-        bannerUrl: userProfile.images.find((image) => image.width && image.width >= 300)?.url || null,
+        imageUrl: userProfile.images.find((image) => image.width && image.width < 300)?.url || undefined,
+        bannerUrl: userProfile.images.find((image) => image.width && image.width >= 300)?.url || undefined,
         displayName: userProfile.display_name,
         scope: tokens.scope,
         token_type: tokens.token_type,

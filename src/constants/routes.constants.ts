@@ -23,13 +23,15 @@ export enum APP_ROUTES {
     ANILIST_ANIME = '/anilist/anime',
     ANILIST_MANGA = '/anilist/manga',
     ANILIST_FAVOURITES = '/anilist/favourites',
-    ANILIST_IMPORT_EXPORT = '/anilist/import-export',
     ANILIST_LOGIN = '/anilist/login',
 
     // Games Routes
     GAMES_TIC_TAC_TOE_INDEX = '/games/tic-tac-toe',
     GAMES_TIC_TAC_TOE_CLASSIC = '/games/tic-tac-toe/classic',
     GAMES_TIC_TAC_TOE_ULTIMATE = '/games/tic-tac-toe/ultimate',
+
+    // Import Routes
+    IMPORT_ANIME_MANGA = '/import/anime-manga',
 
     // User Routes
     USER_PROFILE = '/user/profile',

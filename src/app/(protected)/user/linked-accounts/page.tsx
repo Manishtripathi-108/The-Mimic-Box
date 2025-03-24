@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Metadata } from 'next';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 import { LinkedAccountProvider } from '@prisma/client';
 
 import { auth } from '@/auth';

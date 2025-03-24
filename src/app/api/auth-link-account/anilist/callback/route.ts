@@ -4,7 +4,6 @@ import axios from 'axios';
 
 import { getAnilistUserProfile } from '@/actions/anilist.actions';
 import { auth } from '@/auth';
-import { PROFILE_IMAGE_URL } from '@/constants/client.constants';
 import { API_ROUTES, APP_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { createAniListError, createErrorResponse } from '@/lib/utils/createResponse.utils';
@@ -50,8 +49,8 @@ export async function GET(req: NextRequest) {
     const userId = session.user.id;
     const anilistData = {
         providerAccountId: userProfile?.Viewer.id?.toString(),
-        imageUrl: userProfile?.Viewer.avatar.large || PROFILE_IMAGE_URL,
-        bannerUrl: userProfile?.Viewer.bannerImage,
+        imageUrl: userProfile?.Viewer.avatar.large || undefined,
+        bannerUrl: userProfile?.Viewer.bannerImage || undefined,
         displayName: userProfile?.Viewer.name,
         scope: tokens.scope,
         token_type: tokens.token_type,

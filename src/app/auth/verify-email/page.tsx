@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 
 import { Metadata } from 'next';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import VerifyEmail from '@/components/layout/auth/VerifyEmail';
 import ICON_SET from '@/constants/icons';
