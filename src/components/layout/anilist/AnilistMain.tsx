@@ -107,12 +107,12 @@ const AnilistMain = ({
                 <h2 className="text-highlight text-2xl font-bold capitalize sm:text-3xl">Your {type} List</h2>
 
                 {/* Search Field */}
-                <div className="form-field-wrapper hidden max-w-86 sm:flex">
+                <div className="form-field-wrapper bg-secondary hidden max-w-86 sm:flex">
                     <input
                         type="text"
                         name="search"
                         placeholder="Search..."
-                        className="form-field"
+                        className="form-field bg-inherit"
                         value={filterData.search!}
                         onChange={(e) => {
                             setFilterData({ ...filterData, search: e.target.value });
@@ -135,7 +135,10 @@ const AnilistMain = ({
                             </button>
                         ))}
                     </span>
-                    <button onClick={() => openModal('anilist-filters-modal')} className="button text-highlight ml-4 size-8 rounded-xl p-2">
+                    <button
+                        title="Filter"
+                        onClick={() => openModal('anilist-filters-modal')}
+                        className="button text-highlight ml-4 size-8 rounded-xl p-2">
                         <Icon icon={ICON_SET.FILTER} className="size-full" />
                     </button>
                 </div>

@@ -40,6 +40,8 @@ const TabNavigation = <T extends string>({
 
     return (
         <nav
+            role="tablist"
+            aria-label="Navigation Tabs"
             className={cn(
                 'from-secondary to-tertiary shadow-floating-xs relative flex w-fit flex-wrap gap-1 rounded-xl bg-linear-150 from-15% to-85% p-1',
                 className
@@ -47,6 +49,8 @@ const TabNavigation = <T extends string>({
             {tabs.map((tab, index) => (
                 <button
                     key={index}
+                    id={`tab-${index}`}
+                    title={tab}
                     role="tab"
                     type="button"
                     ref={(el) => {
@@ -54,6 +58,7 @@ const TabNavigation = <T extends string>({
                     }}
                     data-selected={currentTab === tab}
                     aria-selected={currentTab === tab}
+                    aria-controls={`tabpanel-${index}`}
                     onClick={() => onTabChange(tab)}
                     className={cn(
                         'hover:text-text-primary text-text-secondary data-[selected=true]:text-text-primary z-30 flex-1 cursor-pointer rounded-lg px-4 py-2 transition-colors',

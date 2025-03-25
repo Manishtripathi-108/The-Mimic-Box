@@ -82,7 +82,6 @@ const usePagination = <T,>(
     };
 
     const currentData = useMemo(() => {
-        console.log('currentData called');
         return data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     }, [data, currentPage, itemsPerPage]);
 
@@ -95,6 +94,7 @@ const usePagination = <T,>(
                     {/* Previous Arrow */}
                     <li className="bg-primary shadow-floating-xs active:shadow-pressed-xs mx-1 flex-1 rounded-full first:mr-2 last:ml-2 sm:first:mr-4 sm:last:ml-4">
                         <button
+                            title="Previous Page"
                             disabled={currentPage === 1}
                             className="text-text-secondary hover:text-text-primary font-karla block cursor-pointer px-2 py-1"
                             onClick={() => handlePageChange(Math.max(1, currentPage - 1))}>
@@ -130,6 +130,7 @@ const usePagination = <T,>(
                     {/* Next Arrow */}
                     <li className="bg-primary shadow-floating-xs active:shadow-pressed-xs mx-1 flex-1 rounded-full first:mr-2 last:ml-2 sm:first:mr-4 sm:last:ml-4">
                         <button
+                            title="Next Page"
                             disabled={currentPage === totalPages}
                             className="text-text-secondary hover:text-text-primary font-karla block cursor-pointer px-2 py-1 text-center"
                             onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}>

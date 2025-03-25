@@ -7,7 +7,9 @@ import Link from 'next/link';
 
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 
+import { IMAGE_URL } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
@@ -54,6 +56,7 @@ const sidebarMenuItems = [
 
 const Sidebar = () => {
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+    const { data: session } = useSession();
 
     // Close sidebar
     const closeSidebar = () => {
@@ -72,26 +75,29 @@ const Sidebar = () => {
     return (
         <dialog
             id="sidebar"
-            className="bg-primary backdrop:bg-primary shadow-floating-md my-auto flex h-screen max-h-dvh w-72 -translate-x-full -translate-y-full scale-0 flex-col overflow-hidden rounded-e-lg border-r opacity-0 transition-all transition-discrete duration-300 backdrop:opacity-65 backdrop:transition-opacity backdrop:transition-discrete backdrop:duration-300 open:translate-x-0 open:translate-y-0 open:scale-100 open:opacity-100 starting:open:-translate-x-full starting:open:-translate-y-full starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:opacity-0"
+            className="bg-primary backdrop:bg-primary shadow-floating-md my-auto flex h-screen max-h-dvh w-82 -translate-x-full -translate-y-full scale-0 flex-col overflow-hidden rounded-e-lg border-r opacity-0 transition-all transition-discrete duration-300 backdrop:opacity-65 backdrop:transition-opacity backdrop:transition-discrete backdrop:duration-300 open:translate-x-0 open:translate-y-0 open:scale-100 open:opacity-100 starting:open:-translate-x-full starting:open:-translate-y-full starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:opacity-0"
             onClick={(e) => e.target === e.currentTarget && closeSidebar()}
             role="dialog"
-            aria-modal="true">
+            aria-modal="true"
+            aria-labelledby="sidebar-title">
             {/* Profile Section */}
             <div className="flex items-center justify-between gap-4 border-b p-4">
                 <div className="flex items-center gap-3">
-                    <Image className="h-12 w-12 rounded-2xl" width={48} height={48} src="https://picsum.photos/200" alt="Avatar" />
+                    <Image className="h-12 w-12 rounded-2xl" width={48} height={48} src={session?.user?.image || IMAGE_URL.PROFILE} alt="Avatar" />
                     <div>
-                        <p className="text-text-primary font-semibold">Roronoa Zoro</p>
-                        <p className="text-text-secondary text-sm">Sword Master</p>
+                        <p id="sidebar-title" className="text-text-primary font-alegreya tracking-wide">
+                            {session?.user?.name}
+                        </p>
+                        <p className="text-text-secondary text-xs">{session?.user?.email}</p>
                     </div>
                 </div>
                 <button
                     type="button"
                     title="Close sidebar"
                     aria-label="Close sidebar"
-                    className="text-text-secondary hover:text-text-primary"
+                    className="text-text-secondary hover:text-text-primary bg-tertiary rounded-full p-1"
                     onClick={() => closeSidebar()}>
-                    <Icon icon={ICON_SET.CLOSE} className="size-5" />
+                    <Icon icon={ICON_SET.CLOSE} className="size-6" />
                 </button>
             </div>
 
