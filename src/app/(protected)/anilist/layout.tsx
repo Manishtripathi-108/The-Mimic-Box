@@ -1,9 +1,8 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
 import AnilistHeader from '@/components/layout/anilist/AnilistHeader';
-import AnilistSkeleton from '@/components/layout/anilist/AnilistSkeleton';
 
 const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
     const session = await auth();
@@ -21,9 +20,7 @@ const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
         <main className="bg-primary">
             <AnilistHeader bannerUrl={anilist.bannerUrl} displayName={anilist.displayName || 'Anilist User'} imageUrl={anilist.imageUrl} />
 
-            <div className="container mx-auto p-2 sm:p-6">
-                <Suspense fallback={<AnilistSkeleton />}>{children}</Suspense>
-            </div>
+            <div className="container mx-auto p-2 sm:p-6">{children}</div>
         </main>
     );
 };
