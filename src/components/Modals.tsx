@@ -54,13 +54,13 @@ const Modal = ({
             onClick={handleBackdropClick}
             onClose={handleDialogClose}
             className={cn(
-                'bg-primary shadow-pressed-md m-auto hidden w-full max-w-2xl scale-0 overflow-visible rounded-2xl border p-5 opacity-0 outline-hidden transition-all transition-discrete duration-300 ease-in-out',
+                'from-secondary to-tertiary shadow-pressed-md m-auto hidden w-full max-w-2xl scale-0 overflow-visible rounded-2xl border bg-linear-150 from-15% to-85% p-5 opacity-0 outline-hidden transition-all transition-discrete duration-300 ease-in-out',
                 'backdrop:bg-primary backdrop:opacity-75 backdrop:transition-all backdrop:transition-discrete backdrop:duration-300 backdrop:ease-in',
                 'open:block open:scale-100 open:opacity-100 open:delay-300 open:backdrop:scale-100',
                 'starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:scale-x-100 starting:open:backdrop:scale-y-0',
                 className
             )}>
-            <div className="shadow-floating-md w-full max-w-full overflow-hidden rounded-xl border">
+            <div className="shadow-floating-md w-full max-w-full overflow-hidden rounded-xl">
                 {showCloseButton && (
                     <button
                         title="Close Modal"
@@ -80,6 +80,7 @@ const Modal = ({
 export const ConfirmationModal = ({
     modalId,
     icon,
+    iconClassName,
     onConfirm,
     onCancel,
     confirmText = 'Yes',
@@ -91,6 +92,7 @@ export const ConfirmationModal = ({
 }: {
     modalId: string;
     icon: string;
+    iconClassName?: string;
     onConfirm: () => void;
     onCancel?: () => void;
     confirmText?: string;
@@ -131,15 +133,18 @@ export const ConfirmationModal = ({
             id={modalId}
             onClick={handleBackdropClick}
             onClose={handleDialogClose}
-            className="bg-primary shadow-pressed-md backdrop:bg-primary m-auto hidden w-fit max-w-2xl scale-0 rounded-xl border p-5 opacity-0 outline-hidden transition-all transition-discrete duration-300 ease-in-out backdrop:opacity-75 backdrop:transition-all backdrop:transition-discrete backdrop:duration-300 backdrop:ease-in open:block open:scale-100 open:opacity-100 open:delay-300 open:backdrop:scale-100 starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:scale-x-100 starting:open:backdrop:scale-y-0">
-            <div className="shadow-floating-md overflow-hidden rounded-lg border">
+            className="from-secondary to-tertiary shadow-pressed-md backdrop:bg-primary m-auto hidden w-fit max-w-2xl scale-0 rounded-xl border bg-linear-150 from-15% to-85% p-5 opacity-0 outline-hidden transition-all transition-discrete duration-300 ease-in-out backdrop:opacity-75 backdrop:transition-all backdrop:transition-discrete backdrop:duration-300 backdrop:ease-in open:block open:scale-100 open:opacity-100 open:delay-300 open:backdrop:scale-100 starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:scale-x-100 starting:open:backdrop:scale-y-0">
+            <div className="shadow-floating-md overflow-hidden rounded-lg">
                 <div className="relative max-h-full w-full max-w-md p-8 text-center md:p-10">
-                    <Icon icon={icon} className="mx-auto mb-4 size-12 text-red-500" />
+                    <Icon icon={icon} className={cn('mx-auto mb-4 size-12 text-red-500', iconClassName)} />
                     <h3 className="text-text-primary mb-5 text-lg font-normal">{children}</h3>
-                    <button onClick={handleConfirmClick} title={confirmText} className={`button ${isConfirmDanger && 'button-danger'}`}>
+                    <button onClick={handleConfirmClick} title={confirmText} className={`button mt-4 inline ${isConfirmDanger && 'button-danger'}`}>
                         {confirmText}
                     </button>
-                    <button title={cancelText} className={`button mt-4 ml-4 ${isConfirmDanger && 'button-danger'}`} onClick={handleCancelClick}>
+                    <button
+                        title={cancelText}
+                        className={`button mt-4 ml-4 inline ${!isConfirmDanger && 'button-highlight'}`}
+                        onClick={handleCancelClick}>
                         {cancelText}
                     </button>
                 </div>

@@ -1,44 +1,46 @@
-export enum APP_ROUTES {
+export const APP_ROUTES = {
     // General Routes
-    INDEX = '/',
-    REDIRECT = '/redirect',
-    DEV = '/dev',
-    NOT_FOUND = '*',
+    INDEX: '/',
+    REDIRECT: '/redirect',
+    DEV: '/dev',
+    NOT_FOUND: '*',
 
     // Authentication Routes
-    AUTH_CHANGE_EMAIL = '/auth/change-email',
-    AUTH_LOGIN = '/auth/login',
-    AUTH_REGISTER = '/auth/register',
-    AUTH_FORGOT_PASSWORD = '/auth/forgot-password',
-    AUTH_RESET_PASSWORD = '/auth/reset-password',
-    AUTH_VERIFY_EMAIL = '/auth/verify-email',
-    AUTH_ERROR = '/auth/error',
+    AUTH_CHANGE_EMAIL: '/auth/change-email',
+    AUTH_LOGIN: '/auth/login',
+    AUTH_REGISTER: '/auth/register',
+    AUTH_FORGOT_PASSWORD: '/auth/forgot-password',
+    AUTH_RESET_PASSWORD: '/auth/reset-password',
+    AUTH_VERIFY_EMAIL: '/auth/verify-email',
+    AUTH_ERROR: '/auth/error',
 
     // Audio Routes
-    AUDIO_TAGS_EDITOR = '/audio/tags-editor',
-    AUDIO_CONVERTER = '/audio/converter',
+    AUDIO_TAGS_EDITOR: '/audio/tags-editor',
+    AUDIO_CONVERTER: '/audio/converter',
 
     // AniList Routes
-    ANILIST_INDEX = '/anilist',
-    ANILIST_ANIME = '/anilist/anime',
-    ANILIST_MANGA = '/anilist/manga',
-    ANILIST_FAVOURITES = '/anilist/favourites',
-    ANILIST_LOGIN = '/anilist/login',
+    ANILIST_INDEX: '/anilist',
+    ANILIST_ANIME: '/anilist/anime',
+    ANILIST_MANGA: '/anilist/manga',
+    ANILIST_FAVOURITES: '/anilist/favourites',
+    ANILIST_LOGIN: '/anilist/login',
 
     // Games Routes
-    GAMES_TIC_TAC_TOE_INDEX = '/games/tic-tac-toe',
-    GAMES_TIC_TAC_TOE_CLASSIC = '/games/tic-tac-toe/classic',
-    GAMES_TIC_TAC_TOE_ULTIMATE = '/games/tic-tac-toe/ultimate',
+    GAMES_TIC_TAC_TOE_INDEX: '/games/tic-tac-toe',
+    GAMES_TIC_TAC_TOE_CLASSIC: '/games/tic-tac-toe/classic',
+    GAMES_TIC_TAC_TOE_ULTIMATE: '/games/tic-tac-toe/ultimate',
+    GAMES_TIC_TAC_TOE_ONLINE: '/games/tic-tac-toe/online',
+    GAMES_TIC_TAC_TOE_ONLINE_ROOM: (roomId: string) => `/games/tic-tac-toe/online/${roomId}`,
 
     // Import Routes
-    IMPORT_ANIME_MANGA = '/import/anime-manga',
+    IMPORT_ANIME_MANGA: '/import/anime-manga',
 
     // User Routes
-    USER_PROFILE = '/user/profile',
-    USER_EDIT_PROFILE = '/user/profile/edit',
-    USER_SETTINGS = '/user/settings',
-    USER_LINKED_ACCOUNTS = '/user/linked-accounts',
-}
+    USER_PROFILE: '/user/profile',
+    USER_EDIT_PROFILE: '/user/profile/edit',
+    USER_SETTINGS: '/user/settings',
+    USER_LINKED_ACCOUNTS: '/user/linked-accounts',
+} as const;
 
 export enum API_ROUTES {
     /* ---------------------------- Auth Link Account --------------------------- */
