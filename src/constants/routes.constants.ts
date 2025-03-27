@@ -32,7 +32,7 @@ export enum APP_ROUTES {
     GAMES_TIC_TAC_TOE_ULTIMATE = '/games/tic-tac-toe/ultimate',
 
     // User Routes
-    USER_PROFILE = '/user/profile',
+    USER_PROFILE = '/user',
     USER_EDIT_PROFILE = '/user/profile/edit',
     USER_SETTINGS = '/user/settings',
     USER_LINKED_ACCOUNTS = '/user/linked-accounts',

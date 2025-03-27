@@ -40,3 +40,9 @@ export const FILTER_OPTIONS = {
 export const SORT_OPTIONS = ['Average Score', 'Last Added', 'Last Updated', 'Popularity', 'Progress', 'Score', 'Title'];
 export const VALID_STATUSES = ['COMPLETED', 'CURRENT', 'DROPPED', 'PAUSED', 'PLANNING', 'REPEATING'];
 export const ANILIST_MEDIA_TAB = ['All', ...VALID_STATUSES];
+
+export const SideConst = [
+    { title: 'Profile', link: '/' },
+    { title: 'Link Account', link: '/' },
+    { title: 'Permanent Delete', link: '/' },
+];
