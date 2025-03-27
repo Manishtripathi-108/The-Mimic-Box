@@ -70,7 +70,6 @@ export const restoreInitialState = (state: TicTacToeGameState, overrides: Partia
     gameMode: state.gameMode,
     gameRoomId: state.gameRoomId,
     gameRoomName: state.gameRoomName,
-    onlineMode: state.onlineMode,
     hasGameStarted: state.hasGameStarted,
     stalemateCount: state.stalemateCount,
     playerXData: state.playerXData,

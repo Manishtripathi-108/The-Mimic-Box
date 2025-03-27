@@ -10,7 +10,6 @@ export const defaultGameState: TicTacToeGameState = {
 
     // Online play
     isFetching: false,
-    onlineMode: false,
     awaitingOpponent: false,
     playerSymbol: null,
     gameRoomId: null,
@@ -27,8 +26,8 @@ export const defaultGameState: TicTacToeGameState = {
     activeCellIndex: null,
 
     // Player details
-    playerXData: { name: 'Player 1', score: 0 },
-    playerOData: { name: 'Player 2', score: 0 },
+    playerXData: { id: null, name: 'Player 1', score: 0 },
+    playerOData: { id: null, name: 'Player 2', score: 0 },
 };
 
 export const TicTacToeReducer = (state: TicTacToeGameState, action: TicTacToeActions): TicTacToeGameState => {
@@ -103,9 +102,6 @@ export const TicTacToeReducer = (state: TicTacToeGameState, action: TicTacToeAct
                 return newState;
             }
         }
-
-        case 'TOGGLE_ONLINE':
-            return restoreInitialState(state, { onlineMode: action.payload });
 
         case 'UPDATE_STATE':
             return { ...state, ...action.payload };

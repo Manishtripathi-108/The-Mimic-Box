@@ -6,7 +6,7 @@ import { Socket, io } from 'socket.io-client';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
 
-export const useSocket = (namespace?: string) => {
+export const useSocket = ({ namespace, connectOnMount = false }: { namespace?: string; connectOnMount?: boolean } = {}) => {
     const socketRef = useRef<Socket | null>(null);
     const [, forceRender] = useState(0);
 
@@ -43,13 +43,13 @@ export const useSocket = (namespace?: string) => {
     }, [namespace]);
 
     useEffect(() => {
-        connectSocket();
+        if (connectOnMount) connectSocket();
         return () => {
             console.log('Disconnecting socket', namespace, socketRef.current?.id);
             socketRef.current?.disconnect();
             socketRef.current = null;
         };
-    }, [connectSocket]);
+    }, [connectSocket, connectOnMount]);
 
     const reconnect = useCallback(() => {
         if (!socketRef.current) connectSocket();
@@ -61,5 +61,5 @@ export const useSocket = (namespace?: string) => {
         forceRender((prev) => prev + 1);
     }, []);
 
-    return { socket: socketRef.current, reconnect, disconnect };
+    return { socket: socketRef.current, connect: connectSocket, reconnect, disconnect };
 };

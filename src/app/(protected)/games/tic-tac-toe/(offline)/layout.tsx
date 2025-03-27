@@ -2,32 +2,22 @@
 
 import React from 'react';
 
+import Link from 'next/link';
+
 import { Icon } from '@iconify/react';
 import { AnimatePresence } from 'motion/react';
 
 import GameOverModal from '@/app/(protected)/games/tic-tac-toe/_components/GameOverModal';
 import PlayerNameModal from '@/app/(protected)/games/tic-tac-toe/_components/PlayerNameModal';
 import ScoreBoard from '@/app/(protected)/games/tic-tac-toe/_components/ScoreBoard';
-import TicTacToeHeader from '@/app/(protected)/games/tic-tac-toe/_components/TicTacToeHeader';
 import { ConfirmationModal, openModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
 
 const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => {
     const { state, restartGame, resetBoard } = useTicTacToeContext();
-    const {
-        gameMode,
-        onlineMode,
-        playerSymbol,
-        gameRoomName,
-        isNextX,
-        hasGameEnded,
-        gameWinner,
-        isStalemate,
-        stalemateCount,
-        playerXData,
-        playerOData,
-    } = state;
+    const { gameMode, isNextX, hasGameEnded, gameWinner, isStalemate, stalemateCount, playerXData, playerOData } = state;
 
     const renderGameStatus = () => {
         if (hasGameEnded) {
@@ -37,53 +27,70 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
     };
 
     return (
-        <>
-            <TicTacToeHeader title={onlineMode ? `Welcome to ${gameRoomName} (${gameMode})` : gameMode} playingOnline={onlineMode} />
+        <div className="container mx-auto grid place-items-center gap-5 px-4 pb-6">
+            {/* Header */}
+            <header className="flex w-full max-w-4xl items-center justify-between border-b px-2 py-4">
+                <h1 className="text-highlight text-lg font-bold tracking-wide capitalize md:text-4xl">{gameMode}</h1>
+                <nav className="flex gap-2">
+                    <Link
+                        href={gameMode === 'ultimate' ? APP_ROUTES.GAMES_TIC_TAC_TOE_CLASSIC : APP_ROUTES.GAMES_TIC_TAC_TOE_ULTIMATE}
+                        className="button">
+                        {gameMode === 'ultimate' ? 'Play Classic' : 'Play Ultimate'}
+                    </Link>
+                    <Link href={APP_ROUTES.GAMES_TIC_TAC_TOE_ONLINE} className="button">
+                        Play Online
+                    </Link>
+                </nav>
+            </header>
 
-            <div className="container mx-auto grid place-items-center gap-5 px-2 py-5">
-                <div className="text-text-primary flex w-full max-w-4xl items-center justify-evenly">
-                    <span className="text-text-secondary font-julee text-4xl">{isNextX ? 'X' : 'O'}</span>
-                    <h2 className="text-accent line-clamp-1 text-center text-2xl font-bold tracking-wider capitalize">{renderGameStatus()}</h2>
-                    {onlineMode ? (
-                        <span className="text-highlight font-julee text-4xl">{playerSymbol}</span>
-                    ) : (
-                        <button onClick={() => openModal('game_action')} type="button" title="Clear Board" className="button size-10 rounded-xl p-2">
-                            <Icon icon={ICON_SET.BROOM} className="size-full" />
-                        </button>
-                    )}
-                </div>
+            {/* Game Status */}
+            <section className="flex w-full max-w-4xl items-center justify-between rounded-lg px-4 py-3">
+                <span className="text-text-secondary text-4xl">{isNextX ? 'X' : 'O'}</span>
+                <h2 className="text-accent text-center text-2xl font-bold capitalize">{renderGameStatus()}</h2>
+                <button
+                    onClick={() => openModal('game_action')}
+                    type="button"
+                    title="Clear Board"
+                    className="button size-10 rounded-xl p-2"
+                    aria-label="Clear Board">
+                    <Icon icon={ICON_SET.BROOM} className="size-full" />
+                </button>
+            </section>
 
-                <div className="relative">
-                    {children}
-                    <AnimatePresence>{hasGameEnded && <GameOverModal status={renderGameStatus()} />}</AnimatePresence>
-                </div>
+            {/* Game Board */}
+            <main className="relative">
+                {children}
+                <AnimatePresence>{hasGameEnded && <GameOverModal status={renderGameStatus()} />}</AnimatePresence>
+            </main>
 
-                <ScoreBoard playerX={playerXData} playerO={playerOData} drawScore={stalemateCount} />
+            {/* Score Board */}
+            <ScoreBoard playerX={playerXData} playerO={playerOData} drawScore={stalemateCount} />
 
-                <div className="mt-5 grid grid-cols-2 gap-4">
-                    <button onClick={restartGame} className="button">
-                        <Icon icon={ICON_SET.GAMEPAD} className="size-6" />
-                        Start Over
-                    </button>
-                    <button className="button" onClick={() => openModal('playerNameModal')}>
-                        <Icon icon={ICON_SET.PLAYER} className="size-5" />
-                        Change <span className="hidden md:inline">Player</span> Name
-                    </button>
-                </div>
-            </div>
+            {/* Controls */}
+            <footer className="mt-5 grid grid-cols-2 gap-4">
+                <button onClick={restartGame} className="button">
+                    <Icon icon={ICON_SET.GAMEPAD} className="size-6" />
+                    Start Over
+                </button>
+                <button className="button" onClick={() => openModal('playerNameModal')}>
+                    <Icon icon={ICON_SET.PLAYER} className="size-5" />
+                    Change <span className="hidden md:inline">Player</span> Name
+                </button>
+            </footer>
 
+            {/* Modals */}
             <PlayerNameModal />
             <ConfirmationModal
-                modalId={'game_action'}
+                modalId="game_action"
                 icon={ICON_SET.ERROR}
                 iconClassName="size-20"
                 onConfirm={resetBoard}
                 cancelText="Cancel"
                 confirmText="Clear Board"
-                isConfirmDanger={true}>
+                isConfirmDanger>
                 Are you sure you want to clear the board?
             </ConfirmationModal>
-        </>
+        </div>
     );
 };
 

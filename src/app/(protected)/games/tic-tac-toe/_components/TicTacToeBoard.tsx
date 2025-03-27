@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef } from 'react';
 
+import { notFound } from 'next/navigation';
+
 import { AnimatePresence, motion } from 'motion/react';
 
 import Cell from '@/app/(protected)/games/tic-tac-toe/_components/Cell';
@@ -14,7 +16,10 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
     const boardRef = useRef<HTMLDivElement>(null);
 
     // Set game mode on mount
-    useEffect(() => setMode(mode), [mode, setMode]);
+    useEffect(() => {
+        if (!['classic', 'ultimate'].includes(mode)) return notFound();
+        setMode(mode);
+    }, [mode, setMode]);
 
     useEffect(() => {
         const handleClick = (event: MouseEvent) => {

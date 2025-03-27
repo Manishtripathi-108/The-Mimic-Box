@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { useSearchParams } from 'next/navigation';
+
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react/dist/iconify.js';
@@ -18,26 +20,23 @@ const joinRoomSchema = z.object({
 });
 
 const createRoomSchema = z.object({
-    roomName: z.string().min(1, 'Room Name is required').max(10, 'Room Name must not exceed 10 characters'),
+    mode: z.enum(['classic', 'ultimate'], { required_error: 'Game Mode is required', message: 'Invalid Game Mode' }),
     playerName: z.string().min(1, 'Player Name is required').max(20, 'Player Name must not exceed 20 characters'),
 });
 
 // Join Room Form Component
-const JoinRoomForm = () => {
-    const { joinRoom, setLoading } = useTicTacToeContext();
+const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
+    const { joinRoom, state } = useTicTacToeContext();
+    const { isFetching } = state;
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
-        reset,
-    } = useForm({
-        resolver: zodResolver(joinRoomSchema),
-    });
+        formState: { errors },
+    } = useForm({ resolver: zodResolver(joinRoomSchema), disabled: isFetching, defaultValues: { roomId: roomId } });
 
-    const onSubmit = (data: { roomId: string; playerName: string }) => {
-        setLoading(true);
+    const onSubmit = (data: z.infer<typeof joinRoomSchema>) => {
+        if (isFetching) return;
         joinRoom(data.roomId, data.playerName);
-        reset();
     };
 
     return (
@@ -57,6 +56,7 @@ const JoinRoomForm = () => {
                 />
                 <ErrorMessage errors={errors} name="roomId" as="p" className="text-xs text-red-500" aria-live="polite" />
             </div>
+
             <div className="form-group">
                 <label className="form-text" htmlFor="playerName">
                     Player Name
@@ -72,47 +72,47 @@ const JoinRoomForm = () => {
                 />
                 <ErrorMessage errors={errors} name="playerName" as="p" className="text-xs text-red-500" aria-live="polite" />
             </div>
-            <button type="submit" className="button button-highlight mt-6 w-full" disabled={isSubmitting}>
-                Join Room
-            </button>
+
+            <input
+                type="submit"
+                className="button button-highlight mt-6 w-full"
+                value={isFetching ? 'Joining Room...' : 'Join Room'}
+                disabled={isFetching}
+            />
         </form>
     );
 };
 
 // Create Room Form Component
 const CreateRoomForm = () => {
-    const { createRoom, setLoading } = useTicTacToeContext();
+    const { state, createRoom } = useTicTacToeContext();
+    const { isFetching } = state;
+
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
-        reset,
-    } = useForm({
-        resolver: zodResolver(createRoomSchema),
-    });
+        formState: { errors },
+    } = useForm({ resolver: zodResolver(createRoomSchema), disabled: isFetching });
 
-    const onSubmit = (data: { roomName: string; playerName: string }) => {
-        setLoading(true);
-        createRoom(data.roomName, data.playerName);
-        reset();
+    const onSubmit = (data: z.infer<typeof createRoomSchema>) => {
+        if (isFetching) return;
+        createRoom(data.mode, data.playerName);
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="form-group">
-                <label className="form-text" htmlFor="roomName">
+                <label className="form-text" htmlFor="mode">
                     Room Name
                 </label>
-                <input
-                    id="roomName"
-                    className="form-field"
-                    type="text"
-                    placeholder="Enter a room name"
-                    maxLength={10}
-                    autoComplete="off"
-                    {...register('roomName')}
-                />
-                <ErrorMessage errors={errors} name="roomName" as="p" className="text-xs text-red-500" aria-live="polite" />
+                <select id="mode" className="form-field capitalize" {...register('mode')} defaultValue="classic">
+                    {createRoomSchema.shape.mode.options.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
+                <ErrorMessage errors={errors} name="mode" as="p" className="text-xs text-red-500" aria-live="polite" />
             </div>
 
             <div className="form-group">
@@ -131,14 +131,19 @@ const CreateRoomForm = () => {
                 <ErrorMessage errors={errors} name="playerName" as="p" className="text-xs text-red-500" aria-live="polite" />
             </div>
 
-            <button type="submit" className="button button-highlight mt-6 w-full" disabled={isSubmitting}>
-                Create Room
-            </button>
+            <input
+                type="submit"
+                className="button button-highlight mt-6 w-full"
+                value={isFetching ? 'Creating Room...' : 'Create Room'}
+                disabled={isFetching}
+            />
         </form>
     );
 };
 
 const PlayOnline = () => {
+    const searchParams = useSearchParams();
+    const roomId = searchParams.get('roomId');
     const [isJoinForm, setIsJoinForm] = useState(true);
 
     return (
@@ -158,7 +163,7 @@ const PlayOnline = () => {
                     </button>
                 </div>
 
-                {isJoinForm ? <JoinRoomForm /> : <CreateRoomForm />}
+                {isJoinForm ? <JoinRoomForm roomId={roomId || undefined} /> : <CreateRoomForm />}
             </div>{' '}
         </div>
     );

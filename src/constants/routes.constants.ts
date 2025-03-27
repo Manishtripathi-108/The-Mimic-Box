@@ -30,7 +30,7 @@ export const APP_ROUTES = {
     GAMES_TIC_TAC_TOE_CLASSIC: '/games/tic-tac-toe/classic',
     GAMES_TIC_TAC_TOE_ULTIMATE: '/games/tic-tac-toe/ultimate',
     GAMES_TIC_TAC_TOE_ONLINE: '/games/tic-tac-toe/online',
-    GAMES_TIC_TAC_TOE_ONLINE_ROOM: (roomId: string) => `/games/tic-tac-toe/online/${roomId}`,
+    GAMES_TIC_TAC_TOE_ONLINE_MODE: (mode: 'classic' | 'ultimate' | 'waiting-room') => `/games/tic-tac-toe/online/${mode}`,
 
     // Import Routes
     IMPORT_ANIME_MANGA: '/import/anime-manga',

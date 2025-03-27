@@ -29,14 +29,13 @@ const Cell = ({
                 {
                     'button-highlight': isActive,
                     active: !!value,
-                    'text-accent': isWinningSquare,
                 }
             )}
             {...props}>
             <AnimatePresence>
                 {value && (
                     <motion.span
-                        className="select-none"
+                        className={`select-none ${isWinningSquare && 'text-accent'}`}
                         variants={{
                             hidden: { opacity: 0, scale: 3 },
                             visible: { opacity: 1, scale: 1 },
@@ -54,6 +53,7 @@ const Cell = ({
                         }}
                         initial="hidden"
                         animate={isWinningSquare ? 'winner' : 'visible'}
+                        // {...props}
                         exit="exit">
                         {value}
                     </motion.span>

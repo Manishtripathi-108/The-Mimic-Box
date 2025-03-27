@@ -1,4 +1,5 @@
 export type PlayerData = {
+    id: string | null;
     name: string;
     score: number;
 };
@@ -13,7 +14,6 @@ export type TicTacToeGameState = {
     ultimateBoardState: BoardState[];
 
     isFetching: boolean;
-    onlineMode: boolean;
     awaitingOpponent: boolean;
     playerSymbol: 'X' | 'O' | null;
     gameRoomId: string | null;
@@ -44,10 +44,10 @@ export type TicTacToeActions =
 export type TicTacToeGameContext = {
     resetBoard: () => void;
     connect: () => void;
-    createRoom: (roomName: string, playerName: string) => void;
+    createRoom: (mode: GameMode, playerName: string) => void;
     disconnect: () => void;
     makeMove: (macroIndex: number, cellIndex?: number) => void;
-    joinRoom: (gameRoomId: string, playerName: string, roomName?: string, isCreating?: boolean) => void;
+    joinRoom: (gameRoomId: string, playerName: string) => void;
     leaveRoom: () => void;
     setMode: (gameMode: 'classic' | 'ultimate') => void;
     setLoading: (loading: boolean) => void;

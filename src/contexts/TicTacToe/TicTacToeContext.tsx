@@ -6,8 +6,9 @@ import { redirect } from 'next/navigation';
 
 import toast from 'react-hot-toast';
 
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { useSocket } from '@/hooks/useSocket';
-import { TicTacToeGameContext } from '@/lib/types/tic-tac-toe.types';
+import { GameMode, TicTacToeGameContext } from '@/lib/types/tic-tac-toe.types';
 
 import { TicTacToeReducer, defaultGameState } from './TicTacToeReducer';
 
@@ -23,7 +24,7 @@ export const useTicTacToeContext = () => {
 
 export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) => {
     const [state, dispatch] = useReducer(TicTacToeReducer, defaultGameState);
-    const { socket, reconnect, disconnect } = useSocket('/tic-tac-toe');
+    const { socket, reconnect, disconnect } = useSocket();
 
     // Connect to socket
     useEffect(() => {
@@ -33,17 +34,12 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
             dispatch({ type: 'TOGGLE_LOADING', payload: true });
         });
 
-        socket.on('gameStarted', (roomState) => {
-            dispatch({ type: 'UPDATE_STATE', payload: { hasStarted: true, ...roomState } });
-        });
-
         socket.on('updateGame', (roomState) => {
-            dispatch({ type: 'MAKE_MOVE', payload: { ...roomState } });
+            dispatch({ type: 'UPDATE_STATE', payload: { ...roomState } });
         });
 
-        socket.on('gameError', (message) => {
-            dispatch({ type: 'TOGGLE_LOADING', payload: false });
-            console.log('Error:', message);
+        socket.on('error', (message) => {
+            console.error('Error:', message);
             toast.error(message);
         });
 
@@ -69,7 +65,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
 
     const makeMove = useCallback(
         (macroIndex: number, cellIndex?: number) => {
-            const { onlineMode, isNextX, playerSymbol, gameRoomId, classicBoardState, ultimateBoardState, activeCellIndex } = state;
+            const { isNextX, playerSymbol, gameRoomId, classicBoardState, ultimateBoardState, activeCellIndex } = state;
 
             if (
                 (cellIndex && ultimateBoardState[macroIndex]?.[cellIndex]) ||
@@ -80,7 +76,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
                 return;
             }
 
-            if (onlineMode) {
+            if (gameRoomId) {
                 const isPlayerTurn = isNextX === (playerSymbol === 'X');
                 if (isPlayerTurn) {
                     socket?.emit('playerMove', { gameRoomId, playerSymbol, macroIndex, cellIndex });
@@ -95,29 +91,40 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
     );
 
     const startMatch = useCallback(() => {
-        socket?.emit('startMatch', { gameRoomId: state.gameRoomId });
+        socket?.emit('startMatch', { roomId: state.gameRoomId });
     }, [socket, state.gameRoomId]);
 
     const joinRoom = useCallback(
-        (gameRoomId: string, playerName: string, roomName = 'default', isCreating = false) => {
+        (roomId: string, playerName: string) => {
             reconnect();
-            socket?.emit('joinRoom', { gameRoomId, playerName, roomName, isCreating });
-            redirect('/games/tic-tac-toe/classic');
+            socket?.emit(
+                'joinRoom',
+                { roomId, playerName },
+                ({ success, message, mode }: { success: boolean; message: string; mode: GameMode | 'waiting-room' }) => {
+                    dispatch({ type: 'TOGGLE_LOADING', payload: false });
+                    toast.error(message);
+                    redirect(success ? APP_ROUTES.GAMES_TIC_TAC_TOE_ONLINE_MODE(mode) : APP_ROUTES.GAMES_TIC_TAC_TOE_ONLINE);
+                }
+            );
         },
         [socket, reconnect]
     );
 
     const createRoom = useCallback(
-        (roomName: string, playerName: string) => {
+        (mode: GameMode, playerName: string) => {
             reconnect();
-            socket?.emit('getRoomId', ({ success, gameRoomId, message }: { success: boolean; gameRoomId: string; message: string }) => {
-                if (success) {
-                    joinRoom(gameRoomId, playerName, roomName, true);
-                } else {
-                    console.log('Error:', message);
-                    toast.error(message);
+            socket?.emit(
+                'createRoom',
+                { playerName, mode },
+                ({ success, gameRoomId, message }: { success: boolean; gameRoomId: string; message: string }) => {
+                    if (success) {
+                        joinRoom(gameRoomId, playerName);
+                    } else {
+                        console.log('Error:', message);
+                        toast.error(message);
+                    }
                 }
-            });
+            );
         },
         [socket, reconnect, joinRoom]
     );
@@ -131,12 +138,12 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
     }, []);
 
     const resetBoard = useCallback(() => {
-        if (state.onlineMode) {
+        if (state.gameRoomId) {
             socket?.emit('resetRoom', state.gameRoomId);
         } else {
             dispatch({ type: 'RESET_HARD' });
         }
-    }, [socket, state.onlineMode, state.gameRoomId]);
+    }, [socket, state.gameRoomId]);
 
     const restartGame = useCallback(() => {
         dispatch({ type: 'RESET_HARD' });
