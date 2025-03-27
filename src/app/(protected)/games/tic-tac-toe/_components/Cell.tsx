@@ -8,13 +8,12 @@ import cn from '@/lib/utils/cn';
 
 const Cell = ({
     value,
-    onClick,
     isActive = false,
     classic = false,
     isWinningSquare = false,
+    ...props
 }: {
     value: 'X' | 'O' | 'D' | null;
-    onClick: () => void;
     isActive?: boolean;
     classic?: boolean;
     isWinningSquare?: boolean;
@@ -22,7 +21,6 @@ const Cell = ({
     return (
         <button
             type="button"
-            onClick={onClick}
             aria-label={`Cell ${value || 'empty'}`}
             aria-pressed={!!value}
             className={cn(
@@ -33,7 +31,8 @@ const Cell = ({
                     active: !!value,
                     'text-accent': isWinningSquare,
                 }
-            )}>
+            )}
+            {...props}>
             <AnimatePresence>
                 {value && (
                     <motion.span

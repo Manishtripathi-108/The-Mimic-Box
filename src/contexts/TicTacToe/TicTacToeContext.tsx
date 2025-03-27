@@ -44,6 +44,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
         socket.on('gameError', (message) => {
             dispatch({ type: 'TOGGLE_LOADING', payload: false });
             console.log('Error:', message);
+            toast.error(message);
         });
 
         socket.on('disconnect', () => {
@@ -52,6 +53,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
 
         socket.on('roomLeft', () => {
             console.log('You left the room');
+            toast.error('You left the room');
             dispatch({ type: 'RESET_HARD' });
         });
     }, [socket]);
@@ -74,7 +76,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
                 classicBoardState[macroIndex] ||
                 (activeCellIndex !== null && activeCellIndex !== macroIndex)
             ) {
-                console.log('Invalid move', 'error');
+                toast.error('Invalid move');
                 return;
             }
 
@@ -113,6 +115,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
                     joinRoom(gameRoomId, playerName, roomName, true);
                 } else {
                     console.log('Error:', message);
+                    toast.error(message);
                 }
             });
         },

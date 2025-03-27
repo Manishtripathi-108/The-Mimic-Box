@@ -47,8 +47,8 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
                     {onlineMode ? (
                         <span className="text-highlight font-julee text-4xl">{playerSymbol}</span>
                     ) : (
-                        <button onClick={() => openModal('game_action')} type="button" title="Clear Board" className="button rounded-xl p-2">
-                            <Icon icon={ICON_SET.BROOM} className="size-6" />
+                        <button onClick={() => openModal('game_action')} type="button" title="Clear Board" className="button size-10 rounded-xl p-2">
+                            <Icon icon={ICON_SET.BROOM} className="size-full" />
                         </button>
                     )}
                 </div>
