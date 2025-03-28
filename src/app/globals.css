@@ -51,9 +51,7 @@
     --animate-blob: blob 10s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
     --animate-loader-circle: loader-circle 0.5s alternate infinite ease-in;
     --animate-loader-shadow: loader-shadow 0.5s alternate infinite ease-in;
-    --animate-pulse-slow: pulse-slow 1s ease-in-out infinite alternate;
     --animate-progress-after: progress-after 1s infinite linear;
-    --animate-shimmer-ray: shimmer-ray 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
     --animate-slide-left: slide-left 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-slide-left-return: slide-left-return 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-wipe-in-down: wipe-in-down 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
@@ -61,32 +59,6 @@
     --animate-zoom-in: zoom-in 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-zoom-out: zoom-out 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-waves: waves 5s linear infinite;
-
-    @keyframes shimmer-ray {
-        0% {
-            left: -30%;
-            opacity: 0;
-            width: 0;
-        }
-
-        100% {
-            left: 100%;
-            opacity: 1;
-            width: 35%;
-        }
-    }
-
-    @keyframes pulse-slow {
-        0% {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-
-        to {
-            opacity: 0.5;
-            transform: scale(0.8);
-        }
-    }
 
     @keyframes slide-left-return {
         0% {
@@ -400,7 +372,7 @@
 
 /* ---------------------------------- Field --------------------------------- */
 @utility form-field {
-    @apply bg-primary text-text-primary placeholder:text-text-secondary shadow-floating-xs focus:shadow-pressed-xs file:bg-accent w-full appearance-none rounded-xl border px-3 py-2 text-sm outline-hidden transition duration-300 file:mr-5 file:cursor-pointer file:rounded-lg file:border-none file:px-3 file:py-2 file:text-white file:transition file:duration-200 file:ease-in-out;
+    @apply bg-primary text-text-primary placeholder:text-text-secondary shadow-floating-xs focus:shadow-pressed-xs file:bg-accent w-full appearance-none rounded-xl px-3 py-2 text-sm outline-hidden transition duration-300 file:mr-5 file:cursor-pointer file:rounded-lg file:border-none file:px-3 file:py-2 file:text-white file:transition file:duration-200 file:ease-in-out;
 
     select& {
         @apply cursor-pointer bg-no-repeat pr-10 ring-black focus-visible:ring-1 dark:ring-white;
@@ -467,12 +439,12 @@
 
     &:user-invalid,
     &[data-invalid='true'] {
-        @apply border-red-500 text-red-500 dark:border-red-500;
+        @apply border border-red-500 text-red-500 dark:border-red-500;
     }
 }
 
 @utility form-field-wrapper {
-    @apply shadow-floating-xs bg-primary text-text-secondary hover:text-text-primary focus-within:text-text-primary flex w-full items-center justify-center divide-x rounded-lg border;
+    @apply shadow-floating-xs bg-primary text-text-secondary hover:text-text-primary focus-within:text-text-primary flex w-full items-center justify-center divide-x rounded-lg;
 
     & .form-field {
         @apply my-0.5 rounded-md border-none text-inherit shadow-none;

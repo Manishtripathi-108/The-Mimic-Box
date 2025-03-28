@@ -11,7 +11,7 @@ import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
-    title: 'Linked Accounts | The Mimic Box',
+    title: 'Linked Accounts',
     description: 'Manage your linked accounts on The Mimic Box.',
 };
 

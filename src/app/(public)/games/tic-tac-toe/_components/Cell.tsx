@@ -2,8 +2,6 @@
 
 import React, { memo } from 'react';
 
-import { AnimatePresence, motion } from 'motion/react';
-
 import cn from '@/lib/utils/cn';
 
 const Cell = ({
@@ -32,33 +30,11 @@ const Cell = ({
                 }
             )}
             {...props}>
-            <AnimatePresence>
-                {value && (
-                    <motion.span
-                        className={`select-none ${isWinningSquare && 'text-accent'}`}
-                        variants={{
-                            hidden: { opacity: 0, scale: 3 },
-                            visible: { opacity: 1, scale: 1 },
-                            winner: {
-                                opacity: [1, 1, 1],
-                                scale: [0.8, 1.3, 0.8],
-                                transition: {
-                                    duration: 1.5,
-                                    repeat: Infinity,
-                                    repeatType: 'reverse',
-                                    ease: 'easeInOut',
-                                },
-                            },
-                            exit: { opacity: 0, scale: 0.5 },
-                        }}
-                        initial="hidden"
-                        animate={isWinningSquare ? 'winner' : 'visible'}
-                        // {...props}
-                        exit="exit">
-                        {value}
-                    </motion.span>
-                )}
-            </AnimatePresence>
+            {value && (
+                <span className={cn('animate-zoom-in transition-transform duration-300 ease-in-out select-none', isWinningSquare && 'text-accent')}>
+                    {value}
+                </span>
+            )}
         </button>
     );
 };

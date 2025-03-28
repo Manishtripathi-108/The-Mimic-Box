@@ -8,7 +8,7 @@ import ResetPasswordForm from '@/components/layout/auth/ResetPassword';
 import ICON_SET from '@/constants/icons';
 
 export const metadata: Metadata = {
-    title: 'Reset Password | The Mimic Box',
+    title: 'Reset Password',
     description: 'Reset your password',
 };
 

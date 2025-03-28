@@ -10,7 +10,7 @@ import LogoutButton from '@/components/ui/LogoutButton';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
-    title: 'Profile | The Mimic Box',
+    title: 'Profile',
     description: 'View and manage your profile on The Mimic Box.',
 };
 

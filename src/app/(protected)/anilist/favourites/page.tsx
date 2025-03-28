@@ -8,7 +8,7 @@ import AnilistMain from '@/components/layout/anilist/AnilistMain';
 import { IMAGE_URL } from '@/constants/client.constants';
 
 export const metadata: Metadata = {
-    title: 'Your Anilist Favorites | The Mimic Box',
+    title: 'Your Anilist Favorites',
     description: 'View and manage your favorite anime and manga from Anilist. Keep track of what you love and share your top picks with friends.',
 };
 

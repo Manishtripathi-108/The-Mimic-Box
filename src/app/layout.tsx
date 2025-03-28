@@ -30,7 +30,10 @@ const fontAlegreya = Alegreya({
 });
 
 export const metadata: Metadata = {
-    title: 'The Mimic Box',
+    title: {
+        default: 'The Mimic Box',
+        template: '%s | The Mimic Box',
+    },
     description: 'Welcome to The Mimic Box.',
     keywords: [
         'Mimic Box',
@@ -51,6 +54,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
     themeColor: '#dfdfdf',
+    colorScheme: 'light dark',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

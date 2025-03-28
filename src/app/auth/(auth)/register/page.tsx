@@ -4,10 +4,10 @@ import RegisterForm from '@/components/layout/auth/Register';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
-    title: 'Register | The Mimic Box',
+    title: 'Register',
     description: 'Create an account on The Mimic Box to get started. Join us today!',
     openGraph: {
-        title: 'Register | The Mimic Box',
+        title: 'Register',
         description: 'Create an account on The Mimic Box to get started. Join us today!',
         url: `${process.env.NEXT_PUBLIC_URL}${APP_ROUTES.AUTH_REGISTER}`,
         type: 'website',

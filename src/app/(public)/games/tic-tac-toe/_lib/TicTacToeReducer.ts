@@ -34,8 +34,7 @@ export const TicTacToeReducer = (state: TicTacToeGameState, action: TicTacToeAct
     switch (action.type) {
         case 'SET_MODE': {
             const { payload: gameMode } = action;
-            if (!['classic', 'ultimate'].includes(gameMode)) return state;
-            return restoreInitialState(state, { gameMode });
+            return ['classic', 'ultimate'].includes(gameMode) ? restoreInitialState(state, { gameMode }) : state;
         }
 
         case 'UPDATE_PLAYER':
@@ -57,7 +56,7 @@ export const TicTacToeReducer = (state: TicTacToeGameState, action: TicTacToeAct
                 const updatedBoard = classicBoardState.map((cell, i) => (i === macroIndex ? (isNextX ? 'X' : 'O') : cell));
                 const result = evaluateBoardStatus(updatedBoard);
 
-                let newState = {
+                const newState = {
                     ...state,
                     classicBoardState: updatedBoard,
                     isNextX: !isNextX,
@@ -67,12 +66,17 @@ export const TicTacToeReducer = (state: TicTacToeGameState, action: TicTacToeAct
                     isStalemate: result.status === 'draw',
                 };
 
-                if (result.status === 'win') newState = incrementPlayerScore(newState, result.winner);
+                if (result.status === 'win') return incrementPlayerScore(newState, result.winner);
                 else if (result.status === 'draw') newState.stalemateCount += 1;
                 return newState;
             } else {
-                if (cellIndex === undefined) return state;
-                if (ultimateBoardState[macroIndex][cellIndex] || (activeCellIndex !== null && activeCellIndex !== macroIndex)) return state;
+                if (
+                    cellIndex === undefined ||
+                    ultimateBoardState[macroIndex][cellIndex] ||
+                    (activeCellIndex !== null && activeCellIndex !== macroIndex)
+                ) {
+                    return state;
+                }
 
                 const updatedUltimateBoard = ultimateBoardState.map((board, i) =>
                     i === macroIndex ? board.map((cell, j) => (j === cellIndex ? (isNextX ? 'X' : 'O') : cell)) : board
@@ -80,12 +84,13 @@ export const TicTacToeReducer = (state: TicTacToeGameState, action: TicTacToeAct
 
                 const miniResult = evaluateBoardStatus(updatedUltimateBoard[macroIndex]);
                 const updatedClassicBoard = [...classicBoardState];
+
                 if (miniResult.status === 'win') updatedClassicBoard[macroIndex] = miniResult.winner;
                 else if (miniResult.status === 'draw') updatedClassicBoard[macroIndex] = 'D';
 
                 const largeResult = evaluateBoardStatus(updatedClassicBoard);
 
-                let newState = {
+                const newState = {
                     ...state,
                     ultimateBoardState: updatedUltimateBoard,
                     classicBoardState: updatedClassicBoard,
@@ -97,8 +102,8 @@ export const TicTacToeReducer = (state: TicTacToeGameState, action: TicTacToeAct
                     activeCellIndex: updatedClassicBoard[cellIndex] ? null : cellIndex,
                 };
 
-                if (largeResult.status === 'win') newState = incrementPlayerScore(newState, largeResult.winner);
-                else if (largeResult.status === 'draw') newState.stalemateCount += 1;
+                if (largeResult.status === 'win') return incrementPlayerScore(newState, largeResult.winner);
+                if (largeResult.status === 'draw') newState.stalemateCount += 1;
                 return newState;
             }
         }

@@ -10,7 +10,7 @@ import { IMAGE_URL } from '@/constants/client.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
-    title: 'Your Anilist Anime Collection | The Mimic Box',
+    title: 'Your Anilist Anime Collection',
     description:
         'Keep track of your anime with Anilist integration. Manage your collection, track progress, and discover new favorites effortlessly.',
 };

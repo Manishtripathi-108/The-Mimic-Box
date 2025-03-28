@@ -8,7 +8,7 @@ import VerifyEmail from '@/components/layout/auth/VerifyEmail';
 import ICON_SET from '@/constants/icons';
 
 export const metadata: Metadata = {
-    title: 'Verify Your Email | The Mimic Box',
+    title: 'Verify Your Email',
     description: 'Verify your email to complete your registration on The Mimic Box.',
 };
 

@@ -2,8 +2,6 @@
 
 import React, { useEffect, useRef } from 'react';
 
-import { AnimatePresence, motion } from 'motion/react';
-
 import Cell from '@/app/(public)/games/tic-tac-toe/_components/Cell';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { GameMode } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
@@ -70,20 +68,14 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
                             data-macro={macroIndex}
                         />
                     ))}
-                    <AnimatePresence>
-                        {classicBoardState[macroIndex] && (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={winningIndexes?.includes(macroIndex) ? { scale: 1 } : { scale: 1 }}
-                                exit={{ scale: 0 }}
-                                className="bg-primary shadow-pressed-sm absolute inset-0 z-10 flex items-center justify-center rounded-md p-5">
-                                <motion.span
-                                    className={`${winningIndexes?.includes(macroIndex) ? 'text-accent' : 'text-text-secondary'} text-7xl select-none md:text-9xl`}>
-                                    {classicBoardState[macroIndex]}
-                                </motion.span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {classicBoardState[macroIndex] && (
+                        <div className="bg-primary shadow-pressed-sm animate-zoom-in absolute inset-0 z-10 flex items-center justify-center rounded-md p-5">
+                            <span
+                                className={`${winningIndexes?.includes(macroIndex) ? 'text-accent' : 'text-text-secondary'} text-7xl select-none md:text-9xl`}>
+                                {classicBoardState[macroIndex]}
+                            </span>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>
