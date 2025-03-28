@@ -141,7 +141,7 @@ const CreateRoomForm = () => {
     );
 };
 
-const PlayOnline = () => {
+const OnlineGameSetup = () => {
     const searchParams = useSearchParams();
     const roomId = searchParams.get('roomId');
     const [isJoinForm, setIsJoinForm] = useState(true);
@@ -169,4 +169,4 @@ const PlayOnline = () => {
     );
 };
 
-export default PlayOnline;
+export default OnlineGameSetup;

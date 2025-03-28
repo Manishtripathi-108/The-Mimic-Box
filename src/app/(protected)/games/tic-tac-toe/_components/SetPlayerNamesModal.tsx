@@ -32,7 +32,7 @@ const playerSchema = z
 // ✅ Define TypeScript type based on Zod schema
 type PlayerFormValues = z.infer<typeof playerSchema>;
 
-const PlayerNameModal = () => {
+const SetPlayerNamesModal = () => {
     const { state, setPlayers } = useTicTacToeContext();
     const { playerXData, playerOData } = state;
 
@@ -53,11 +53,11 @@ const PlayerNameModal = () => {
     const onSubmit = (data: PlayerFormValues) => {
         setPlayers('X', data.playerX);
         setPlayers('O', data.playerO);
-        closeModal('playerNameModal');
+        closeModal('SetPlayerNamesModal');
     };
 
     return (
-        <Modal modalId="playerNameModal" showCloseButton={false} className="w-full max-w-96">
+        <Modal modalId="SetPlayerNamesModal" showCloseButton={false} className="w-full max-w-96">
             <form onSubmit={handleSubmit(onSubmit)} className="p-6">
                 <h2 className="text-highlight font-alegreya mb-4 text-center text-xl font-bold tracking-wide">Set Player Names</h2>
 
@@ -114,4 +114,4 @@ const PlayerNameModal = () => {
     );
 };
 
-export default PlayerNameModal;
+export default SetPlayerNamesModal;

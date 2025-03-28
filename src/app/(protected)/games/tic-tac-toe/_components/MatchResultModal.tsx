@@ -6,7 +6,7 @@ import { motion } from 'motion/react';
 
 import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
 
-const GameOverModal = ({ status }: { status: string }) => {
+const MatchResultModal = ({ status }: { status: string }) => {
     const playRef = useRef<HTMLButtonElement>(null);
     const { resetBoard } = useTicTacToeContext();
     useEffect(() => playRef.current?.focus(), []);
@@ -35,4 +35,4 @@ const GameOverModal = ({ status }: { status: string }) => {
     );
 };
 
-export default GameOverModal;
+export default MatchResultModal;

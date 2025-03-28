@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 
 import { AnimatePresence } from 'motion/react';
 
-import GameOverModal from '@/app/(protected)/games/tic-tac-toe/_components/GameOverModal';
+import MatchResultModal from '@/app/(protected)/games/tic-tac-toe/_components/MatchResultModal';
 import ScoreBoard from '@/app/(protected)/games/tic-tac-toe/_components/ScoreBoard';
 import TicTacToeBoard from '@/app/(protected)/games/tic-tac-toe/_components/TicTacToeBoard';
 import WaitingRoom from '@/app/(protected)/games/tic-tac-toe/_components/WaitingRoom';
@@ -14,7 +14,7 @@ import { APP_ROUTES } from '@/constants/routes.constants';
 import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
 import { GameMode } from '@/lib/types/tic-tac-toe.types';
 
-const TicTacToeOnlineMode = ({ mode }: { mode: GameMode | 'waiting-room' }) => {
+const OnlineGameLobby = ({ mode }: { mode: GameMode | 'waiting-room' }) => {
     const { playerSymbol, gameRoomId, isNextX, hasGameEnded, gameWinner, isStalemate, stalemateCount, playerXData, playerOData } =
         useTicTacToeContext().state;
 
@@ -54,7 +54,7 @@ const TicTacToeOnlineMode = ({ mode }: { mode: GameMode | 'waiting-room' }) => {
             {/* Board and Game Over Modal */}
             <div className="relative">
                 <TicTacToeBoard mode={mode} />
-                <AnimatePresence>{hasGameEnded && <GameOverModal status={renderGameStatus()} />}</AnimatePresence>
+                <AnimatePresence>{hasGameEnded && <MatchResultModal status={renderGameStatus()} />}</AnimatePresence>
             </div>
 
             {/* Score Board */}
@@ -63,4 +63,4 @@ const TicTacToeOnlineMode = ({ mode }: { mode: GameMode | 'waiting-room' }) => {
     );
 };
 
-export default TicTacToeOnlineMode;
+export default OnlineGameLobby;

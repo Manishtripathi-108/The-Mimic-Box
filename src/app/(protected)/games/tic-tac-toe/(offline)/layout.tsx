@@ -7,9 +7,9 @@ import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import { AnimatePresence } from 'motion/react';
 
-import GameOverModal from '@/app/(protected)/games/tic-tac-toe/_components/GameOverModal';
-import PlayerNameModal from '@/app/(protected)/games/tic-tac-toe/_components/PlayerNameModal';
+import MatchResultModal from '@/app/(protected)/games/tic-tac-toe/_components/MatchResultModal';
 import ScoreBoard from '@/app/(protected)/games/tic-tac-toe/_components/ScoreBoard';
+import SetPlayerNamesModal from '@/app/(protected)/games/tic-tac-toe/_components/SetPlayerNamesModal';
 import { ConfirmationModal, openModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
@@ -60,7 +60,7 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
             {/* Game Board */}
             <main className="relative">
                 {children}
-                <AnimatePresence>{hasGameEnded && <GameOverModal status={renderGameStatus()} />}</AnimatePresence>
+                <AnimatePresence>{hasGameEnded && <MatchResultModal status={renderGameStatus()} />}</AnimatePresence>
             </main>
 
             {/* Score Board */}
@@ -72,14 +72,14 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
                     <Icon icon={ICON_SET.GAMEPAD} className="size-6" />
                     Start Over
                 </button>
-                <button className="button" onClick={() => openModal('playerNameModal')}>
+                <button className="button" onClick={() => openModal('SetPlayerNamesModal')}>
                     <Icon icon={ICON_SET.PLAYER} className="size-5" />
                     Change <span className="hidden md:inline">Player</span> Name
                 </button>
             </footer>
 
             {/* Modals */}
-            <PlayerNameModal />
+            <SetPlayerNamesModal />
             <ConfirmationModal
                 modalId="game_action"
                 icon={ICON_SET.ERROR}

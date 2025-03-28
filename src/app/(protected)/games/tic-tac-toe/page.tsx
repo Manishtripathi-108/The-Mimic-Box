@@ -8,8 +8,9 @@ import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
-    title: 'Tic Tac Toe | The Mimic Box',
-    description: 'Play Tic Tac Toe with friends locally or online.',
+    title: 'Tic-Tac-Toe | Choose Your Game Mode - The Mimic Box',
+    description: 'Select your preferred Tic-Tac-Toe mode: Classic, Ultimate, or Online Multiplayer. Enjoy competitive gameplay!',
+    keywords: ['Tic Tac Toe Classic', 'Ultimate Tic Tac Toe', 'Multiplayer Tic Tac Toe', 'Local Tic Tac Toe'],
 };
 
 const TicTacToeIndex = () => {
