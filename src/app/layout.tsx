@@ -32,6 +32,21 @@ const fontAlegreya = Alegreya({
 export const metadata: Metadata = {
     title: 'The Mimic Box',
     description: 'Welcome to The Mimic Box.',
+    keywords: [
+        'Mimic Box',
+        'The Mimic Box',
+        'Mimic Box Games',
+        'Mimic Box Tic Tac Toe',
+        'Mimic Box Online Games',
+        'Mimic Box Classic Games',
+        'Mimic Box Multiplayer Games',
+        'Mimic Box Fun Games',
+        'Mimic Box Entertainment',
+        'Mimic Box Community',
+        'Mimic Box Gaming',
+        'Mimic Box Fun',
+        'Mimic Box Online',
+    ],
 };
 
 export const viewport: Viewport = {

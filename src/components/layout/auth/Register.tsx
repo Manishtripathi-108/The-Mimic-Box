@@ -14,7 +14,7 @@ import { z } from 'zod';
 
 import { registerAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
-import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { registerSchema } from '@/lib/schema/auth.validations';
 
 export default function RegisterForm() {
@@ -167,7 +167,7 @@ export default function RegisterForm() {
 
             <footer className="text-text-secondary mt-2 text-center text-sm">
                 Already have an account?{' '}
-                <Link href={APP_ROUTES.AUTH_LOGIN} className="text-highlight hover:underline">
+                <Link href={DEFAULT_AUTH_ROUTE} className="text-highlight hover:underline">
                     Login
                 </Link>
             </footer>

@@ -13,7 +13,7 @@ import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
 import ICON_SET from '@/constants/icons';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
 
 const ForgotPasswordForm = () => {
@@ -83,7 +83,7 @@ const ForgotPasswordForm = () => {
                     </button>
                 </form>
 
-                <Link className="text-highlight mb-6 block text-center text-sm hover:underline" href={APP_ROUTES.AUTH_LOGIN}>
+                <Link className="text-highlight mb-6 block text-center text-sm hover:underline" href={DEFAULT_AUTH_ROUTE}>
                     Return to Login
                 </Link>
             </article>

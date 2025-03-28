@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 import { auth } from '@/auth';
-import { API_ROUTES, APP_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_ROUTE, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getSpotifyUserProfile } from '@/lib/services/spotify/user.service';
 import { createErrorResponse } from '@/lib/utils/createResponse.utils';
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const session = await auth();
 
     if (!session || !session.user?.id) {
-        return NextResponse.redirect(new URL(APP_ROUTES.AUTH_LOGIN, req.nextUrl));
+        return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, req.nextUrl));
     }
 
     const searchParams = req.nextUrl.searchParams;
