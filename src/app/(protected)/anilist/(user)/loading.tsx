@@ -2,7 +2,7 @@ import React from 'react';
 
 const AnilistSkeleton = () => {
     return (
-        <>
+        <div className="container mx-auto p-2 sm:p-6">
             {/* Controls */}
             <div className="mb-4 flex items-center justify-between gap-4 *:animate-pulse">
                 <div className="bg-tertiary h-8 w-48 rounded-lg"></div>
@@ -32,7 +32,7 @@ const AnilistSkeleton = () => {
                     <div key={index} className="bg-tertiary h-52 w-full rounded"></div>
                 ))}
             </div>
-        </>
+        </div>
     );
 };
 

@@ -1,8 +1,50 @@
 /** 📌 Represents the type of media (Anime or Manga) */
 export type AnilistMediaType = 'ANIME' | 'MANGA';
 
+/** 📌 Represents the season of a media entry */
+export type AnilistMediaSeason = 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL';
+
 /** 📌 Represents the status of a media entry */
 export type AnilistMediaStatus = 'FINISHED' | 'RELEASING' | 'NOT_YET_RELEASED' | 'CANCELLED' | 'HIATUS';
+
+export type AnilistMediaSort =
+    | 'ID'
+    | 'ID_DESC'
+    | 'TITLE_ROMAJI'
+    | 'TITLE_ROMAJI_DESC'
+    | 'TITLE_ENGLISH'
+    | 'TITLE_ENGLISH_DESC'
+    | 'TITLE_NATIVE'
+    | 'TITLE_NATIVE_DESC'
+    | 'TYPE'
+    | 'TYPE_DESC'
+    | 'FORMAT'
+    | 'FORMAT_DESC'
+    | 'START_DATE'
+    | 'START_DATE_DESC'
+    | 'END_DATE'
+    | 'END_DATE_DESC'
+    | 'SCORE'
+    | 'SCORE_DESC'
+    | 'POPULARITY'
+    | 'POPULARITY_DESC'
+    | 'TRENDING'
+    | 'TRENDING_DESC'
+    | 'EPISODES'
+    | 'EPISODES_DESC'
+    | 'DURATION'
+    | 'DURATION_DESC'
+    | 'STATUS'
+    | 'STATUS_DESC'
+    | 'CHAPTERS'
+    | 'CHAPTERS_DESC'
+    | 'VOLUMES'
+    | 'VOLUMES_DESC'
+    | 'UPDATED_AT'
+    | 'UPDATED_AT_DESC'
+    | 'SEARCH_MATCH'
+    | 'FAVOURITES'
+    | 'FAVOURITES_DESC';
 
 /** 📌 Represents the user’s list status for a media */
 export type AnilistMediaListStatus = 'CURRENT' | 'PLANNING' | 'COMPLETED' | 'DROPPED' | 'PAUSED' | 'REPEATING';
@@ -19,6 +61,7 @@ export type AnilistMedia = {
     type: AnilistMediaType;
     format: AnilistMediaFormat;
     status: AnilistMediaStatus;
+    season: AnilistMediaSeason;
     description: string;
     duration: number | null;
     chapters: number | null;
@@ -101,6 +144,19 @@ export type AnilistMediaIds = {
     };
 };
 
+export type AnilistQuery = {
+    type: AnilistMediaType;
+    format?: AnilistMediaFormat;
+    season?: AnilistMediaSeason;
+    sort?: AnilistMediaSort;
+    status?: AnilistMediaStatus;
+    search?: string | null;
+    genres?: string[] | null;
+    seasonYear?: number | null;
+    page?: number;
+    perPage?: number;
+};
+
 /* ------------------------------- Client Side ------------------------------ */
 
 /** 📌 Represents the tabs for media lists */
@@ -113,6 +169,7 @@ export type AnilistFavouritesTab = 'All' | 'Anime' | 'Manga';
 export type AnilistMediaFilters = {
     format: AnilistMediaFormat | null;
     status: AnilistMediaStatus | null;
+    season: AnilistMediaSeason | null;
     search: string;
     genres: string[] | null;
     year: number | null;

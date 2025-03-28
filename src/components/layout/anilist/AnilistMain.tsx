@@ -11,6 +11,7 @@ import Modal, { openModal } from '@/components/Modals';
 import AnilistEditMedia from '@/components/layout/anilist/AnilistEditMedia';
 import AnilistFilter from '@/components/layout/anilist/AnilistFIlter';
 import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
+import AnilistToolbar from '@/components/layout/anilist/AnilistToolbar';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { ANILIST_FAVOURITE_TAB, ANILIST_MEDIA_TAB, IMAGE_URL } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
@@ -101,48 +102,15 @@ const AnilistMain = ({
     );
 
     return (
-        <>
+        <main className="container mx-auto p-2 sm:p-6">
             {/* Header Section */}
-            <div className="mb-4 flex items-center justify-between gap-4">
-                <h2 className="text-highlight text-2xl font-bold capitalize sm:text-3xl">Your {type} List</h2>
-
-                {/* Search Field */}
-                <div className="form-field-wrapper bg-secondary hidden max-w-86 sm:flex">
-                    <input
-                        type="text"
-                        name="search"
-                        placeholder="Search..."
-                        className="form-field bg-inherit"
-                        value={filterData.search!}
-                        onChange={(e) => {
-                            setFilterData({ ...filterData, search: e.target.value });
-                        }}
-                    />
-                    <Icon role="button" icon={ICON_SET.SEARCH} className="form-icon" />
-                </div>
-
-                {/* View Mode & Filter Buttons */}
-                <div className="flex items-center justify-end pr-4">
-                    <span className="flex w-fit items-center justify-center rounded-full border">
-                        {['detailed list', 'card'].map((mode) => (
-                            <button
-                                onClick={() => setDetailedView(mode === 'detailed list')}
-                                key={mode}
-                                className={`button p-2 shadow-none ${mode === 'detailed list' ? 'rounded-l-full' : 'rounded-r-full'} ${detailedView === (mode === 'detailed list') ? 'active' : ''}`}
-                                title={`View as ${mode}`}
-                                aria-label={`View as ${mode}`}>
-                                <Icon icon={mode === 'detailed list' ? ICON_SET.LIST : ICON_SET.CARD} className="size-4" />
-                            </button>
-                        ))}
-                    </span>
-                    <button
-                        title="Filter"
-                        onClick={() => openModal('anilist-filters-modal')}
-                        className="button text-highlight ml-4 size-8 rounded-xl p-2">
-                        <Icon icon={ICON_SET.FILTER} className="size-full" />
-                    </button>
-                </div>
-            </div>
+            <AnilistToolbar
+                text={`Your ${type} List`}
+                filterData={filterData}
+                setFilterData={setFilterData}
+                detailedView={detailedView}
+                setDetailedView={setDetailedView}
+            />
 
             {/* Tabs Navigation */}
             <TabNavigation
@@ -151,11 +119,10 @@ const AnilistMain = ({
                 currentTab={selectedTab}
                 onTabChange={handleTabChange}
             />
-
             {/* Anime Cards Grid */}
             {currentData.length > 0 ? (
                 <div
-                    className={`grid ${detailedView ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(380px,1fr))]' : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3'}`}>
+                    className={`grid ${detailedView ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(380px,1fr))]' : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]'}`}>
                     {currentData?.map((entry) => (
                         <AnilistMediaCard key={entry.id} detailed={detailedView} onEdit={type !== 'favourites' ? handleEdit : null} media={entry} />
                     ))}
@@ -188,7 +155,7 @@ const AnilistMain = ({
                     )}
                 </Modal>
             )}
-        </>
+        </main>
     );
 };
 

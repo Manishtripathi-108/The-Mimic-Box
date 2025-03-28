@@ -17,11 +17,10 @@ const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <main className="bg-primary">
+        <>
             <AnilistHeader bannerUrl={anilist.bannerUrl} displayName={anilist.displayName || 'Anilist User'} imageUrl={anilist.imageUrl} />
-
-            <div className="container mx-auto p-2 sm:p-6">{children}</div>
-        </main>
+            {children}
+        </>
     );
 };
 

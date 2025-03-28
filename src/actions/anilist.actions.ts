@@ -1,15 +1,85 @@
 'use server';
 
 import {
+    AnilistMedia,
     AnilistMediaCollection,
     AnilistMediaIds,
     AnilistMediaType,
+    AnilistQuery,
     AnilistSaveMediaListEntry,
     AnilistUser,
     AnilistUserFavourites,
 } from '@/lib/types/anilist.types';
 import { createAniListErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { fetchAniListData } from '@/lib/utils/server.utils';
+
+export const searchAnilistMedia = async ({
+    search,
+    type = 'ANIME',
+    page,
+    perPage,
+    season,
+    seasonYear,
+    sort,
+    genres,
+    format,
+    status,
+}: AnilistQuery) => {
+    const ANIME_QUERY = `
+    query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genre: String, $status: MediaStatus) {
+        Page(page: $page, perPage: $perPage) {
+            media(search: $search, type: $type, season: $season, seasonYear: $seasonYear, sort: $sort, genre: $genre, status: $status) {
+                id
+                type
+                format
+                status
+                description
+                duration
+                chapters
+                episodes
+                genres
+                season
+                averageScore
+                popularity
+                favourites
+                isFavourite
+                title {
+                    romaji
+                    english
+                    native
+                    userPreferred
+                }
+                bannerImage
+                coverImage {
+                    large
+                }
+                startDate {
+                    day
+                    month
+                    year
+                }
+            }
+        }
+    }
+`;
+
+    const [error, response] = await fetchAniListData<{ Page: { media: AnilistMedia[] } }>(null, ANIME_QUERY, {
+        search,
+        type,
+        season,
+        seasonYear,
+        sort,
+        page,
+        perPage,
+        genres,
+        format,
+        status,
+    });
+
+    if (error || !response) return createAniListErrorReturn('Error fetching search results', error);
+
+    return createSuccessReturn('Search results fetched successfully', response.Page.media);
+};
 
 export const getAnilistUserProfile = async (token: string): Promise<AnilistUser | null> => {
     const query = `
@@ -54,6 +124,7 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
                             type
                             format
                             status
+                            season
                             description
                             duration
                             chapters
@@ -128,6 +199,7 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                             type
                             format
                             status
+                            season
                             description
                             duration
                             chapters
@@ -160,6 +232,7 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                             type
                             format
                             status
+                            season
                             description
                             duration
                             chapters

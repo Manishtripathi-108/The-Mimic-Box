@@ -27,5 +27,5 @@ export const AnilistFilterSchema = z.object({
     sort: z.string({ message: 'Invalid sort option' }).refine((val) => ANILIST_SORT_OPTIONS.includes(val), {
         message: 'Invalid sort option',
     }),
-    year: z.number().min(1900).max(new Date().getFullYear()).nullable(),
+    year: z.union([z.number().min(1900).max(new Date().getFullYear()), z.nan()]).nullish(),
 });
