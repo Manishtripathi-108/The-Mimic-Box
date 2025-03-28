@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PlayerData } from '@/lib/types/tic-tac-toe.types';
+import { PlayerData } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
 
 const ScoreBoard = ({ playerX, playerO, drawScore }: { playerX: PlayerData; playerO: PlayerData; drawScore: number }) => {
     return (

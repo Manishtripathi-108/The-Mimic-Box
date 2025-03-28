@@ -1,5 +1,5 @@
-import { defaultGameState } from '@/contexts/TicTacToe/TicTacToeReducer';
-import { TicTacToeGameState } from '@/lib/types/tic-tac-toe.types';
+import { defaultGameState } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeReducer';
+import { TicTacToeGameState } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
 
 const WINNING_PATTERNS = {
     9: [

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import OnlineGameSetupForm from '@/app/(protected)/games/tic-tac-toe/_components/OnlineGameSetup';
+import OnlineGameSetupForm from '@/app/(public)/games/tic-tac-toe/_components/OnlineGameSetup';
 
 export const metadata: Metadata = {
     title: 'Tic-Tac-Toe Online Multiplayer | The Mimic Box',

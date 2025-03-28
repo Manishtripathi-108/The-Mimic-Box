@@ -6,9 +6,9 @@ import { Icon } from '@iconify/react';
 import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 
+import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
 
 const WaitingRoom = () => {
     const { state, startMatch, leaveRoom } = useTicTacToeContext();

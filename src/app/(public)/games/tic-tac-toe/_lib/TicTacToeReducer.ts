@@ -1,7 +1,7 @@
 'use client';
 
-import { evaluateBoardStatus, incrementPlayerScore, restoreInitialState } from '@/contexts/TicTacToe/tic-tac-toe.utils';
-import { TicTacToeActions, TicTacToeGameState } from '@/lib/types/tic-tac-toe.types';
+import { TicTacToeActions, TicTacToeGameState } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
+import { evaluateBoardStatus, incrementPlayerScore, restoreInitialState } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.utils';
 
 export const defaultGameState: TicTacToeGameState = {
     gameMode: 'classic',

@@ -77,11 +77,19 @@ export const EXTERNAL_ROUTES = {
  * Array of routes accessible without authentication.
  */
 export const PUBLIC_ROUTES: string[] = [
+    /* ------------------------------ General Routes ----------------------------- */
     APP_ROUTES.INDEX,
     APP_ROUTES.DEV,
+
+    /* ------------------------------ Authentication Routes ---------------------- */
     APP_ROUTES.AUTH_VERIFY_EMAIL,
     APP_ROUTES.AUTH_FORGOT_PASSWORD,
     APP_ROUTES.AUTH_RESET_PASSWORD,
+
+    /* ------------------------------ Games Routes ------------------------------ */
+    APP_ROUTES.GAMES_TIC_TAC_TOE_INDEX,
+    APP_ROUTES.GAMES_TIC_TAC_TOE_CLASSIC,
+    APP_ROUTES.GAMES_TIC_TAC_TOE_ULTIMATE,
 ];
 
 /**

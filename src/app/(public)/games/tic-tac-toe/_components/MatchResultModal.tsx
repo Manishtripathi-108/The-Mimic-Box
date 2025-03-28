@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 
 import { motion } from 'motion/react';
 
-import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
+import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 
 const MatchResultModal = ({ status }: { status: string }) => {
     const playRef = useRef<HTMLButtonElement>(null);

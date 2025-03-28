@@ -6,13 +6,13 @@ import { redirect } from 'next/navigation';
 
 import { AnimatePresence } from 'motion/react';
 
-import MatchResultModal from '@/app/(protected)/games/tic-tac-toe/_components/MatchResultModal';
-import ScoreBoard from '@/app/(protected)/games/tic-tac-toe/_components/ScoreBoard';
-import TicTacToeBoard from '@/app/(protected)/games/tic-tac-toe/_components/TicTacToeBoard';
-import WaitingRoom from '@/app/(protected)/games/tic-tac-toe/_components/WaitingRoom';
+import MatchResultModal from '@/app/(public)/games/tic-tac-toe/_components/MatchResultModal';
+import ScoreBoard from '@/app/(public)/games/tic-tac-toe/_components/ScoreBoard';
+import TicTacToeBoard from '@/app/(public)/games/tic-tac-toe/_components/TicTacToeBoard';
+import WaitingRoom from '@/app/(public)/games/tic-tac-toe/_components/WaitingRoom';
+import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
+import { GameMode } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
-import { GameMode } from '@/lib/types/tic-tac-toe.types';
 
 const OnlineGameLobby = ({ mode }: { mode: GameMode | 'waiting-room' }) => {
     const { playerSymbol, gameRoomId, isNextX, hasGameEnded, gameWinner, isStalemate, stalemateCount, playerXData, playerOData } =

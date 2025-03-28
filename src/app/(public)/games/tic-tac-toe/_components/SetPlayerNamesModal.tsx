@@ -7,8 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import Modal, { closeModal } from '@/components/Modals';
-import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
 
 // ✅ Define Zod schema for validation
 const playerSchema = z

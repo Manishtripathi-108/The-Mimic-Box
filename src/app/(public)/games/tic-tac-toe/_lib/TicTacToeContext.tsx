@@ -6,9 +6,9 @@ import { redirect } from 'next/navigation';
 
 import toast from 'react-hot-toast';
 
+import { GameMode, TicTacToeGameContext } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { useSocket } from '@/hooks/useSocket';
-import { GameMode, TicTacToeGameContext } from '@/lib/types/tic-tac-toe.types';
 
 import { TicTacToeReducer, defaultGameState } from './TicTacToeReducer';
 

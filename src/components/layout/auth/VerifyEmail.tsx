@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 import { verifyEmailToken } from '@/actions/auth.actions';
 import { verifyEmailChangeToken } from '@/actions/user.actions';
 import ICON_SET from '@/constants/icons';
-import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 
 export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
     const { data: session, update } = useSession();
@@ -88,7 +88,7 @@ export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
                                 : 'The token is missing. Please request a new one.'}
                         </p>
 
-                        <Link href={APP_ROUTES.AUTH_LOGIN} replace className="button button-highlight mt-4 w-full">
+                        <Link href={DEFAULT_AUTH_ROUTE} replace className="button button-highlight mt-4 w-full">
                             Request New Token
                         </Link>
                     </div>

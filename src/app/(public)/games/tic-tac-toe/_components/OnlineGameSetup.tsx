@@ -10,8 +10,8 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import ICON_SET from '@/constants/icons';
-import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
 
 // Define Zod schemas
 const joinRoomSchema = z.object({

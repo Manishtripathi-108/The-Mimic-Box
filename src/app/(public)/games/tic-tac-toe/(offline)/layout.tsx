@@ -7,13 +7,13 @@ import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import { AnimatePresence } from 'motion/react';
 
-import MatchResultModal from '@/app/(protected)/games/tic-tac-toe/_components/MatchResultModal';
-import ScoreBoard from '@/app/(protected)/games/tic-tac-toe/_components/ScoreBoard';
-import SetPlayerNamesModal from '@/app/(protected)/games/tic-tac-toe/_components/SetPlayerNamesModal';
+import MatchResultModal from '@/app/(public)/games/tic-tac-toe/_components/MatchResultModal';
+import ScoreBoard from '@/app/(public)/games/tic-tac-toe/_components/ScoreBoard';
+import SetPlayerNamesModal from '@/app/(public)/games/tic-tac-toe/_components/SetPlayerNamesModal';
+import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { ConfirmationModal, openModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { useTicTacToeContext } from '@/contexts/TicTacToe/TicTacToeContext';
 
 const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => {
     const { state, restartGame, resetBoard } = useTicTacToeContext();

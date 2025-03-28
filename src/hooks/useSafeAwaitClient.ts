@@ -20,14 +20,8 @@ function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
     const isMounted = useRef(true);
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    useEffect(() => {
-        isMounted.current = true;
-        if (ENABLE_DEBUG_LOGS) console.log('[useSafeAwaitClient] Component mounted');
-
-        return () => {
-            isMounted.current = false;
-            cancelRequest('Component unmounted');
-        };
+    const cancelRequest = useCallback((reason = 'Request cancelled') => {
+        abortControllerRef.current?.abort(reason);
     }, []);
 
     const makeApiCall = useCallback(
@@ -122,9 +116,15 @@ function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
         [apiClient, retryCount]
     );
 
-    const cancelRequest = useCallback((reason = 'Request cancelled') => {
-        abortControllerRef.current?.abort(reason);
-    }, []);
+    useEffect(() => {
+        isMounted.current = true;
+        if (ENABLE_DEBUG_LOGS) console.log('[useSafeAwaitClient] Component mounted');
+
+        return () => {
+            isMounted.current = false;
+            cancelRequest('Component unmounted');
+        };
+    }, [cancelRequest]);
 
     return { isPending, error, data, makeApiCall, cancelRequest };
 }
