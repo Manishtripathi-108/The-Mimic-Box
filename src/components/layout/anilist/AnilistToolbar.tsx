@@ -8,26 +8,27 @@ import { AnilistMediaFilters } from '@/lib/types/anilist.types';
 
 const AnilistToolbar = ({
     text,
-    filterData,
-    setFilterData,
+    search,
+    setSearch,
     detailedView,
     setDetailedView,
 }: {
     text: string;
-    filterData: AnilistMediaFilters;
-    setFilterData: (data: AnilistMediaFilters) => void;
+    search: AnilistMediaFilters['search'];
+    setSearch: (data: AnilistMediaFilters['search']) => void;
     detailedView: boolean;
     setDetailedView: (value: boolean) => void;
 }) => {
-    const [searchTerm, setSearchTerm] = useState(filterData.search || '');
+    const [searchTerm, setSearchTerm] = useState(search || '');
 
     // Debounce logic
     useEffect(() => {
         const handler = setTimeout(() => {
-            setFilterData({ ...filterData, search: searchTerm });
+            setSearch(searchTerm);
         }, 500);
 
         return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm]);
 
     return (
@@ -63,7 +64,7 @@ const AnilistToolbar = ({
                 </span>
                 <button
                     title="Filter"
-                    onClick={() => openModal('anilist-filters-modal')}
+                    onClick={() => openModal('modal-anilist-filters')}
                     className="button text-highlight ml-4 size-8 rounded-xl p-2">
                     <Icon icon={ICON_SET.FILTER} className="size-full" />
                 </button>

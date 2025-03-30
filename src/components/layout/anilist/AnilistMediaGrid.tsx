@@ -20,13 +20,13 @@ const getMediaSearchParams = (type: AnilistMediaType, category: AnilistMediaGrid
 
     switch (category) {
         case 'Trending Now':
-            return { type, sort: 'TRENDING_DESC' };
+            return { type, season: 'ALL', sort: 'TRENDING_DESC' };
         case 'Popular This Season':
-            return { type, season, seasonYear: new Date().getFullYear(), sort: 'POPULARITY_DESC' };
+            return { type, season, year: new Date().getFullYear(), sort: 'POPULARITY_DESC' };
         case 'All Time Popular':
-            return { type, sort: 'POPULARITY_DESC' };
+            return { type, season: 'ALL', sort: 'POPULARITY_DESC' };
         default: // 'Upcoming'
-            return { type, season, seasonYear: year };
+            return { type, season, year: year };
     }
 };
 

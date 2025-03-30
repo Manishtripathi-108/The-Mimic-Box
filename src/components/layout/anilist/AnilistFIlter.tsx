@@ -19,15 +19,7 @@ import { AnilistMediaFilters, AnilistMediaFormat, AnilistMediaStatus } from '@/l
 
 const AnilistMediaFormatTabs = AnilistMediaFormatSchema.options.map((option) => option.replace('_', ' ').toLowerCase());
 const AnilistMediaStatusTabs = AnilistMediaStatusSchema.options.map((option) => option.replaceAll('_', ' ').toLowerCase());
-const ResetFilters: AnilistMediaFilters = {
-    search: null,
-    format: null,
-    year: null,
-    status: null,
-    season: 'ALL',
-    genres: [],
-    sort: 'Last Updated',
-};
+const ResetFilters: AnilistMediaFilters = { season: 'ALL', sort: 'Last Updated', genres: [] };
 
 const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; setFilters: (filters: AnilistMediaFilters) => void }) => {
     const {
@@ -43,7 +35,7 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
     });
 
     const onSubmit = (values: AnilistMediaFilters) => {
-        closeModal('anilist-filters-modal');
+        closeModal('modal-anilist-filters');
         setFilters(values);
     };
 
@@ -71,7 +63,7 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 <button
                     type="button"
                     className="text-text-secondary hover:text-text-primary absolute -top-2 right-4 cursor-pointer text-2xl"
-                    onClick={() => setValue('format', null)}
+                    onClick={() => setValue('format', undefined)}
                     title="Clear">
                     x
                 </button>
@@ -104,7 +96,7 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 <button
                     type="button"
                     className="text-text-secondary hover:text-text-primary absolute -top-2 right-4 cursor-pointer text-2xl"
-                    onClick={() => setValue('status', null)}
+                    onClick={() => setValue('status', undefined)}
                     title="Clear">
                     x
                 </button>

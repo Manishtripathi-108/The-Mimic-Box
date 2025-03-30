@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-import {
-    AnilistFilterSchema,
-    AnilistMediaFormatSchema,
-    AnilistMediaListStatusSchema,
-    AnilistMediaSeasonSchema,
-    AnilistMediaStatusSchema,
-} from '@/lib/schema/client.validations';
+
+
+import { AnilistFilterSchema, AnilistMediaFormatSchema, AnilistMediaListStatusSchema, AnilistMediaSeasonSchema, AnilistMediaStatusSchema } from '@/lib/schema/client.validations';
+
+
+
+
 
 /* ----------------------------- Core Types ----------------------------- */
 
@@ -142,17 +142,11 @@ export type AnilistMediaIds = {
     };
 };
 
+export type AnilistMediaFilters = z.infer<typeof AnilistFilterSchema>;
+
 export type AnilistQuery = {
     type: AnilistMediaType;
-    format?: AnilistMediaFormat;
-    season?: AnilistMediaSeason;
     sort?: AnilistMediaSort;
-    status?: AnilistMediaStatus;
-    search?: string | null;
-    genres?: string[] | null;
-    seasonYear?: number | null;
     page?: number;
     perPage?: number;
-};
-
-export type AnilistMediaFilters = z.infer<typeof AnilistFilterSchema>;
+} & Omit<z.infer<typeof AnilistFilterSchema>, 'sort'>;

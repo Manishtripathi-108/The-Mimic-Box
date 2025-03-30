@@ -13,18 +13,7 @@ import {
 import { createAniListErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { fetchAniListData } from '@/lib/utils/server.utils';
 
-export const searchAnilistMedia = async ({
-    search,
-    type = 'ANIME',
-    page,
-    perPage,
-    season,
-    seasonYear,
-    sort,
-    genres,
-    format,
-    status,
-}: AnilistQuery) => {
+export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage, season, year, sort, genres, format, status }: AnilistQuery) => {
     const ANIME_QUERY = `
     query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genre: String, $status: MediaStatus) {
         Page(page: $page, perPage: $perPage) {
@@ -67,7 +56,7 @@ export const searchAnilistMedia = async ({
         search,
         type,
         season,
-        seasonYear,
+        seasonYear: year,
         sort,
         page,
         perPage,
