@@ -13,8 +13,8 @@ import { z } from 'zod';
 
 import { deleteMediaEntry, saveMediaEntry, toggleFavourite } from '@/actions/anilist.actions';
 import { closeModal } from '@/components/Modals';
-import { ANILIST_VALID_STATUSES } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
+import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
 import { AnilistMediaEntry, AnilistMediaListStatus } from '@/lib/types/anilist.types';
 
 const modalId = 'modal-anilist-edit-media';
@@ -25,9 +25,9 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
     const [isToggling, setIsToggling] = useState(false);
     const maxProgress = entry?.media?.episodes || entry?.media?.chapters || 100000;
 
-    /** ✅ Zod validation schema */
+    // validation schema
     const validationSchema = z.object({
-        status: z.string().refine((val) => ANILIST_VALID_STATUSES.includes(val as AnilistMediaListStatus), { message: 'Invalid status' }),
+        status: AnilistMediaListStatusSchema,
         progress: z.number().min(0, 'Progress must be zero or more').max(maxProgress, `Progress must be less than ${maxProgress}`),
     });
 
@@ -37,10 +37,10 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
         formState: { errors, isSubmitting, isDirty },
     } = useForm({
         resolver: zodResolver(validationSchema),
-        defaultValues: { status: entry.status, progress: entry.progress || 0 },
+        defaultValues: { status: entry.status as AnilistMediaListStatus, progress: entry.progress || 0 },
     });
 
-    /** ✅ Save media entry updates */
+    /** Save media entry updates */
     const onSubmit = async (values: z.infer<typeof validationSchema>) => {
         if (!isDirty) {
             toast.success('No changes to save.');
@@ -60,7 +60,7 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
         }
     };
 
-    /** ✅ Toggle favourite status */
+    /** Toggle favourite status */
     const toggleLike = async () => {
         setIsToggling(true);
         const result = await toggleFavourite(token, entry.media.id, entry.media.type);
@@ -76,7 +76,7 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
         }
     };
 
-    /** ✅ Delete media entry */
+    /** Delete media entry */
     const deleteEntry = async () => {
         setIsToggling(true);
         const result = await deleteMediaEntry(token, entry.id);
@@ -139,10 +139,10 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
                         <label htmlFor="media_status" className="form-text">
                             Status:
                         </label>
-                        <select {...register('status')} id="media_status" data-invalid={!!errors.status} className="form-field">
-                            {ANILIST_VALID_STATUSES.map((option) => (
+                        <select {...register('status')} id="media_status" data-invalid={!!errors.status} className="form-field capitalize">
+                            {AnilistMediaListStatusSchema.options.map((option) => (
                                 <option key={option} value={option}>
-                                    {option}
+                                    {option.toLowerCase()}
                                 </option>
                             ))}
                         </select>

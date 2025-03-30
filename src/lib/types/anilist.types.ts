@@ -1,11 +1,21 @@
-/** 📌 Represents the type of media (Anime or Manga) */
+import { z } from 'zod';
+
+import {
+    AnilistFilterSchema,
+    AnilistMediaFormatSchema,
+    AnilistMediaListStatusSchema,
+    AnilistMediaSeasonSchema,
+    AnilistMediaStatusSchema,
+} from '@/lib/schema/client.validations';
+
+/* ----------------------------- Core Types ----------------------------- */
+
 export type AnilistMediaType = 'ANIME' | 'MANGA';
-
-/** 📌 Represents the season of a media entry */
-export type AnilistMediaSeason = 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL';
-
-/** 📌 Represents the status of a media entry */
-export type AnilistMediaStatus = 'FINISHED' | 'RELEASING' | 'NOT_YET_RELEASED' | 'CANCELLED' | 'HIATUS';
+export type AnilistMediaSeason = z.infer<typeof AnilistMediaSeasonSchema>;
+export type AnilistMediaStatus = z.infer<typeof AnilistMediaStatusSchema>;
+export type AnilistMediaFormat = z.infer<typeof AnilistMediaFormatSchema>;
+export type AnilistMediaListStatus = z.infer<typeof AnilistMediaListStatusSchema>;
+export type AnilistSelectedTabType = 'ALL' | AnilistMediaListStatus | AnilistMediaType;
 
 export type AnilistMediaSort =
     | 'ID'
@@ -46,16 +56,10 @@ export type AnilistMediaSort =
     | 'FAVOURITES'
     | 'FAVOURITES_DESC';
 
-/** 📌 Represents the user’s list status for a media */
-export type AnilistMediaListStatus = 'CURRENT' | 'PLANNING' | 'COMPLETED' | 'DROPPED' | 'PAUSED' | 'REPEATING';
+/* ------------------------- Data Representation ------------------------- */
 
-/** 📌 Represents different media formats */
-export type AnilistMediaFormat = 'TV' | 'TV_SHORT' | 'MOVIE' | 'SPECIAL' | 'OVA' | 'ONA' | 'MUSIC' | 'MANGA' | 'NOVEL' | 'ONE_SHOT';
-
-/** 📌 Represents an Anilist user */
 export type AnilistUser = { Viewer: { id: number; name: string; avatar: { large: string }; bannerImage: string } };
 
-/** 📌 Represents a media entry (Anime/Manga) */
 export type AnilistMedia = {
     id: number;
     type: AnilistMediaType;
@@ -86,31 +90,27 @@ export type AnilistMedia = {
     };
 };
 
-/** 📌 Represents an individual media list entry (e.g., from user's list) */
 export type AnilistMediaEntry = {
     id: number;
     progress: number;
-    status: string;
+    status: AnilistMediaListStatus;
     updatedAt: number;
     createdAt: number;
     media: AnilistMedia;
 };
 
-/** 📌 Represents a user's media list collection */
 export type AnilistMediaList = {
     name: string;
     status: AnilistMediaListStatus;
     entries: AnilistMediaEntry[];
 };
 
-/** 📌 Represents the media list collection */
 export type AnilistMediaCollection = {
     MediaListCollection: {
         lists: AnilistMediaList[];
     };
 };
 
-/** 📌 Represents a user's favourite media */
 export type AnilistFavourites = {
     anime?: {
         nodes: AnilistMedia[];
@@ -120,21 +120,19 @@ export type AnilistFavourites = {
     };
 };
 
-/** 📌 Represents a user's favourites collection */
 export type AnilistUserFavourites = {
     User: {
         favourites: AnilistFavourites;
     };
 };
 
-/** 📌 Represents the response from saving a media list entry */
 export type AnilistSaveMediaListEntry = {
     id: number;
     status: AnilistMediaListStatus;
     progress: number;
 };
 
-/** 📌 Represents the response of Anilist Ids of MalIds */
+// Represents the response of Anilist Ids of MalIds
 export type AnilistMediaIds = {
     Page: {
         media: {
@@ -157,21 +155,4 @@ export type AnilistQuery = {
     perPage?: number;
 };
 
-/* ------------------------------- Client Side ------------------------------ */
-
-/** 📌 Represents the tabs for media lists */
-export type AnilistMediaTab = 'All' | AnilistMediaListStatus;
-
-/** 📌 Represents the tabs for favourites */
-export type AnilistFavouritesTab = 'All' | 'Anime' | 'Manga';
-
-/** 📌 Represents media filtering options */
-export type AnilistMediaFilters = {
-    format: AnilistMediaFormat | null;
-    status: AnilistMediaStatus | null;
-    season: AnilistMediaSeason | null;
-    search: string;
-    genres: string[] | null;
-    year: number | null;
-    sort: string | null;
-};
+export type AnilistMediaFilters = z.infer<typeof AnilistFilterSchema>;

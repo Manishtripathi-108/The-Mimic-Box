@@ -18,7 +18,7 @@ const AnilistSearchToolbar = ({ type }: { type: AnilistMediaType }) => {
     const [filterData, setFilterData] = useState<AnilistMediaFilters>({
         search: '',
         format: null,
-        season: null,
+        season: 'ALL',
         genres: null,
         year: null,
         status: null,
@@ -32,7 +32,7 @@ const AnilistSearchToolbar = ({ type }: { type: AnilistMediaType }) => {
             type,
             search: filters.search,
             format: filters.format || undefined,
-            season: filters.season || undefined,
+            season: filters.season === 'ALL' ? undefined : filters.season,
             genres: filters.genres,
             seasonYear: filters.year,
             status: filters.status || undefined,

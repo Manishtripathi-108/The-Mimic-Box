@@ -13,21 +13,23 @@ import AnilistFilter from '@/components/layout/anilist/AnilistFIlter';
 import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
 import AnilistToolbar from '@/components/layout/anilist/AnilistToolbar';
 import TabNavigation from '@/components/ui/TabNavigation';
-import { ANILIST_FAVOURITE_TAB, ANILIST_MEDIA_TAB, IMAGE_URL } from '@/constants/client.constants';
+import { IMAGE_URL } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
 import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
 import usePagination from '@/hooks/usePagination';
+import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
 import {
     AnilistFavourites,
-    AnilistFavouritesTab,
     AnilistMedia,
     AnilistMediaEntry,
     AnilistMediaFilters,
     AnilistMediaList,
-    AnilistMediaTab,
+    AnilistSelectedTabType,
 } from '@/lib/types/anilist.types';
 
 const ITEMS_PER_PAGE = 30;
+const ANILIST_MEDIA_TAB = ['all', ...AnilistMediaListStatusSchema.options.map((status) => status.toLowerCase())];
+const ANILIST_FAVOURITE_TAB = ['all', 'anime', 'manga'];
 
 const AnilistMain = ({
     mediaLists,
@@ -43,14 +45,15 @@ const AnilistMain = ({
     const searchParams = useSearchParams();
 
     const [editEntry, setEditEntry] = useState<AnilistMediaEntry | null>(null);
-    const [selectedTab, setSelectedTab] = useState<AnilistFavouritesTab | AnilistMediaTab>('All');
+    const [selectedTab, setSelectedTab] = useState<AnilistSelectedTabType>('ALL');
     const [detailedView, setDetailedView] = useState(false);
     const [filterData, setFilterData] = useState<AnilistMediaFilters>({
-        search: '',
+        search: null,
         format: null,
         genres: null,
         year: null,
         status: null,
+        season: 'ALL',
         sort: 'Last Updated',
     });
 
@@ -82,8 +85,8 @@ const AnilistMain = ({
 
     // Handles tab change
     const handleTabChange = useCallback(
-        (tab: AnilistFavouritesTab | AnilistMediaTab) => {
-            setSelectedTab(tab);
+        (tab: string) => {
+            setSelectedTab(tab.toUpperCase() as AnilistSelectedTabType);
         },
         [setSelectedTab]
     );
@@ -115,8 +118,9 @@ const AnilistMain = ({
             {/* Tabs Navigation */}
             <TabNavigation
                 className="mb-6"
+                buttonClassName="capitalize"
                 tabs={type === 'favourites' ? ANILIST_FAVOURITE_TAB : ANILIST_MEDIA_TAB}
-                currentTab={selectedTab}
+                currentTab={selectedTab.toLowerCase()}
                 onTabChange={handleTabChange}
             />
             {/* Anime Cards Grid */}
