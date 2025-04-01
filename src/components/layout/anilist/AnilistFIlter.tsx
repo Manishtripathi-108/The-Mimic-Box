@@ -19,7 +19,7 @@ import { AnilistMediaFilters, AnilistMediaFormat, AnilistMediaStatus } from '@/l
 
 const AnilistMediaFormatTabs = AnilistMediaFormatSchema.options.map((option) => option.replace('_', ' ').toLowerCase());
 const AnilistMediaStatusTabs = AnilistMediaStatusSchema.options.map((option) => option.replaceAll('_', ' ').toLowerCase());
-const ResetFilters: AnilistMediaFilters = { season: 'ALL', sort: 'Last Updated', genres: [] };
+const ResetFilters: AnilistMediaFilters = { season: 'ALL', sort: 'Last Updated' };
 
 const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; setFilters: (filters: AnilistMediaFilters) => void }) => {
     const {
@@ -30,7 +30,7 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
         watch,
         formState: { errors },
     } = useForm<AnilistMediaFilters>({
-        defaultValues: filters,
+        defaultValues: { ...filters, genres: filters.genres ?? [] },
         resolver: zodResolver(AnilistFilterSchema),
     });
 

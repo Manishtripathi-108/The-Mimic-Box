@@ -41,7 +41,7 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
     const [selectedMediaEntry, setSelectedMediaEntry] = useState<AnilistMediaEntry | null>(null);
     const [selectedTab, setSelectedTab] = useState<AnilistSelectedTabType>('ALL');
     const [isDetailedView, setIsDetailedView] = useState(false);
-    const [filterData, setFilterData] = useState<AnilistMediaFilters>({ season: 'ALL', sort: 'Last Updated', genres: [] });
+    const [filterData, setFilterData] = useState<AnilistMediaFilters>({ season: 'ALL', sort: 'Last Updated' });
 
     // Filter data
     const filters = useMemo(() => filterData, [filterData]);

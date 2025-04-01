@@ -81,7 +81,6 @@ export type AnilistMedia = {
         romaji: string;
         english: string;
         native: string;
-        userPreferred: string;
     };
     startDate: {
         day: number;

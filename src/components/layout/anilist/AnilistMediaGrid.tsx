@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { searchAnilistMedia } from '@/actions/anilist.actions';
 import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { AnilistMedia, AnilistMediaType, AnilistQuery, AnilistSearchCategories } from '@/lib/types/anilist.types';
-import { getCurrentSeason, getNextSeason } from '@/lib/utils/core.utils';
+import { AnilistMedia, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
+import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
 
 interface AnilistMediaGridProps {
     type: AnilistMediaType;
@@ -16,35 +16,6 @@ interface AnilistMediaGridProps {
     showDetails?: boolean;
     className?: string;
 }
-
-const getMediaSearchParams = (type: AnilistMediaType, category: AnilistSearchCategories): AnilistQuery => {
-    const { season, year } = getNextSeason();
-    switch (category) {
-        case 'trending':
-            return { type, season: 'ALL', sort: 'TRENDING_DESC' };
-        case 'this-season':
-            return { type, season: getCurrentSeason(), year: new Date().getFullYear(), sort: 'POPULARITY_DESC' };
-        case 'popular':
-            return { type, season: 'ALL', sort: 'POPULARITY_DESC' };
-        case 'next-season':
-            return { type, season, year };
-        default:
-            return { type, season: 'ALL', sort: 'POPULARITY_DESC' };
-    }
-};
-
-const categoryTitle = (category: AnilistSearchCategories) => {
-    switch (category) {
-        case 'trending':
-            return 'TRENDING NOW';
-        case 'this-season':
-            return 'POPULAR THIS SEASON';
-        case 'popular':
-            return 'ALL TIME POPULAR';
-        default: // 'next-season':
-            return 'UPCOMING';
-    }
-};
 
 const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDetails, className }) => {
     const [mediaList, setMediaList] = useState<AnilistMedia[]>([]);
