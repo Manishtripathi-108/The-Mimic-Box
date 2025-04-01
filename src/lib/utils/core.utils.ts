@@ -35,7 +35,7 @@ export const getMediaSearchParams = (type: AnilistMediaType, category?: AnilistS
     }
 };
 
-export const categoryTitle = (category: AnilistSearchCategories) => {
+export const categoryTitle = (category?: AnilistSearchCategories) => {
     switch (category) {
         case 'trending':
             return 'TRENDING NOW';
@@ -43,7 +43,9 @@ export const categoryTitle = (category: AnilistSearchCategories) => {
             return 'POPULAR THIS SEASON';
         case 'popular':
             return 'ALL TIME POPULAR';
-        default: // 'next-season':
+        case 'next-season':
             return 'UPCOMING';
+        default:
+            return;
     }
 };

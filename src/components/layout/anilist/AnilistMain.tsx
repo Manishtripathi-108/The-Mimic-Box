@@ -8,7 +8,7 @@ import { Icon } from '@iconify/react';
 
 import Modal, { openModal } from '@/components/Modals';
 import AnilistEditMedia from '@/components/layout/anilist/AnilistEditMedia';
-import AnilistFilter from '@/components/layout/anilist/AnilistFIlter';
+import AnilistFilter from '@/components/layout/anilist/AnilistFilter';
 import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
 import AnilistToolbar from '@/components/layout/anilist/AnilistToolbar';
 import TabNavigation from '@/components/ui/TabNavigation';

@@ -16,6 +16,18 @@ const NavigationBar = () => {
             <ul className="flex justify-center">
                 <li>
                     <Link
+                        href={APP_ROUTES.ANILIST_SEARCH('anime')}
+                        className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
+                            pathName === APP_ROUTES.ANILIST_SEARCH('anime')
+                                ? 'text-highlight border-highlight'
+                                : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
+                        }`}>
+                        <Icon icon={ICON_SET.SEARCH} className="size-5" />
+                        <span className="hidden md:inline">Search</span>
+                    </Link>
+                </li>
+                <li>
+                    <Link
                         href={APP_ROUTES.ANILIST_ANIME}
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
                             pathName === APP_ROUTES.ANILIST_ANIME
