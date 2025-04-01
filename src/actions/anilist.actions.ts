@@ -55,7 +55,7 @@ export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage
     const [error, response] = await fetchAniListData<{ Page: { media: AnilistMedia[] } }>(null, ANIME_QUERY, {
         search,
         type,
-        season,
+        season: season === 'ALL' ? undefined : season,
         seasonYear: year,
         sort,
         page,

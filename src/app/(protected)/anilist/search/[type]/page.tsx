@@ -13,10 +13,10 @@ const AnilistSearch = async ({ params }: { params: Promise<{ type: 'anime' | 'ma
     return (
         <main className="container mx-auto p-2 sm:p-6">
             <AnilistSearchToolbar type={UpperCaseType} />
-            <AnilistMediaGrid type={UpperCaseType} category="Trending Now" showDetails={false} className="mt-6" />
-            <AnilistMediaGrid type={UpperCaseType} category="Popular This Season" showDetails={false} className="mt-6" />
-            <AnilistMediaGrid type={UpperCaseType} category="All Time Popular" showDetails={false} className="mt-6" />
-            <AnilistMediaGrid type={UpperCaseType} category="Upcoming" showDetails={false} className="mt-6" />
+            <AnilistMediaGrid type={UpperCaseType} category="trending" className="mt-6" />
+            <AnilistMediaGrid type={UpperCaseType} category="this-season" className="mt-6" />
+            <AnilistMediaGrid type={UpperCaseType} category="next-season" className="mt-6" />
+            <AnilistMediaGrid type={UpperCaseType} category="popular" className="mt-6" />
         </main>
     );
 };

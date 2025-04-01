@@ -46,7 +46,7 @@ const AnilistMediaCard = ({
                         {media.title.userPreferred || media.title.english || media.title.native || 'Unknown Title'}
                     </h2>
                     <p className="text-text-secondary text-xs capitalize">
-                        {media?.format.replaceAll('_', ' ').toLowerCase()}{' '}
+                        {media?.format?.replaceAll('_', ' ').toLowerCase()}{' '}
                         {media?.type === 'ANIME'
                             ? media?.format === 'MOVIE'
                                 ? `${media?.duration ?? '??'}min`

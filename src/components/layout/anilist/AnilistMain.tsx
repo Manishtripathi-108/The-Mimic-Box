@@ -108,8 +108,8 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
                     <div
                         className={`grid ${
                             isDetailedView
-                                ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(380px,1fr))]'
-                                : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]'
+                                ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
+                                : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
                         }`}>
                         {currentData.map((entry) => (
                             <AnilistMediaCard

@@ -1,3 +1,5 @@
+import { AnilistSearchCategories } from '@/lib/types/anilist.types';
+
 export const APP_ROUTES = {
     // General Routes
     INDEX: '/',
@@ -23,7 +25,7 @@ export const APP_ROUTES = {
     ANILIST_ANIME: '/anilist/anime',
     ANILIST_MANGA: '/anilist/manga',
     ANILIST_FAVOURITES: '/anilist/favourites',
-    ANILIST_LOGIN: '/anilist/login',
+    ANILIST_SEARCH: (type: 'anime' | 'manga', category?: AnilistSearchCategories) => `/anilist/search/${type}${category ? `/${category}` : ''}`,
 
     // Games Routes
     GAMES_TIC_TAC_TOE_INDEX: '/games/tic-tac-toe',
