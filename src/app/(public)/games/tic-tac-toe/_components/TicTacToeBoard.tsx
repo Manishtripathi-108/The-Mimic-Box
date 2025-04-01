@@ -2,9 +2,12 @@
 
 import React, { useEffect, useRef } from 'react';
 
+import { Icon } from '@iconify/react/dist/iconify.js';
+
 import Cell from '@/app/(public)/games/tic-tac-toe/_components/Cell';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { GameMode } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
+import ICON_SET from '@/constants/icons';
 
 const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
     const { state, makeMove, setMode } = useTicTacToeContext();
@@ -23,7 +26,7 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
             if (cellIndex !== undefined) {
                 const index = parseInt(cellIndex, 10);
                 const macro = macroIndex ? parseInt(macroIndex, 10) : undefined;
-                makeMove(macro !== undefined ? macro : index, macro !== undefined ? index : undefined);
+                makeMove(macro ?? index, macro !== undefined ? index : undefined);
             }
         };
 
@@ -33,51 +36,49 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
         return () => board?.removeEventListener('click', handleClick);
     }, [makeMove]);
 
-    if (mode === 'classic') {
-        return (
-            <div
-                ref={boardRef}
-                className="animate-zoom-in shadow-floating-md from-secondary to-tertiary relative z-0 w-fit rounded-xl border bg-linear-150 from-15% to-85% p-2">
-                <div className="shadow-pressed-sm rounded-lg border p-3">
-                    <div tabIndex={0} className="grid grid-cols-3 gap-3 outline-hidden">
-                        {classicBoardState.map((cell, index) => (
-                            <Cell key={index} classic value={cell} isWinningSquare={winningIndexes?.includes(index)} data-index={index} />
-                        ))}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div
             ref={boardRef}
-            className="animate-zoom-in from-secondary to-tertiary shadow-floating-md relative z-0 grid w-fit grid-cols-3 gap-2 rounded-xl border bg-linear-150 from-15% to-85% p-2 outline-hidden">
-            {ultimateBoardState.map((macroBoard, macroIndex) => (
-                <div
-                    key={macroIndex}
-                    className={`shadow-pressed-xs relative grid grid-cols-3 gap-2 rounded-md p-2 ${
-                        macroIndex === activeCellIndex ? 'bg-highlight' : ''
-                    }`}>
-                    {macroBoard.map((cell, cellIndex) => (
-                        <Cell
-                            key={`${macroIndex}-${cellIndex}`}
-                            value={cell}
-                            isActive={macroIndex === activeCellIndex}
-                            data-index={cellIndex}
-                            data-macro={macroIndex}
-                        />
-                    ))}
-                    {classicBoardState[macroIndex] && (
-                        <div className="bg-primary shadow-pressed-sm animate-zoom-in absolute inset-0 z-10 flex items-center justify-center rounded-md p-5">
-                            <span
-                                className={`${winningIndexes?.includes(macroIndex) ? 'text-accent' : 'text-text-secondary'} text-7xl select-none md:text-9xl`}>
-                                {classicBoardState[macroIndex]}
-                            </span>
-                        </div>
-                    )}
+            className={`animate-zoom-in shadow-floating-md from-secondary to-tertiary relative aspect-square ${mode === 'classic' ? 'max-w-md' : 'grid max-w-xl grid-cols-3 gap-2'} w-[min(90vw,90vh)] rounded-xl border bg-linear-150 p-2`}>
+            {mode === 'classic' ? (
+                <div className="shadow-pressed-sm rounded-lg border p-3">
+                    <div tabIndex={0} className="grid grid-cols-3 gap-3 outline-hidden">
+                        {classicBoardState.map((cell, index) => (
+                            <Cell key={index} value={cell} isWinningSquare={winningIndexes?.includes(index)} data-index={index} />
+                        ))}
+                    </div>
                 </div>
-            ))}
+            ) : (
+                ultimateBoardState.map((macroBoard, macroIndex) => (
+                    <div
+                        key={macroIndex}
+                        className={`shadow-pressed-xs size-full rounded-md p-1 sm:p-2 ${macroIndex === activeCellIndex ? 'bg-highlight' : ''} ${winningIndexes?.includes(macroIndex) ? 'text-accent' : ''} ${!classicBoardState[macroIndex] && 'grid grid-cols-3 gap-1 sm:gap-2'}`}>
+                        {classicBoardState[macroIndex] ? (
+                            <Icon
+                                key={macroIndex}
+                                icon={
+                                    classicBoardState[macroIndex] === 'D'
+                                        ? ICON_SET.DRAW
+                                        : classicBoardState[macroIndex] === 'X'
+                                          ? ICON_SET.CLOSE
+                                          : ICON_SET.CIRCLE
+                                }
+                                className="animate-zoom-in size-full rounded-md p-5 transition-transform duration-300 ease-in-out select-none"
+                            />
+                        ) : (
+                            macroBoard.map((cell, cellIndex) => (
+                                <Cell
+                                    key={`${macroIndex}-${cellIndex}`}
+                                    value={cell}
+                                    isActive={macroIndex === activeCellIndex}
+                                    data-index={cellIndex}
+                                    data-macro={macroIndex}
+                                />
+                            ))
+                        )}
+                    </div>
+                ))
+            )}
         </div>
     );
 };
