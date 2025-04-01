@@ -2,12 +2,14 @@
 
 import React, { memo } from 'react';
 
+import { Icon } from '@iconify/react/dist/iconify.js';
+
+import ICON_SET from '@/constants/icons';
 import cn from '@/lib/utils/cn';
 
 const Cell = ({
     value,
     isActive = false,
-    classic = false,
     isWinningSquare = false,
     ...props
 }: {
@@ -21,19 +23,17 @@ const Cell = ({
             type="button"
             aria-label={`Cell ${value || 'empty'}`}
             aria-pressed={!!value}
-            className={cn(
-                'button button-secondary p-2',
-                classic ? 'size-20 text-6xl md:size-32 md:text-8xl' : 'size-8 text-xl md:size-12 md:text-4xl',
-                {
-                    'button-highlight': isActive,
-                    active: !!value,
-                }
-            )}
+            className={cn('button button-secondary size-full p-1 aspect-square', {
+                'button-highlight': isActive,
+                'text-accent': isWinningSquare,
+                active: !!value,
+            })}
             {...props}>
             {value && (
-                <span className={cn('animate-zoom-in transition-transform duration-300 ease-in-out select-none', isWinningSquare && 'text-accent')}>
-                    {value}
-                </span>
+                <Icon
+                    icon={value === 'D' ? ICON_SET.DRAW : value === 'X' ? ICON_SET.CLOSE : ICON_SET.CIRCLE}
+                    className="animate-zoom-in size-full transition-transform duration-300 ease-in-out select-none"
+                />
             )}
         </button>
     );
