@@ -14,6 +14,8 @@ interface AnilistMediaPageProps {
     params: Promise<{ type: 'anime' | 'manga' | 'favourites' }>;
 }
 
+export const dynamicParams = false;
+
 export const generateStaticParams = async () => {
     return [{ type: 'anime' }, { type: 'manga' }, { type: 'favourites' }];
 };

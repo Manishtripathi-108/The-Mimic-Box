@@ -1,42 +1,39 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+
+import Link from 'next/link';
 
 import { searchAnilistMedia } from '@/actions/anilist.actions';
 import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
-import { AnilistMedia, AnilistMediaType, AnilistQuery } from '@/lib/types/anilist.types';
-import { getNextSeason } from '@/lib/utils/core.utils';
+import { APP_ROUTES } from '@/constants/routes.constants';
+import { AnilistMedia, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
+import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
 
 interface AnilistMediaGridProps {
     type: AnilistMediaType;
-    category: 'Upcoming' | 'Trending Now' | 'Popular This Season' | 'All Time Popular';
-    showDetails: boolean;
+    category: AnilistSearchCategories;
+    showDetails?: boolean;
     className?: string;
 }
 
-// Utility function to determine search properties based on category
-const getMediaSearchParams = (type: AnilistMediaType, category: AnilistMediaGridProps['category']): AnilistQuery => {
-    const { season, year } = getNextSeason();
-
-    switch (category) {
-        case 'Trending Now':
-            return { type, season: 'ALL', sort: 'TRENDING_DESC' };
-        case 'Popular This Season':
-            return { type, season, year: new Date().getFullYear(), sort: 'POPULARITY_DESC' };
-        case 'All Time Popular':
-            return { type, season: 'ALL', sort: 'POPULARITY_DESC' };
-        default: // 'Upcoming'
-            return { type, season, year: year };
-    }
-};
-
 const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDetails, className }) => {
     const [mediaList, setMediaList] = useState<AnilistMedia[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [isPending, startTransition] = useTransition();
+
     const searchParams = useMemo(() => getMediaSearchParams(type, category), [type, category]);
 
-    const fetchMediaData = useCallback(async () => {
-        const response = await searchAnilistMedia(searchParams);
-        if (response?.success && response.payload) setMediaList(response.payload);
+    const fetchMediaData = useCallback(() => {
+        startTransition(async () => {
+            setError(null);
+            const response = await searchAnilistMedia(searchParams);
+            if (response?.success && response.payload) {
+                setMediaList(response.payload);
+            } else {
+                setError(response?.message || 'Failed to fetch media data.');
+            }
+        });
     }, [searchParams]);
 
     useEffect(() => {
@@ -45,15 +42,30 @@ const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, sho
 
     return (
         <article className={className}>
-            <h1 className="text-highlight mb-2 text-2xl font-bold capitalize sm:text-3xl">{category}</h1>
-            <section
-                className={`mx-auto grid ${
-                    showDetails ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(380px,1fr))]' : 'grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3'
-                }`}>
-                {mediaList.map((entry) => (
-                    <AnilistMediaCard key={entry.id} detailed={showDetails} media={entry} />
-                ))}
-            </section>
+            <div className="mb-2 flex items-center justify-between">
+                <h1 className="text-highlight text-lg font-bold capitalize">{categoryTitle(category)}</h1>
+                <Link
+                    href={APP_ROUTES.ANILIST_SEARCH(type.toLowerCase() as 'anime' | 'manga', category)}
+                    className="text-text-secondary hover:text-text-primary text-sm hover:underline">
+                    View More
+                </Link>
+            </div>
+            {error ? (
+                <p className="text-center text-red-500">{error}</p>
+            ) : (
+                <section
+                    className={`mx-auto grid ${
+                        showDetails
+                            ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
+                            : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
+                    }`}>
+                    {isPending
+                        ? Array.from({ length: 6 }).map((_, index) => (
+                              <div key={index} className="bg-secondary aspect-5/7 animate-pulse rounded-lg"></div>
+                          ))
+                        : mediaList.map((entry) => <AnilistMediaCard key={entry.id} detailed={showDetails} media={entry} />)}
+                </section>
+            )}
         </article>
     );
 };

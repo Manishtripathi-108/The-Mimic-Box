@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-
-
-import { AnilistFilterSchema, AnilistMediaFormatSchema, AnilistMediaListStatusSchema, AnilistMediaSeasonSchema, AnilistMediaStatusSchema } from '@/lib/schema/client.validations';
-
-
-
-
+import {
+    AnilistFilterSchema,
+    AnilistMediaFormatSchema,
+    AnilistMediaListStatusSchema,
+    AnilistMediaSeasonSchema,
+    AnilistMediaStatusSchema,
+} from '@/lib/schema/client.validations';
 
 /* ----------------------------- Core Types ----------------------------- */
 
@@ -81,7 +81,6 @@ export type AnilistMedia = {
         romaji: string;
         english: string;
         native: string;
-        userPreferred: string;
     };
     startDate: {
         day: number;
@@ -150,3 +149,5 @@ export type AnilistQuery = {
     page?: number;
     perPage?: number;
 } & Omit<z.infer<typeof AnilistFilterSchema>, 'sort'>;
+
+export type AnilistSearchCategories = 'trending' | 'this-season' | 'next-season' | 'popular';

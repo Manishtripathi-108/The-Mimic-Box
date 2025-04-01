@@ -8,7 +8,7 @@ import { Icon } from '@iconify/react';
 
 import Modal, { openModal } from '@/components/Modals';
 import AnilistEditMedia from '@/components/layout/anilist/AnilistEditMedia';
-import AnilistFilter from '@/components/layout/anilist/AnilistFIlter';
+import AnilistFilter from '@/components/layout/anilist/AnilistFilter';
 import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
 import AnilistToolbar from '@/components/layout/anilist/AnilistToolbar';
 import TabNavigation from '@/components/ui/TabNavigation';
@@ -41,7 +41,7 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
     const [selectedMediaEntry, setSelectedMediaEntry] = useState<AnilistMediaEntry | null>(null);
     const [selectedTab, setSelectedTab] = useState<AnilistSelectedTabType>('ALL');
     const [isDetailedView, setIsDetailedView] = useState(false);
-    const [filterData, setFilterData] = useState<AnilistMediaFilters>({ season: 'ALL', sort: 'Last Updated', genres: [] });
+    const [filterData, setFilterData] = useState<AnilistMediaFilters>({ season: 'ALL', sort: 'Last Updated' });
 
     // Filter data
     const filters = useMemo(() => filterData, [filterData]);
@@ -108,8 +108,8 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
                     <div
                         className={`grid ${
                             isDetailedView
-                                ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(380px,1fr))]'
-                                : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]'
+                                ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
+                                : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
                         }`}>
                         {currentData.map((entry) => (
                             <AnilistMediaCard

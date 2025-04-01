@@ -28,7 +28,7 @@ const AnilistToolbar = ({
         }, 500);
 
         return () => clearTimeout(handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm]);
 
     return (
@@ -45,7 +45,15 @@ const AnilistToolbar = ({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Icon role="button" icon={ICON_SET.SEARCH} className="form-icon" />
+                <Icon
+                    role="button"
+                    aria-label={searchTerm ? 'Clear search' : 'Search'}
+                    onClick={() => {
+                        if (searchTerm) setSearchTerm('');
+                    }}
+                    icon={searchTerm ? ICON_SET.CLOSE : ICON_SET.SEARCH}
+                    className="form-icon hover:cursor-pointer"
+                />
             </div>
 
             {/* View Mode & Filter Buttons */}

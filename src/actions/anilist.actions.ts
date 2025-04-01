@@ -15,9 +15,9 @@ import { fetchAniListData } from '@/lib/utils/server.utils';
 
 export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage, season, year, sort, genres, format, status }: AnilistQuery) => {
     const ANIME_QUERY = `
-    query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genre: String, $status: MediaStatus) {
+    query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genres: [String], $status: MediaStatus) {
         Page(page: $page, perPage: $perPage) {
-            media(search: $search, type: $type, season: $season, seasonYear: $seasonYear, sort: $sort, genre: $genre, status: $status) {
+            media(search: $search, type: $type, season: $season, seasonYear: $seasonYear, sort: $sort, genre_in: $genres, status: $status) {
                 id
                 type
                 format
@@ -36,7 +36,6 @@ export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage
                     romaji
                     english
                     native
-                    userPreferred
                 }
                 bannerImage
                 coverImage {
@@ -52,15 +51,28 @@ export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage
     }
 `;
 
-    const [error, response] = await fetchAniListData<{ Page: { media: AnilistMedia[] } }>(null, ANIME_QUERY, {
-        search,
+    console.log('searchAnilistMedia', {
+        search: search || undefined,
         type,
         season,
+        year,
+        sort,
+        page,
+        perPage,
+        genres: genres || undefined,
+        format,
+        status,
+    });
+
+    const [error, response] = await fetchAniListData<{ Page: { media: AnilistMedia[] } }>(null, ANIME_QUERY, {
+        search: search || undefined,
+        type,
+        season: season === 'ALL' ? undefined : season,
         seasonYear: year,
         sort,
         page,
         perPage,
-        genres,
+        genres: genres || undefined,
         format,
         status,
     });
@@ -127,7 +139,6 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
                                 romaji
                                 english
                                 native
-                                userPreferred
                             }
                             bannerImage
                             coverImage {
@@ -202,7 +213,6 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                                 romaji
                                 english
                                 native
-                                userPreferred
                             }
                             bannerImage
                             coverImage {
@@ -235,7 +245,6 @@ export const fetchUserFavourites = async (token: string, userId: string) => {
                                 romaji
                                 english
                                 native
-                                userPreferred
                             }
                             bannerImage
                             coverImage {

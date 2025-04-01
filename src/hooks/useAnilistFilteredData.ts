@@ -40,12 +40,11 @@ const useAnilistFilteredData = (
         if (deferredSearchTerm) {
             const searchTerm = deferredSearchTerm.toLowerCase();
             result = result.filter((media) => {
-                const { english, romaji, native, userPreferred } = media.title;
+                const { english, romaji, native } = media.title;
                 return (
                     english?.toLowerCase().includes(searchTerm) ||
                     romaji?.toLowerCase().includes(searchTerm) ||
-                    native?.toLowerCase().includes(searchTerm) ||
-                    userPreferred?.toLowerCase().includes(searchTerm)
+                    native?.toLowerCase().includes(searchTerm)
                 );
             });
         }
@@ -72,8 +71,7 @@ const useAnilistFilteredData = (
                         return (
                             (a.title.english ?? '').localeCompare(b.title.english ?? '') ||
                             (a.title.romaji ?? '').localeCompare(b.title.romaji ?? '') ||
-                            (a.title.native ?? '').localeCompare(b.title.native ?? '') ||
-                            (a.title.userPreferred ?? '').localeCompare(b.title.userPreferred ?? '')
+                            (a.title.native ?? '').localeCompare(b.title.native ?? '')
                         );
 
                     case 'Year':
