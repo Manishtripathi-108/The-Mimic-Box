@@ -9,21 +9,6 @@ import cn from '@/lib/utils/cn';
 
 const MAX_VISIBLE_BUTTONS = 4;
 
-/**
- * usePagination is a custom hook that provides a way to paginate data. It returns a pagination component and an array of data for the current page.
- *
- * @param data The data to paginate
- * @param itemsPerPage The number of items per page
- * @param options An object with the following properties:
- *   - current: The current page number (default: 1)
- *   - setCurrent: A function to set the current page number (default: useState)
- * @returns An object with the following properties:
- *   - currentData: The data for the current page
- *   - Pagination: A memoized pagination component
- *   - currentPage: The current page number
- *   - totalPages: The total number of pages
- *   - setCurrent: A function to set the current page number
- */
 const usePagination = <T,>(
     data: T[],
     itemsPerPage: number,
@@ -35,7 +20,7 @@ const usePagination = <T,>(
         current?: number;
         setCurrent?: (page: number) => void;
         scrollToTop?: boolean;
-    }
+    } = {}
 ) => {
     const [internalCurrent, setInternalCurrent] = useState(current || 1);
     const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
@@ -45,20 +30,20 @@ const usePagination = <T,>(
 
     // Define the current page state based on external or internal control
     const currentPage = isExternalControl ? current : internalCurrent;
-    const setCurrent = isExternalControl ? externalSetCurrent : setInternalCurrent;
+    const setCurrentPage = isExternalControl ? externalSetCurrent : setInternalCurrent;
 
     // Ensure the current page is within valid bounds
     useEffect(() => {
         if (currentPage > totalPages) {
-            setCurrent(totalPages);
+            setCurrentPage(totalPages);
         } else if (currentPage < 1) {
-            setCurrent(1);
+            setCurrentPage(1);
         }
-    }, [currentPage, totalPages, setCurrent]);
+    }, [currentPage, totalPages, setCurrentPage]);
 
     const handlePageChange = (page: number) => {
         if (page !== currentPage) {
-            setCurrent(page);
+            setCurrentPage(page);
             if (scrollToTop) scroll(0, 0);
         }
     };
@@ -144,7 +129,7 @@ const usePagination = <T,>(
 
     Pagination.displayName = 'Pagination';
 
-    return { currentData, Pagination, currentPage, totalPages, setCurrent };
+    return { currentData, Pagination, currentPage, totalPages, setCurrentPage };
 };
 
 export default usePagination;

@@ -2,19 +2,12 @@
 
 import { useDeferredValue, useMemo } from 'react';
 
-import {
-    AnilistFavourites,
-    AnilistFavouritesTab,
-    AnilistMedia,
-    AnilistMediaFilters,
-    AnilistMediaList,
-    AnilistMediaTab,
-} from '@/lib/types/anilist.types';
+import { AnilistFavourites, AnilistMedia, AnilistMediaFilters, AnilistMediaList, AnilistSelectedTabType } from '@/lib/types/anilist.types';
 
 const useAnilistFilteredData = (
     lists: AnilistMediaList[] | AnilistFavourites,
     filters: AnilistMediaFilters,
-    selectedList: AnilistFavouritesTab | AnilistMediaTab
+    selectedList: AnilistSelectedTabType
 ) => {
     const deferredSearchTerm = useDeferredValue(filters.search);
     const isFavourite = !Array.isArray(lists);
@@ -24,7 +17,7 @@ const useAnilistFilteredData = (
         let result: AnilistMedia[];
 
         // Step 1: Filter by selected list
-        if (selectedList !== 'All') {
+        if (selectedList !== 'ALL') {
             const status = selectedList.toLowerCase();
 
             if (isFavourite) {
@@ -59,15 +52,16 @@ const useAnilistFilteredData = (
 
         // Step 3: Apply additional filters
         result = result.filter((media) => {
-            const { format, status, genres: mediaGenres, startDate } = media;
+            const { format, status, genres: mediaGenres, startDate, season } = media;
             const matchFormat = filters.format ? format?.toUpperCase() === filters.format.toUpperCase() : true;
             const matchStatus = filters.status ? status?.toUpperCase() === filters.status.toUpperCase() : true;
             const matchGenres = filters.genres
                 ? filters.genres.every((genre) => mediaGenres?.map((g) => g.toUpperCase()).includes(genre.toUpperCase()))
                 : true;
             const matchYear = filters.year ? startDate?.year === filters.year : true;
+            const matchSeason = filters.season !== 'ALL' ? season === filters.season : true;
 
-            return matchFormat && matchStatus && matchGenres && matchYear;
+            return matchFormat && matchStatus && matchGenres && matchYear && matchSeason;
         });
 
         // Step 4: Apply sorting

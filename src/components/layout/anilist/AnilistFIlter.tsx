@@ -5,15 +5,21 @@ import React from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 import { closeModal } from '@/components/Modals';
 import TabNavigation from '@/components/ui/TabNavigation';
-import { ANILIST_GENRES, ANILIST_MEDIA_FORMATS, ANILIST_MEDIA_STATUSES, ANILIST_SORT_OPTIONS } from '@/constants/client.constants';
-import { AnilistFilterSchema } from '@/lib/schema/client.validations';
-import { AnilistMediaFilters } from '@/lib/types/anilist.types';
+import { ANILIST_GENRES } from '@/constants/client.constants';
+import {
+    AnilistFilterSchema,
+    AnilistMediaFormatSchema,
+    AnilistMediaSortOptionsSchema,
+    AnilistMediaStatusSchema,
+} from '@/lib/schema/client.validations';
+import { AnilistMediaFilters, AnilistMediaFormat, AnilistMediaStatus } from '@/lib/types/anilist.types';
 
-type FilterValues = z.infer<typeof AnilistFilterSchema>;
+const AnilistMediaFormatTabs = AnilistMediaFormatSchema.options.map((option) => option.replace('_', ' ').toLowerCase());
+const AnilistMediaStatusTabs = AnilistMediaStatusSchema.options.map((option) => option.replaceAll('_', ' ').toLowerCase());
+const ResetFilters: AnilistMediaFilters = { season: 'ALL', sort: 'Last Updated', genres: [] };
 
 const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; setFilters: (filters: AnilistMediaFilters) => void }) => {
     const {
@@ -23,14 +29,14 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
         reset,
         watch,
         formState: { errors },
-    } = useForm<FilterValues>({
-        defaultValues: filters as FilterValues,
+    } = useForm<AnilistMediaFilters>({
+        defaultValues: filters,
         resolver: zodResolver(AnilistFilterSchema),
     });
 
-    const onSubmit = (values: FilterValues) => {
-        closeModal('anilist-filters-modal');
-        setFilters(values as AnilistMediaFilters);
+    const onSubmit = (values: AnilistMediaFilters) => {
+        closeModal('modal-anilist-filters');
+        setFilters(values);
     };
 
     return (
@@ -48,16 +54,16 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
             <div className="form-group relative">
                 <p className="form-text text-text-primary font-alegreya text-base">Format:</p>
                 <TabNavigation
-                    tabs={ANILIST_MEDIA_FORMATS}
-                    currentTab={watch('format')}
+                    tabs={AnilistMediaFormatTabs}
+                    currentTab={watch('format')?.toLowerCase().replace('_', ' ')}
                     className="w-full text-nowrap"
                     buttonClassName="capitalize p-2 text-sm"
-                    onTabChange={(format) => setValue('format', format)}
+                    onTabChange={(format) => setValue('format', format.replaceAll(' ', '_').toUpperCase() as AnilistMediaFormat)}
                 />
                 <button
                     type="button"
                     className="text-text-secondary hover:text-text-primary absolute -top-2 right-4 cursor-pointer text-2xl"
-                    onClick={() => setValue('format', null)}
+                    onClick={() => setValue('format', undefined)}
                     title="Clear">
                     x
                 </button>
@@ -81,16 +87,16 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
             <div className="form-group relative">
                 <p className="form-text text-text-primary font-alegreya text-base">Status:</p>
                 <TabNavigation
-                    tabs={ANILIST_MEDIA_STATUSES}
-                    currentTab={watch('status')}
+                    tabs={AnilistMediaStatusTabs}
+                    currentTab={watch('status')?.toLowerCase().replaceAll('_', ' ')}
                     className="w-full text-nowrap"
                     buttonClassName="capitalize p-2 text-sm"
-                    onTabChange={(status) => setValue('status', status)}
+                    onTabChange={(status) => setValue('status', status.replaceAll(' ', '_').toUpperCase() as AnilistMediaStatus)}
                 />
                 <button
                     type="button"
                     className="text-text-secondary hover:text-text-primary absolute -top-2 right-4 cursor-pointer text-2xl"
-                    onClick={() => setValue('status', null)}
+                    onClick={() => setValue('status', undefined)}
                     title="Clear">
                     x
                 </button>
@@ -103,14 +109,27 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                         Sort By:
                     </label>
                     <select {...register('sort')} id="filter-sort" className="form-field">
-                        <option value="Last Added">Default</option>
-                        {ANILIST_SORT_OPTIONS.map((option) => (
+                        {AnilistMediaSortOptionsSchema.options.map((option) => (
                             <option key={option} value={option}>
                                 {option}
                             </option>
                         ))}
                     </select>
                     <ErrorMessage errors={errors} name="sort" as="p" className="text-sm text-red-500" />
+                </div>
+
+                <div className="form-group relative">
+                    <label htmlFor="filter-season" className="form-text font-alegreya text-base">
+                        Season:
+                    </label>
+                    <select {...register('season')} id="filter-season" className="form-field capitalize">
+                        {AnilistFilterSchema.shape.season.options.map((option) => (
+                            <option key={option} value={option}>
+                                {option.toLowerCase()}
+                            </option>
+                        ))}
+                    </select>
+                    <ErrorMessage errors={errors} name="season" as="p" className="text-sm text-red-500" />
                 </div>
 
                 {/* Year */}
@@ -140,23 +159,8 @@ const AnilistFilter = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                     type="button"
                     className="button button-danger"
                     onClick={() => {
-                        reset({
-                            search: '',
-                            format: null,
-                            genres: [],
-                            year: null,
-                            status: null,
-                            sort: 'Last Updated',
-                        });
-
-                        setFilters({
-                            search: '',
-                            format: null,
-                            genres: [],
-                            year: null,
-                            status: null,
-                            sort: 'Last Updated',
-                        });
+                        reset(ResetFilters);
+                        setFilters(ResetFilters);
                     }}>
                     Clear Filters
                 </button>

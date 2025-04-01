@@ -9,8 +9,9 @@ export const generateStaticParams = async () => {
     return [{ mode: 'classic' }, { mode: 'ultimate' }, { mode: 'waiting-room' }];
 };
 
-export const generateMetadata = async ({ params }: { params: { mode: GameMode | 'waiting-room' } }): Promise<Metadata> => {
-    const modeTitle = params.mode === 'ultimate' ? 'Tic-Tac-Toe Ultimate' : 'Tic-Tac-Toe Classic';
+export const generateMetadata = async ({ params }: { params: Promise<{ mode: GameMode | 'waiting-room' }> }): Promise<Metadata> => {
+    const { mode } = await params;
+    const modeTitle = mode === 'ultimate' ? 'Tic-Tac-Toe Ultimate' : 'Tic-Tac-Toe Classic';
 
     return {
         title: `${modeTitle}`,
