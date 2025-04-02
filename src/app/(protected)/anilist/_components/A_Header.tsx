@@ -2,9 +2,9 @@ import React from 'react';
 
 import Image from 'next/image';
 
-import NavigationBar from '@/components/layout/anilist/NavigationBar';
+import A_Navbar from '@/app/(protected)/anilist/_components/A_Navbar';
 
-const AnilistHeader = ({ displayName, imageUrl, bannerUrl }: { displayName: string; imageUrl: string; bannerUrl: string }) => {
+const A_Header = ({ displayName, imageUrl, bannerUrl }: { displayName: string; imageUrl: string; bannerUrl: string }) => {
     return (
         <header
             style={{ backgroundImage: `url(${bannerUrl})` }}
@@ -22,10 +22,10 @@ const AnilistHeader = ({ displayName, imageUrl, bannerUrl }: { displayName: stri
                         {displayName}
                     </h1>
                 </div>
-                <NavigationBar />
+                <A_Navbar />
             </div>
         </header>
     );
 };
 
-export default AnilistHeader;
+export default A_Header;

@@ -4,9 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { fetchUserFavourites, getAnilistUserMedia } from '@/actions/anilist.actions';
+import A_Main from '@/app/(protected)/anilist/_components/A_Main';
 import { auth } from '@/auth';
 import ErrorCard from '@/components/ErrorCard';
-import AnilistMain from '@/components/layout/anilist/AnilistMain';
 import { IMAGE_URL } from '@/constants/client.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
@@ -58,7 +58,7 @@ const AnilistMediaPage = async ({ params }: AnilistMediaPageProps) => {
                 : response.payload.anime?.nodes?.length || response.payload.manga?.nodes?.length)) ||
         0 > 0;
 
-    return hasMedia ? <AnilistMain token={anilist.accessToken} mediaLists={response.payload!} type={type} /> : <NoDataMessage type={type} />;
+    return hasMedia ? <A_Main token={anilist.accessToken} mediaLists={response.payload!} type={type} /> : <NoDataMessage type={type} />;
 };
 
 export default AnilistMediaPage;

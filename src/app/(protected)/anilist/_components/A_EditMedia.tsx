@@ -12,14 +12,14 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { deleteMediaEntry, saveMediaEntry, toggleFavourite } from '@/actions/anilist.actions';
-import { closeModal } from '@/components/Modals';
+import Modal, { closeModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
-import { AnilistMediaEntry, AnilistMediaListStatus } from '@/lib/types/anilist.types';
+import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
 const modalId = 'modal-anilist-edit-media';
 
-const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry }) => {
+const A_EditMedia = ({ token, entry, onClose }: { token: string; entry: AnilistMediaEntry; onClose?: () => void }) => {
     const [isLiked, setIsLiked] = useState(entry.media?.isFavourite || false);
     const [isToggling, setIsToggling] = useState(false);
     const maxProgress = entry.media?.episodes || entry.media?.chapters || 100000;
@@ -35,7 +35,7 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
         formState: { errors, isSubmitting, isDirty },
     } = useForm({
         resolver: zodResolver(validationSchema),
-        defaultValues: { status: entry.status as AnilistMediaListStatus, progress: entry.progress || 0 },
+        defaultValues: { status: entry.status, progress: entry.progress || 0 },
     });
 
     const onSubmit = async (values: z.infer<typeof validationSchema>) => {
@@ -65,7 +65,7 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
     };
 
     return (
-        <>
+        <Modal modalId="modal-anilist-edit-media" onClose={onClose}>
             <div
                 className="relative h-44 rounded-t-lg bg-cover bg-center after:absolute after:size-full after:opacity-40 md:h-64"
                 style={{ backgroundImage: `url(${entry.media?.bannerImage})` }}
@@ -138,8 +138,8 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
                     </button>
                 </div>
             </form>
-        </>
+        </Modal>
     );
 };
 
-export default AnilistEditMedia;
+export default A_EditMedia;

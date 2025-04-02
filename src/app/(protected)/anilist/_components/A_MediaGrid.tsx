@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState, useTransition } from 
 import Link from 'next/link';
 
 import { searchAnilistMedia } from '@/actions/anilist.actions';
-import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
+import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { AnilistMedia, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
 import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
@@ -17,7 +17,7 @@ interface AnilistMediaGridProps {
     className?: string;
 }
 
-const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDetails, className }) => {
+const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDetails, className }) => {
     const [mediaList, setMediaList] = useState<AnilistMedia[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -63,11 +63,11 @@ const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, sho
                         ? Array.from({ length: 6 }).map((_, index) => (
                               <div key={index} className="bg-secondary aspect-5/7 animate-pulse rounded-lg"></div>
                           ))
-                        : mediaList.map((entry) => <AnilistMediaCard key={entry.id} detailed={showDetails} media={entry} />)}
+                        : mediaList.map((entry) => <A_MediaCard key={entry.id} detailed={showDetails} media={entry} />)}
                 </section>
             )}
         </article>
     );
 };
 
-export default AnilistMediaGrid;
+export default A_MediaGrid;

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import AnilistSearchToolbar from '@/components/layout/anilist/AnilistSearchToolbar';
+import A_MediaExplorer from '@/app/(protected)/anilist/_components/A_MediaExplorer';
 import { AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
 
 export const dynamicParams = false;
@@ -31,11 +31,7 @@ const AnilistSearch = async ({ params }: { params: Promise<{ category: AnilistSe
     const { category, type } = await params;
     const UpperCaseType = type.toUpperCase() as AnilistMediaType;
 
-    return (
-        <main className="container mx-auto p-2 sm:p-6">
-            <AnilistSearchToolbar type={UpperCaseType} category={category} />
-        </main>
-    );
+    return <A_MediaExplorer type={UpperCaseType} category={category} />;
 };
 
 export default AnilistSearch;

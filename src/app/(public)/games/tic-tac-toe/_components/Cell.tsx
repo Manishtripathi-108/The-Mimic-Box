@@ -23,7 +23,7 @@ const Cell = ({
             type="button"
             aria-label={`Cell ${value || 'empty'}`}
             aria-pressed={!!value}
-            className={cn('button button-secondary size-full p-1 aspect-square', {
+            className={cn('button button-secondary aspect-square size-full p-1', {
                 'button-highlight': isActive,
                 'text-accent': isWinningSquare,
                 active: !!value,

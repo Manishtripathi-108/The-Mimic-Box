@@ -4,16 +4,15 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
-import { Icon } from '@iconify/react';
+import toast from 'react-hot-toast';
 
-import Modal, { openModal } from '@/components/Modals';
-import AnilistEditMedia from '@/components/layout/anilist/AnilistEditMedia';
-import AnilistFilter from '@/components/layout/anilist/AnilistFilter';
-import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
-import AnilistToolbar from '@/components/layout/anilist/AnilistToolbar';
+import A_EditMedia from '@/app/(protected)/anilist/_components/A_EditMedia';
+import AnilistFilterModal from '@/app/(protected)/anilist/_components/A_FilterModal';
+import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
+import A_Toolbar from '@/app/(protected)/anilist/_components/A_Toolbar';
+import { openModal } from '@/components/Modals';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { IMAGE_URL } from '@/constants/client.constants';
-import ICON_SET from '@/constants/icons';
 import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
 import usePagination from '@/hooks/usePagination';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
@@ -37,7 +36,7 @@ type AnilistMainProps = {
     token: string;
 };
 
-const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
+const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
     const [selectedMediaEntry, setSelectedMediaEntry] = useState<AnilistMediaEntry | null>(null);
     const [selectedTab, setSelectedTab] = useState<AnilistSelectedTabType>('ALL');
     const [isDetailedView, setIsDetailedView] = useState(false);
@@ -81,7 +80,7 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
     return (
         <main className="container mx-auto p-2 sm:p-6">
             {/* Header */}
-            <AnilistToolbar
+            <A_Toolbar
                 text={`Your ${type} List`}
                 search={filters.search}
                 setSearch={(search) => {
@@ -112,7 +111,7 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
                                 : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
                         }`}>
                         {currentData.map((entry) => (
-                            <AnilistMediaCard
+                            <A_MediaCard
                                 key={entry.id}
                                 detailed={isDetailedView}
                                 onEdit={type !== 'favourites' ? handleMediaEdit : null}
@@ -129,31 +128,23 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
             <Pagination className="mt-6" />
 
             {/* Filters Modal */}
-            <Modal modalId="modal-anilist-filters">
-                <AnilistFilter
-                    filters={filters}
-                    setFilters={(filters) => {
-                        setCurrentPage(1);
-                        setFilterData(filters);
-                    }}
-                />
-            </Modal>
+            <AnilistFilterModal
+                filters={filters}
+                setFilters={(filters) => {
+                    setCurrentPage(1);
+                    setFilterData(filters);
+                }}
+            />
 
             {/* Edit Modal */}
-            {type !== 'favourites' && (
-                <Modal modalId="modal-anilist-edit-media" onClose={() => setSelectedMediaEntry(null)}>
-                    {selectedMediaEntry ? (
-                        <AnilistEditMedia token={token} entry={selectedMediaEntry} />
-                    ) : (
-                        <div className="grid place-items-center gap-5 text-red-500">
-                            <Icon icon={ICON_SET.ERROR} className="size-20" />
-                            <h2 className="text-xl">Please select a media to edit</h2>
-                        </div>
-                    )}
-                </Modal>
-            )}
+            {type !== 'favourites' &&
+                (selectedMediaEntry ? (
+                    <A_EditMedia token={token} entry={selectedMediaEntry} onClose={() => setSelectedMediaEntry(null)} />
+                ) : (
+                    toast.error('Something went wrong')
+                ))}
         </main>
     );
 };
 
-export default AnilistMain;
+export default A_Main;

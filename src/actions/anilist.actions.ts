@@ -15,9 +15,9 @@ import { fetchAniListData } from '@/lib/utils/server.utils';
 
 export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage, season, year, sort, genres, format, status }: AnilistQuery) => {
     const ANIME_QUERY = `
-    query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genres: [String], $status: MediaStatus) {
+    query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genres: [String], $status: MediaStatus, $format: MediaFormat) {
         Page(page: $page, perPage: $perPage) {
-            media(search: $search, type: $type, season: $season, seasonYear: $seasonYear, sort: $sort, genre_in: $genres, status: $status) {
+            media(search: $search, type: $type, season: $season, seasonYear: $seasonYear, sort: $sort, genre_in: $genres, status: $status, format: $format) {
                 id
                 type
                 format
@@ -54,8 +54,8 @@ export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage
     console.log('searchAnilistMedia', {
         search: search || undefined,
         type,
-        season,
-        year,
+        season: season === 'ALL' ? undefined : season,
+        seasonYear: year,
         sort,
         page,
         perPage,

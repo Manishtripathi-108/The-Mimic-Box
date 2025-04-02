@@ -11,7 +11,7 @@ import ICON_SET from '@/constants/icons';
 import { AnilistMedia } from '@/lib/types/anilist.types';
 import cn from '@/lib/utils/cn';
 
-const AnilistMediaCard = ({
+const A_MediaCard = ({
     media,
     detailed = false,
     onEdit,
@@ -136,4 +136,4 @@ const AnilistMediaCard = ({
     );
 };
 
-export default memo(AnilistMediaCard);
+export default memo(A_MediaCard);

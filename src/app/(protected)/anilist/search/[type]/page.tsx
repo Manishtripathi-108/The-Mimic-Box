@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import AnilistMediaGrid from '@/components/layout/anilist/AnilistMediaGrid';
-import AnilistSearchToolbar from '@/components/layout/anilist/AnilistSearchToolbar';
+import A_MediaExplorer from '@/app/(protected)/anilist/_components/A_MediaExplorer';
+import A_MediaGrid from '@/app/(protected)/anilist/_components/A_MediaGrid';
 import { AnilistMediaType } from '@/lib/types/anilist.types';
 
 export const dynamicParams = false;
@@ -26,13 +26,13 @@ const AnilistSearch = async ({ params }: { params: Promise<{ type: 'anime' | 'ma
     const UpperCaseType = type.toUpperCase() as AnilistMediaType;
 
     return (
-        <main className="container mx-auto p-2 sm:p-6">
-            <AnilistSearchToolbar type={UpperCaseType} />
-            <AnilistMediaGrid type={UpperCaseType} category="trending" className="mt-6" />
-            <AnilistMediaGrid type={UpperCaseType} category="this-season" className="mt-6" />
-            <AnilistMediaGrid type={UpperCaseType} category="next-season" className="mt-6" />
-            <AnilistMediaGrid type={UpperCaseType} category="popular" className="mt-6" />
-        </main>
+        <>
+            <A_MediaExplorer type={UpperCaseType} />
+            <A_MediaGrid type={UpperCaseType} category="trending" className="mt-6" />
+            <A_MediaGrid type={UpperCaseType} category="this-season" className="mt-6" />
+            <A_MediaGrid type={UpperCaseType} category="next-season" className="mt-6" />
+            <A_MediaGrid type={UpperCaseType} category="popular" className="mt-6" />
+        </>
     );
 };
 

@@ -1,8 +1,8 @@
 import React from 'react';
 
+import A_Header from '@/app/(protected)/anilist/_components/A_Header';
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
-import AnilistHeader from '@/components/layout/anilist/AnilistHeader';
 
 const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
     const session = await auth();
@@ -18,7 +18,7 @@ const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
 
     return (
         <>
-            <AnilistHeader bannerUrl={anilist.bannerUrl} displayName={anilist.displayName || 'Anilist User'} imageUrl={anilist.imageUrl} />
+            <A_Header bannerUrl={anilist.bannerUrl} displayName={anilist.displayName || 'Anilist User'} imageUrl={anilist.imageUrl} />
             {children}
         </>
     );

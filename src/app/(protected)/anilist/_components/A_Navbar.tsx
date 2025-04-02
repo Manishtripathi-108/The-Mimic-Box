@@ -8,7 +8,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const NavigationBar = () => {
+const A_Navbar = () => {
     const pathName = usePathname();
 
     return (
@@ -82,4 +82,4 @@ const NavigationBar = () => {
     );
 };
 
-export default NavigationBar;
+export default A_Navbar;
