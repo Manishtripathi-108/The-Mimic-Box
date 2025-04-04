@@ -12,14 +12,14 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { deleteMediaEntry, saveMediaEntry, toggleFavourite } from '@/actions/anilist.actions';
-import Modal, { closeModal } from '@/components/Modals';
+import { closeModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
 import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
 const modalId = 'modal-anilist-edit-media';
 
-const A_EditMedia = ({ token, entry, onClose }: { token: string; entry: AnilistMediaEntry; onClose?: () => void }) => {
+const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry }) => {
     const [isLiked, setIsLiked] = useState(entry.media?.isFavourite || false);
     const [isToggling, setIsToggling] = useState(false);
     const maxProgress = entry.media?.episodes || entry.media?.chapters || 100000;
@@ -65,7 +65,7 @@ const A_EditMedia = ({ token, entry, onClose }: { token: string; entry: AnilistM
     };
 
     return (
-        <Modal modalId="modal-anilist-edit-media" onClose={onClose}>
+        <>
             <div
                 className="relative h-44 rounded-t-lg bg-cover bg-center after:absolute after:size-full after:opacity-40 md:h-64"
                 style={{ backgroundImage: `url(${entry.media?.bannerImage})` }}
@@ -138,7 +138,7 @@ const A_EditMedia = ({ token, entry, onClose }: { token: string; entry: AnilistM
                     </button>
                 </div>
             </form>
-        </Modal>
+        </>
     );
 };
 

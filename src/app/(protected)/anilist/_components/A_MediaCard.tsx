@@ -3,11 +3,13 @@
 import React, { memo } from 'react';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Icon } from '@iconify/react';
 
 import { convertMonthNumberToName } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { AnilistMedia } from '@/lib/types/anilist.types';
 import cn from '@/lib/utils/cn';
 
@@ -18,119 +20,139 @@ const A_MediaCard = ({
 }: {
     media: AnilistMedia;
     detailed?: boolean;
-    onEdit?: null | ((entry: AnilistMedia) => void);
+    onEdit?: ((entry: AnilistMedia) => void) | null;
 }) => {
+    const title = media.title.english || media.title.native || media.title.romaji || 'Unknown Title';
+
     return (
         <section
             className={cn(
-                'shadow-floating-xs from-secondary to-tertiary relative overflow-hidden bg-linear-150 from-15% to-85% transition-all duration-300',
-                detailed ? 'grid w-full grid-cols-10 rounded-2xl' : 'aspect-[5/7] rounded-xl'
+                'shadow-floating-xs from-secondary text-text-secondary to-tertiary relative w-full overflow-hidden bg-linear-150 from-15% to-85% transition-all duration-300',
+                detailed ? 'grid grid-cols-10 rounded-2xl' : 'aspect-[5/7] rounded-xl'
             )}
-            aria-labelledby={`media-title-${media?.id}`}>
-            {/* Image Section */}
+            aria-labelledby={`media-title-${media.id}`}>
+            {/* Image */}
             <div className="relative col-span-4 h-full">
                 <Image
                     width={detailed ? 500 : 300}
                     height={detailed ? 500 : 700}
                     src={media.coverImage.large}
-                    alt={media.title.english || 'Unknown Title'}
+                    alt={title}
                     className="size-full object-cover"
                     priority
                 />
 
-                {/* Title Overlay */}
-                <header className="bg-secondary/75 absolute bottom-0 w-full p-2 backdrop-blur-sm">
-                    <h2
-                        title={media.title.english || media.title.native || 'Unknown Title'}
-                        className={`text-text-primary font-alegreya overflow-hidden leading-none tracking-wide capitalize ${detailed ? 'mb-1' : 'truncate'}`}>
-                        {media.title.english || media.title.native || 'Unknown Title'}
-                    </h2>
-                    <p className="text-text-secondary text-xs capitalize">
-                        {media?.format?.replaceAll('_', ' ').toLowerCase()}{' '}
-                        {media?.type === 'ANIME'
-                            ? media?.format === 'MOVIE'
-                                ? `${media?.duration ?? '??'}min`
-                                : `${media?.episodes ?? '??'}, ${media?.duration ?? '??'}min/ep`
-                            : `${media?.chapters ?? '??'} chapters`}
-                    </p>
-                </header>
+                {/* Overlay title (only for non-detailed) */}
+                {!detailed && (
+                    <header className="bg-secondary/75 absolute bottom-0 w-full px-3 py-2 backdrop-blur-sm">
+                        <h2 title={title} className="text-text-primary block truncate text-base font-semibold">
+                            {title}
+                        </h2>
+                        <p className="text-xs capitalize">
+                            {media.format?.replaceAll('_', ' ').toLowerCase()} ·{' '}
+                            {media.type === 'ANIME'
+                                ? media.format === 'MOVIE'
+                                    ? `${media.duration ?? '??'}min`
+                                    : `${media.episodes ?? '??'} ep · ${media.duration ?? '??'}min/ep`
+                                : `${media.chapters ?? '??'} chapters`}
+                        </p>
+                    </header>
+                )}
+
+                {/* Floating Edit Button */}
+                {onEdit && !detailed && (
+                    <button
+                        type="button"
+                        title="Edit"
+                        onClick={() => onEdit(media)}
+                        className="button absolute top-2 right-2 z-10 size-7 rounded-full p-1"
+                        aria-label="Edit">
+                        <Icon icon={ICON_SET.EDIT} className="size-full" />
+                    </button>
+                )}
+
+                <Link
+                    href={APP_ROUTES.ANILIST_MEDIA_DETAIL(media.type.toLowerCase() as 'anime' | 'manga', media.id)}
+                    className="absolute inset-0 z-0"
+                    aria-label={`View details for ${title}`}>
+                    <span className="sr-only">View details for {title}</span>
+                </Link>
             </div>
 
-            {/* Edit Button */}
-            {onEdit && !detailed && (
-                <button
-                    type="button"
-                    title="Edit"
-                    onClick={() => onEdit(media)}
-                    className="button absolute top-1 right-1 z-10 size-6 rounded-full p-1"
-                    aria-label="Edit">
-                    <Icon icon={ICON_SET.EDIT} className="size-full" />
-                </button>
-            )}
-
-            {/* Description */}
+            {/* Detailed Section */}
             {detailed && (
-                <article id={`description-${media?.id}`} className="relative col-span-6 p-4">
-                    {onEdit && (
-                        <button
-                            type="button"
-                            title="Edit"
-                            onClick={() => onEdit(media)}
-                            className="button z-10 float-right size-8 rounded-full p-1"
-                            aria-label="Edit">
-                            <Icon icon={ICON_SET.EDIT} className="size-full" />
-                        </button>
-                    )}
+                <div className="col-span-6 flex flex-col justify-between p-2 md:p-6">
+                    {/* Header */}
+                    <header className="flex items-start justify-between">
+                        <h2 id={`media-title-${media.id}`} className="text-text-primary text-lg font-bold">
+                            {title}
+                        </h2>
+                        {onEdit && (
+                            <button
+                                type="button"
+                                title="Edit"
+                                onClick={() => onEdit(media)}
+                                className="button size-7 shrink-0 rounded-full p-1"
+                                aria-label="Edit">
+                                <Icon icon={ICON_SET.EDIT} className="size-full" />
+                            </button>
+                        )}
+                    </header>
 
-                    <p className="text-text-secondary line-clamp-5 text-sm">
-                        <strong className="text-text-primary">Description: </strong>
-                        {media.description || 'No description available.'}
-                    </p>
+                    {/* Description */}
+                    <div>
+                        <span className="text-text-primary font-medium">Description: </span>
+                        <p
+                            style={{ scrollbarGutter: 'stable' }}
+                            className="scrollbar-thin h-20 overflow-y-hidden text-sm hover:overflow-y-auto"
+                            dangerouslySetInnerHTML={{ __html: media.description }}
+                        />
+                    </div>
 
                     {/* Additional Info */}
-                    <div className="text-text-secondary mt-3 mb-10 space-y-1 text-sm capitalize">
+                    <div className="[&>p>strong]:text-text-primary mt-2 text-sm">
                         <p>
-                            <strong className="text-text-primary">Native: </strong>
-                            {media?.title?.native || 'N/A'}
+                            <strong>Native: </strong>
+                            {media.title.native || 'N/A'}
                         </p>
                         <p>
-                            <strong className="text-text-primary">Aired: </strong>
-                            {media.startDate.day && media.startDate.month && media.startDate.year
+                            <strong>Aired: </strong>
+                            {media.startDate.month
                                 ? `${media.startDate.day} ${convertMonthNumberToName(media.startDate.month)} ${media.startDate.year}`
                                 : 'Unknown'}
                         </p>
                         <p>
-                            <strong className="text-text-primary">Status: </strong>
+                            <strong>Status: </strong>
                             {media.status?.toLowerCase() || 'Unknown'}
                         </p>
                         <p>
-                            <strong className="text-text-primary">Genres: </strong>
+                            <strong>Genres: </strong>
                             {media.genres?.join(', ') || 'N/A'}
                         </p>
                         {media.type === 'ANIME' && (
                             <p>
-                                <strong className="text-text-primary">Duration: </strong>
+                                <strong>Duration: </strong>
                                 {media.duration ?? 'Unknown'} min/ep
                             </p>
                         )}
                     </div>
 
                     {/* Stats */}
-                    <footer className="bg-secondary text-text-secondary absolute right-0 bottom-0 left-0 flex items-center justify-between p-3">
-                        <div className="flex items-center gap-2">
+                    <footer className="mt-3 flex items-center justify-between border-t pt-4 text-sm *:flex *:items-center *:gap-1">
+                        <div>
                             <Icon icon={ICON_SET.SMILE} className="size-4 text-green-500" />
-                            <span className="text-sm">{media.averageScore}%</span>
+                            <span>{media.averageScore}%</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div>
                             <Icon icon={ICON_SET.HEART} className="size-4 text-red-500" />
-                            <span className="text-sm">{media.favourites}</span>
+                            <span>{media.favourites}</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div>
                             <Icon icon={ICON_SET.EYE} className="size-4 text-blue-400" />
-                            <span className="text-sm">{media.popularity}</span>
+                            <span>{media.popularity}</span>
                         </div>
                     </footer>
-                </article>
+                </div>
             )}
         </section>
     );

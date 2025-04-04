@@ -22,10 +22,11 @@ export const APP_ROUTES = {
 
     // AniList Routes
     ANILIST_INDEX: '/anilist',
-    ANILIST_ANIME: '/anilist/anime',
-    ANILIST_MANGA: '/anilist/manga',
-    ANILIST_FAVOURITES: '/anilist/favourites',
+    ANILIST_ANIME: '/anilist/user/anime',
+    ANILIST_MANGA: '/anilist/user/manga',
+    ANILIST_FAVOURITES: '/anilist/user/favourites',
     ANILIST_SEARCH: (type: 'anime' | 'manga', category?: AnilistSearchCategories) => `/anilist/search/${type}${category ? `/${category}` : ''}`,
+    ANILIST_MEDIA_DETAIL: (type: 'anime' | 'manga', id: number) => `/anilist/${type}/${id}`,
 
     // Games Routes
     GAMES_TIC_TAC_TOE_INDEX: '/games/tic-tac-toe',

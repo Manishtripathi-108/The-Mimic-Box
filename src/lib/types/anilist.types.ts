@@ -75,7 +75,7 @@ export type AnilistMedia = {
     popularity: number;
     favourites: number;
     isFavourite: boolean;
-    bannerImage: string;
+    bannerImage?: string;
     coverImage: { large: string };
     title: {
         romaji: string;
@@ -86,6 +86,14 @@ export type AnilistMedia = {
         day: number;
         month: number;
         year: number;
+    };
+};
+
+export type AnilistMediaWithRecommendations = AnilistMedia & {
+    recommendations: {
+        nodes: {
+            mediaRecommendation: AnilistMedia;
+        }[];
     };
 };
 

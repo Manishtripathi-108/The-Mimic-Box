@@ -5,6 +5,7 @@ import {
     AnilistMediaCollection,
     AnilistMediaIds,
     AnilistMediaType,
+    AnilistMediaWithRecommendations,
     AnilistQuery,
     AnilistSaveMediaListEntry,
     AnilistUser,
@@ -13,11 +14,7 @@ import {
 import { createAniListErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { fetchAniListData } from '@/lib/utils/server.utils';
 
-export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage, season, year, sort, genres, format, status }: AnilistQuery) => {
-    const ANIME_QUERY = `
-    query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genres: [String], $status: MediaStatus, $format: MediaFormat) {
-        Page(page: $page, perPage: $perPage) {
-            media(search: $search, type: $type, season: $season, seasonYear: $seasonYear, sort: $sort, genre_in: $genres, status: $status, format: $format) {
+const mediaQuery = (additional = '') => `{
                 id
                 type
                 format
@@ -46,23 +43,17 @@ export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage
                     month
                     year
                 }
-            }
+                ${additional}
+            }`;
+
+export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage, season, year, sort, genres, format, status }: AnilistQuery) => {
+    const ANIME_QUERY = `
+    query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genres: [String], $status: MediaStatus, $format: MediaFormat) {
+        Page(page: $page, perPage: $perPage) {
+            media(search: $search, type: $type, season: $season, seasonYear: $seasonYear, sort: $sort, genre_in: $genres, status: $status, format: $format) ${mediaQuery()}
         }
     }
 `;
-
-    console.log('searchAnilistMedia', {
-        search: search || undefined,
-        type,
-        season: season === 'ALL' ? undefined : season,
-        seasonYear: year,
-        sort,
-        page,
-        perPage,
-        genres: genres || undefined,
-        format,
-        status,
-    });
 
     const [error, response] = await fetchAniListData<{ Page: { media: AnilistMedia[] } }>(null, ANIME_QUERY, {
         search: search || undefined,
@@ -82,7 +73,26 @@ export const searchAnilistMedia = async ({ search, type = 'ANIME', page, perPage
     return createSuccessReturn('Search results fetched successfully', response.Page.media);
 };
 
-export const getAnilistUserProfile = async (token: string): Promise<AnilistUser | null> => {
+export const fetchAnilistMediaDetails = async (type: AnilistMediaType, id: number) => {
+    const query = `
+        query Query($mediaId: Int, $type: MediaType) {
+            Media(id: $mediaId, type: $type) ${mediaQuery(
+                `recommendations {
+                    nodes {
+                        mediaRecommendation ${mediaQuery()}
+                    }
+                }`
+            )}
+            
+        }
+    `;
+
+    const [error, response] = await fetchAniListData<{ Media: AnilistMediaWithRecommendations }>(null, query, { mediaId: id, type });
+    if (error || !response) return createAniListErrorReturn('Error fetching media data', error);
+    return createSuccessReturn('Media data fetched successfully', response.Media);
+};
+
+export const fetchAnilistUserProfile = async (token: string): Promise<AnilistUser | null> => {
     const query = `
         query {
             Viewer {
@@ -107,7 +117,7 @@ export const getAnilistUserProfile = async (token: string): Promise<AnilistUser 
 /**
  * Fetches a user's media list from Anilist.
  */
-export const getAnilistUserMedia = async (token: string, userId: string, mediaType: AnilistMediaType) => {
+export const fetchAnilistUserMediaList = async (token: string, userId: string, mediaType: AnilistMediaType) => {
     const query = `
         query ($userId: Int, $type: MediaType, $sort: [MediaListSort]) {
             MediaListCollection(userId: $userId, type: $type, sort: $sort) {
@@ -120,36 +130,7 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
                         status
                         updatedAt
                         createdAt
-                        media {
-                            id
-                            type
-                            format
-                            status
-                            season
-                            description
-                            duration
-                            chapters
-                            episodes
-                            genres
-                            averageScore
-                            popularity
-                            favourites
-                            isFavourite
-                            title {
-                                romaji
-                                english
-                                native
-                            }
-                            bannerImage
-                            coverImage {
-                                large
-                            }
-                            startDate {
-                                day
-                                month
-                                year
-                            }
-                        }
+                        media ${mediaQuery()}
                     }
                 }
             }
@@ -188,74 +169,16 @@ export const getAnilistUserMedia = async (token: string, userId: string, mediaTy
 /**
  * Fetches a user's favourite anime & manga from Anilist.
  */
-export const fetchUserFavourites = async (token: string, userId: string) => {
+export const fetchUserFavouritesList = async (token: string, userId: string) => {
     const query = `
         query ($userId: Int) {
             User(id: $userId) {
                 favourites {
                     anime {
-                        nodes {
-                            id
-                            type
-                            format
-                            status
-                            season
-                            description
-                            duration
-                            chapters
-                            episodes
-                            genres
-                            averageScore
-                            popularity
-                            favourites
-                            isFavourite
-                            title {
-                                romaji
-                                english
-                                native
-                            }
-                            bannerImage
-                            coverImage {
-                                large
-                            }
-                            startDate {
-                                day
-                                month
-                                year
-                            }
-                        }
+                        nodes ${mediaQuery()}
                     }
                     manga {
-                        nodes {
-                            id
-                            type
-                            format
-                            status
-                            season
-                            description
-                            duration
-                            chapters
-                            episodes
-                            genres
-                            averageScore
-                            popularity
-                            favourites
-                            isFavourite
-                            title {
-                                romaji
-                                english
-                                native
-                            }
-                            bannerImage
-                            coverImage {
-                                large
-                            }
-                            startDate {
-                                day
-                                month
-                                year
-                            }
-                        }
+                        nodes ${mediaQuery()}
                     }
                 }
             }

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { fetchUserFavourites, getAnilistUserMedia } from '@/actions/anilist.actions';
+import { fetchAnilistUserMediaList, fetchUserFavouritesList } from '@/actions/anilist.actions';
 import A_Main from '@/app/(protected)/anilist/_components/A_Main';
 import { auth } from '@/auth';
 import ErrorCard from '@/components/ErrorCard';
@@ -42,8 +42,8 @@ const AnilistMediaPage = async ({ params }: AnilistMediaPageProps) => {
     try {
         response =
             type === 'favourites'
-                ? await fetchUserFavourites(anilist.accessToken, anilist.id)
-                : await getAnilistUserMedia(anilist.accessToken, anilist.id, type.toUpperCase() as 'ANIME' | 'MANGA');
+                ? await fetchUserFavouritesList(anilist.accessToken, anilist.id)
+                : await fetchAnilistUserMediaList(anilist.accessToken, anilist.id, type.toUpperCase() as 'ANIME' | 'MANGA');
     } catch (error) {
         console.error('Error fetching data:', error);
         return <ErrorCard message="Failed to load data. Please try again later." />;

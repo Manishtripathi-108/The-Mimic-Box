@@ -4,13 +4,11 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
-import toast from 'react-hot-toast';
-
 import A_EditMedia from '@/app/(protected)/anilist/_components/A_EditMedia';
 import AnilistFilterModal from '@/app/(protected)/anilist/_components/A_FilterModal';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import A_Toolbar from '@/app/(protected)/anilist/_components/A_Toolbar';
-import { openModal } from '@/components/Modals';
+import Modal, { openModal } from '@/components/Modals';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { IMAGE_URL } from '@/constants/client.constants';
 import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
@@ -105,11 +103,7 @@ const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
                 <div className="w-full">
                     <p className="text-left">{`Page ${currentPage} of ${totalPages}`}</p>
                     <div
-                        className={`grid ${
-                            isDetailedView
-                                ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
-                                : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
-                        }`}>
+                        className={`grid gap-4 ${isDetailedView ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'}`}>
                         {currentData.map((entry) => (
                             <A_MediaCard
                                 key={entry.id}
@@ -137,12 +131,11 @@ const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
             />
 
             {/* Edit Modal */}
-            {type !== 'favourites' &&
-                (selectedMediaEntry ? (
-                    <A_EditMedia token={token} entry={selectedMediaEntry} onClose={() => setSelectedMediaEntry(null)} />
-                ) : (
-                    toast.error('Something went wrong')
-                ))}
+            {type !== 'favourites' && (
+                <Modal modalId="modal-anilist-edit-media" onClose={() => setSelectedMediaEntry(null)}>
+                    {selectedMediaEntry ? <A_EditMedia token={token} entry={selectedMediaEntry} /> : null}
+                </Modal>
+            )}
         </main>
     );
 };

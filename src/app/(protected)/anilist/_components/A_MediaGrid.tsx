@@ -54,11 +54,7 @@ const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDeta
                 <p className="text-center text-red-500">{error}</p>
             ) : (
                 <section
-                    className={`mx-auto grid ${
-                        showDetails
-                            ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
-                            : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
-                    }`}>
+                    className={`mx-auto grid gap-4 ${showDetails ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'} `}>
                     {isPending
                         ? Array.from({ length: 6 }).map((_, index) => (
                               <div key={index} className="bg-secondary aspect-5/7 animate-pulse rounded-lg"></div>
