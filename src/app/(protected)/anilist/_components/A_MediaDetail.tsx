@@ -11,7 +11,7 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
         <div className="bg-primary text-text-primary min-h-screen">
             {/* Banner */}
             <div className="relative h-72 w-full overflow-hidden">
-                <Image src={media.bannerImage || IMAGE_URL.BANNER} alt="Banner" layout="fill" objectFit="cover" className="opacity-60" />
+                <Image src={media.bannerImage || IMAGE_URL.BANNER} alt="Banner" className="object-cover opacity-60" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
             </div>
 

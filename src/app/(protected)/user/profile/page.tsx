@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 import { auth } from '@/auth';
 import LogoutButton from '@/components/ui/LogoutButton';
+import { IMAGE_URL } from '@/constants/client.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
@@ -27,8 +28,8 @@ const UserProfile = async () => {
                     <div className="rounded-xl border p-3 sm:p-6">
                         <div className="from-secondary to-tertiary shadow-pressed-xs -mt-20 size-32 rounded-full border bg-linear-150 from-15% to-85% p-2 sm:-mt-24 sm:size-44">
                             <Image
-                                className="shadow-floating-xs from-secondary to-tertiary size-full rounded-full border bg-linear-150 from-15% to-85% object-cover p-3"
-                                src={image!}
+                                className="shadow-floating-xs from-secondary to-tertiary rounded-full border bg-linear-150 from-15% to-85% object-cover p-3"
+                                src={image || IMAGE_URL.PROFILE}
                                 alt="Avatar"
                                 width={200}
                                 height={200}

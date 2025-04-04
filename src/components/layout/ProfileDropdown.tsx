@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useSession } from 'next-auth/react';
 
 import LogoutButton from '@/components/ui/LogoutButton';
+import { IMAGE_URL } from '@/constants/client.constants';
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import useTheme from '@/hooks/useTheme';
@@ -58,7 +59,13 @@ const ProfileDropdown = () => {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="shadow-floating-xs relative flex w-fit cursor-pointer items-center justify-center rounded-full border p-0.5">
-                <Image src={image!} alt="Profile" width={36} height={36} className="text-text-secondary size-9 rounded-full object-cover" />
+                <Image
+                    src={image || IMAGE_URL.PROFILE}
+                    alt="Profile"
+                    width={36}
+                    height={36}
+                    className="text-text-secondary size-9 rounded-full object-cover"
+                />
             </button>
 
             {/* Dropdown Menu */}
@@ -72,7 +79,7 @@ const ProfileDropdown = () => {
                         <div className="shadow-pressed-xs mb-2 flex aspect-[4/3] w-full flex-col items-center justify-center rounded-2xl border">
                             <div className="shadow-floating-xs mb-2 flex items-center justify-center rounded-3xl border p-2">
                                 <Image
-                                    src={image!}
+                                    src={image || IMAGE_URL.PROFILE}
                                     alt="Profile"
                                     width={72}
                                     height={72}

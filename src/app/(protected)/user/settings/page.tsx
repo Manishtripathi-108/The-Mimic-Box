@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import { auth } from '@/auth';
 import LogoutButton from '@/components/ui/LogoutButton';
+import { IMAGE_URL } from '@/constants/client.constants';
 
 const UserProfile = async () => {
     const session = await auth();
@@ -22,7 +23,7 @@ const UserProfile = async () => {
                         <div className="from-secondary to-tertiary shadow-pressed-xs -mt-20 size-32 rounded-full border bg-linear-150 from-15% to-85% p-2 sm:-mt-24 sm:size-44">
                             <Image
                                 className="shadow-floating-xs size-full rounded-full border object-cover p-3"
-                                src={image || 'https://picsum.photos/200'}
+                                src={image || IMAGE_URL.PROFILE}
                                 alt="Avatar"
                                 width={200}
                                 height={200}

@@ -16,7 +16,7 @@ const A_Header = ({ displayName, imageUrl, bannerUrl }: { displayName: string; i
                         height={144}
                         src={imageUrl}
                         alt={`${displayName}'s avatar`}
-                        className="ml-5 aspect-square w-28 rounded-t-lg align-text-top md:w-36"
+                        className="ml-5 aspect-square rounded-t-lg align-text-top"
                     />
                     <h1 className="text-text-primary font-alegreya mb-3 w-full truncate rounded-lg text-2xl font-bold tracking-wide sm:text-4xl">
                         {displayName}
