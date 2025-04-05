@@ -67,17 +67,17 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
     return (
         <>
             <div
-                className="relative h-44 rounded-t-lg bg-cover bg-center after:absolute after:size-full after:opacity-40 md:h-64"
+                className="relative h-44 rounded-t-lg bg-cover bg-center after:absolute after:inset-0 after:bg-gradient-to-t after:from-black/60 after:to-transparent md:h-64"
                 style={{ backgroundImage: `url(${entry.media?.bannerImage})` }}
             />
 
-            <div className="bg-primary shadow-neumorphic-inset-xs relative -mt-24 ml-5 max-w-40 rounded-lg border p-3">
+            <div className="bg-primary shadow-neumorphic-inset-xs relative -mt-24 ml-5 max-w-52 rounded-lg border p-3">
                 <Image
-                    width={200}
-                    height={300}
+                    width={500}
+                    height={700}
                     className="size-full rounded-lg object-cover"
-                    src={entry.media.coverImage?.large}
-                    alt={entry.media.title?.english || entry.media.title?.native}
+                    src={entry.media.coverImage.extraLarge}
+                    alt={entry.media.title.english || entry.media.title.native}
                     loading="lazy"
                 />
             </div>
@@ -131,7 +131,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
                 <div className="mt-8 flex justify-end space-x-2">
                     <button type="button" className="button button-danger" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
-                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Delete'}
+                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Remove'}
                     </button>
                     <button type="submit" className="button button-primary" disabled={isToggling || isSubmitting}>
                         {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Save'}

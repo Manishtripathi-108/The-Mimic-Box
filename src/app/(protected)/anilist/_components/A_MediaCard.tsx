@@ -33,14 +33,7 @@ const A_MediaCard = ({
             aria-labelledby={`media-title-${media.id}`}>
             {/* Image */}
             <div className="relative col-span-4 h-full">
-                <Image
-                    width={detailed ? 500 : 300}
-                    height={detailed ? 500 : 700}
-                    src={media.coverImage.large}
-                    alt={title}
-                    className="size-full object-cover"
-                    priority
-                />
+                <Image width={500} height={700} src={media.coverImage.extraLarge} alt={title} className="size-full object-cover" priority />
 
                 {/* Overlay title (only for non-detailed) */}
                 {!detailed && (

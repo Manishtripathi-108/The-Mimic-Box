@@ -2,15 +2,13 @@
 
 import React, { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 
-import Image from 'next/image';
-
 import { getFilteredMediaList } from '@/actions/anilist.actions';
 import AnilistFilterModal from '@/app/(protected)/anilist/_components/A_FilterModal';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import A_Toolbar from '@/app/(protected)/anilist/_components/A_Toolbar';
 import ErrorCard from '@/components/ErrorCard';
+import { NoDataCard } from '@/components/NoDataCard';
 import Pagination from '@/components/ui/Pagination';
-import { IMAGE_URL } from '@/constants/client.constants';
 import { AnilistMedia, AnilistMediaFilters, AnilistMediaType, AnilistPageInfo, AnilistSearchCategories } from '@/lib/types/anilist.types';
 import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
 
@@ -94,13 +92,6 @@ const A_MediaExplorer = ({ type, category }: { type: AnilistMediaType; category?
         </div>
     );
 
-    const renderNoData = () => (
-        <div className="from-secondary to-tertiary shadow-floating-xs grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
-            <Image src={IMAGE_URL.NO_DATA} alt="No media found" width={300} height={300} />
-            <h2 className="text-accent font-alegreya text-center text-xl tracking-wide">No {type} found, try changing your filters</h2>
-        </div>
-    );
-
     return (
         <>
             {/* Toolbar */}
@@ -130,7 +121,7 @@ const A_MediaExplorer = ({ type, category }: { type: AnilistMediaType; category?
                             />
                         </>
                     ) : (
-                        renderNoData()
+                        <NoDataCard message={`No ${type} found, try changing your filters!`} />
                     )}
                 </>
             ) : null}

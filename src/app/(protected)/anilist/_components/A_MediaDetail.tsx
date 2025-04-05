@@ -23,7 +23,7 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
                     className="size-full object-cover opacity-60"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </section>
 
             {/* Content */}
@@ -34,11 +34,11 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
                     {/* Header */}
                     <header className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
                         <Image
-                            src={coverImage.large}
+                            src={coverImage.extraLarge}
                             alt={`Cover for ${title.english || title.romaji}`}
-                            width={144}
-                            height={208}
-                            className="h-52 w-36 rounded-md"
+                            width={500}
+                            height={700}
+                            className="aspect-[5/7] w-52 rounded-md"
                         />
                         <div>
                             <h1 id="media-title" itemProp="name" className="text-3xl font-bold">

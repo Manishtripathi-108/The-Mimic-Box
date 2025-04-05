@@ -24,7 +24,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ type: 'an
         openGraph: {
             title: media.title.romaji || media.title.english,
             description: media.description?.replace(/<[^>]*>/g, '').slice(0, 160) || '',
-            images: media.coverImage?.large ? [{ url: media.coverImage.large }] : [],
+            images: media.coverImage.extraLarge ? [{ url: media.coverImage.extraLarge }] : [],
         },
     };
 };

@@ -84,7 +84,7 @@ export type AnilistMedia = {
     favourites: number;
     isFavourite: boolean;
     bannerImage?: string;
-    coverImage: { large: string };
+    coverImage: { extraLarge: string };
     title: {
         romaji: string;
         english: string;

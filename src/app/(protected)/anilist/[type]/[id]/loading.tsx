@@ -9,7 +9,7 @@ export default function MediaDetailSkeleton() {
                 <div className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10">
                     {/* Header */}
                     <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-                        <div className="bg-primary h-[220px] w-[150px] rounded-md" />
+                        <div className="bg-primary aspect-[5/7] w-52 rounded-md" />
                         <div className="space-y-2">
                             <div className="bg-primary h-7 w-60 rounded" />
                             <div className="bg-primary h-4 w-40 rounded" />

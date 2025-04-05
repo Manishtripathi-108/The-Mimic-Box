@@ -2,15 +2,13 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 
-import Image from 'next/image';
-
 import A_EditMedia from '@/app/(protected)/anilist/_components/A_EditMedia';
 import AnilistFilterModal from '@/app/(protected)/anilist/_components/A_FilterModal';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import A_Toolbar from '@/app/(protected)/anilist/_components/A_Toolbar';
 import Modal, { openModal } from '@/components/Modals';
+import { NoDataCard } from '@/components/NoDataCard';
 import TabNavigation from '@/components/ui/TabNavigation';
-import { IMAGE_URL } from '@/constants/client.constants';
 import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
 import usePagination from '@/hooks/usePagination';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
@@ -67,14 +65,6 @@ const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
         [mediaLists]
     );
 
-    // Empty state component
-    const EmptyState = () => (
-        <div className="from-secondary shadow-floating-xs to-tertiary grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
-            <Image src={IMAGE_URL.NO_DATA} alt="No media found" width={300} height={300} />
-            <h2 className="text-accent font-alegreya text-center text-xl tracking-wide">No {type} found, try changing your filters</h2>
-        </div>
-    );
-
     return (
         <main className="container mx-auto p-2 sm:p-6">
             {/* Header */}
@@ -115,7 +105,7 @@ const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
                     </div>
                 </div>
             ) : (
-                <EmptyState />
+                <NoDataCard message={`No ${type} found, try changing your filters!`} />
             )}
 
             {/* Pagination */}

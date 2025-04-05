@@ -38,7 +38,7 @@ const mediaQuery = (additional = '') => `{
                 }
                 bannerImage
                 coverImage {
-                    large
+                    extraLarge
                 }
                 startDate {
                     day
@@ -50,7 +50,7 @@ const mediaQuery = (additional = '') => `{
 
 /* ------------------------- Media Search & Details ------------------------- */
 export const getFilteredMediaList = async ({ search, type = 'ANIME', page, perPage, season, year, sort, genres, format, status }: AnilistQuery) => {
-    const ANIME_QUERY = `
+    const query = `
     query ($search: String, $type: MediaType, $season: MediaSeason, $seasonYear: Int, $sort: [MediaSort], $page: Int = 1, $perPage: Int = 6, $genres: [String], $status: MediaStatus, $format: MediaFormat) {
         Page(page: $page, perPage: $perPage) {
         pageInfo {
@@ -70,7 +70,7 @@ export const getFilteredMediaList = async ({ search, type = 'ANIME', page, perPa
             pageInfo: AnilistPageInfo;
             media: AnilistMedia[];
         };
-    }>(null, ANIME_QUERY, {
+    }>(null, query, {
         search: search || undefined,
         type,
         season: season === 'ALL' ? undefined : season,
@@ -122,10 +122,7 @@ export const getUserProfile = async (token: string): Promise<AnilistUser | null>
 
     const [error, response] = await fetchAniListData<AnilistUser>(token, query);
 
-    if (error || !response) {
-        console.error('Error fetching user data:', error);
-        return null;
-    }
+    if (error || !response) return null;
 
     return response;
 };
