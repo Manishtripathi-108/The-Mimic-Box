@@ -4,11 +4,11 @@ import A_Navbar from '@/app/(protected)/anilist/_components/A_Navbar';
 
 const AnilistSearchLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
-        <main className="container mx-auto">
+        <div className="container mx-auto">
             <A_Navbar />
 
-            <div className="p-2 sm:p-6">{children}</div>
-        </main>
+            <main className="p-2 sm:p-6">{children}</main>
+        </div>
     );
 };
 

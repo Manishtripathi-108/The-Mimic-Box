@@ -101,7 +101,7 @@ const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
             {/* Media Grid */}
             {currentData.length > 0 ? (
                 <div className="w-full">
-                    <p className="text-left">{`Page ${currentPage} of ${totalPages}`}</p>
+                    <p className="text-text-secondary mb-1 flex justify-end">{`Page ${currentPage} of ${totalPages}`}</p>
                     <div
                         className={`grid gap-4 ${isDetailedView ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'}`}>
                         {currentData.map((entry) => (

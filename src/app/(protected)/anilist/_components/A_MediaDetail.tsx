@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 
 import A_AddToListBtn from '@/app/(protected)/anilist/_components/A_AddToListBtn';
@@ -6,104 +8,140 @@ import { IMAGE_URL, convertMonthNumberToName } from '@/constants/client.constant
 import { AnilistMediaWithRecommendations } from '@/lib/types/anilist.types';
 
 export default function MediaDetail({ media }: { media: AnilistMediaWithRecommendations }) {
+    const { title, startDate, bannerImage, coverImage, recommendations } = media;
+    const formattedDate = `${startDate.day} ${convertMonthNumberToName(startDate.month || 1)} ${startDate.year}`;
+
     return (
-        <div className="bg-primary text-text-primary min-h-screen">
+        <main className="bg-primary text-text-primary min-h-screen" itemScope itemType="https://schema.org/CreativeWork">
             {/* Banner */}
-            <div className="relative h-60 w-full overflow-hidden">
+            <section className="relative h-60 w-full overflow-hidden" aria-hidden="true">
                 <Image
-                    src={media.bannerImage || IMAGE_URL.BANNER}
-                    alt="Banner"
+                    src={bannerImage || IMAGE_URL.BANNER}
+                    alt="Banner image"
                     width={2000}
                     height={2000}
                     className="size-full object-cover opacity-60"
+                    priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
-            </div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent" />
+            </section>
 
             {/* Content */}
             <div className="mx-auto -mt-32 max-w-6xl px-4 sm:px-8">
-                <div className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10">
+                <article
+                    className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10"
+                    aria-labelledby="media-title">
                     {/* Header */}
-                    <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-                        <Image src={media.coverImage.large} alt={media.title.romaji} width={144} height={208} className="h-52 w-36 rounded-md" />
+                    <header className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+                        <Image
+                            src={coverImage.large}
+                            alt={`Cover for ${title.english || title.romaji}`}
+                            width={144}
+                            height={208}
+                            className="h-52 w-36 rounded-md"
+                        />
                         <div>
-                            <h1 className="text-3xl font-bold">{media.title.english || media.title.romaji}</h1>
-                            <p className="text-text-secondary text-sm italic">{media.title.native}</p>
-                            <p className="text-text-secondary mt-2 text-sm">
-                                Aired: {media.startDate.day} {convertMonthNumberToName(media.startDate.month || 1)} {media.startDate.year}
+                            <h1 id="media-title" itemProp="name" className="text-3xl font-bold">
+                                {title.english || title.romaji}
+                            </h1>
+                            <p className="text-text-secondary text-sm italic" itemProp="alternateName">
+                                {title.native}
                             </p>
-                            <A_AddToListBtn mediaId={media.id} className="mt-4" />
+                            <p className="text-text-secondary mt-2 text-sm" itemProp="datePublished">
+                                Aired: {formattedDate}
+                            </p>
+                            <A_AddToListBtn mediaId={media.id} type={media.type} className="mt-4" />
                         </div>
-                    </div>
+                    </header>
 
                     {/* Info Grid */}
-                    <div className="[&>p>strong]:text-text-primary [&>p]:text-text-secondary mt-8 grid grid-cols-2 gap-4 text-sm capitalize md:grid-cols-3">
-                        <p>
-                            <strong>Type:</strong> {media.type.toLowerCase()}
-                        </p>
-                        <p>
-                            <strong>Status:</strong> {media.status.toLowerCase().replaceAll('_', ' ')}
-                        </p>
-                        <p>
-                            <strong>Format:</strong> {media.format.toLowerCase().replace('_', ' ')}
-                        </p>
+                    <dl className="[&>div>dt]:text-text-primary [&>div>dd]:text-text-secondary mt-8 grid grid-cols-2 gap-4 text-sm capitalize md:grid-cols-3">
+                        <div>
+                            <dt>Type</dt>
+                            <dd itemProp="genre">{media.type.toLowerCase()}</dd>
+                        </div>
+                        <div>
+                            <dt>Status</dt>
+                            <dd>{media.status.toLowerCase().replaceAll('_', ' ')}</dd>
+                        </div>
+                        <div>
+                            <dt>Format</dt>
+                            <dd>{media.format.toLowerCase().replace('_', ' ')}</dd>
+                        </div>
                         {media.type === 'ANIME' ? (
                             <>
-                                <p>
-                                    <strong>Episodes:</strong> {media.episodes || 'N/A'}
-                                </p>
-                                <p>
-                                    <strong>Duration:</strong> {media.duration || 'N/A'} min
-                                </p>
+                                <div>
+                                    <dt>Episodes</dt>
+                                    <dd>{media.episodes || 'N/A'}</dd>
+                                </div>
+                                <div>
+                                    <dt>Duration</dt>
+                                    <dd>{media.duration || 'N/A'} min</dd>
+                                </div>
                             </>
                         ) : (
-                            <p>
-                                <strong>Chapters:</strong> {media.chapters || 'N/A'}
-                            </p>
+                            <div>
+                                <dt>Chapters</dt>
+                                <dd>{media.chapters || 'N/A'}</dd>
+                            </div>
                         )}
-
-                        <p>
-                            <strong>Score:</strong> {media.averageScore}%
-                        </p>
-                        <p>
-                            <strong>Popularity:</strong> {media.popularity}
-                        </p>
-                        <p>
-                            <strong>Favourites:</strong> {media.favourites}
-                        </p>
-                    </div>
+                        <div>
+                            <dt>Score</dt>
+                            <dd>{media.averageScore}%</dd>
+                        </div>
+                        <div>
+                            <dt>Popularity</dt>
+                            <dd>{media.popularity}</dd>
+                        </div>
+                        <div>
+                            <dt>Favourites</dt>
+                            <dd>{media.favourites}</dd>
+                        </div>
+                    </dl>
 
                     {/* Genres */}
-                    <div className="mt-6">
-                        <h2 className="text-highlight mb-2 text-lg font-semibold">Genres</h2>
-                        <div className="flex flex-wrap gap-2">
+                    <section className="mt-6" aria-labelledby="genres-heading">
+                        <h2 id="genres-heading" className="text-highlight mb-2 text-lg font-semibold">
+                            Genres
+                        </h2>
+                        <ul className="flex flex-wrap gap-2" itemProp="keywords">
                             {media.genres.map((genre) => (
-                                <span key={genre} className="bg-primary shadow-pressed-xs text-text-secondary rounded-full border px-3 py-1 text-sm">
-                                    {genre}
-                                </span>
+                                <li key={genre}>
+                                    <span className="bg-primary shadow-pressed-xs text-text-secondary rounded-full border px-3 py-1 text-sm">
+                                        {genre}
+                                    </span>
+                                </li>
                             ))}
-                        </div>
-                    </div>
+                        </ul>
+                    </section>
 
                     {/* Description */}
-                    <div className="mt-8">
-                        <h2 className="text-highlight mb-2 text-lg font-semibold">Description</h2>
-                        <p className="text-text-secondary" dangerouslySetInnerHTML={{ __html: media.description }} />
-                    </div>
+                    <section className="mt-8" aria-labelledby="description-heading">
+                        <h2 id="description-heading" className="text-highlight mb-2 text-lg font-semibold">
+                            Description
+                        </h2>
+                        <div
+                            className="text-text-secondary prose max-w-none"
+                            itemProp="description"
+                            dangerouslySetInnerHTML={{ __html: media.description }}
+                        />
+                    </section>
 
                     {/* Recommendations */}
-                    {media.recommendations.nodes.length > 0 && (
-                        <div className="mt-8">
-                            <h2 className="text-highlight mb-4 text-lg font-semibold">Recommendations</h2>
+                    {recommendations.nodes.length > 0 && (
+                        <section className="mt-8" aria-labelledby="recommendations-heading">
+                            <h2 id="recommendations-heading" className="text-highlight mb-4 text-lg font-semibold">
+                                Recommendations
+                            </h2>
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                                {media.recommendations.nodes.map((recommendation) => (
-                                    <A_MediaCard key={recommendation.mediaRecommendation.id} media={recommendation.mediaRecommendation} />
+                                {recommendations.nodes.map(({ mediaRecommendation }) => (
+                                    <A_MediaCard key={mediaRecommendation.id} media={mediaRecommendation} />
                                 ))}
                             </div>
-                        </div>
+                        </section>
                     )}
-                </div>
+                </article>
             </div>
-        </div>
+        </main>
     );
 }

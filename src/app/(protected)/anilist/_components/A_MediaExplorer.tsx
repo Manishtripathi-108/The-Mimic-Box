@@ -4,105 +4,139 @@ import React, { useCallback, useEffect, useMemo, useState, useTransition } from 
 
 import Image from 'next/image';
 
-import { searchAnilistMedia } from '@/actions/anilist.actions';
+import { getFilteredMediaList } from '@/actions/anilist.actions';
 import AnilistFilterModal from '@/app/(protected)/anilist/_components/A_FilterModal';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import A_Toolbar from '@/app/(protected)/anilist/_components/A_Toolbar';
 import ErrorCard from '@/components/ErrorCard';
+import Pagination from '@/components/ui/Pagination';
 import { IMAGE_URL } from '@/constants/client.constants';
-import { AnilistMedia, AnilistMediaFilters, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
+import { AnilistMedia, AnilistMediaFilters, AnilistMediaType, AnilistPageInfo, AnilistSearchCategories } from '@/lib/types/anilist.types';
 import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
 
+const INITIAL_PAGE_INFO: AnilistPageInfo = {
+    total: 0,
+    currentPage: 1,
+    lastPage: 1,
+    hasNextPage: false,
+    perPage: 30,
+};
+
 const A_MediaExplorer = ({ type, category }: { type: AnilistMediaType; category?: AnilistSearchCategories }) => {
-    const [isDetailedView, setIsDetailedView] = useState(false);
     const [mediaList, setMediaList] = useState<AnilistMedia[]>([]);
+    const [filters, setFilters] = useState<AnilistMediaFilters>({ season: 'ALL', sort: 'Last Updated' });
+    const [pageInfo, setPageInfo] = useState<AnilistPageInfo>(INITIAL_PAGE_INFO);
     const [error, setError] = useState<string | null>(null);
+    const [detailedView, setDetailedView] = useState(false);
     const [isPending, startTransition] = useTransition();
 
-    const categoryData = useMemo(() => getMediaSearchParams(type, category), [type, category]);
+    const searchParams = useMemo(() => getMediaSearchParams(type, category), [type, category]);
 
-    const [filterData, setFilterData] = useState<AnilistMediaFilters>({
-        season: categoryData.season,
-        year: categoryData.year,
-        sort: 'Last Updated',
-    });
+    const appliedFilters = useMemo(
+        () => ({
+            ...filters,
+            type: searchParams.type,
+            sort: searchParams.sort,
+            season: filters.season === 'ALL' ? searchParams.season : filters.season,
+            year: filters.year || searchParams.year,
+        }),
+        [filters, searchParams]
+    );
 
-    const filters = useMemo(() => filterData, [filterData]);
+    const fetchMedia = useCallback(
+        (page = 1) => {
+            if (!filters.search && !category) return;
 
-    const fetchMediaData = useCallback(() => {
-        if (!filters.search && !category) return;
+            setError(null);
+            startTransition(async () => {
+                const response = await getFilteredMediaList({
+                    ...appliedFilters,
+                    perPage: pageInfo.perPage,
+                    page,
+                });
 
-        setError(null);
-        startTransition(async () => {
-            const response = await searchAnilistMedia({
-                ...filters,
-                perPage: 30,
-                sort: categoryData.sort,
-                type: categoryData.type,
-                season: filters.season === 'ALL' ? categoryData.season : filters.season,
-                year: filters.year || categoryData.year,
+                if (response?.success && response.payload) {
+                    setMediaList(response.payload.media);
+                    setPageInfo(response.payload.pageInfo);
+                } else {
+                    setError(response?.message || 'An unexpected error occurred.');
+                    setMediaList([]);
+                }
             });
-
-            if (response?.success && response.payload) {
-                setMediaList(response.payload);
-            } else {
-                setError(response?.message || 'An unexpected error occurred');
-                setMediaList([]);
-            }
-        });
-    }, [filters, categoryData, category]);
+        },
+        [appliedFilters, filters.search, category, pageInfo.perPage]
+    );
 
     useEffect(() => {
-        fetchMediaData();
-    }, [fetchMediaData]);
+        fetchMedia(1);
+    }, [fetchMedia]);
+
+    const handlePageChange = (page: number) => {
+        if (page !== pageInfo.currentPage) {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            fetchMedia(page);
+        }
+    };
+
+    const renderLoadingSkeletons = () => (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {Array.from({ length: 20 }).map((_, index) => (
+                <div key={index} className="bg-secondary aspect-5/7 animate-pulse rounded-lg" />
+            ))}
+        </div>
+    );
+
+    const renderMediaGrid = () => (
+        <div className={`grid gap-4 ${detailedView ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'}`}>
+            {mediaList.map((media) => (
+                <A_MediaCard key={media.id} media={media} detailed={detailedView} />
+            ))}
+        </div>
+    );
+
+    const renderNoData = () => (
+        <div className="from-secondary to-tertiary shadow-floating-xs grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
+            <Image src={IMAGE_URL.NO_DATA} alt="No media found" width={300} height={300} />
+            <h2 className="text-accent font-alegreya text-center text-xl tracking-wide">No {type} found, try changing your filters</h2>
+        </div>
+    );
 
     return (
         <>
-            {/* Toolbar Section */}
+            {/* Toolbar */}
             <A_Toolbar
                 text={categoryTitle(category) || 'Search'}
-                search={filterData.search}
-                setSearch={(search) => setFilterData((prev) => ({ ...prev, search }))}
-                detailedView={isDetailedView}
-                setDetailedView={setIsDetailedView}
+                search={filters.search}
+                setSearch={(search) => setFilters((prev) => ({ ...prev, search }))}
+                detailedView={detailedView}
+                setDetailedView={setDetailedView}
             />
 
-            {/* Data Handling */}
+            {/* Result Area */}
             {filters.search || category ? (
                 <>
                     {isPending ? (
-                        <div className="grid gap-5 sm:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
-                            {Array.from({ length: 20 }).map((_, index) => (
-                                <div key={index} className="bg-secondary aspect-5/7 animate-pulse rounded-lg"></div>
-                            ))}
-                        </div>
+                        renderLoadingSkeletons()
                     ) : error ? (
-                        <ErrorCard message={error} reset={fetchMediaData} />
-                    ) : mediaList.length > 0 ? (
-                        <div
-                            className={`grid ${
-                                isDetailedView
-                                    ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
-                                    : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
-                            }`}>
-                            {mediaList.map((entry) => (
-                                <A_MediaCard key={entry.id} detailed={isDetailedView} media={entry} />
-                            ))}
-                        </div>
+                        <ErrorCard message={error} reset={() => fetchMedia(pageInfo.currentPage)} />
+                    ) : mediaList.length ? (
+                        <>
+                            {renderMediaGrid()}
+                            <Pagination
+                                currentPage={pageInfo.currentPage}
+                                totalPages={pageInfo.lastPage}
+                                onPageChange={handlePageChange}
+                                className="mt-4"
+                            />
+                        </>
                     ) : (
-                        /* No Data State */
-                        <div className="from-secondary shadow-floating-xs to-tertiary grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
-                            <Image src={IMAGE_URL.NO_DATA} alt="No media found" width={300} height={300} />
-                            <h2 className="text-accent font-alegreya text-center text-xl tracking-wide">
-                                No {type} found, try changing your filters
-                            </h2>
-                        </div>
+                        renderNoData()
                     )}
                 </>
             ) : null}
 
-            {/* Filters Modal */}
-            <AnilistFilterModal filters={filters} setFilters={setFilterData} />
+            {/* Filter Modal */}
+            <AnilistFilterModal filters={filters} setFilters={setFilters} />
         </>
     );
 };

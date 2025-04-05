@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-import { deleteMediaEntry, saveMediaEntry, toggleFavourite } from '@/actions/anilist.actions';
+import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
 import { closeModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
@@ -41,14 +41,14 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
     const onSubmit = async (values: z.infer<typeof validationSchema>) => {
         if (!isDirty) return toast.success('No changes to save.'), closeModal(modalId);
 
-        const result = await saveMediaEntry(token, entry.media.id, values.status, values.progress);
+        const result = await updateMediaProgress(token, entry.media.type, entry.media.id, values.status, values.progress);
         toast[result.success ? 'success' : 'error'](result.message || 'Update failed.');
         closeModal(modalId);
     };
 
     const toggleLike = async () => {
         setIsToggling(true);
-        const result = await toggleFavourite(token, entry.media.id, entry.media.type);
+        const result = await toggleMediaFavouriteStatus(token, entry.media.id, entry.media.type);
         setIsToggling(false);
 
         if (result.success) setIsLiked((prev) => !prev);
@@ -57,7 +57,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
     const deleteEntry = async () => {
         setIsToggling(true);
-        const result = await deleteMediaEntry(token, entry.id);
+        const result = await removeMediaFromList(token, entry.id);
         setIsToggling(false);
 
         if (result.success) closeModal(modalId);

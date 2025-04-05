@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState, useTransition } from 
 
 import Link from 'next/link';
 
-import { searchAnilistMedia } from '@/actions/anilist.actions';
+import { getFilteredMediaList } from '@/actions/anilist.actions';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { AnilistMedia, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
@@ -27,9 +27,9 @@ const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDeta
     const fetchMediaData = useCallback(() => {
         startTransition(async () => {
             setError(null);
-            const response = await searchAnilistMedia(searchParams);
+            const response = await getFilteredMediaList(searchParams);
             if (response?.success && response.payload) {
-                setMediaList(response.payload);
+                setMediaList(response.payload.media);
             } else {
                 setError(response?.message || 'Failed to fetch media data.');
             }
