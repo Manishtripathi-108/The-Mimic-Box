@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 

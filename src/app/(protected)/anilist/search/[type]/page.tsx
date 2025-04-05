@@ -29,8 +29,12 @@ const AnilistSearch = async ({ params }: { params: Promise<{ type: 'anime' | 'ma
         <>
             <A_MediaExplorer type={UpperCaseType} />
             <A_MediaGrid type={UpperCaseType} category="trending" className="mt-6" />
-            <A_MediaGrid type={UpperCaseType} category="this-season" className="mt-6" />
-            <A_MediaGrid type={UpperCaseType} category="next-season" className="mt-6" />
+            {type === 'anime' && (
+                <>
+                    <A_MediaGrid type={UpperCaseType} category="this-season" className="mt-6" />
+                    <A_MediaGrid type={UpperCaseType} category="next-season" className="mt-6" />
+                </>
+            )}
             <A_MediaGrid type={UpperCaseType} category="popular" className="mt-6" />
         </>
     );

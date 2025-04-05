@@ -2,7 +2,7 @@ export default function MediaDetailSkeleton() {
     return (
         <div className="bg-primary text-text-primary min-h-calc-full-height animate-pulse">
             {/* Banner Skeleton */}
-            <div className="bg-secondary relative h-72 w-full" />
+            <div className="bg-secondary relative h-60 w-full" />
 
             {/* Content */}
             <div className="mx-auto -mt-32 max-w-6xl px-4 sm:px-8">

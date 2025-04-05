@@ -1,17 +1,22 @@
-'use client';
-
 import Image from 'next/image';
 
+import A_AddToListBtn from '@/app/(protected)/anilist/_components/A_AddToListBtn';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
-import { IMAGE_URL } from '@/constants/client.constants';
+import { IMAGE_URL, convertMonthNumberToName } from '@/constants/client.constants';
 import { AnilistMediaWithRecommendations } from '@/lib/types/anilist.types';
 
 export default function MediaDetail({ media }: { media: AnilistMediaWithRecommendations }) {
     return (
         <div className="bg-primary text-text-primary min-h-screen">
             {/* Banner */}
-            <div className="relative h-72 w-full overflow-hidden">
-                <Image src={media.bannerImage || IMAGE_URL.BANNER} alt="Banner" className="object-cover opacity-60" />
+            <div className="relative h-60 w-full overflow-hidden">
+                <Image
+                    src={media.bannerImage || IMAGE_URL.BANNER}
+                    alt="Banner"
+                    width={2000}
+                    height={2000}
+                    className="size-full object-cover opacity-60"
+                />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
             </div>
 
@@ -20,29 +25,27 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
                 <div className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10">
                     {/* Header */}
                     <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-                        <Image src={media.coverImage.large} alt={media.title.romaji} width={150} height={220} className="rounded-md" />
+                        <Image src={media.coverImage.large} alt={media.title.romaji} width={144} height={208} className="h-52 w-36 rounded-md" />
                         <div>
                             <h1 className="text-3xl font-bold">{media.title.english || media.title.romaji}</h1>
                             <p className="text-text-secondary text-sm italic">{media.title.native}</p>
                             <p className="text-text-secondary mt-2 text-sm">
-                                Aired: {media.startDate.year}/{media.startDate.month}/{media.startDate.day}
+                                Aired: {media.startDate.day} {convertMonthNumberToName(media.startDate.month || 1)} {media.startDate.year}
                             </p>
-                            <button onClick={() => {}} className="button button-highlight mt-4">
-                                ➕ Add to List
-                            </button>
+                            <A_AddToListBtn mediaId={media.id} className="mt-4" />
                         </div>
                     </div>
 
                     {/* Info Grid */}
-                    <div className="[&>p>strong]:text-text-primary [&>p]:text-text-secondary mt-8 grid grid-cols-2 gap-4 text-sm md:grid-cols-3">
+                    <div className="[&>p>strong]:text-text-primary [&>p]:text-text-secondary mt-8 grid grid-cols-2 gap-4 text-sm capitalize md:grid-cols-3">
                         <p>
                             <strong>Type:</strong> {media.type.toLowerCase()}
                         </p>
                         <p>
-                            <strong>Status:</strong> {media.status.toLowerCase()}
+                            <strong>Status:</strong> {media.status.toLowerCase().replaceAll('_', ' ')}
                         </p>
                         <p>
-                            <strong>Format:</strong> {media.format}
+                            <strong>Format:</strong> {media.format.toLowerCase().replace('_', ' ')}
                         </p>
                         {media.type === 'ANIME' ? (
                             <>

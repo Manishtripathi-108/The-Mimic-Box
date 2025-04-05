@@ -2,7 +2,7 @@
 
 import React, { memo } from 'react';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import ICON_SET from '@/constants/icons';
 import cn from '@/lib/utils/cn';

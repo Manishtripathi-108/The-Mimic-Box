@@ -39,7 +39,6 @@ const A_MediaCard = ({
                     src={media.coverImage.large}
                     alt={title}
                     className="size-full object-cover"
-                    loading="lazy"
                     priority
                 />
 

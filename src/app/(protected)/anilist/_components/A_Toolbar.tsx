@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import { openModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';

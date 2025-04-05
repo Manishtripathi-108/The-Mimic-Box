@@ -83,7 +83,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
             </div>
 
             <h2 className="text-text-primary font-aladin mt-4 mb-6 ml-7 text-xl tracking-widest capitalize">
-                {entry.media.title?.english || entry.media.title?.native || entry.media.title?.romaji || 'Unknown Title'}
+                {entry.media.title.english || entry.media.title.native || entry.media.title.romaji || 'Unknown Title'}
             </h2>
 
             <button

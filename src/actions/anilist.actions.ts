@@ -156,7 +156,7 @@ export const fetchAnilistUserMediaList = async (token: string, userId: string, m
     const [error, mediaListCollection] = await fetchAniListData<AnilistMediaCollection>(token, query, {
         userId,
         type: mediaType,
-        sort: 'UPDATED_TIME',
+        sort: 'UPDATED_TIME_DESC',
     });
 
     if (error || !mediaListCollection) {
