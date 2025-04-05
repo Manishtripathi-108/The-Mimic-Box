@@ -11,15 +11,15 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-import { deleteMediaEntry, saveMediaEntry, toggleFavourite } from '@/actions/anilist.actions';
+import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
 import { closeModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
-import { AnilistMediaEntry, AnilistMediaListStatus } from '@/lib/types/anilist.types';
+import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
 const modalId = 'modal-anilist-edit-media';
 
-const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry }) => {
+const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry }) => {
     const [isLiked, setIsLiked] = useState(entry.media?.isFavourite || false);
     const [isToggling, setIsToggling] = useState(false);
     const maxProgress = entry.media?.episodes || entry.media?.chapters || 100000;
@@ -35,20 +35,20 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
         formState: { errors, isSubmitting, isDirty },
     } = useForm({
         resolver: zodResolver(validationSchema),
-        defaultValues: { status: entry.status as AnilistMediaListStatus, progress: entry.progress || 0 },
+        defaultValues: { status: entry.status, progress: entry.progress || 0 },
     });
 
     const onSubmit = async (values: z.infer<typeof validationSchema>) => {
         if (!isDirty) return toast.success('No changes to save.'), closeModal(modalId);
 
-        const result = await saveMediaEntry(token, entry.media.id, values.status, values.progress);
+        const result = await updateMediaProgress(token, entry.media.type, entry.media.id, values.status, values.progress);
         toast[result.success ? 'success' : 'error'](result.message || 'Update failed.');
         closeModal(modalId);
     };
 
     const toggleLike = async () => {
         setIsToggling(true);
-        const result = await toggleFavourite(token, entry.media.id, entry.media.type);
+        const result = await toggleMediaFavouriteStatus(token, entry.media.id, entry.media.type);
         setIsToggling(false);
 
         if (result.success) setIsLiked((prev) => !prev);
@@ -57,7 +57,7 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
 
     const deleteEntry = async () => {
         setIsToggling(true);
-        const result = await deleteMediaEntry(token, entry.id);
+        const result = await removeMediaFromList(token, entry.id);
         setIsToggling(false);
 
         if (result.success) closeModal(modalId);
@@ -67,23 +67,23 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
     return (
         <>
             <div
-                className="relative h-44 rounded-t-lg bg-cover bg-center after:absolute after:size-full after:opacity-40 md:h-64"
+                className="relative h-44 rounded-t-lg bg-cover bg-center after:absolute after:inset-0 after:bg-gradient-to-t after:from-black/60 after:to-transparent md:h-64"
                 style={{ backgroundImage: `url(${entry.media?.bannerImage})` }}
             />
 
-            <div className="bg-primary shadow-neumorphic-inset-xs relative -mt-24 ml-5 max-w-40 rounded-lg border p-3">
+            <div className="bg-primary shadow-neumorphic-inset-xs relative -mt-24 ml-5 max-w-52 rounded-lg border p-3">
                 <Image
-                    width={200}
-                    height={300}
+                    width={500}
+                    height={700}
                     className="size-full rounded-lg object-cover"
-                    src={entry.media.coverImage?.large}
-                    alt={entry.media.title?.english || entry.media.title?.native}
+                    src={entry.media.coverImage.extraLarge}
+                    alt={entry.media.title.english || entry.media.title.native}
                     loading="lazy"
                 />
             </div>
 
             <h2 className="text-text-primary font-aladin mt-4 mb-6 ml-7 text-xl tracking-widest capitalize">
-                {entry.media.title?.english || entry.media.title?.native || entry.media.title?.romaji || 'Unknown Title'}
+                {entry.media.title.english || entry.media.title.native || entry.media.title.romaji || 'Unknown Title'}
             </h2>
 
             <button
@@ -131,7 +131,7 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
 
                 <div className="mt-8 flex justify-end space-x-2">
                     <button type="button" className="button button-danger" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
-                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Delete'}
+                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Remove'}
                     </button>
                     <button type="submit" className="button button-primary" disabled={isToggling || isSubmitting}>
                         {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Save'}
@@ -142,4 +142,4 @@ const AnilistEditMedia = ({ token, entry }: { token: string; entry: AnilistMedia
     );
 };
 
-export default AnilistEditMedia;
+export default A_EditMedia;

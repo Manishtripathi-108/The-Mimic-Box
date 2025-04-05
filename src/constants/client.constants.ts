@@ -13,6 +13,12 @@ export const convertMonthNumberToName = (monthNumber: number) => {
     return '...';
 };
 
+export const getPageNumbers = (currentPage: number, totalPages: number, maxVisibleBtns = 5) => {
+    const start = Math.max(1, currentPage - Math.floor(maxVisibleBtns / 2));
+    const end = Math.min(totalPages, start + maxVisibleBtns - 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                   Anilist                                  */
 /* -------------------------------------------------------------------------- */

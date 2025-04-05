@@ -1,13 +1,12 @@
 import { Metadata } from 'next';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
-import { fetchUserFavourites, getAnilistUserMedia } from '@/actions/anilist.actions';
+import { getUserFavourites, getUserMediaCollections } from '@/actions/anilist.actions';
+import A_Main from '@/app/(protected)/anilist/_components/A_Main';
 import { auth } from '@/auth';
 import ErrorCard from '@/components/ErrorCard';
-import AnilistMain from '@/components/layout/anilist/AnilistMain';
-import { IMAGE_URL } from '@/constants/client.constants';
+import { NoDataCard } from '@/components/NoDataCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 interface AnilistMediaPageProps {
@@ -42,10 +41,9 @@ const AnilistMediaPage = async ({ params }: AnilistMediaPageProps) => {
     try {
         response =
             type === 'favourites'
-                ? await fetchUserFavourites(anilist.accessToken, anilist.id)
-                : await getAnilistUserMedia(anilist.accessToken, anilist.id, type.toUpperCase() as 'ANIME' | 'MANGA');
-    } catch (error) {
-        console.error('Error fetching data:', error);
+                ? await getUserFavourites(anilist.accessToken, anilist.id)
+                : await getUserMediaCollections(anilist.accessToken, anilist.id, type.toUpperCase() as 'ANIME' | 'MANGA');
+    } catch {
         return <ErrorCard message="Failed to load data. Please try again later." />;
     }
 
@@ -58,23 +56,21 @@ const AnilistMediaPage = async ({ params }: AnilistMediaPageProps) => {
                 : response.payload.anime?.nodes?.length || response.payload.manga?.nodes?.length)) ||
         0 > 0;
 
-    return hasMedia ? <AnilistMain token={anilist.accessToken} mediaLists={response.payload!} type={type} /> : <NoDataMessage type={type} />;
+    return hasMedia ? (
+        <A_Main token={anilist.accessToken} mediaLists={response.payload!} type={type} />
+    ) : (
+        <NoDataCard message={`Your ${type} list is looking a little empty!`}>
+            <p className="text-text-secondary">Start adding your favorite anime/manga to your list or import an existing list.</p>
+            <div className="mt-3 flex gap-3">
+                <Link target="_blank" href={APP_ROUTES.ANILIST_SEARCH(type === 'favourites' ? 'anime' : type)} className="button">
+                    Browse
+                </Link>
+                <Link href={APP_ROUTES.IMPORT_ANIME_MANGA} className="button">
+                    Import List
+                </Link>
+            </div>
+        </NoDataCard>
+    );
 };
 
 export default AnilistMediaPage;
-
-const NoDataMessage = ({ type }: { type: 'anime' | 'manga' | 'favourites' }) => (
-    <section className="shadow-floating-xs from-secondary to-tertiary grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
-        <Image src={IMAGE_URL.NO_DATA} alt="No data available" width={250} height={250} />
-        <h2 className="text-text-primary font-alegreya text-xl font-semibold tracking-wide">Your {type} list is looking a little empty!</h2>
-        <p className="text-text-secondary">Start adding your favorite anime/manga from Anilist or import an existing list.</p>
-        <div className="mt-3 flex gap-3">
-            <a target="_blank" href="https://anilist.co/search/anime" className="button">
-                Browse
-            </a>
-            <Link href={APP_ROUTES.IMPORT_ANIME_MANGA} className="button">
-                Import List
-            </Link>
-        </div>
-    </section>
-);

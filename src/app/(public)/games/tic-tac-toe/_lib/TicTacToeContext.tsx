@@ -48,7 +48,6 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
         });
 
         socket.on('roomLeft', () => {
-            console.log('You left the room');
             toast.error('You left the room');
             dispatch({ type: 'RESET_HARD' });
         });
@@ -120,7 +119,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
                     if (success) {
                         joinRoom(gameRoomId, playerName);
                     } else {
-                        console.log('Error:', message);
+                        console.error('Error:', message);
                         toast.error(message);
                     }
                 }

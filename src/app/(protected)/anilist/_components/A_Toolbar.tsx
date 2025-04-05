@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import { openModal } from '@/components/Modals';
 import ICON_SET from '@/constants/icons';
 import { AnilistMediaFilters } from '@/lib/types/anilist.types';
 
-const AnilistToolbar = ({
+const A_Toolbar = ({
     text,
     search,
     setSearch,
@@ -81,4 +81,4 @@ const AnilistToolbar = ({
     );
 };
 
-export default AnilistToolbar;
+export default A_Toolbar;

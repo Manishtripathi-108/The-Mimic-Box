@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import axios from 'axios';
 
-import { getAnilistUserProfile } from '@/actions/anilist.actions';
+import { getUserProfile } from '@/actions/anilist.actions';
 import { auth } from '@/auth';
 import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_ROUTE, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     }
 
     const tokens = exchResponse?.data;
-    const userProfile = await getAnilistUserProfile(tokens.access_token);
+    const userProfile = await getUserProfile(tokens.access_token);
 
     if (!userProfile) {
         return createErrorResponse({ message: 'Failed to Setup Anilist Account', status: 400 });

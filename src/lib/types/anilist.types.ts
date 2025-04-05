@@ -60,6 +60,14 @@ export type AnilistMediaSort =
 
 export type AnilistUser = { Viewer: { id: number; name: string; avatar: { large: string }; bannerImage: string } };
 
+export type AnilistPageInfo = {
+    total: number;
+    currentPage: number;
+    lastPage: number;
+    hasNextPage: boolean;
+    perPage: number;
+};
+
 export type AnilistMedia = {
     id: number;
     type: AnilistMediaType;
@@ -75,8 +83,8 @@ export type AnilistMedia = {
     popularity: number;
     favourites: number;
     isFavourite: boolean;
-    bannerImage: string;
-    coverImage: { large: string };
+    bannerImage?: string;
+    coverImage: { extraLarge: string };
     title: {
         romaji: string;
         english: string;
@@ -86,6 +94,14 @@ export type AnilistMedia = {
         day: number;
         month: number;
         year: number;
+    };
+};
+
+export type AnilistMediaWithRecommendations = AnilistMedia & {
+    recommendations: {
+        nodes: {
+            mediaRecommendation: AnilistMedia;
+        }[];
     };
 };
 

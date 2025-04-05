@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import Cell from '@/app/(public)/games/tic-tac-toe/_components/Cell';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';

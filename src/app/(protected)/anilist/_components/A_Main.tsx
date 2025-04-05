@@ -2,18 +2,13 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 
-import Image from 'next/image';
-
-import { Icon } from '@iconify/react';
-
+import A_EditMedia from '@/app/(protected)/anilist/_components/A_EditMedia';
+import AnilistFilterModal from '@/app/(protected)/anilist/_components/A_FilterModal';
+import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
+import A_Toolbar from '@/app/(protected)/anilist/_components/A_Toolbar';
 import Modal, { openModal } from '@/components/Modals';
-import AnilistEditMedia from '@/components/layout/anilist/AnilistEditMedia';
-import AnilistFilter from '@/components/layout/anilist/AnilistFilter';
-import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
-import AnilistToolbar from '@/components/layout/anilist/AnilistToolbar';
+import { NoDataCard } from '@/components/NoDataCard';
 import TabNavigation from '@/components/ui/TabNavigation';
-import { IMAGE_URL } from '@/constants/client.constants';
-import ICON_SET from '@/constants/icons';
 import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
 import usePagination from '@/hooks/usePagination';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
@@ -37,7 +32,7 @@ type AnilistMainProps = {
     token: string;
 };
 
-const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
+const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
     const [selectedMediaEntry, setSelectedMediaEntry] = useState<AnilistMediaEntry | null>(null);
     const [selectedTab, setSelectedTab] = useState<AnilistSelectedTabType>('ALL');
     const [isDetailedView, setIsDetailedView] = useState(false);
@@ -70,18 +65,10 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
         [mediaLists]
     );
 
-    // Empty state component
-    const EmptyState = () => (
-        <div className="from-secondary shadow-floating-xs to-tertiary grid place-items-center gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6">
-            <Image src={IMAGE_URL.NO_DATA} alt="No media found" width={300} height={300} />
-            <h2 className="text-accent font-alegreya text-center text-xl tracking-wide">No {type} found, try changing your filters</h2>
-        </div>
-    );
-
     return (
         <main className="container mx-auto p-2 sm:p-6">
             {/* Header */}
-            <AnilistToolbar
+            <A_Toolbar
                 text={`Your ${type} List`}
                 search={filters.search}
                 setSearch={(search) => {
@@ -104,15 +91,11 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
             {/* Media Grid */}
             {currentData.length > 0 ? (
                 <div className="w-full">
-                    <p className="text-left">{`Page ${currentPage} of ${totalPages}`}</p>
+                    <p className="text-text-secondary mb-1 flex justify-end">{`Page ${currentPage} of ${totalPages}`}</p>
                     <div
-                        className={`grid ${
-                            isDetailedView
-                                ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
-                                : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
-                        }`}>
+                        className={`grid gap-4 ${isDetailedView ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'}`}>
                         {currentData.map((entry) => (
-                            <AnilistMediaCard
+                            <A_MediaCard
                                 key={entry.id}
                                 detailed={isDetailedView}
                                 onEdit={type !== 'favourites' ? handleMediaEdit : null}
@@ -122,38 +105,29 @@ const AnilistMain: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) =>
                     </div>
                 </div>
             ) : (
-                <EmptyState />
+                <NoDataCard message={`No ${type} found, try changing your filters!`} />
             )}
 
             {/* Pagination */}
             <Pagination className="mt-6" />
 
             {/* Filters Modal */}
-            <Modal modalId="modal-anilist-filters">
-                <AnilistFilter
-                    filters={filters}
-                    setFilters={(filters) => {
-                        setCurrentPage(1);
-                        setFilterData(filters);
-                    }}
-                />
-            </Modal>
+            <AnilistFilterModal
+                filters={filters}
+                setFilters={(filters) => {
+                    setCurrentPage(1);
+                    setFilterData(filters);
+                }}
+            />
 
             {/* Edit Modal */}
             {type !== 'favourites' && (
                 <Modal modalId="modal-anilist-edit-media" onClose={() => setSelectedMediaEntry(null)}>
-                    {selectedMediaEntry ? (
-                        <AnilistEditMedia token={token} entry={selectedMediaEntry} />
-                    ) : (
-                        <div className="grid place-items-center gap-5 text-red-500">
-                            <Icon icon={ICON_SET.ERROR} className="size-20" />
-                            <h2 className="text-xl">Please select a media to edit</h2>
-                        </div>
-                    )}
+                    {selectedMediaEntry ? <A_EditMedia token={token} entry={selectedMediaEntry} /> : null}
                 </Modal>
             )}
         </main>
     );
 };
 
-export default AnilistMain;
+export default A_Main;

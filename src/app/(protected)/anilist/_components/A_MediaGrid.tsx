@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useMemo, useState, useTransition } from 
 
 import Link from 'next/link';
 
-import { searchAnilistMedia } from '@/actions/anilist.actions';
-import AnilistMediaCard from '@/components/layout/anilist/AnilistMediaCard';
+import { getFilteredMediaList } from '@/actions/anilist.actions';
+import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { AnilistMedia, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
 import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
@@ -17,7 +17,7 @@ interface AnilistMediaGridProps {
     className?: string;
 }
 
-const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDetails, className }) => {
+const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDetails, className }) => {
     const [mediaList, setMediaList] = useState<AnilistMedia[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -27,9 +27,9 @@ const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, sho
     const fetchMediaData = useCallback(() => {
         startTransition(async () => {
             setError(null);
-            const response = await searchAnilistMedia(searchParams);
+            const response = await getFilteredMediaList(searchParams);
             if (response?.success && response.payload) {
-                setMediaList(response.payload);
+                setMediaList(response.payload.media);
             } else {
                 setError(response?.message || 'Failed to fetch media data.');
             }
@@ -54,20 +54,16 @@ const AnilistMediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, sho
                 <p className="text-center text-red-500">{error}</p>
             ) : (
                 <section
-                    className={`mx-auto grid ${
-                        showDetails
-                            ? 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(310px,1fr))]'
-                            : 'grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]'
-                    }`}>
+                    className={`mx-auto grid gap-4 ${showDetails ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'} `}>
                     {isPending
                         ? Array.from({ length: 6 }).map((_, index) => (
                               <div key={index} className="bg-secondary aspect-5/7 animate-pulse rounded-lg"></div>
                           ))
-                        : mediaList.map((entry) => <AnilistMediaCard key={entry.id} detailed={showDetails} media={entry} />)}
+                        : mediaList.map((entry) => <A_MediaCard key={entry.id} detailed={showDetails} media={entry} />)}
                 </section>
             )}
         </article>
     );
 };
 
-export default AnilistMediaGrid;
+export default A_MediaGrid;

@@ -3,28 +3,47 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 
 import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const NavigationBar = () => {
+const A_Navbar = () => {
     const pathName = usePathname();
 
     return (
         <nav className="bg-secondary/75 saturate-150 backdrop-blur-xs">
             <ul className="flex justify-center">
-                <li>
-                    <Link
-                        href={APP_ROUTES.ANILIST_SEARCH('anime')}
+                <li className="relative">
+                    <button
+                        id="search-button"
+                        popoverTarget="search-popover"
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
-                            pathName === APP_ROUTES.ANILIST_SEARCH('anime')
+                            pathName.includes('/search')
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
                         <Icon icon={ICON_SET.SEARCH} className="size-5" />
                         <span className="hidden md:inline">Search</span>
-                    </Link>
+                    </button>
+
+                    <div
+                        id="search-popover"
+                        popover="auto"
+                        className="bg-tertiary text-text-secondary absolute inset-auto m-0 rounded-md shadow-lg [position-area:bottom]">
+                        <ul className="divide-y">
+                            <li>
+                                <Link href={APP_ROUTES.ANILIST_SEARCH('anime')} className="hover:bg-highlight block px-4 py-2 hover:text-white">
+                                    Anime
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={APP_ROUTES.ANILIST_SEARCH('manga')} className="hover:bg-highlight block px-4 py-2 hover:text-white">
+                                    Manga
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <li>
                     <Link
@@ -82,4 +101,4 @@ const NavigationBar = () => {
     );
 };
 
-export default NavigationBar;
+export default A_Navbar;

@@ -83,7 +83,7 @@ const Sidebar = () => {
             {/* Profile Section */}
             <div className="flex items-center justify-between gap-4 border-b p-4">
                 <div className="flex items-center gap-3">
-                    <Image className="h-12 w-12 rounded-2xl" width={48} height={48} src={session?.user?.image || IMAGE_URL.PROFILE} alt="Avatar" />
+                    <Image className="rounded-2xl" width={48} height={48} src={session?.user?.image || IMAGE_URL.PROFILE} alt="Avatar" />
                     <div>
                         <p id="sidebar-title" className="text-text-primary font-alegreya tracking-wide">
                             {session?.user?.name}
