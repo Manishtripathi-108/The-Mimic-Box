@@ -7,6 +7,29 @@ import { Icon } from '@iconify/react';
 import ICON_SET from '@/constants/icons';
 import cn from '@/lib/utils/cn';
 
+type ModalProps = {
+    modalId: string;
+    className?: string;
+    showCloseButton?: boolean;
+    children: React.ReactNode;
+    shouldClose?: () => boolean;
+    onClose?: () => void;
+};
+
+type ConfirmationModalProps = {
+    modalId: string;
+    icon: string;
+    iconClassName?: string;
+    onConfirm: () => void;
+    onCancel?: () => void;
+    confirmText?: string;
+    cancelText?: string;
+    children: React.ReactNode;
+    isConfirmDanger?: boolean;
+    shouldClose?: () => boolean;
+    onClose?: () => void;
+};
+
 export const closeModal = (modalId: string) => {
     const modalElement = document.getElementById(modalId) as HTMLDialogElement;
     if (modalElement) modalElement.close();
@@ -17,21 +40,7 @@ export const openModal = (modalId: string) => {
     if (modalElement) modalElement.showModal();
 };
 
-const Modal = ({
-    modalId,
-    className = '',
-    showCloseButton = true,
-    children,
-    shouldClose = () => true,
-    onClose,
-}: {
-    modalId: string;
-    className?: string;
-    showCloseButton?: boolean;
-    children: React.ReactNode;
-    shouldClose?: () => boolean;
-    onClose?: () => void;
-}) => {
+const Modal = ({ modalId, className = '', showCloseButton = true, children, shouldClose = () => true, onClose }: ModalProps) => {
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget && shouldClose()) {
             closeModal(modalId);
@@ -54,7 +63,7 @@ const Modal = ({
             onClick={handleBackdropClick}
             onClose={handleDialogClose}
             className={cn(
-                'from-secondary to-tertiary shadow-pressed-md m-auto hidden w-full max-w-2xl scale-0 overflow-visible rounded-2xl border bg-linear-150 from-15% to-85% p-5 opacity-0 outline-hidden transition-all transition-discrete duration-300 ease-in-out',
+                'from-secondary to-tertiary shadow-pressed-md m-auto hidden w-full max-w-2xl scale-0 overflow-visible rounded-2xl border bg-linear-150 from-15% to-85% p-2 opacity-0 outline-hidden transition-all transition-discrete duration-300 ease-in-out sm:p-6',
                 'backdrop:bg-primary backdrop:opacity-75 backdrop:transition-all backdrop:transition-discrete backdrop:duration-300 backdrop:ease-in',
                 'open:block open:scale-100 open:opacity-100 open:delay-300 open:backdrop:scale-100',
                 'starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:scale-x-100 starting:open:backdrop:scale-y-0',
@@ -71,7 +80,7 @@ const Modal = ({
                         <Icon icon={ICON_SET.CLOSE} className="size-6" />
                     </button>
                 )}
-                <div className="scrollbar-thin max-h-[calc(100vh-6rem)] w-full max-w-full overflow-y-auto overscroll-x-none">{children}</div>
+                <div className="scrollbar-thin max-h-[calc(100dvh-6rem)] w-full max-w-full overflow-y-auto overscroll-x-none">{children}</div>
             </div>
         </dialog>
     );
@@ -89,67 +98,34 @@ export const ConfirmationModal = ({
     isConfirmDanger = false,
     shouldClose = () => true,
     onClose,
-}: {
-    modalId: string;
-    icon: string;
-    iconClassName?: string;
-    onConfirm: () => void;
-    onCancel?: () => void;
-    confirmText?: string;
-    cancelText?: string;
-    children: React.ReactNode;
-    isConfirmDanger?: boolean;
-    shouldClose?: () => boolean;
-    onClose?: () => void;
-}) => {
+}: ConfirmationModalProps) => {
     const handleCancelClick = () => {
-        if (onCancel) {
-            onCancel();
-        }
-        if (shouldClose()) {
-            closeModal(modalId);
-        }
+        if (onCancel) onCancel();
+
+        if (shouldClose()) closeModal(modalId);
     };
 
     const handleConfirmClick = () => {
         onConfirm();
-        if (shouldClose()) {
-            closeModal(modalId);
-        }
-    };
-
-    const handleBackdropClick = (e: React.MouseEvent) => {
-        if (e.target === e.currentTarget && shouldClose()) {
-            closeModal(modalId);
-        }
-    };
-
-    const handleDialogClose = () => {
-        if (onClose) onClose();
+        if (shouldClose()) closeModal(modalId);
     };
 
     return (
-        <dialog
-            id={modalId}
-            onClick={handleBackdropClick}
-            onClose={handleDialogClose}
-            className="from-secondary to-tertiary shadow-pressed-md backdrop:bg-primary m-auto hidden w-fit max-w-2xl scale-0 rounded-xl border bg-linear-150 from-15% to-85% p-5 opacity-0 outline-hidden transition-all transition-discrete duration-300 ease-in-out backdrop:opacity-75 backdrop:transition-all backdrop:transition-discrete backdrop:duration-300 backdrop:ease-in open:block open:scale-100 open:opacity-100 open:delay-300 open:backdrop:scale-100 starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:scale-x-100 starting:open:backdrop:scale-y-0">
-            <div className="shadow-floating-md overflow-hidden rounded-lg">
-                <div className="relative max-h-full w-full max-w-md p-8 text-center md:p-10">
-                    <Icon icon={icon} className={cn('mx-auto mb-4 size-12 text-red-500', iconClassName)} />
-                    <h3 className="text-text-primary mb-5 text-lg font-normal">{children}</h3>
-                    <button onClick={handleConfirmClick} title={confirmText} className={`button mt-4 inline ${isConfirmDanger && 'button-danger'}`}>
-                        {confirmText}
-                    </button>
-                    <button
-                        title={cancelText}
-                        className={`button mt-4 ml-4 inline ${!isConfirmDanger && 'button-highlight'}`}
-                        onClick={handleCancelClick}>
-                        {cancelText}
-                    </button>
-                </div>
+        <Modal modalId={modalId} shouldClose={shouldClose} className="max-w-md" onClose={onClose}>
+            <div className="relative max-h-full w-full max-w-md p-8 text-center md:p-10">
+                <Icon icon={icon} className={cn('mx-auto mb-4 size-12 text-red-500', iconClassName)} />
+                <h3 className="text-text-primary mb-5 text-lg font-normal">{children}</h3>
+                <button onClick={handleConfirmClick} title={confirmText} className={`button mt-4 inline ${isConfirmDanger && 'button-danger'}`}>
+                    {confirmText}
+                </button>
+                <button
+                    title={cancelText}
+                    className={`button mt-4 ml-4 inline ${!isConfirmDanger && 'button-highlight'}`}
+                    onClick={handleCancelClick}>
+                    {cancelText}
+                </button>
             </div>
-        </dialog>
+        </Modal>
     );
 };
 

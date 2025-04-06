@@ -8,7 +8,7 @@ export default function MediaDetailSkeleton() {
             <div className="mx-auto -mt-32 max-w-6xl px-4 sm:px-8">
                 <div className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10">
                     {/* Header */}
-                    <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+                    <div className="flex flex-col items-center gap-6 sm:flex-row">
                         <div className="bg-primary aspect-[5/7] w-52 rounded-md" />
                         <div className="space-y-2">
                             <div className="bg-primary h-7 w-60 rounded" />
@@ -19,9 +19,9 @@ export default function MediaDetailSkeleton() {
                     </div>
 
                     {/* Info Grid */}
-                    <div className="mt-8 grid grid-cols-2 gap-4 text-sm md:grid-cols-3">
+                    <div className="mt-8 grid grid-cols-2 gap-2 text-sm sm:gap-4 md:grid-cols-3">
                         {Array.from({ length: 7 }).map((_, i) => (
-                            <div key={i} className="bg-primary h-4 w-32 rounded" />
+                            <div key={i} className="bg-primary h-4 w-32 rounded-md" />
                         ))}
                     </div>
 

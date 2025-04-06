@@ -29,10 +29,10 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
             {/* Content */}
             <div className="mx-auto -mt-32 max-w-6xl px-4 sm:px-8">
                 <article
-                    className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10"
+                    className="from-secondary/70 to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10"
                     aria-labelledby="media-title">
                     {/* Header */}
-                    <header className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+                    <header className="flex flex-col items-center gap-6 sm:flex-row">
                         <Image
                             src={coverImage.extraLarge}
                             alt={`Cover for ${title.english || title.romaji}`}
@@ -133,7 +133,7 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
                             <h2 id="recommendations-heading" className="text-highlight mb-4 text-lg font-semibold">
                                 Recommendations
                             </h2>
-                            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
                                 {recommendations.nodes.map(({ mediaRecommendation }) => (
                                     <A_MediaCard key={mediaRecommendation.id} media={mediaRecommendation} />
                                 ))}

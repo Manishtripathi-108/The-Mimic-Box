@@ -55,7 +55,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                     <label htmlFor="filter-search" className="form-text font-alegreya text-base">
                         Search:
                     </label>
-                    <input {...register('search')} type="text" id="filter-search" className="form-field" placeholder="Search for media" />
+                    <input {...register('search')} type="text" id="filter-search" className="form-field" placeholder="eg. Naruto" />
                     <ErrorMessage errors={errors} name="search" as="p" className="text-sm text-red-500" />
                 </div>
 

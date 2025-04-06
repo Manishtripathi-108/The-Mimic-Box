@@ -21,27 +21,27 @@ type Props = {
 
 const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
     const { data: session, status } = useSession();
-    const token = session?.user?.linkedAccounts?.anilist?.accessToken;
+    const anilist = session?.user?.linkedAccounts?.anilist;
 
     const [isPending, startTransition] = React.useTransition();
     const [mediaStatus, setMediaStatus] = React.useState<AnilistMediaListStatus | 'add to list'>('add to list');
 
     React.useEffect(() => {
-        if (!token) return;
+        if (!anilist?.accessToken) return;
 
         const fetchMediaStatus = async () => {
-            const response = await getUserMediaEntry(token, mediaId, type);
+            const response = await getUserMediaEntry(anilist.accessToken, anilist.id, mediaId, type);
             if (response.success && response.payload?.status) {
                 setMediaStatus(response.payload.status);
             }
         };
 
         fetchMediaStatus();
-    }, [token, mediaId, type]);
+    }, [anilist, mediaId, type]);
 
     if (status === 'loading') return null;
 
-    if (!token) {
+    if (!anilist?.accessToken) {
         return (
             <ConnectAccount account="anilist" className={cn('button button-highlight mt-4 capitalize', className)}>
                 Connect Anilist Account to add to list
@@ -51,7 +51,7 @@ const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
 
     const handleAddToList = (value: AnilistMediaListStatus | 'add to list') => {
         if (isPending) return;
-        // close popover
+
         const popover = document.getElementById('add-to-list');
         if (popover) popover.hidePopover();
 
@@ -59,11 +59,9 @@ const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
         if (!parsed.success) return toast.error('Invalid status selected.');
 
         startTransition(async () => {
-            const result = await updateMediaProgress(token, type, mediaId, parsed.data, 0);
+            const result = await updateMediaProgress(anilist.accessToken, type, mediaId, parsed.data, 0);
             toast[result.success ? 'success' : 'error'](result.message || 'Failed to add to list.');
-            if (result.success) {
-                setMediaStatus(parsed.data);
-            }
+            if (result.success) setMediaStatus(parsed.data);
         });
     };
 

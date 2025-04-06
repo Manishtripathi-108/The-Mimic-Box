@@ -179,9 +179,9 @@ export const getUserMediaCollections = async (token: string, userId: string, med
     return createSuccessReturn('User media fetched successfully', mediaListCollection.MediaListCollection.lists);
 };
 
-export const getUserMediaEntry = async (token: string, mediaId: number, mediaType: AnilistMediaType) => {
-    const query = `query ($mediaId: Int, $type: MediaType) {
-                        MediaList(mediaId: $mediaId, type: $type) {
+export const getUserMediaEntry = async (token: string, userId: string, mediaId: number, mediaType: AnilistMediaType) => {
+    const query = `query ($mediaId: Int, $type: MediaType,  $userId: Int) {
+                        MediaList(mediaId: $mediaId, type: $type, userId: $userId) {
                             id
                             status
                             progress
@@ -192,10 +192,7 @@ export const getUserMediaEntry = async (token: string, mediaId: number, mediaTyp
     const [error, response] = await fetchAniListData<{ MediaList: { id: number; status: AnilistMediaListStatus; progress: number; score: number } }>(
         token,
         query,
-        {
-            mediaId,
-            type: mediaType,
-        }
+        { mediaId, type: mediaType, userId }
     );
 
     if (error || !response) {

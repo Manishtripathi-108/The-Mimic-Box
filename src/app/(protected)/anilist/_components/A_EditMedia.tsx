@@ -71,7 +71,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
                 style={{ backgroundImage: `url(${entry.media?.bannerImage})` }}
             />
 
-            <div className="bg-primary shadow-neumorphic-inset-xs relative -mt-24 ml-5 max-w-52 rounded-lg border p-3">
+            <div className="bg-primary shadow-neumorphic-inset-xs relative -mt-24 ml-5 max-w-40 rounded-lg border p-3">
                 <Image
                     width={500}
                     height={700}

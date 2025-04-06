@@ -28,7 +28,7 @@ const A_MediaCard = ({
         <section
             className={cn(
                 'shadow-floating-xs from-secondary text-text-secondary to-tertiary relative w-full overflow-hidden bg-linear-150 from-15% to-85% transition-all duration-300',
-                detailed ? 'grid grid-cols-10 rounded-2xl' : 'aspect-[5/7] rounded-xl'
+                detailed ? 'grid grid-cols-10 rounded-2xl' : 'aspect-[5/7] rounded-md'
             )}
             aria-labelledby={`media-title-${media.id}`}>
             {/* Image */}
@@ -74,7 +74,7 @@ const A_MediaCard = ({
 
             {/* Detailed Section */}
             {detailed && (
-                <div className="col-span-6 flex flex-col justify-between p-2 md:p-6">
+                <div className="col-span-6 flex flex-col justify-between gap-2 p-2 md:p-6">
                     {/* Header */}
                     <header className="flex items-start justify-between">
                         <h2 id={`media-title-${media.id}`} className="text-text-primary text-lg font-bold">
@@ -131,7 +131,7 @@ const A_MediaCard = ({
                     </div>
 
                     {/* Stats */}
-                    <footer className="mt-3 flex items-center justify-between border-t pt-4 text-sm *:flex *:items-center *:gap-1">
+                    <footer className="flex items-center justify-between border-t pt-4 text-sm *:flex *:items-center *:gap-1">
                         <div>
                             <Icon icon={ICON_SET.SMILE} className="size-4 text-green-500" />
                             <span>{media.averageScore}%</span>

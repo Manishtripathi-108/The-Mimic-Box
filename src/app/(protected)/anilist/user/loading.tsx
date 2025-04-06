@@ -29,7 +29,7 @@ const AnilistSkeleton = () => {
             {/* Media List */}
             <div className="mt-4 grid grid-cols-2 gap-3 *:animate-pulse *:rounded-xl sm:grid-cols-3 lg:grid-cols-6">
                 {Array.from({ length: 18 }).map((_, index) => (
-                    <div key={index} className="bg-tertiary aspect-5/7 w-full rounded"></div>
+                    <div key={index} className="bg-tertiary aspect-5/7 w-full rounded-md"></div>
                 ))}
             </div>
         </div>
