@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: 'The Mimic Box',
         short_name: 'Mimic Box',
         start_url: '/',
-        theme_color: '#dfdfdf',
+        theme_color: '#e1102c',
         background_color: '#dfdfdf',
         display: 'standalone',
         icons: [

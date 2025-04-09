@@ -1,11 +1,17 @@
+'use client';
+
+import { useEffect } from 'react';
+
 import { Icon } from '@iconify/react';
 
 import ICON_SET from '@/constants/icons';
 
-const ErrorCard = ({ message, reset }: { message: string; reset?: () => void }) => {
+const ErrorCard = ({ message, reset, error }: { message: string; reset?: () => void; error?: Error & { digest?: string } }) => {
+    useEffect(() => console.error(error), [error]);
+
     return (
-        <div className="bg-primary h-calc-full-height grid place-items-center rounded-lg p-6 text-center">
-            <div className="to-tertiary shadow-floating-xs from-secondary flex max-w-md min-w-sm flex-col items-center justify-start rounded-2xl bg-linear-150 p-4">
+        <div className="bg-primary h-calc-full-height grid place-items-center rounded-lg p-2 text-center sm:p-6">
+            <div className="to-tertiary shadow-floating-xs from-secondary flex w-full max-w-md flex-col items-center justify-start rounded-2xl bg-linear-150 p-4">
                 <div className="flex w-full items-start justify-end gap-1.5">
                     <div className="size-2 rounded-full bg-white hover:bg-gray-200"></div>
                     <div className="size-2 rounded-full bg-white opacity-50"></div>
