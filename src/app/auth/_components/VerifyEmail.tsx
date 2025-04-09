@@ -5,13 +5,12 @@ import { useActionState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { Icon } from '@iconify/react';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { verifyEmailToken } from '@/actions/auth.actions';
 import { verifyEmailChangeToken } from '@/actions/user.actions';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 
 export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
@@ -59,14 +58,14 @@ export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
             <article className="shadow-floating-sm from-secondary to-tertiary w-full max-w-md overflow-hidden rounded-2xl bg-linear-150 from-15% to-85% text-center">
                 <header className="shadow-raised-xs text-highlight flex items-center justify-center gap-2 border-b p-4">
                     <div className="shadow-floating-xs flex size-12 items-center justify-center rounded-full border">
-                        <Icon icon={ICON_SET.APP_LOGO} className="size-6" />
+                        <Icon icon="appLogo" className="size-6" />
                     </div>
                     <h2 className="text-lg font-semibold">The Mimic Box</h2>
                 </header>
 
                 {!hasError() ? (
                     <div className="p-6">
-                        <Icon icon={isPending ? ICON_SET.LOADING : ICON_SET.EMAIL} className="text-highlight mb-4 inline-block size-16" />
+                        <Icon icon={isPending ? 'loading' : 'email'} className="text-highlight mb-4 inline-block size-16" />
                         <h1 className="text-text-primary text-2xl font-bold">{type === 'verify' ? 'Verify Email' : 'Change Email'}</h1>
                         <p className="text-text-secondary mt-2">
                             Click the button below to {type === 'verify' ? 'verify your email and activate your account' : 'change your email'}.
@@ -80,7 +79,7 @@ export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
                     </div>
                 ) : (
                     <div className="p-6">
-                        <Icon icon={token ? ICON_SET.ERROR : ICON_SET.NOT_FOUND} className="mb-2 inline-block size-16 text-red-500" />
+                        <Icon icon={token ? 'error' : 'notFound'} className="mb-2 inline-block size-16 text-red-500" />
                         <h1 className="text-text-primary text-2xl font-bold">{token ? 'Invalid Token!' : 'Token Missing!'}</h1>
                         <p className="mt-2 text-red-500">
                             {token

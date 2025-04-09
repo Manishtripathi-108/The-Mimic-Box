@@ -6,13 +6,12 @@ import Link from 'next/link';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
 
@@ -45,7 +44,7 @@ const ForgotPasswordForm = () => {
             <article className="shadow-floating-sm from-secondary to-tertiary w-full max-w-md overflow-hidden rounded-2xl bg-linear-150 from-15% to-85%">
                 <header className="shadow-raised-xs text-highlight flex items-center justify-center gap-2 border-b p-4">
                     <div className="shadow-floating-xs flex size-12 items-center justify-center rounded-full border">
-                        <Icon icon={ICON_SET.APP_LOGO} className="size-6" />
+                        <Icon icon="appLogo" className="size-6" />
                     </div>
                     <h2 className="text-lg font-semibold">Forgot Password</h2>
                 </header>
@@ -56,7 +55,7 @@ const ForgotPasswordForm = () => {
                             Enter your email
                         </label>
                         <div className="form-field-wrapper">
-                            <Icon icon={ICON_SET.EMAIL} className="form-icon" />
+                            <Icon icon="email" className="form-icon" />
                             <input
                                 {...register('email')}
                                 data-invalid={!!errors.email}
@@ -73,7 +72,7 @@ const ForgotPasswordForm = () => {
 
                     {errors.root?.serverError && (
                         <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                            <Icon icon={ICON_SET.ERROR} className="size-7" />
+                            <Icon icon="error" className="size-7" />
                             {errors.root.serverError.message}
                         </p>
                     )}

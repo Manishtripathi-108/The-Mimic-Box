@@ -7,13 +7,12 @@ import { redirect } from 'next/navigation';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { registerAction } from '@/actions/auth.actions';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { registerSchema } from '@/lib/schema/auth.validations';
 
@@ -46,7 +45,7 @@ export default function RegisterForm() {
     return (
         <>
             <header className="text-highlight flex items-center gap-2 text-2xl">
-                <Icon icon={ICON_SET.PERSON_ADD} className="size-7" />
+                <Icon icon="personAdd" className="size-7" />
                 <h1 className="text-2xl font-semibold">Create an Account</h1>
             </header>
 
@@ -62,7 +61,7 @@ export default function RegisterForm() {
                             Full Name
                         </label>
                         <div className="form-field-wrapper">
-                            <Icon icon={ICON_SET.PERSON} className="form-icon" />
+                            <Icon icon="person" className="form-icon" />
                             <input
                                 id="fullName"
                                 type="text"
@@ -83,7 +82,7 @@ export default function RegisterForm() {
                             Email Address
                         </label>
                         <div className="form-field-wrapper">
-                            <Icon icon={ICON_SET.EMAIL} className="form-icon" />
+                            <Icon icon="email" className="form-icon" />
                             <input
                                 id="email"
                                 type="email"
@@ -110,7 +109,7 @@ export default function RegisterForm() {
                                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                                 className="form-icon"
                                 onClick={() => setShowPassword((prev) => !prev)}>
-                                <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="text-xl" />
+                                <Icon icon={showPassword ? 'eye' : 'eyeClose'} className="text-xl" />
                             </button>{' '}
                             <input
                                 id="password"
@@ -132,7 +131,7 @@ export default function RegisterForm() {
                             Confirm Password
                         </label>
                         <div className="form-field-wrapper">
-                            <Icon icon={ICON_SET.LOCK} className="form-icon" />
+                            <Icon icon="lock" className="form-icon" />
                             <input
                                 id="confirmPassword"
                                 type="password"
@@ -151,7 +150,7 @@ export default function RegisterForm() {
                     {/* Server Error Messages */}
                     {errors.root?.serverError && (
                         <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                            <Icon icon={ICON_SET.ERROR} className="size-7" />
+                            <Icon icon="error" className="size-7" />
                             {errors.root.serverError.message}
                         </p>
                     )}
@@ -160,7 +159,7 @@ export default function RegisterForm() {
 
                     {/* Submit Button */}
                     <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
-                        {isSubmitting ? 'Submitting...' : 'Create an Account'}
+                        {isSubmitting ? 'Creating Account...' : 'Create an Account'}
                     </button>
                 </fieldset>
             </form>

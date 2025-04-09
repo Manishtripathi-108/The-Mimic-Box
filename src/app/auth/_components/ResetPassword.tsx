@@ -6,13 +6,12 @@ import { useSearchParams } from 'next/navigation';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { resetPasswordAction } from '@/actions/auth.actions';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
 export default function ResetPasswordForm() {
@@ -49,7 +48,7 @@ export default function ResetPasswordForm() {
             <article className="shadow-floating-sm from-secondary to-tertiary w-full max-w-md overflow-hidden rounded-2xl bg-linear-150 from-15% to-85%">
                 <header className="shadow-raised-xs text-highlight flex items-center justify-center gap-2 border-b p-4">
                     <div className="shadow-floating-xs flex size-12 items-center justify-center rounded-full border">
-                        <Icon icon={ICON_SET.APP_LOGO} className="size-6" />
+                        <Icon icon="appLogo" className="size-6" />
                     </div>
                     <h2 className="text-lg font-semibold">Reset Password</h2>
                 </header>
@@ -77,7 +76,7 @@ export default function ResetPasswordForm() {
                                     title={showPassword ? 'Hide password' : 'Show password'}
                                     onClick={() => setShowPassword((prev) => !prev)}
                                     aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                                    <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="size-full" />
+                                    <Icon icon={showPassword ? "eye" : "eyeClose"} className="size-full" />
                                 </button>
                             </div>
                             <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="password" aria-live="polite" />
@@ -99,14 +98,14 @@ export default function ResetPasswordForm() {
                                     placeholder="confirmPassword"
                                 />
 
-                                <Icon icon={ICON_SET.LOCK} className="form-icon" />
+                                <Icon icon="lock" className="form-icon" />
                             </div>
                             <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="confirmPassword" aria-live="polite" />
                         </div>
 
                         {(errors.root?.serverError || errors.token) && (
                             <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                                <Icon icon={ICON_SET.ERROR} className="size-7" />
+                                <Icon icon="error" className="size-7" />
                                 {errors.root?.serverError.message || 'Invalid or Missing Token'}
                             </p>
                         )}

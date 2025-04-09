@@ -2,10 +2,8 @@ import { Suspense } from 'react';
 
 import { Metadata } from 'next';
 
-import { Icon } from '@iconify/react';
-
-import VerifyEmail from '@/components/layout/auth/VerifyEmail';
-import ICON_SET from '@/constants/icons';
+import VerifyEmail from '@/app/auth/_components/VerifyEmail';
+import Icon from '@/components/ui/Icon';
 
 export const metadata: Metadata = {
     title: 'Verify Your Email',
@@ -14,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function VerifyEmailPage() {
     return (
-        <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>
+        <Suspense fallback={<Icon icon="loading" className="size-20" />}>
             <VerifyEmail type="change" />
         </Suspense>
     );

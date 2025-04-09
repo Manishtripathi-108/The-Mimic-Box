@@ -1,6 +1,6 @@
 'use client';
 
-import ErrorCard from '@/components/ErrorCard';
+import ErrorCard from '@/components/layout/ErrorCard';
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
     return (

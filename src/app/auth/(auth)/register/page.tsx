@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import RegisterForm from '@/components/layout/auth/Register';
+import RegisterForm from '@/app/auth/_components/Register';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {

@@ -6,7 +6,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import Modal, { closeModal } from '@/components/Modals';
+import Modal, { closeModal } from '@/components/ui/Modals';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { ANILIST_GENRES } from '@/constants/client.constants';
 import {

@@ -5,13 +5,12 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSession } from 'next-auth/react';
 
+import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_URL } from '@/constants/client.constants';
-import ICON_SET from '@/constants/icons';
 import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import useTheme from '@/hooks/useTheme';
 
@@ -42,7 +41,7 @@ const ProfileDropdown = () => {
     if (status === 'loading')
         return (
             <div className="button text-highlight size-9 cursor-wait rounded-full p-1.5">
-                <Icon icon={ICON_SET.LOADING} className="size-full" />
+                <Icon icon="loading" className="size-full" />
             </div>
         );
 
@@ -50,7 +49,7 @@ const ProfileDropdown = () => {
     if (!session?.user) {
         return (
             <Link href={DEFAULT_AUTH_ROUTE} className="button rounded-full">
-                <Icon icon={ICON_SET.LOGIN} className="size-5" />
+                <Icon icon="login" className="size-5" />
                 <span>Login</span>
             </Link>
         );
@@ -94,30 +93,27 @@ const ProfileDropdown = () => {
                                 onClick={() => setIsOpen(false)}
                                 href={APP_ROUTES.USER_PROFILE}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
-                                <Icon icon={ICON_SET.PERSON} className="size-5" />
+                                <Icon icon="person" className="size-5" />
                                 <span>My Profile</span>
                             </Link>
                             <Link
                                 onClick={() => setIsOpen(false)}
                                 href={APP_ROUTES.USER_LINKED_ACCOUNTS}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
-                                <Icon icon={ICON_SET.LINK} className="size-5" />
+                                <Icon icon="link" className="size-5" />
                                 <span>Linked Accounts</span>
                             </Link>
                             <Link
                                 onClick={() => setIsOpen(false)}
                                 href={APP_ROUTES.USER_SETTINGS}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
-                                <Icon icon={ICON_SET.SETTINGS} className="size-5" />
+                                <Icon icon="settings" className="size-5" />
                                 <span>Settings</span>
                             </Link>
                             <button
                                 onClick={() => cycleTheme()}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
-                                <Icon
-                                    icon={ICON_SET[nextTheme === 'system' ? 'DESKTOP' : nextTheme === 'dark' ? 'MOON' : 'SUN']}
-                                    className="size-5"
-                                />
+                                <Icon icon={nextTheme === 'system' ? 'desktop' : nextTheme === 'dark' ? 'moon' : 'sun'} className="size-5" />
                                 <span>Switch to {nextTheme} Mode</span>
                             </button>
                         </div>
@@ -125,7 +121,7 @@ const ProfileDropdown = () => {
                         <hr className="my-2" />
 
                         <LogoutButton className="hover:bg-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2 text-red-500">
-                            <Icon icon={ICON_SET.LOGOUT} className="size-5" />
+                            <Icon icon="logout" className="size-5" />
                             <span>Logout</span>
                         </LogoutButton>
 

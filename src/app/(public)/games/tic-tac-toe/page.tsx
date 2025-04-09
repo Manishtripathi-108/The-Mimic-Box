@@ -2,9 +2,7 @@ import { Metadata } from 'next';
 
 import Link from 'next/link';
 
-import { Icon } from '@iconify/react';
-
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
@@ -19,7 +17,7 @@ const TicTacToeIndex = () => {
             <div className="shadow-floating-sm from-secondary to-tertiary text-text-primary w-full max-w-lg rounded-2xl border bg-linear-150 from-15% to-85% p-6">
                 {/* Header */}
                 <h1 className="text-highlight font-alegreya mb-6 flex items-center justify-center gap-3 text-3xl font-medium tracking-wide">
-                    <Icon icon={ICON_SET.GAMEPAD} className="size-8" /> Select Your Game Mode
+                    <Icon icon="gamepad" className="size-8" /> Select Your Game Mode
                 </h1>
 
                 {/* Mode Selection */}

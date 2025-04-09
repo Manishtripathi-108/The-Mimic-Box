@@ -7,14 +7,13 @@ import { redirect, useSearchParams } from 'next/navigation';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { loginAction } from '@/actions/auth.actions';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { APP_ROUTES, DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import { loginSchema } from '@/lib/schema/auth.validations';
 
@@ -53,7 +52,7 @@ export default function LoginInForm() {
     return (
         <>
             <header className="text-highlight flex items-center gap-2 text-2xl">
-                <Icon icon={ICON_SET.LOGIN} className="size-7" />
+                <Icon icon="login" className="size-7" />
                 <h1 className="text-2xl font-semibold">Welcome Back!</h1>
             </header>
 
@@ -69,7 +68,7 @@ export default function LoginInForm() {
                             Email Address
                         </label>
                         <div className="form-field-wrapper">
-                            <Icon icon={ICON_SET.EMAIL} className="form-icon" />
+                            <Icon icon="email" className="form-icon" />
                             <input
                                 id="email"
                                 type="email"
@@ -96,7 +95,7 @@ export default function LoginInForm() {
                                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                                 className="form-icon"
                                 onClick={() => setShowPassword((prev) => !prev)}>
-                                <Icon icon={showPassword ? ICON_SET.EYE : ICON_SET.EYE_CLOSE} className="size-full" />
+                                <Icon icon={showPassword ? 'eye' : 'eyeClose'} className="size-full" />
                             </button>
 
                             <input
@@ -121,7 +120,7 @@ export default function LoginInForm() {
                     {/* Server Error Messages */}
                     {(errors.root?.serverError || UrlError) && (
                         <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                            <Icon icon={ICON_SET.ERROR} className="size-7 shrink-0" />
+                            <Icon icon="error" className="size-7 shrink-0" />
                             {errors.root?.serverError.message ||
                                 'Email is already registered with another account. Please login with the correct account.'}
                         </p>
@@ -130,7 +129,7 @@ export default function LoginInForm() {
                     <hr className="my-5" />
                     {/* Submit Button */}
                     <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
-                        {isSubmitting ? 'Submitting...' : 'Login'}
+                        {isSubmitting ? 'Logging in...' : 'Login'}
                     </button>
                 </fieldset>
             </form>

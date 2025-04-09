@@ -3,9 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Icon } from '@iconify/react';
-
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const A_Navbar = () => {
@@ -23,7 +21,7 @@ const A_Navbar = () => {
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
-                        <Icon icon={ICON_SET.SEARCH} className="size-5" />
+                        <Icon icon="search" className="size-5" />
                         <span className="hidden md:inline">Search</span>
                     </button>
 
@@ -53,7 +51,7 @@ const A_Navbar = () => {
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
-                        <Icon icon={ICON_SET.ANIME} className="size-5" />
+                        <Icon icon="anime" className="size-5" />
                         <span className="hidden md:inline">Anime List</span>
                     </Link>
                 </li>
@@ -66,7 +64,7 @@ const A_Navbar = () => {
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
                         {' '}
-                        <Icon icon={ICON_SET.MANGA} className="size-5" />
+                        <Icon icon="manga" className="size-5" />
                         <span className="hidden md:inline">Manga List</span>
                     </Link>
                 </li>
@@ -79,7 +77,7 @@ const A_Navbar = () => {
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
                         {' '}
-                        <Icon icon={ICON_SET.HEART} className="size-5" />
+                        <Icon icon="heart" className="size-5" />
                         <span className="hidden md:inline">Favourites</span>
                     </Link>
                 </li>
@@ -92,7 +90,7 @@ const A_Navbar = () => {
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
                         {' '}
-                        <Icon icon={ICON_SET.UPLOAD} className="size-5" />
+                        <Icon icon="upload" className="size-5" />
                         <span className="hidden md:inline">Import/Export</span>
                     </Link>
                 </li>

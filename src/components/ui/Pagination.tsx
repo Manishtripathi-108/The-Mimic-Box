@@ -2,10 +2,8 @@
 
 import React from 'react';
 
-import { Icon } from '@iconify/react';
-
+import Icon from '@/components/ui/Icon';
 import { getPageNumbers } from '@/constants/client.constants';
-import ICON_SET from '@/constants/icons';
 import cn from '@/lib/utils/cn';
 
 const MAX_VISIBLE_BUTTONS = 5;
@@ -30,7 +28,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, className }: Pagina
                         disabled={currentPage === 1}
                         className="text-text-secondary hover:text-text-primary font-karla block cursor-pointer px-2 py-1"
                         onClick={() => onPageChange(Math.max(1, currentPage - 1))}>
-                        <Icon icon={ICON_SET.LEFT_ARROW} className="size-5" />
+                        <Icon icon="leftArrow" className="size-5" />
                     </button>
                 </li>
 
@@ -67,7 +65,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, className }: Pagina
                         disabled={currentPage === totalPages}
                         className="text-text-secondary hover:text-text-primary font-karla block cursor-pointer px-2 py-1"
                         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}>
-                        <Icon icon={ICON_SET.RIGHT_ARROW} className="size-5" />
+                        <Icon icon="rightArrow" className="size-5" />
                     </button>
                 </li>
             </ul>

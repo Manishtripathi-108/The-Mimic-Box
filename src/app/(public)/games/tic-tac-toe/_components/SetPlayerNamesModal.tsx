@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Modal, { closeModal } from '@/components/Modals';
+import Modal, { closeModal } from '@/components/ui/Modals';
 
 // ✅ Define Zod schema for validation
 const playerSchema = z

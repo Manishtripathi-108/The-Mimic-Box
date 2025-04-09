@@ -6,14 +6,13 @@ import Image from 'next/image';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
-import { closeModal } from '@/components/Modals';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
+import { closeModal } from '@/components/ui/Modals';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
 import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
@@ -93,7 +92,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
                 }`}
                 onClick={toggleLike}
                 disabled={isToggling}>
-                <Icon icon={ICON_SET.HEART} className="size-5 text-inherit" />
+                <Icon icon="heart" className="size-5 text-inherit" />
             </button>
 
             <form onSubmit={handleSubmit(onSubmit)} className="px-4 pb-4">
@@ -131,10 +130,10 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
                 <div className="mt-8 flex justify-end space-x-2">
                     <button type="button" className="button button-danger" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
-                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Remove'}
+                        {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Remove'}
                     </button>
                     <button type="submit" className="button button-primary" disabled={isToggling || isSubmitting}>
-                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Save'}
+                        {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Save'}
                     </button>
                 </div>
             </form>

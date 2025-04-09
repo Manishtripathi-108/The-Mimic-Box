@@ -2,12 +2,11 @@
 
 import React from 'react';
 
-import { Icon } from '@iconify/react';
 import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const WaitingRoom = () => {
@@ -77,7 +76,7 @@ const WaitingRoom = () => {
                         className="button button-sm shrink-0 rounded-full p-2"
                         title="Share Room Code"
                         aria-label="Share Room Code">
-                        <Icon icon={ICON_SET.SHARE} className="size-5" />
+                        <Icon icon="share" className="size-5" />
                     </button>
                 </div>
             </motion.div>

@@ -2,9 +2,7 @@
 
 import React, { memo } from 'react';
 
-import { Icon } from '@iconify/react';
-
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import cn from '@/lib/utils/cn';
 
 const Cell = ({
@@ -31,7 +29,7 @@ const Cell = ({
             {...props}>
             {value && (
                 <Icon
-                    icon={value === 'D' ? ICON_SET.DRAW : value === 'X' ? ICON_SET.CLOSE : ICON_SET.CIRCLE}
+                    icon={value === 'D' ? 'draw' : value === 'X' ? 'close' : 'circle'}
                     className="animate-zoom-in size-full transition-transform duration-300 ease-in-out select-none"
                 />
             )}

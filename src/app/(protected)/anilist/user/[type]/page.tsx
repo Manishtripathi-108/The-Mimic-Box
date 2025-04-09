@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { getUserFavourites, getUserMediaCollections } from '@/actions/anilist.actions';
 import A_Main from '@/app/(protected)/anilist/_components/A_Main';
 import { auth } from '@/auth';
-import ErrorCard from '@/components/ErrorCard';
-import { NoDataCard } from '@/components/NoDataCard';
+import ErrorCard from '@/components/layout/ErrorCard';
+import { NoDataCard } from '@/components/layout/NoDataCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 interface AnilistMediaPageProps {

@@ -2,9 +2,8 @@
 
 import React from 'react';
 
-import { Icon } from '@iconify/react';
-
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
+import IconSet from '@/constants/icons';
 import cn from '@/lib/utils/cn';
 
 type ModalProps = {
@@ -18,7 +17,7 @@ type ModalProps = {
 
 type ConfirmationModalProps = {
     modalId: string;
-    icon: string;
+    icon: keyof typeof IconSet;
     iconClassName?: string;
     onConfirm: () => void;
     onCancel?: () => void;
@@ -77,7 +76,7 @@ const Modal = ({ modalId, className = '', showCloseButton = true, children, shou
                         className="text-text-secondary hover:text-text-primary bg-secondary absolute top-2 right-2 z-20 cursor-pointer rounded-full p-1 text-lg select-none"
                         onClick={handleCloseClick}
                         aria-label="Close Modal">
-                        <Icon icon={ICON_SET.CLOSE} className="size-6" />
+                        <Icon icon="close" className="size-6" />
                     </button>
                 )}
                 <div className="scrollbar-thin max-h-[calc(100dvh-6rem)] w-full max-w-full overflow-y-auto overscroll-x-none">{children}</div>

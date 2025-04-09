@@ -4,15 +4,14 @@ import React from 'react';
 
 import Link from 'next/link';
 
-import { Icon } from '@iconify/react';
 import { AnimatePresence } from 'motion/react';
 
 import MatchResultModal from '@/app/(public)/games/tic-tac-toe/_components/MatchResultModal';
 import ScoreBoard from '@/app/(public)/games/tic-tac-toe/_components/ScoreBoard';
 import SetPlayerNamesModal from '@/app/(public)/games/tic-tac-toe/_components/SetPlayerNamesModal';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import { ConfirmationModal, openModal } from '@/components/Modals';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
+import { ConfirmationModal, openModal } from '@/components/ui/Modals';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => {
@@ -53,7 +52,7 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
                     title="Clear Board"
                     className="button size-10 rounded-xl p-2"
                     aria-label="Clear Board">
-                    <Icon icon={ICON_SET.BROOM} className="size-full" />
+                    <Icon icon="broom" className="size-full" />
                 </button>
             </section>
 
@@ -69,11 +68,11 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
             {/* Controls */}
             <footer className="mt-5 grid grid-cols-2 gap-4">
                 <button onClick={restartGame} className="button">
-                    <Icon icon={ICON_SET.GAMEPAD} className="size-6" />
+                    <Icon icon="gamepad" className="size-6" />
                     Start Over
                 </button>
                 <button className="button" onClick={() => openModal('SetPlayerNamesModal')}>
-                    <Icon icon={ICON_SET.PLAYER} className="size-5" />
+                    <Icon icon="player" className="size-5" />
                     Change <span className="hidden md:inline">Player</span> Name
                 </button>
             </footer>
@@ -82,7 +81,7 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
             <SetPlayerNamesModal />
             <ConfirmationModal
                 modalId="game_action"
-                icon={ICON_SET.ERROR}
+                icon="error"
                 iconClassName="size-20"
                 onConfirm={resetBoard}
                 cancelText="Cancel"

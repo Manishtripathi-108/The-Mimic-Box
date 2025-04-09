@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { Icon } from '@iconify/react';
-
-import { openModal } from '@/components/Modals';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
+import { openModal } from '@/components/ui/Modals';
 import { AnilistMediaFilters } from '@/lib/types/anilist.types';
 
 const A_Toolbar = ({
@@ -51,7 +49,7 @@ const A_Toolbar = ({
                     onClick={() => {
                         if (searchTerm) setSearchTerm('');
                     }}
-                    icon={searchTerm ? ICON_SET.CLOSE : ICON_SET.SEARCH}
+                    icon={searchTerm ? 'close' : 'search'}
                     className="form-icon hover:cursor-pointer"
                 />
             </div>
@@ -66,7 +64,7 @@ const A_Toolbar = ({
                             className={`button p-2 shadow-none ${mode === 'detailed list' ? 'rounded-l-full' : 'rounded-r-full'} ${detailedView === (mode === 'detailed list') ? 'active' : ''}`}
                             title={`View as ${mode}`}
                             aria-label={`View as ${mode}`}>
-                            <Icon icon={mode === 'detailed list' ? ICON_SET.LIST : ICON_SET.CARD} className="size-4" />
+                            <Icon icon={mode === 'detailed list' ? 'list' : 'card'} className="size-4" />
                         </button>
                     ))}
                 </span>
@@ -74,7 +72,7 @@ const A_Toolbar = ({
                     title="Filter"
                     onClick={() => openModal('modal-anilist-filters')}
                     className="button text-highlight ml-4 size-8 rounded-xl p-2">
-                    <Icon icon={ICON_SET.FILTER} className="size-full" />
+                    <Icon icon="filter" className="size-full" />
                 </button>
             </div>
         </div>

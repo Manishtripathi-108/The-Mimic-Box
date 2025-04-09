@@ -1,6 +1,6 @@
 'use client';
 
-import AuthError from '@/components/layout/auth/AuthError';
+import AuthError from '@/app/auth/_components/AuthError';
 
 const AuthErrorBoundary = () => {
     return <AuthError />;

@@ -2,9 +2,7 @@
 
 import { useEffect } from 'react';
 
-import { Icon } from '@iconify/react';
-
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 
 const ErrorCard = ({ message, reset, error }: { message: string; reset?: () => void; error?: Error & { digest?: string } }) => {
     useEffect(() => console.error(error), [error]);
@@ -17,7 +15,7 @@ const ErrorCard = ({ message, reset, error }: { message: string; reset?: () => v
                     <div className="size-2 rounded-full bg-white opacity-50"></div>
                 </div>
 
-                <Icon icon={ICON_SET.ERROR} className="size-28" />
+                <Icon icon="error" className="size-28" />
 
                 <div className="mb-6 w-full text-center">
                     <h1 className="font-bold tracking-wider text-red-500">Error!</h1>

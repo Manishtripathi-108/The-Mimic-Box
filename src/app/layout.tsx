@@ -2,15 +2,14 @@ import type { Metadata, Viewport } from 'next';
 
 import { Aladin, Alegreya, Karla } from 'next/font/google';
 
-import { Icon } from '@iconify/react';
 import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
 
 import '@/app/globals.css';
 import { ReactScan } from '@/components/ReactScan';
 import Header from '@/components/layout/Header';
+import Icon from '@/components/ui/Icon';
 import '@/constants/iconSetup';
-import ICON_SET from '@/constants/icons';
 import { ThemeScript } from '@/lib/utils/theme';
 
 const fontKarla = Karla({
@@ -76,13 +75,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Toaster
                         toastOptions={{
                             success: {
-                                icon: <Icon icon={ICON_SET.SUCCESS} className="size-6 shrink-0 text-green-500" />,
+                                icon: <Icon icon="success" className="size-6 shrink-0 text-green-500" />,
                             },
                             error: {
-                                icon: <Icon icon={ICON_SET.ERROR} className="size-7 shrink-0" />,
+                                icon: <Icon icon="error" className="size-7 shrink-0 text-red-500" />,
                             },
                             loading: {
-                                icon: <Icon icon={ICON_SET.LOADING} className="text-accent size-5 shrink-0" />,
+                                icon: <Icon icon="error" className="text-highlight size-5 shrink-0" />,
                             },
                         }}
                     />

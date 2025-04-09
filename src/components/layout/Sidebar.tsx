@@ -5,18 +5,18 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 
+import Icon from '@/components/ui/Icon';
 import { IMAGE_URL } from '@/constants/client.constants';
-import ICON_SET from '@/constants/icons';
+import IconSet from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const sidebarMenuItems = [
     {
         title: 'AniList',
-        icon: ICON_SET.ANIME,
+        icon: 'anilist',
         children: [
             { name: 'Anime', link: APP_ROUTES.ANILIST_ANIME },
             { name: 'Manga', link: APP_ROUTES.ANILIST_MANGA },
@@ -26,7 +26,7 @@ const sidebarMenuItems = [
     },
     {
         title: 'Games',
-        icon: ICON_SET.GAMEPAD,
+        icon: 'gamepad',
         children: [
             {
                 name: 'Tic Tac Toe',
@@ -40,7 +40,7 @@ const sidebarMenuItems = [
     },
     {
         title: 'Audio',
-        icon: ICON_SET.MUSIC,
+        icon: 'music',
         children: [
             { name: 'Converter', link: APP_ROUTES.AUDIO_CONVERTER },
             { name: 'Tags Editor', link: APP_ROUTES.AUDIO_TAGS_EDITOR },
@@ -49,7 +49,7 @@ const sidebarMenuItems = [
     {
         title: 'Profile',
         badge: 14,
-        icon: ICON_SET.PERSON,
+        icon: 'person',
         link: APP_ROUTES.DEV,
     },
 ];
@@ -97,7 +97,7 @@ const Sidebar = () => {
                     aria-label="Close sidebar"
                     className="text-text-secondary hover:text-text-primary bg-tertiary rounded-full p-1"
                     onClick={() => closeSidebar()}>
-                    <Icon icon={ICON_SET.CLOSE} className="size-6" />
+                    <Icon icon="close" className="size-6" />
                 </button>
             </div>
 
@@ -110,7 +110,7 @@ const Sidebar = () => {
                                 href={item.link}
                                 className="hover:bg-secondary text-text-secondary hover:text-text-primary flex items-center gap-2 rounded-lg p-2.5 transition"
                                 onClick={() => closeSidebar()}>
-                                <Icon icon={item.icon} className="size-5" />
+                                <Icon icon={item.icon as keyof typeof IconSet} className="size-5" />
                                 <span className="flex-1">{item.title}</span>
                                 {item.badge && <span className="ml-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">{item.badge}</span>}
                             </Link>
@@ -120,11 +120,11 @@ const Sidebar = () => {
                                 className="hover:bg-secondary text-text-secondary hover:text-text-primary flex w-full items-center justify-between rounded-lg p-2.5 transition"
                                 aria-expanded={openMenus[index]}>
                                 <div className="flex items-center gap-2">
-                                    <Icon icon={item.icon} className="size-5" />
+                                    <Icon icon={item.icon as keyof typeof IconSet} className="size-5" />
                                     <span className="flex-1">{item.title}</span>
                                 </div>
                                 {item.children && (
-                                    <Icon icon={ICON_SET.DOWN} className={`size-5 transition-transform ${openMenus[index] ? 'rotate-180' : ''}`} />
+                                    <Icon icon="down" className={`size-5 transition-transform ${openMenus[index] ? 'rotate-180' : ''}`} />
                                 )}
                             </button>
                         )}
@@ -153,7 +153,7 @@ const Sidebar = () => {
                                                     <span className="flex-1 text-left">{child.name}</span>
                                                     {child.children && (
                                                         <Icon
-                                                            icon={ICON_SET.DOWN}
+                                                            icon="down"
                                                             className={`size-5 transition-transform ${openMenus[`${index}-${idx}`] ? 'rotate-180' : ''}`}
                                                         />
                                                     )}
@@ -194,12 +194,12 @@ const Sidebar = () => {
                 <Link
                     href="/"
                     className="hover:bg-secondary text-text-secondary hover:text-text-primary mb-1 flex items-center gap-2 rounded-lg p-2.5 transition">
-                    <Icon icon={ICON_SET.SETTINGS} className="size-5" />
+                    <Icon icon="settings" className="size-5" />
                     <span>Settings</span>
                 </Link>
 
                 <Link href="#" className="flex items-center gap-2 rounded-lg p-2.5 text-red-500 transition hover:bg-red-700">
-                    <Icon icon={ICON_SET.LOGOUT} className="size-5" />
+                    <Icon icon="logout" className="size-5" />
                     <span>Log Out</span>
                 </Link>
             </nav>
