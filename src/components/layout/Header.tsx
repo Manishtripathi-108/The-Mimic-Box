@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import { Icon } from '@iconify/react';
 
+import InstallPWAButton from '@/components/ui/InstallPWAButton';
 import ICON_SET from '@/constants/icons';
 
 import ProfileDropdown from './ProfileDropdown';
@@ -52,7 +53,7 @@ const Header = () => {
         <>
             <header
                 id="page-header"
-                className="bg-primary shadow-floating-xs h-header-height sticky top-0 z-50 mb-0.5 flex w-full items-center justify-between rounded-b-2xl p-2 transition-all duration-300 ease-in-out">
+                className="bg-primary shadow-floating-xs h-header-height sticky top-0 z-50 mb-0.5 flex w-full items-center justify-between gap-2 rounded-b-2xl p-2 transition-all duration-300 ease-in-out sm:gap-6">
                 <button
                     aria-label="Toggle Sidenav"
                     className="button size-10 rounded-xl p-2"
@@ -63,12 +64,18 @@ const Header = () => {
                     <Icon icon={ICON_SET.MENU} className="size-6" />
                 </button>
 
-                <Link href="/" className="text-text-primary ml-5 flex items-center gap-2">
-                    <p className="sr-only">Go to Home</p>
-                    <Icon icon={ICON_SET.APP_LOGO} className="size-8" />
-                </Link>
+                <div className="flex w-full items-center justify-center">
+                    <Link href="/" className="text-text-primary ml-5 flex items-center gap-2">
+                        <p className="sr-only">Go to Home</p>
+                        <Icon icon={ICON_SET.APP_LOGO} className="size-8" />
+                    </Link>
+                </div>
 
-                <ProfileDropdown />
+                <InstallPWAButton className="shrink-0" />
+
+                <div className="shrink-0">
+                    <ProfileDropdown />
+                </div>
             </header>
 
             <Sidebar />

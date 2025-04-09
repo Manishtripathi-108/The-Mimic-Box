@@ -39,7 +39,12 @@ const ProfileDropdown = () => {
     }, [isOpen]);
 
     // Show nothing until session is loaded to prevent flicker
-    if (status === 'loading') return null;
+    if (status === 'loading')
+        return (
+            <div className="button text-highlight size-9 cursor-wait rounded-full p-1.5">
+                <Icon icon={ICON_SET.LOADING} className="size-full" />
+            </div>
+        );
 
     // If user is NOT logged in, show only the login button
     if (!session?.user) {
@@ -58,14 +63,8 @@ const ProfileDropdown = () => {
             {/* Profile Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="shadow-floating-xs relative flex w-fit cursor-pointer items-center justify-center rounded-full border p-0.5">
-                <Image
-                    src={image || IMAGE_URL.PROFILE}
-                    alt="Profile"
-                    width={36}
-                    height={36}
-                    className="text-text-secondary size-9 rounded-full object-cover"
-                />
+                className="shadow-floating-xs text-text-secondary relative flex aspect-square w-fit cursor-pointer items-center justify-center overflow-hidden rounded-full p-0.5">
+                <Image src={image || IMAGE_URL.PROFILE} alt="Profile" width={36} height={36} className="size-9 rounded-full object-cover" />
             </button>
 
             {/* Dropdown Menu */}
