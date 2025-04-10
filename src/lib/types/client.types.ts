@@ -1,6 +1,6 @@
 import { FieldValues, UseControllerProps } from 'react-hook-form';
 
-import IconSet from '@/constants/icons';
+import IconSet from '@/constants/icons.constants';
 
 export type FileTypesMap = Record<
     string,

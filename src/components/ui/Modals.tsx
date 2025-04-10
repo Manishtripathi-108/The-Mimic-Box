@@ -3,7 +3,7 @@
 import React from 'react';
 
 import Icon from '@/components/ui/Icon';
-import IconSet from '@/constants/icons';
+import IconSet from '@/constants/icons.constants';
 import cn from '@/lib/utils/cn';
 
 type ModalProps = {

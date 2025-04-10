@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 
 import Icon from '@/components/ui/Icon';
 import { IMAGE_URL } from '@/constants/client.constants';
-import IconSet from '@/constants/icons';
+import IconSet from '@/constants/icons.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const sidebarMenuItems = [

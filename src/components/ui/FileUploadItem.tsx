@@ -29,7 +29,7 @@ const FileUploadItem = ({ file, error, onRemove, children, className }: FileUplo
             {/* File Info */}
             <div className="flex w-full min-w-0 shrink items-center gap-4">
                 <div className="shadow-raised-xs block size-9 shrink-0 rounded-lg border p-1.5" aria-hidden="true">
-                    <Icon icon={fileType as 'audio'} className="size-full" />
+                    <Icon icon={fileType} className="size-full" />
                 </div>
 
                 <div>
