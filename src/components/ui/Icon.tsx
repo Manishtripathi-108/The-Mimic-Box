@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { IconProps, Icon as Iconify } from '@iconify/react';
 
@@ -11,7 +11,7 @@ type Props = {
 } & Omit<IconProps, 'icon' | 'className'>;
 
 const Icon = ({ icon, className, ...props }: Props) => {
-    return <Iconify icon={icon} className={cn('size-7', className)} {...props} />;
+    return <Iconify icon={IconSet[icon]} className={cn('size-7', className)} {...props} />;
 };
 
-export default Icon;
+export default memo(Icon);

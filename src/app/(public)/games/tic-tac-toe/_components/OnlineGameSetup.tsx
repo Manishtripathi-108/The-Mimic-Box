@@ -4,13 +4,14 @@ import { useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import Icon from '@/components/ui/Icon';
+import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 
 // Define Zod schemas
 const joinRoomSchema = z.object({
@@ -27,11 +28,7 @@ const createRoomSchema = z.object({
 const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
     const { joinRoom, state } = useTicTacToeContext();
     const { isFetching } = state;
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm({ resolver: zodResolver(joinRoomSchema), disabled: isFetching, defaultValues: { roomId: roomId } });
+    const { control, handleSubmit } = useForm({ resolver: zodResolver(joinRoomSchema), disabled: isFetching, defaultValues: { roomId: roomId } });
 
     const onSubmit = (data: z.infer<typeof joinRoomSchema>) => {
         if (isFetching) return;
@@ -40,38 +37,8 @@ const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="form-group">
-                <label className="form-text" htmlFor="roomId">
-                    Enter Room ID
-                </label>
-                <input
-                    id="roomId"
-                    className="form-field"
-                    type="text"
-                    placeholder="Room ID"
-                    maxLength={6}
-                    autoComplete="off"
-                    {...register('roomId')}
-                />
-                <ErrorMessage errors={errors} name="roomId" as="p" className="text-xs text-red-500" aria-live="polite" />
-            </div>
-
-            <div className="form-group">
-                <label className="form-text" htmlFor="playerName">
-                    Player Name
-                </label>
-                <input
-                    id="playerName"
-                    className="form-field"
-                    type="text"
-                    placeholder="Enter your name"
-                    maxLength={20}
-                    autoComplete="off"
-                    {...register('playerName')}
-                />
-                <ErrorMessage errors={errors} name="playerName" as="p" className="text-xs text-red-500" aria-live="polite" />
-            </div>
-
+            <Input name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
+            <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
             <input
                 type="submit"
                 className="button button-highlight mt-6 w-full"
@@ -87,11 +54,7 @@ const CreateRoomForm = () => {
     const { state, createRoom } = useTicTacToeContext();
     const { isFetching } = state;
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm({ resolver: zodResolver(createRoomSchema), disabled: isFetching });
+    const { control, handleSubmit } = useForm({ resolver: zodResolver(createRoomSchema), disabled: isFetching });
 
     const onSubmit = (data: z.infer<typeof createRoomSchema>) => {
         if (isFetching) return;
@@ -100,36 +63,8 @@ const CreateRoomForm = () => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="form-group">
-                <label className="form-text" htmlFor="mode">
-                    Room Name
-                </label>
-                <select id="mode" className="form-field capitalize" {...register('mode')} defaultValue="classic">
-                    {createRoomSchema.shape.mode.options.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-                <ErrorMessage errors={errors} name="mode" as="p" className="text-xs text-red-500" aria-live="polite" />
-            </div>
-
-            <div className="form-group">
-                <label className="form-text" htmlFor="playerName">
-                    Player Name
-                </label>
-                <input
-                    id="playerName"
-                    className="form-field"
-                    type="text"
-                    placeholder="Enter your name"
-                    maxLength={20}
-                    autoComplete="off"
-                    {...register('playerName')}
-                />
-                <ErrorMessage errors={errors} name="playerName" as="p" className="text-xs text-red-500" aria-live="polite" />
-            </div>
-
+            <Select name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
+            <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
             <input
                 type="submit"
                 className="button button-highlight mt-6 w-full"

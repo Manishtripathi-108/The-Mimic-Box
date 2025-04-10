@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -14,6 +13,7 @@ import { z } from 'zod';
 
 import { loginAction } from '@/actions/auth.actions';
 import Icon from '@/components/ui/Icon';
+import Input from '@/components/ui/Input';
 import { APP_ROUTES, DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import { loginSchema } from '@/lib/schema/auth.validations';
 
@@ -25,11 +25,11 @@ export default function LoginInForm() {
     const [showPassword, setShowPassword] = useState(false);
 
     const {
-        register,
+        control,
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema) });
+    } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } });
 
     async function onSubmit(data: z.infer<typeof loginSchema>) {
         const response = await loginAction(data);
@@ -63,54 +63,25 @@ export default function LoginInForm() {
                     <legend className="sr-only">Login Form</legend>
 
                     {/* Email Field */}
-                    <div className="form-group">
-                        <label htmlFor="email" className="form-text">
-                            Email Address
-                        </label>
-                        <div className="form-field-wrapper">
-                            <Icon icon="email" className="form-icon" />
-                            <input
-                                id="email"
-                                type="email"
-                                {...register('email')}
-                                className="form-field"
-                                placeholder="Enter your email"
-                                data-invalid={!!errors.email}
-                                aria-invalid={!!errors.email}
-                                autoComplete="email"
-                            />
-                        </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="email" aria-live="polite" />
-                    </div>
+                    <Input
+                        name="email"
+                        label="Email Address"
+                        type="email"
+                        placeholder="ie. example@themimicbox.com"
+                        iconName="email"
+                        control={control}
+                    />
 
                     {/* Password Field */}
-                    <div className="form-group">
-                        <label htmlFor="password" className="form-text">
-                            Password
-                        </label>
-                        <div className="form-field-wrapper">
-                            <button
-                                type="button"
-                                title={showPassword ? 'Hide password' : 'Show password'}
-                                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                                className="form-icon"
-                                onClick={() => setShowPassword((prev) => !prev)}>
-                                <Icon icon={showPassword ? 'eye' : 'eyeClose'} className="size-full" />
-                            </button>
-
-                            <input
-                                id="password"
-                                type={showPassword ? 'text' : 'password'}
-                                {...register('password')}
-                                className="form-field"
-                                data-invalid={!!errors.password}
-                                placeholder="Enter your password"
-                                aria-invalid={!!errors.password}
-                                autoComplete="current-password"
-                            />
-                        </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="password" aria-live="polite" />
-                    </div>
+                    <Input
+                        name="password"
+                        label="Password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="* * * * * * * *"
+                        iconName={showPassword ? 'eye' : 'eyeClose'}
+                        onIconClick={() => setShowPassword((prev) => !prev)}
+                        control={control}
+                    />
 
                     {/* Forgot Password Link */}
                     <Link href={APP_ROUTES.AUTH_FORGOT_PASSWORD} className="text-highlight mt-2 block text-right text-xs hover:underline">

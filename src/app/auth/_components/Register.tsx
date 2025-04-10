@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -13,17 +12,27 @@ import { z } from 'zod';
 
 import { registerAction } from '@/actions/auth.actions';
 import Icon from '@/components/ui/Icon';
+import Input from '@/components/ui/Input';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { registerSchema } from '@/lib/schema/auth.validations';
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
+
     const {
-        register,
         handleSubmit,
+        control,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof registerSchema>>({ resolver: zodResolver(registerSchema) });
+    } = useForm<z.infer<typeof registerSchema>>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            fullName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+    });
 
     async function onSubmit(data: z.infer<typeof registerSchema>) {
         const response = await registerAction(data);
@@ -56,96 +65,24 @@ export default function RegisterForm() {
                     <legend className="sr-only">Registration Form</legend>
 
                     {/* Full Name */}
-                    <div className="form-group">
-                        <label htmlFor="fullName" className="form-text">
-                            Full Name
-                        </label>
-                        <div className="form-field-wrapper">
-                            <Icon icon="person" className="form-icon" />
-                            <input
-                                id="fullName"
-                                type="text"
-                                {...register('fullName')}
-                                className="form-field"
-                                placeholder="Enter your full name"
-                                data-invalid={!!errors.fullName}
-                                aria-invalid={!!errors.fullName}
-                                autoComplete="name"
-                            />
-                        </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="fullName" aria-live="polite" />
-                    </div>
+                    <Input name="fullName" label="Full Name" type="text" control={control} placeholder="ie. Gillion Ramirez" iconName="person" />
 
                     {/* Email */}
-                    <div className="form-group">
-                        <label htmlFor="email" className="form-text">
-                            Email Address
-                        </label>
-                        <div className="form-field-wrapper">
-                            <Icon icon="email" className="form-icon" />
-                            <input
-                                id="email"
-                                type="email"
-                                {...register('email')}
-                                className="form-field"
-                                placeholder="Enter your email"
-                                data-invalid={!!errors.email}
-                                aria-invalid={!!errors.email}
-                                autoComplete="email"
-                            />
-                        </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="email" aria-live="polite" />
-                    </div>
+                    <Input name="email" label="Email" type="email" control={control} placeholder="ie. example@themimicbox.com" iconName="email" />
 
                     {/* Password */}
-                    <div className="form-group">
-                        <label htmlFor="password" className="form-text">
-                            Password
-                        </label>
-                        <div className="form-field-wrapper">
-                            <button
-                                type="button"
-                                title={showPassword ? 'Hide password' : 'Show password'}
-                                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                                className="form-icon"
-                                onClick={() => setShowPassword((prev) => !prev)}>
-                                <Icon icon={showPassword ? 'eye' : 'eyeClose'} className="text-xl" />
-                            </button>{' '}
-                            <input
-                                id="password"
-                                type={showPassword ? 'text' : 'password'}
-                                {...register('password')}
-                                className="form-field"
-                                placeholder="Enter your password"
-                                data-invalid={!!errors.password}
-                                aria-invalid={!!errors.password}
-                                autoComplete="new-password"
-                            />
-                        </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="password" aria-live="polite" />
-                    </div>
+                    <Input name="password" label="Password" type="password" control={control} placeholder="* * * * * * * *" iconName="lock" />
 
                     {/* Confirm Password */}
-                    <div className="form-group">
-                        <label htmlFor="confirmPassword" className="form-text">
-                            Confirm Password
-                        </label>
-                        <div className="form-field-wrapper">
-                            <Icon icon="lock" className="form-icon" />
-                            <input
-                                id="confirmPassword"
-                                type="password"
-                                title={showPassword ? 'Hide password' : 'Show password'}
-                                {...register('confirmPassword')}
-                                className="form-field"
-                                placeholder="Confirm your password"
-                                data-invalid={!!errors.confirmPassword}
-                                aria-invalid={!!errors.confirmPassword}
-                                autoComplete="new-password"
-                            />
-                        </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="confirmPassword" aria-live="polite" />
-                    </div>
+                    <Input
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        control={control}
+                        placeholder="* * * * * * * *"
+                        type={showPassword ? 'text' : 'password'}
+                        iconName={showPassword ? 'eye' : 'eyeClose'}
+                        onIconClick={() => setShowPassword((prev) => !prev)}
+                    />
 
                     {/* Server Error Messages */}
                     {errors.root?.serverError && (

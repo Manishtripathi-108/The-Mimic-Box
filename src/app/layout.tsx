@@ -9,7 +9,7 @@ import '@/app/globals.css';
 import { ReactScan } from '@/components/ReactScan';
 import Header from '@/components/layout/Header';
 import Icon from '@/components/ui/Icon';
-import '@/constants/iconSetup';
+import '@/lib/iconSetup';
 import { ThemeScript } from '@/lib/utils/theme';
 
 const fontKarla = Karla({

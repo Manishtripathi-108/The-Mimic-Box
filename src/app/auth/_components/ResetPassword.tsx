@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -12,6 +11,7 @@ import { z } from 'zod';
 
 import { resetPasswordAction } from '@/actions/auth.actions';
 import Icon from '@/components/ui/Icon';
+import Input from '@/components/ui/Input';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
 export default function ResetPasswordForm() {
@@ -37,11 +37,14 @@ export default function ResetPasswordForm() {
     }
 
     const {
-        register,
+        control,
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof resetPasswordSchema>>({ defaultValues: { token: token || undefined }, resolver: zodResolver(resetPasswordSchema) });
+    } = useForm<z.infer<typeof resetPasswordSchema>>({
+        defaultValues: { token: token || undefined, password: '', confirmPassword: '' },
+        resolver: zodResolver(resetPasswordSchema),
+    });
 
     return (
         <main className="bg-primary h-calc-full-height flex items-center justify-center">
@@ -55,53 +58,26 @@ export default function ResetPasswordForm() {
 
                 <div className="p-6">
                     <form onSubmit={handleSubmit(handleReset)}>
-                        <div className="form-group">
-                            <label htmlFor="password" className="form-text">
-                                Enter your new password
-                            </label>
-                            <div className="form-field-wrapper">
-                                <input
-                                    {...register('password')}
-                                    data-invalid={!!errors.password}
-                                    aria-invalid={!!errors.password}
-                                    disabled={isSubmitting}
-                                    type={showPassword ? 'text' : 'password'}
-                                    id="password"
-                                    className="form-field"
-                                    placeholder="password"
-                                />
-                                <button
-                                    type="button"
-                                    className="form-icon cursor-pointer"
-                                    title={showPassword ? 'Hide password' : 'Show password'}
-                                    onClick={() => setShowPassword((prev) => !prev)}
-                                    aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                                    <Icon icon={showPassword ? "eye" : "eyeClose"} className="size-full" />
-                                </button>
-                            </div>
-                            <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="password" aria-live="polite" />
-                        </div>
+                        <Input
+                            name="password"
+                            label="Enter your new password"
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="* * * * * * * *"
+                            iconName="lock"
+                            control={control}
+                            disabled={isSubmitting}
+                        />
 
-                        <div className="form-group">
-                            <label htmlFor="confirmPassword" className="form-text">
-                                Enter your
-                            </label>
-                            <div className="form-field-wrapper">
-                                <input
-                                    {...register('confirmPassword')}
-                                    data-invalid={!!errors.confirmPassword}
-                                    aria-invalid={!!errors.confirmPassword}
-                                    disabled={isSubmitting}
-                                    type="password"
-                                    id="confirmPassword"
-                                    className="form-field"
-                                    placeholder="confirmPassword"
-                                />
-
-                                <Icon icon="lock" className="form-icon" />
-                            </div>
-                            <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="confirmPassword" aria-live="polite" />
-                        </div>
+                        <Input
+                            name="confirmPassword"
+                            label="Confirm your new password"
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="* * * * * * * *"
+                            onIconClick={() => setShowPassword((prev) => !prev)}
+                            iconName={showPassword ? 'eye' : 'eyeClose'}
+                            control={control}
+                            disabled={isSubmitting}
+                        />
 
                         {(errors.root?.serverError || errors.token) && (
                             <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
