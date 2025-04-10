@@ -6,9 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import Icon from '@/components/ui/Icon';
-import { convertMonthNumberToName } from '@/constants/client.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { AnilistMedia } from '@/lib/types/anilist.types';
+import { getMonthName } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
 const A_MediaCard = ({
@@ -109,7 +109,7 @@ const A_MediaCard = ({
                         <p>
                             <strong>Aired: </strong>
                             {media.startDate.month
-                                ? `${media.startDate.day} ${convertMonthNumberToName(media.startDate.month)} ${media.startDate.year}`
+                                ? `${media.startDate.day} ${getMonthName(media.startDate.month)} ${media.startDate.year}`
                                 : 'Unknown'}
                         </p>
                         <p>

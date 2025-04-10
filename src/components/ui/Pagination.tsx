@@ -3,7 +3,7 @@
 import React from 'react';
 
 import Icon from '@/components/ui/Icon';
-import { getPageNumbers } from '@/constants/client.constants';
+import { getPageNumbers } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
 const MAX_VISIBLE_BUTTONS = 5;

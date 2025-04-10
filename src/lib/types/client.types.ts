@@ -2,6 +2,27 @@ import { FieldValues, UseControllerProps } from 'react-hook-form';
 
 import IconSet from '@/constants/icons';
 
+export type FileTypesMap = Record<
+    string,
+    | 'audio'
+    | 'video'
+    | 'image'
+    | 'document'
+    | 'archive'
+    | 'executable'
+    | 'font'
+    | 'code'
+    | 'markup'
+    | 'spreadsheet'
+    | 'presentation'
+    | 'email'
+    | 'database'
+    | 'vector'
+    | '3d'
+    | 'script'
+    | 'text'
+    | 'disk image'
+>;
 /* -------------------------------------------------------------------------- */
 /*                                 Form Types                                 */
 /* -------------------------------------------------------------------------- */
