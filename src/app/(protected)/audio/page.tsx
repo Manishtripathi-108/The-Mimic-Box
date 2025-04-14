@@ -24,26 +24,14 @@ const ACCEPTED_TYPES = 'audio/*';
 
 type T_FormValues = {
     useGlobalSettings: boolean;
-    global: {
-        format: string;
-        quality: number;
-        advancedSettings: T_AudioAdvanceSettings;
-    };
-    fileSettings: {
-        format: string;
-        quality: number;
-        advancedSettings: T_AudioAdvanceSettings;
-    }[];
+    global: T_AudioAdvanceSettings;
+    fileSettings: T_AudioAdvanceSettings[];
     files: File[];
 };
 
 const defaultValues: T_FormValues = {
     useGlobalSettings: true,
-    global: {
-        format: 'M4A',
-        quality: 128,
-        advancedSettings: AUDIO_ADVANCED_SETTINGS_DEFAULTS,
-    },
+    global: AUDIO_ADVANCED_SETTINGS_DEFAULTS,
     fileSettings: [],
     files: [],
 };
@@ -62,6 +50,7 @@ export default function FileConverter() {
         watch,
         setError,
         clearErrors,
+        reset,
         formState: { errors },
     } = useForm<T_FormValues>({ defaultValues });
 
@@ -124,11 +113,6 @@ export default function FileConverter() {
         console.log('Convert files', data);
     };
 
-    const handleClearAll = () => {
-        setValue('files', []);
-        remove();
-    };
-
     return (
         <div className="min-h-calc-full-height text-text-secondary p-2 sm:p-6">
             <div className="mx-auto max-w-4xl">
@@ -137,7 +121,7 @@ export default function FileConverter() {
 
                 <form onSubmit={handleSubmit(handleConvert)}>
                     {files.length === 0 ? (
-                        <FileUpload onFilesSelected={handleFileSelect} maxSizeMB={MAX_SIZE_MB} maxFiles={MAX_FILES} accept={ACCEPTED_TYPES} />
+                        <FileUpload onFilesSelected={handleFileSelect} maxSizeMB={MAX_SIZE_MB} maxFiles={MAX_FILES} />
                     ) : (
                         <CardContainer contentClassName="space-y-6">
                             <input id="file-upload" type="file" multiple accept={ACCEPTED_TYPES} className="hidden" onChange={handleFileSelect} />
@@ -148,7 +132,7 @@ export default function FileConverter() {
                                         {!useGlobalSettings && files.length > 1 && (
                                             <div className="flex w-full items-center justify-between space-x-4 sm:w-auto">
                                                 <Select
-                                                    name={`fileSettings.${index}.format`}
+                                                    name={`fileSettings.${index}.audio.format`}
                                                     control={control}
                                                     options={AudioFormatsSchema.options}
                                                     disabled={useGlobalSettings}
@@ -161,12 +145,7 @@ export default function FileConverter() {
                                                     title="Settings"
                                                     type="button"
                                                     className="sm:button size-5 shrink-0 cursor-pointer rounded-full sm:size-9 sm:p-2"
-                                                    onClick={() =>
-                                                        openAdvancedSettings(
-                                                            fileSettings[index]?.advancedSettings,
-                                                            `fileSettings.${index}.advancedSettings`
-                                                        )
-                                                    }>
+                                                    onClick={() => openAdvancedSettings(fileSettings[index], `fileSettings.${index}`)}>
                                                     <Icon icon="settings" className="size-full" />
                                                 </button>
                                             </div>
@@ -197,14 +176,14 @@ export default function FileConverter() {
                                     <p className="text-text-primary font-alegreya mb-1 text-base tracking-wide">Format:</p>
                                     <TabNavigation
                                         tabs={AudioFormatsSchema.options}
-                                        currentTab={globalSettings.format}
-                                        onTabChange={(tab) => setValue('global.format', tab)}
+                                        currentTab={globalSettings.audio.format}
+                                        onTabChange={(tab) => setValue('global.audio.format', tab)}
                                     />
                                     <div className="mt-4">
                                         <RangeSlider
                                             label="Quality:"
                                             control={control}
-                                            name="global.quality"
+                                            name="global.audio.bitrate"
                                             min={64}
                                             max={320}
                                             step={64}
@@ -215,10 +194,14 @@ export default function FileConverter() {
                                                 <button
                                                     key={value}
                                                     type="button"
-                                                    className={`cursor-pointer text-xs transition-transform duration-300 ease-in-out focus:outline-none ${
-                                                        Number(globalSettings.quality) === value ? 'text-highlight translate-y-0' : 'translate-y-1'
+                                                    className={`cursor-pointer text-xs transition-transform duration-300 ease-in-out ${
+                                                        Number(globalSettings.audio.bitrate) === value
+                                                            ? 'text-highlight translate-y-0'
+                                                            : 'translate-y-1'
                                                     }`}
-                                                    onClick={() => setValue('global.quality', value)}>
+                                                    onClick={() =>
+                                                        setValue('global.audio.bitrate', String(value) as T_FormValues['global']['audio']['bitrate'])
+                                                    }>
                                                     {label}
                                                 </button>
                                             ))}
@@ -229,14 +212,14 @@ export default function FileConverter() {
                                         type="button"
                                         title="Advanced Settings"
                                         className="button mt-4 ml-auto h-10"
-                                        onClick={() => openAdvancedSettings(globalSettings.advancedSettings, 'global.advancedSettings')}>
+                                        onClick={() => openAdvancedSettings(globalSettings, 'global')}>
                                         <Icon icon="settings" className="h-full" /> Advanced Settings
                                     </button>
                                 </div>
                             )}
 
                             <div className="mt-5 flex w-full justify-between">
-                                <button className="button button-danger mr-2 h-10" type="button" onClick={handleClearAll}>
+                                <button className="button button-danger mr-2 h-10" type="button" onClick={() => reset(defaultValues)}>
                                     <Icon icon="trash" className="h-full" /> Clear
                                 </button>
                                 <button className="button button-highlight h-10" type="submit">

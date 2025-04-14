@@ -28,25 +28,27 @@ export const AudioSampleRatesSchema = z.enum(['no change', '44100 Hz', '48000 Hz
 export const AudioChannelsSchema = z.enum(['no change', 'mono', 'stereo']);
 export const AudioPlaybackSpeedsSchema = z.enum(['0.25x (Very Slow)', '0.5x (Slow)', '1.0x (Normal)', '1.5x (Fast)', '2.0x (Very Fast)']);
 export const AudioFormatsSchema = z.enum(['AAC', 'MP3', 'WMA', 'AIFF', 'FLAC', 'OGG', 'M4A', 'WAV']);
-export const AudioBitrateSchema = z.enum(['0', '64', '128', '192', '256', '320']).transform((val) => parseInt(val));
+export const AudioBitrateSchema = z.enum(['0', '64', '128', '192', '256', '320']);
 
 export const AudioConverterSchema = z.object({});
 
 export const audioAdvanceSettingsSchema = z.object({
     audio: z.object({
-        volume: z.string().min(0).max(500).default('100'),
+        format: AudioFormatsSchema.default('MP3'),
+        volume: z.coerce.number().min(0).max(500).default(100),
         channels: AudioChannelsSchema.default('no change'),
         sampleRate: AudioSampleRatesSchema.default('44100 Hz'),
+        bitrate: AudioBitrateSchema.default('128'),
     }),
     effects: z.object({
         playbackSpeed: AudioPlaybackSpeedsSchema.default('1.0x (Normal)'),
-        fadeIn: z.string().min(0).max(10).optional(),
-        fadeOut: z.string().min(0).max(10).optional(),
-        pitchShift: z.string().min(-12).max(12).optional(),
+        fadeIn: z.coerce.number().min(0).max(10).optional(),
+        fadeOut: z.coerce.number().min(0).max(10).optional(),
+        pitchShift: z.coerce.number().min(-12).max(12).optional(),
         normalize: z.boolean().default(false),
     }),
     trim: z.object({
-        trimStart: z.string().time().default('00:00:00').optional(),
-        trimEnd: z.string().time().default('00:00:00').optional(),
+        trimStart: z.string().time({ message: 'Invalid time format (HH:MM:SS)' }).default('00:00:00').optional(),
+        trimEnd: z.string().time({ message: 'Invalid time format (HH:MM:SS)' }).default('00:00:00').optional(),
     }),
 });

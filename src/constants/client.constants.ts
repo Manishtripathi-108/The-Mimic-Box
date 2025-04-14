@@ -170,15 +170,17 @@ export const AUDIO_BITRATE_OPTIONS = [
 
 export const AUDIO_ADVANCED_SETTINGS_DEFAULTS: T_AudioAdvanceSettings = {
     audio: {
+        format: 'M4A',
         channels: 'no change',
-        volume: '100',
+        volume: 100,
         sampleRate: '44100 Hz',
+        bitrate: '128',
     },
     effects: {
-        fadeIn: '',
-        fadeOut: '',
+        fadeIn: 0,
+        fadeOut: 0,
         playbackSpeed: '1.0x (Normal)',
-        pitchShift: '',
+        pitchShift: 0,
         normalize: false,
     },
     trim: {

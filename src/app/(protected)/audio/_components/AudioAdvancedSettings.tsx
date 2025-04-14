@@ -10,7 +10,14 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS } from '@/constants/client.constants';
-import { AudioChannelsSchema, AudioPlaybackSpeedsSchema, AudioSampleRatesSchema, audioAdvanceSettingsSchema } from '@/lib/schema/client.validations';
+import {
+    AudioBitrateSchema,
+    AudioChannelsSchema,
+    AudioFormatsSchema,
+    AudioPlaybackSpeedsSchema,
+    AudioSampleRatesSchema,
+    audioAdvanceSettingsSchema,
+} from '@/lib/schema/client.validations';
 import { T_AudioAdvanceSettings } from '@/lib/types/client.types';
 
 const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSettings; onApply: (data: T_AudioAdvanceSettings) => void }) => {
@@ -34,10 +41,10 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
     const onSubmit = (data: T_AudioAdvanceSettings) => onApply(data);
 
     return (
-        <form className="w-full max-w-sm space-y-4 p-2 sm:p-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="w-full max-w-sm space-y-4 p-6" onSubmit={handleSubmit(onSubmit)}>
             <TabNavigation tabs={['Audio', 'Effects', 'Trim']} className="mx-auto w-full" currentTab={currentTab} onTabChange={setCurrentTab} />
 
-            <div className="h-52 w-full">
+            <div className="min-h-52 w-full">
                 <AnimatePresence mode="wait">
                     {currentTab === 'Audio' && (
                         <motion.div
@@ -46,9 +53,11 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -10 }}
                             className="grid w-full grid-cols-2 gap-4">
+                            <Select label="Format" name="audio.format" options={AudioFormatsSchema.options} control={control} />
+                            <Select label="Bitrate Rate" name="audio.bitrate" options={AudioBitrateSchema.options} control={control} />
                             <Select label="Channels" name="audio.channels" options={AudioChannelsSchema.options} control={control} />
-                            <Input label="Volume" name="audio.volume" control={control} />
                             <Select label="Sample Rate" name="audio.sampleRate" options={AudioSampleRatesSchema.options} control={control} />
+                            <Input label="Volume" type="number" max={500} min={0} name="audio.volume" control={control} />
                         </motion.div>
                     )}
 
@@ -59,9 +68,9 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -10 }}
                             className="grid w-full grid-cols-2 gap-4">
-                            <Input label="Fade In (seconds)" name="effects.fadeIn" control={control} />
-                            <Input label="Fade Out (seconds)" name="effects.fadeOut" control={control} />
-                            <Input label="Pitch Shift" name="effects.pitchShift" control={control} />
+                            <Input type="number" max={10} min={0} label="Fade In (seconds)" name="effects.fadeIn" control={control} />
+                            <Input type="number" max={10} min={0} label="Fade Out (seconds)" name="effects.fadeOut" control={control} />
+                            <Input type="number" max={12} min={-12} label="Pitch Shift" name="effects.pitchShift" control={control} />
                             <Select
                                 label="Playback Speed"
                                 name="effects.playbackSpeed"
@@ -71,7 +80,7 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                             <div className="col-span-2 flex justify-end">
                                 <label htmlFor="normalize" className="form-checkbox">
                                     <input id="normalize" className="checkbox-field" type="checkbox" {...register('effects.normalize')} />
-                                    <span className="form-text select-none">Normalize</span>
+                                    <span className="form-text text-base select-none">Normalize Audio</span>
                                 </label>
                             </div>
                         </motion.div>

@@ -55,18 +55,18 @@ export type RadioGroupProps<T extends FieldValues> = {
 export type InputProps<T extends FieldValues = FieldValues> = {
     placeholder?: string;
     type?: string;
+    min?: number;
+    max?: number;
+    label?: string;
     iconName?: keyof typeof IconSet;
     iconPosition?: 'left' | 'right';
     onIconClick?: () => void;
     classNames?: BaseClassNames & {
         icon?: string;
     };
-    label?: string;
 } & UseControllerProps<T>;
 
 export type RangeSliderProps<T extends FieldValues> = {
-    min?: number;
-    max?: number;
     step?: number;
 } & InputProps<T>;
 

@@ -11,6 +11,8 @@ const Input = <TFieldValues extends FieldValues>({
     placeholder = '',
     type = 'text',
     iconName,
+    max,
+    min,
     iconPosition = 'left',
     onIconClick,
     classNames = {},
@@ -44,6 +46,8 @@ const Input = <TFieldValues extends FieldValues>({
                     autoComplete={controllerProps.name}
                     type={type}
                     {...field}
+                    max={max}
+                    min={min}
                     placeholder={placeholder}
                     className={cn('form-field', classNames.field)}
                     aria-invalid={!!error}
