@@ -23,3 +23,11 @@ export const AnilistFilterSchema = z.object({
         .optional()
         .transform((val) => ((val ?? []).length > 0 ? val : undefined)),
 });
+
+export const AudioSampleRatesSchema = z.enum(['no change', '44100 Hz', '48000 Hz', '96000 Hz']);
+export const AudioChannelsSchema = z.enum(['no change', 'mono', 'stereo']);
+export const AudioPlaybackSpeedsSchema = z.enum(['0.25x (Very Slow)', '0.5x (Slow)', '1.0x (Normal)', '1.5x (Fast)', '2.0x (Very Fast)']);
+export const AudioFormatsSchema = z.enum(['AAC', 'MP3', 'WMA', 'AIFF', 'FLAC', 'OGG', 'M4A', 'WAV']);
+export const AudioBitrateSchema = z.enum(['0', '64', '128', '192', '256', '320']).transform((val) => parseInt(val));
+
+export const AudioConverterSchema = z.object({});

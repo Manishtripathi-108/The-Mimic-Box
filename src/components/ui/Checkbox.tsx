@@ -15,7 +15,7 @@ const Checkbox = <T extends FieldValues>({ options, label, classNames = {}, ...c
     const currentValue: string[] = field.value || [];
 
     const handleChange = (value: string) => {
-        const updatedValue = currentValue.includes(value) ? currentValue.filter((v) => v !== value) : [...currentValue, value];
+        const updatedValue = currentValue?.includes(value) ? currentValue.filter((v) => v !== value) : [...currentValue, value];
 
         field.onChange(updatedValue);
     };
@@ -33,7 +33,7 @@ const Checkbox = <T extends FieldValues>({ options, label, classNames = {}, ...c
                                 id={value}
                                 type="checkbox"
                                 value={value}
-                                checked={currentValue.includes(value)}
+                                checked={currentValue?.includes(value)}
                                 onChange={() => handleChange(value)}
                                 className={cn('checkbox-field', classNames.field)}
                             />

@@ -61,6 +61,12 @@ export type InputProps<T extends FieldValues = FieldValues> = {
     label?: string;
 } & UseControllerProps<T>;
 
+export type RangeSliderProps<T extends FieldValues> = {
+    min?: number;
+    max?: number;
+    step?: number;
+} & InputProps<T>;
+
 export type SelectProps<T extends FieldValues> = {
     options: FormOption[];
     placeholder?: string;

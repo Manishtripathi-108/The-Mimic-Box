@@ -9,13 +9,22 @@ import cn from '@/lib/utils/cn';
 interface FileUploadProps {
     onFilesSelected: (files: File[]) => void;
     accept?: string;
+    showList?: boolean;
     maxSizeMB?: number;
     maxFiles?: number;
     description?: string;
     className?: string;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ onFilesSelected, accept = '*', maxSizeMB = 50, maxFiles = 5, description, className = '' }) => {
+const FileUpload: React.FC<FileUploadProps> = ({
+    onFilesSelected,
+    accept = '*',
+    showList = false,
+    maxSizeMB = 50,
+    maxFiles = 5,
+    description,
+    className = '',
+}) => {
     const { files, error, dragActive, dropRef, handleDrop, handleDragOver, handleDragLeave, handleFileSelect } = useFileUpload({
         accept,
         maxSizeMB,
@@ -49,21 +58,23 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFilesSelected, accept = '*', 
                 </div>
             </div>
 
-            <div>
-                {files?.map((file, index) => (
-                    <FileUploadItem
-                        key={index}
-                        file={file}
-                        error={error}
-                        className="first:mt-4"
-                        onRemove={() => {
-                            const newFiles = [...files];
-                            newFiles.splice(index, 1);
-                            onFilesSelected(newFiles);
-                        }}
-                    />
-                ))}
-            </div>
+            {showList && (
+                <div>
+                    {files?.map((file, index) => (
+                        <FileUploadItem
+                            key={index}
+                            file={file}
+                            error={error}
+                            className="first:mt-4"
+                            onRemove={() => {
+                                const newFiles = [...files];
+                                newFiles.splice(index, 1);
+                                onFilesSelected(newFiles);
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
         </>
     );
 };

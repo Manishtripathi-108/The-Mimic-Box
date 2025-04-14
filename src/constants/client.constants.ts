@@ -131,9 +131,7 @@ export const FILE_TYPES_MAP: FileTypesMap = {
     bin: 'disk image',
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                   Anilist                                  */
-/* -------------------------------------------------------------------------- */
+/* --------------------------------- Anilist -------------------------------- */
 export const ANILIST_GENRES = [
     'Action',
     'Adventure',
@@ -152,4 +150,13 @@ export const ANILIST_GENRES = [
     'Sports',
     'Supernatural',
     'Thriller',
+];
+
+/* ---------------------------------- Audio --------------------------------- */
+export const AUDIO_BITRATE_OPTIONS = [
+    { label: 'Economy (64 kbps)', value: 64 },
+    { label: 'Standard (128 kbps)', value: 128 },
+    { label: 'Good (192 kbps)', value: 192 },
+    { label: 'Ultra (256 kbps)', value: 256 },
+    { label: 'Best (320 kbps)', value: 320 },
 ];
