@@ -1,4 +1,4 @@
-import { FileTypesMap } from '@/lib/types/client.types';
+import { FileTypesMap, T_AudioAdvanceSettings } from '@/lib/types/client.types';
 
 export const IMAGE_URL = {
     APP_LOGO: 'https://res.cloudinary.com/dra73suxl/image/upload/v1744229205/mimic_logo_tb4e9r.png',
@@ -7,6 +7,13 @@ export const IMAGE_URL = {
     NO_DATA: 'https://res.cloudinary.com/dra73suxl/image/upload/v1742810700/nodata_vyixzn.png',
     AUDIO_COVER_FALLBACK: 'https://res.cloudinary.com/dra73suxl/image/upload/v1744229654/no_cover_image_fallback_jhsdj.png',
 };
+
+export const MAX_FILE_SIZE = {
+    image: 5 * 1024 * 1024, // 5MB
+    video: 50 * 1024 * 1024, // 50MB
+    audio: 50 * 1024 * 1024, // 50MB
+    document: 50 * 1024 * 1024, // 50MB
+} as const;
 
 export const FILE_TYPES_MAP: FileTypesMap = {
     // Audio
@@ -160,3 +167,22 @@ export const AUDIO_BITRATE_OPTIONS = [
     { label: 'Ultra (256 kbps)', value: 256 },
     { label: 'Best (320 kbps)', value: 320 },
 ];
+
+export const AUDIO_ADVANCED_SETTINGS_DEFAULTS: T_AudioAdvanceSettings = {
+    audio: {
+        channels: 'no change',
+        volume: '100',
+        sampleRate: '44100 Hz',
+    },
+    effects: {
+        fadeIn: '',
+        fadeOut: '',
+        playbackSpeed: '1.0x (Normal)',
+        pitchShift: '',
+        normalize: false,
+    },
+    trim: {
+        trimStart: '00:00:00',
+        trimEnd: '00:00:00',
+    },
+};

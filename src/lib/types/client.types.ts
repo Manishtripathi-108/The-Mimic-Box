@@ -1,6 +1,8 @@
 import { FieldValues, UseControllerProps } from 'react-hook-form';
+import { z } from 'zod';
 
 import IconSet from '@/constants/icons.constants';
+import { audioAdvanceSettingsSchema } from '@/lib/schema/client.validations';
 
 export type FileTypesMap = Record<
     string,
@@ -23,6 +25,7 @@ export type FileTypesMap = Record<
     | 'text'
     | 'disk image'
 >;
+
 /* -------------------------------------------------------------------------- */
 /*                                 Form Types                                 */
 /* -------------------------------------------------------------------------- */
@@ -72,3 +75,9 @@ export type SelectProps<T extends FieldValues> = {
     placeholder?: string;
 } & BaseFormProps &
     UseControllerProps<T>;
+
+/* -------------------------------------------------------------------------- */
+/*                                    Audio                                   */
+/* -------------------------------------------------------------------------- */
+
+export type T_AudioAdvanceSettings = z.infer<typeof audioAdvanceSettingsSchema>;

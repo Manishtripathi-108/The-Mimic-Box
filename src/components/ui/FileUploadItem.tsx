@@ -40,7 +40,7 @@ const FileUploadItem = ({ file, error, onRemove, children, className }: FileUplo
                     <p className="text-text-secondary mt-0.5 text-start text-xs">{`${fileExt} — ${formatFileSize(file.size)}`}</p>
 
                     {error && (
-                        <p className="mt-0.5 text-xs text-red-500" role="alert">
+                        <p className="mt-0.5 text-xs text-red-500" role="alert" aria-live="assertive">
                             {error}
                         </p>
                     )}

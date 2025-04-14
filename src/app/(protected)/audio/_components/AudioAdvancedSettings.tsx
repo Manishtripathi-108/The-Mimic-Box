@@ -1,0 +1,108 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+
+import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
+import TabNavigation from '@/components/ui/TabNavigation';
+import { AUDIO_ADVANCED_SETTINGS_DEFAULTS } from '@/constants/client.constants';
+import { AudioChannelsSchema, AudioPlaybackSpeedsSchema, AudioSampleRatesSchema, audioAdvanceSettingsSchema } from '@/lib/schema/client.validations';
+import { T_AudioAdvanceSettings } from '@/lib/types/client.types';
+
+const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSettings; onApply: (data: T_AudioAdvanceSettings) => void }) => {
+    const [currentTab, setCurrentTab] = useState<'Audio' | 'Effects' | 'Trim'>('Audio');
+
+    const parsedValues = audioAdvanceSettingsSchema.safeParse(values);
+    const mergedValues = parsedValues.success ? parsedValues.data : AUDIO_ADVANCED_SETTINGS_DEFAULTS;
+
+    const { control, register, handleSubmit, reset } = useForm<T_AudioAdvanceSettings>({
+        resolver: zodResolver(audioAdvanceSettingsSchema),
+        defaultValues: mergedValues,
+    });
+
+    useEffect(() => {
+        if (values) reset(mergedValues);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [values, reset]);
+
+    if (!values) return null;
+
+    const onSubmit = (data: T_AudioAdvanceSettings) => onApply(data);
+
+    return (
+        <form className="w-full max-w-sm space-y-4 p-2 sm:p-6" onSubmit={handleSubmit(onSubmit)}>
+            <TabNavigation tabs={['Audio', 'Effects', 'Trim']} className="mx-auto w-full" currentTab={currentTab} onTabChange={setCurrentTab} />
+
+            <div className="h-52 w-full">
+                <AnimatePresence mode="wait">
+                    {currentTab === 'Audio' && (
+                        <motion.div
+                            key="audioTab"
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            className="grid w-full grid-cols-2 gap-4">
+                            <Select label="Channels" name="audio.channels" options={AudioChannelsSchema.options} control={control} />
+                            <Input label="Volume" name="audio.volume" control={control} />
+                            <Select label="Sample Rate" name="audio.sampleRate" options={AudioSampleRatesSchema.options} control={control} />
+                        </motion.div>
+                    )}
+
+                    {currentTab === 'Effects' && (
+                        <motion.div
+                            key="effectsTab"
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            className="grid w-full grid-cols-2 gap-4">
+                            <Input label="Fade In (seconds)" name="effects.fadeIn" control={control} />
+                            <Input label="Fade Out (seconds)" name="effects.fadeOut" control={control} />
+                            <Input label="Pitch Shift" name="effects.pitchShift" control={control} />
+                            <Select
+                                label="Playback Speed"
+                                name="effects.playbackSpeed"
+                                options={AudioPlaybackSpeedsSchema.options}
+                                control={control}
+                            />
+                            <div className="col-span-2 flex justify-end">
+                                <label htmlFor="normalize" className="form-checkbox">
+                                    <input id="normalize" className="checkbox-field" type="checkbox" {...register('effects.normalize')} />
+                                    <span className="form-text select-none">Normalize</span>
+                                </label>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {currentTab === 'Trim' && (
+                        <motion.div
+                            key="trimTab"
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            className="grid w-full grid-cols-2 gap-4">
+                            <Input label="Trim Start" name="trim.trimStart" control={control} />
+                            <Input label="Trim End" name="trim.trimEnd" control={control} />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            <hr />
+
+            <div className="flex justify-between px-4 pb-2">
+                <button className="button button-danger" title="Reset" type="button" onClick={() => reset(mergedValues)}>
+                    Reset
+                </button>
+                <button title="Apply Changes" className="button button-highlight" type="submit">
+                    Apply Changes
+                </button>
+            </div>
+        </form>
+    );
+};
+
+export default AudioAdvancedSettings;
