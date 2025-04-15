@@ -49,15 +49,15 @@ export enum API_ROUTES {
     /* ---------------------------- Auth Link Account --------------------------- */
     AUTH_LA_ROOT = '/api/auth-link-account',
 
-    // Spotify Authentication
+    /* ------------------------- Spotify Authentication ------------------------- */
     AUTH_LA_SPOTIFY_ROOT = '/api/auth-link-account/spotify',
     AUTH_LA_SPOTIFY_CALLBACK = '/api/auth-link-account/spotify/callback',
 
-    // AniList Authentication
+    /* ------------------------- AniList Authentication ------------------------- */
     AUTH_LA_ANILIST_ROOT = '/api/auth-link-account/anilist',
     AUTH_LA_ANILIST_CALLBACK = '/api/auth-link-account/anilist/callback',
 
-    // MyAnimeList Authentication
+    /* ----------------------- MyAnimeList Authentication ----------------------- */
     AUTH_LA_MYANIMELIST_ROOT = '/api/auth-link-account/myanimelist',
     AUTH_LA_MYANIMELIST_CALLBACK = '/api/auth-link-account/myanimelist/callback',
 }
@@ -74,7 +74,17 @@ export const EXTERNAL_ROUTES = {
         API: 'https://api.spotify.com/v1',
         USER_PROFILE: 'https://api.spotify.com/v1/me',
     },
+    AUDIO: {
+        CONVERTER:
+            process.env.NODE_ENV === 'development'
+                ? ' http://localhost:4000/api/audio/convert-audio'
+                : 'https://elephoria.onrender.com/api/audio/convert-audio',
+    },
 } as const;
+
+/* -------------------------------------------------------------------------- */
+/*                                   Configs                                  */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Array of routes accessible without authentication.

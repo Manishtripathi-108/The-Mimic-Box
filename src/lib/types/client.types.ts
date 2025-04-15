@@ -1,3 +1,4 @@
+import { AxiosProgressEvent } from 'axios';
 import { FieldValues, UseControllerProps } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -81,3 +82,15 @@ export type SelectProps<T extends FieldValues> = {
 /* -------------------------------------------------------------------------- */
 
 export type T_AudioAdvanceSettings = z.infer<typeof audioAdvanceSettingsSchema>;
+
+/* -------------------------------------------------------------------------- */
+/*                                   Upload                                   */
+/* -------------------------------------------------------------------------- */
+
+export type T_UploadState = {
+    formattedLoaded: string;
+    formattedTotal: string;
+    formattedProgress: string;
+    formattedRate: string;
+    formattedEstimated: string;
+} & AxiosProgressEvent;

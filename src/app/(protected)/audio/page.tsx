@@ -3,8 +3,10 @@
 import { useCallback, useState } from 'react';
 
 import { Path, useFieldArray, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 import AudioAdvancedSettings from '@/app/(protected)/audio/_components/AudioAdvancedSettings';
+import UploadProgressCard from '@/components/layout/UploadProgressCard';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUpload from '@/components/ui/FileUpload';
@@ -15,8 +17,12 @@ import RangeSlider from '@/components/ui/RangeSlider';
 import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
+import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import useSafeApiCall from '@/hooks/useSafeApiCall';
+import useUploadProgress from '@/hooks/useUploadProgress';
 import { AudioFormatsSchema } from '@/lib/schema/client.validations';
 import { T_AudioAdvanceSettings } from '@/lib/types/client.types';
+import { downloadFile } from '@/lib/utils/file.utils';
 
 const MAX_SIZE_MB = 50;
 const MAX_FILES = 10;
@@ -41,6 +47,9 @@ export default function FileConverter() {
         values: T_AudioAdvanceSettings | null;
         name: Path<T_FormValues> | null;
     }>({ values: null, name: null });
+
+    const { isPending, makeApiCall } = useSafeApiCall({ isExternalApiCall: true });
+    const { uploadState, resetUploadProgress, onUploadProgress } = useUploadProgress();
 
     const {
         control,
@@ -109,9 +118,41 @@ export default function FileConverter() {
         remove(index);
     };
 
-    const handleConvert = (data: T_FormValues) => {
-        console.log('Convert files', data);
+    const handleConvert = async (values: T_FormValues) => {
+        makeApiCall({
+            url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
+            method: 'post',
+            responseType: 'blob',
+            onUploadProgress,
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onStart: () => {
+                const formData = new FormData();
+                values.files.forEach((file) => formData.append('files', file));
+
+                values.fileSettings.forEach((settings) => {
+                    formData.append('formats', values.useGlobalSettings ? values.global.audio.format : settings.audio.format);
+                    formData.append('qualities', values.useGlobalSettings ? values.global.audio.bitrate : settings.audio.bitrate);
+                    formData.append('advanceSettings', values.useGlobalSettings ? JSON.stringify(values.global) : JSON.stringify(settings));
+                });
+
+                return formData;
+            },
+            onSuccess: (_, response) => {
+                toast.success('Files converted successfully!');
+                const filename = response.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || 'converted_audio';
+                downloadFile(response.data as Blob, filename);
+            },
+            onError(_, errorMessage) {
+                toast.error(errorMessage);
+                setError('root', { message: errorMessage });
+            },
+            onEnd: () => resetUploadProgress(),
+        });
     };
+
+    if (isPending) {
+        return <UploadProgressCard uploadState={uploadState} />;
+    }
 
     return (
         <div className="min-h-calc-full-height text-text-secondary p-2 sm:p-6">

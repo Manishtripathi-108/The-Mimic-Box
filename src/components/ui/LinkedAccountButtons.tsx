@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 
 import { removeLinkedAccount } from '@/actions/linkedAccount.actions';
 import { API_ROUTES } from '@/constants/routes.constants';
-import useSafeAwaitClient from '@/hooks/useSafeAwaitClient';
+import useSafeApiCall from '@/hooks/useSafeApiCall';
 import cn from '@/lib/utils/cn';
 
 export const ConnectAccount = ({
@@ -25,7 +25,7 @@ export const ConnectAccount = ({
     callBackUrl?: string;
 }) => {
     const pathName = usePathname();
-    const { isPending, makeApiCall } = useSafeAwaitClient<{ provider: LinkedAccountProvider }, string>();
+    const { isPending, makeApiCall } = useSafeApiCall<{ provider: LinkedAccountProvider }, string>();
 
     const handleConnect = async () => {
         await makeApiCall({
@@ -38,7 +38,7 @@ export const ConnectAccount = ({
                 toast.error(`Failed to connect ${account}`);
             },
             onSuccess(data) {
-                window.location.href = data;
+                if (data) window.location.href = data;
             },
         });
     };

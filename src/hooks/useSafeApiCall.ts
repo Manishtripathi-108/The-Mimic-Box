@@ -1,17 +1,20 @@
+// useSafeApiCall.ts
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
+import axios, { AxiosResponse, isAxiosError } from 'axios';
 
 import { MakeApiCallType, SuccessResponseOutput } from '@/lib/types/response.types';
 
 const ENABLE_DEBUG_LOGS = process.env.NODE_ENV === 'development';
 
-function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
+function useSafeApiCall<TReq = unknown, TRes = unknown>({
     apiClient = axios,
     retryCount = 0,
+    isExternalApiCall = false,
 }: {
     apiClient?: typeof axios;
     retryCount?: number;
+    isExternalApiCall?: boolean;
 } = {}) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -25,62 +28,43 @@ function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
     }, []);
 
     const makeApiCall = useCallback(
-        async ({
-            url,
-            method = 'get',
-            data = undefined,
-            params = undefined,
-            headers = {},
-            responseType = 'json',
-            onUploadProgress,
-            onStart,
-            onSuccess,
-            onError,
-            onEnd,
-        }: MakeApiCallType<TReq, TRes>) => {
+        async ({ onStart, onSuccess, onError, onEnd, ...requestConfig }: MakeApiCallType<TReq, TRes>) => {
             setIsPending(true);
             setError(null);
             let attempts = 0;
 
             try {
                 if (onStart) {
-                    if (ENABLE_DEBUG_LOGS) console.log('[useSafeAwaitClient] Executing onStart callback');
+                    if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] Executing onStart callback');
                     const startResult = await onStart();
                     if (startResult === false) {
                         setIsPending(false);
                         return;
+                    }
+                    if (startResult && !requestConfig.data && startResult !== true) {
+                        requestConfig.data = startResult;
                     }
                 }
 
                 while (attempts <= retryCount) {
                     try {
                         abortControllerRef.current = new AbortController();
-                        if (ENABLE_DEBUG_LOGS)
-                            console.log('[useSafeAwaitClient] Making API call:', { url, method, data, params, headers, responseType });
+                        if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] Making API call:', requestConfig);
 
-                        const response: AxiosResponse<SuccessResponseOutput<TRes>> = await apiClient({
-                            url,
-                            method,
-                            data,
-                            params,
-                            headers,
-                            responseType,
-                            signal: abortControllerRef.current.signal,
-                            onUploadProgress,
-                        } as AxiosRequestConfig);
+                        const response: AxiosResponse<SuccessResponseOutput<TRes>> = await apiClient(requestConfig);
 
-                        if (ENABLE_DEBUG_LOGS) console.log('[useSafeAwaitClient] API call successful:', response);
+                        if (!isMounted.current) return;
 
-                        if (isMounted.current) {
-                            if (response.data.success === true) {
-                                setData(response.data.payload || null);
-                                if (onSuccess && response.data.payload) {
-                                    onSuccess(response.data.payload, response);
-                                }
-                            } else {
-                                throw new Error(response.data.message);
-                            }
+                        if (isExternalApiCall) {
+                            onSuccess?.(null, response);
+                        } else if (response.data.success === true) {
+                            const payload = response.data.payload ?? null;
+                            setData(payload);
+                            onSuccess?.(payload, response);
+                        } else {
+                            throw new Error(response.data.message || 'An error occurred');
                         }
+
                         return;
                     } catch (err) {
                         attempts++;
@@ -98,8 +82,8 @@ function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
                         }
 
                         setError(errorMessage);
-                        console.error('[useSafeAwaitClient] Request failed:', err);
-                        onError?.(err);
+                        console.error('[useSafeApiCall] Request failed:', err);
+                        onError?.(err, errorMessage);
 
                         if (attempts > retryCount) break;
                     } finally {
@@ -109,17 +93,18 @@ function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
                     }
                 }
             } catch (startError) {
-                console.error('[useSafeAwaitClient] Error in onStart callback:', startError);
+                console.error('[useSafeApiCall] Error in onStart callback:', startError);
                 setError('An error occurred during initialization');
+                onError?.(startError, 'An error occurred during initialization');
+                setIsPending(false);
             }
         },
-        [apiClient, retryCount]
+        [apiClient, retryCount, isExternalApiCall]
     );
 
     useEffect(() => {
         isMounted.current = true;
-        if (ENABLE_DEBUG_LOGS) console.log('[useSafeAwaitClient] Component mounted');
-
+        if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] Component mounted');
         return () => {
             isMounted.current = false;
             cancelRequest('Component unmounted');
@@ -129,4 +114,4 @@ function useSafeAwaitClient<TReq = unknown, TRes = unknown>({
     return { isPending, error, data, makeApiCall, cancelRequest };
 }
 
-export default useSafeAwaitClient;
+export default useSafeApiCall;
