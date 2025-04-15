@@ -25,7 +25,6 @@ export const AnilistFilterSchema = z.object({
 });
 
 export const AudioSampleRatesSchema = z.enum(['no change', '44100 Hz', '48000 Hz', '96000 Hz']);
-export const AudioChannelsSchema = z.enum(['no change', 'mono', 'stereo']);
 export const AudioPlaybackSpeedsSchema = z.enum(['0.25x (Very Slow)', '0.5x (Slow)', '1.0x (Normal)', '1.5x (Fast)', '2.0x (Very Fast)']);
 export const AudioFormatsSchema = z.enum(['AAC', 'MP3', 'WMA', 'AIFF', 'FLAC', 'OGG', 'M4A', 'WAV']);
 export const AudioBitrateSchema = z.enum(['0', '64', '128', '192', '256', '320']);
@@ -36,8 +35,8 @@ export const audioAdvanceSettingsSchema = z.object({
     audio: z.object({
         format: AudioFormatsSchema.default('MP3'),
         volume: z.coerce.number().min(0).max(500).default(100),
-        channels: AudioChannelsSchema.default('no change'),
-        sampleRate: AudioSampleRatesSchema.default('44100 Hz'),
+        channels: z.enum(['0', '1', '2']).default('0'),
+        sampleRate: AudioSampleRatesSchema.default('no change'),
         bitrate: AudioBitrateSchema.default('128'),
     }),
     effects: z.object({

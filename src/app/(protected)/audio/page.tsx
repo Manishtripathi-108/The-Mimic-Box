@@ -48,7 +48,7 @@ export default function FileConverter() {
         name: Path<T_FormValues> | null;
     }>({ values: null, name: null });
 
-    const { isPending, makeApiCall } = useSafeApiCall({ isExternalApiCall: true });
+    const { isPending, makeApiCall } = useSafeApiCall();
     const { uploadState, resetUploadProgress, onUploadProgress } = useUploadProgress();
 
     const {
@@ -121,6 +121,7 @@ export default function FileConverter() {
     const handleConvert = async (values: T_FormValues) => {
         makeApiCall({
             url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
+            isExternalApiCall: true,
             method: 'post',
             responseType: 'blob',
             onUploadProgress,
@@ -150,8 +151,12 @@ export default function FileConverter() {
         });
     };
 
-    if (isPending) {
-        return <UploadProgressCard uploadState={uploadState} />;
+    if (isPending && uploadState.progress !== 100) {
+        return (
+            <div className="min-h-calc-full-height grid place-items-center p-2 sm:p-6">
+                <UploadProgressCard uploadState={uploadState} />
+            </div>
+        );
     }
 
     return (
@@ -271,7 +276,7 @@ export default function FileConverter() {
                     )}
                 </form>
 
-                {files.length > 1 && (
+                {files.length > 0 && (
                     <Modal
                         modalId="advancedSettingsModal"
                         onClose={() => setOpen({ values: null, name: null })}

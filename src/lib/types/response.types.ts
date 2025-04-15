@@ -34,8 +34,10 @@ export interface ErrorResponseOutput<T = undefined> {
 
 export type MakeApiCallType<TRequest, TResponse> = {
     data?: TRequest;
-    withRetry?: boolean;
     retryCount?: number;
+    retryDelay?: number;
+    isExternalApiCall?: boolean;
+    retryCondition?: (error: AxiosError<ErrorResponseOutput> | Error) => boolean;
     onStart?: () => Promise<void | boolean | TRequest> | void | boolean | TRequest;
     onSuccess?: (data: TResponse | null, response: AxiosResponse<SuccessResponseOutput<TResponse> | unknown>) => void;
     onError?: (error: AxiosError<ErrorResponseOutput> | Error | unknown, message: string) => void;

@@ -9,10 +9,9 @@ import { useForm } from 'react-hook-form';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';
-import { AUDIO_ADVANCED_SETTINGS_DEFAULTS } from '@/constants/client.constants';
+import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_CHANNEL_OPTIONS } from '@/constants/client.constants';
 import {
     AudioBitrateSchema,
-    AudioChannelsSchema,
     AudioFormatsSchema,
     AudioPlaybackSpeedsSchema,
     AudioSampleRatesSchema,
@@ -55,8 +54,14 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                             className="grid w-full grid-cols-2 gap-4">
                             <Select label="Format" name="audio.format" options={AudioFormatsSchema.options} control={control} />
                             <Select label="Bitrate Rate" name="audio.bitrate" options={AudioBitrateSchema.options} control={control} />
-                            <Select label="Channels" name="audio.channels" options={AudioChannelsSchema.options} control={control} />
-                            <Select label="Sample Rate" name="audio.sampleRate" options={AudioSampleRatesSchema.options} control={control} />
+                            <Select label="Channels" name="audio.channels" options={AUDIO_CHANNEL_OPTIONS} control={control} />
+                            <Select
+                                label="Sample Rate"
+                                classNames={{ field: 'capitalize' }}
+                                name="audio.sampleRate"
+                                options={AudioSampleRatesSchema.options}
+                                control={control}
+                            />
                             <Input label="Volume" type="number" max={500} min={0} name="audio.volume" control={control} />
                         </motion.div>
                     )}

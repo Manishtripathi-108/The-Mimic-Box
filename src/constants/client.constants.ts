@@ -168,12 +168,18 @@ export const AUDIO_BITRATE_OPTIONS = [
     { label: 'Best (320 kbps)', value: 320 },
 ];
 
+export const AUDIO_CHANNEL_OPTIONS = [
+    { label: 'Auto', value: '0' },
+    { label: 'Mono', value: '1' },
+    { label: 'Stereo', value: '2' },
+];
+
 export const AUDIO_ADVANCED_SETTINGS_DEFAULTS: T_AudioAdvanceSettings = {
     audio: {
         format: 'M4A',
-        channels: 'no change',
+        channels: '0',
         volume: 100,
-        sampleRate: '44100 Hz',
+        sampleRate: 'no change',
         bitrate: '128',
     },
     effects: {
