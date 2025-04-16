@@ -59,6 +59,7 @@
     --animate-zoom-in: zoom-in 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-zoom-out: zoom-out 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-waves: waves 5s linear infinite;
+    --animate-tape: tape 5s linear infinite;
 
     @keyframes slide-left-return {
         0% {
@@ -208,6 +209,15 @@
         100% {
             transform: scale(2);
             opacity: 0;
+        }
+    }
+
+    @keyframes tape {
+        0% {
+            transform: rotate(0deg) scale(0.4);
+        }
+        100% {
+            transform: rotate(-360deg) scale(0.4);
         }
     }
 }

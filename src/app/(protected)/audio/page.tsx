@@ -142,6 +142,7 @@ export default function FileConverter() {
                 toast.success('Files converted successfully!');
                 const filename = response.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || 'converted_audio';
                 downloadFile(response.data as Blob, filename);
+                reset(defaultValues);
             },
             onError(_, errorMessage) {
                 toast.error(errorMessage);
@@ -155,6 +156,17 @@ export default function FileConverter() {
         return (
             <div className="min-h-calc-full-height grid place-items-center p-2 sm:p-6">
                 <UploadProgressCard uploadState={uploadState} />
+            </div>
+        );
+    }
+
+    if (isPending && uploadState.progress === 100) {
+        return (
+            <div className="min-h-calc-full-height grid place-items-center p-2 sm:p-6">
+                <CardContainer contentClassName="w-full items-center flex-col flex justify-center" className="relative w-full max-w-md">
+                    <div className="via-highlight after:animate-tape before:animate-tape relative mt-6 h-20 w-40 bg-linear-174 from-black/0 from-49% via-50% to-black/0 to-51% before:absolute before:-right-5 before:bottom-12.5 before:size-9 before:rotate-0 before:rounded-full before:border-2 before:border-dashed before:border-black before:[box-shadow:0_0_0_4px_#000,_0_0_0_34px_var(--color-theme-highlight),_0_0_5px_34px_#00000000] before:[animation-duration:2s] after:absolute after:bottom-11 after:-left-4 after:size-9 after:rotate-0 after:rounded-full after:border-2 after:border-dashed after:border-black after:[box-shadow:0_0_0_4px_#000,_0_0_0_64px_var(--color-theme-highlight),_0_0_5px_64px_#00000000]"></div>
+                    <p className="font-alegreya text-text-primary text-center text-4xl tracking-wide">Processing...</p>
+                </CardContainer>
             </div>
         );
     }
@@ -284,7 +296,7 @@ export default function FileConverter() {
                         title="Advanced Settings">
                         {open.values && open.name && (
                             <AudioAdvancedSettings
-                                values={open.values}
+                                values={open.values!}
                                 onApply={(values) => {
                                     setValue(open.name!, values);
                                     closeModal('advancedSettingsModal');

@@ -53,7 +53,7 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                             exit={{ opacity: 0, x: -10 }}
                             className="grid w-full grid-cols-2 gap-4">
                             <Select label="Format" name="audio.format" options={AudioFormatsSchema.options} control={control} />
-                            <Select label="Bitrate Rate" name="audio.bitrate" options={AudioBitrateSchema.options} control={control} />
+                            <Select label="Bitrate Rate (kbps)" name="audio.bitrate" options={AudioBitrateSchema.options} control={control} />
                             <Select label="Channels" name="audio.channels" options={AUDIO_CHANNEL_OPTIONS} control={control} />
                             <Select
                                 label="Sample Rate"
@@ -108,7 +108,7 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
             <hr />
 
             <div className="flex justify-between px-4 pb-2">
-                <button className="button button-danger" title="Reset" type="button" onClick={() => reset(mergedValues)}>
+                <button className="button button-danger" title="Reset" type="button" onClick={() => reset(AUDIO_ADVANCED_SETTINGS_DEFAULTS)}>
                     Reset
                 </button>
                 <button title="Apply Changes" className="button button-highlight" type="submit">
