@@ -2,12 +2,10 @@
 
 import React, { useEffect, useRef } from 'react';
 
-import { Icon } from '@iconify/react';
-
 import Cell from '@/app/(public)/games/tic-tac-toe/_components/Cell';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { GameMode } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 
 const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
     const { state, makeMove, setMode } = useTicTacToeContext();
@@ -56,13 +54,7 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
                         {classicBoardState[macroIndex] ? (
                             <Icon
                                 key={macroIndex}
-                                icon={
-                                    classicBoardState[macroIndex] === 'D'
-                                        ? ICON_SET.DRAW
-                                        : classicBoardState[macroIndex] === 'X'
-                                          ? ICON_SET.CLOSE
-                                          : ICON_SET.CIRCLE
-                                }
+                                icon={classicBoardState[macroIndex] === 'D' ? 'draw' : classicBoardState[macroIndex] === 'X' ? 'close' : 'circle'}
                                 className="animate-zoom-in size-full rounded-md p-5 transition-transform duration-300 ease-in-out select-none"
                             />
                         ) : (

@@ -59,6 +59,7 @@
     --animate-zoom-in: zoom-in 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-zoom-out: zoom-out 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-waves: waves 5s linear infinite;
+    --animate-tape: tape 5s linear infinite;
 
     @keyframes slide-left-return {
         0% {
@@ -208,6 +209,15 @@
         100% {
             transform: scale(2);
             opacity: 0;
+        }
+    }
+
+    @keyframes tape {
+        0% {
+            transform: rotate(0deg) scale(0.4);
+        }
+        100% {
+            transform: rotate(-360deg) scale(0.4);
         }
     }
 }
@@ -398,17 +408,17 @@
         &::-webkit-slider-container {
             /* --value-percentage: ((value - min) / (max - min)) * 100 */
 
-            @apply m-1.5 h-3 rounded-full;
+            @apply border-secondary m-1.5 h-3 rounded-full border;
             background:
-                linear-gradient(var(--color-theme-accent), #aa1a00) 0 / var(--value-percentage) no-repeat,
-                linear-gradient(#ffd4d6, #e49fa2);
+                linear-gradient(var(--color-theme-accent), #af1e32) 0 / var(--value-percentage) no-repeat,
+                linear-gradient(var(--color-theme-primary), var(--color-theme-tertiary));
         }
 
         @variant dark {
             &::-webkit-slider-container {
                 background:
-                    linear-gradient(var(--color-theme-accent), #aa1a00) 0 / var(--value-percentage) no-repeat,
-                    linear-gradient(#334760, #141b26);
+                    linear-gradient(var(--color-theme-accent), #ff0022) 0 / var(--value-percentage) no-repeat,
+                    linear-gradient(var(--color-theme-primary), var(--color-theme-tertiary));
             }
         }
 
@@ -420,8 +430,8 @@
         &::-webkit-slider-thumb {
             @apply size-6 cursor-ew-resize rounded-full border-5 border-transparent shadow-xs shadow-black transition-transform duration-500;
             background:
-                linear-gradient(#d72100, var(--color-theme-accent)) padding-box,
-                linear-gradient(var(--color-theme-accent), #aa1a00) border-box;
+                linear-gradient(#eb2300, var(--color-theme-accent)) padding-box,
+                linear-gradient(var(--color-theme-accent), #af1e32) border-box;
         }
 
         &:focus {
@@ -540,18 +550,5 @@
 
     &:hover .checkbox-field:not(:disabled, :checked) ~ .form-text {
         @apply text-text-primary translate-x-2;
-    }
-}
-
-/* ------------------------------- slider ------------------------------- */
-@utility range-slider {
-    @apply bg-primary shadow-floating-xs relative h-2 w-full appearance-none rounded-full outline-hidden;
-
-    &::-webkit-slider-thumb {
-        @apply bg-accent shadow-floating-xs h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
-    }
-
-    &::-moz-range-thumb {
-        @apply bg-accent shadow-floating-xs relative h-6 w-6 cursor-pointer appearance-none rounded-full transition duration-300 ease-in-out;
     }
 }

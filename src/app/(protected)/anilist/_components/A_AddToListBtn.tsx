@@ -2,13 +2,12 @@
 
 import React from 'react';
 
-import { Icon } from '@iconify/react/dist/iconify.js';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { getUserMediaEntry, updateMediaProgress } from '@/actions/anilist.actions';
+import Icon from '@/components/ui/Icon';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
-import ICON_SET from '@/constants/icons';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
 import { AnilistMediaListStatus, AnilistMediaType } from '@/lib/types/anilist.types';
 import cn from '@/lib/utils/cn';
@@ -70,11 +69,11 @@ const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
             <button popoverTarget="add-to-list" disabled={isPending} className={cn('button button-highlight mt-4 gap-1 capitalize', className)}>
                 {isPending ? (
                     <>
-                        <Icon icon={ICON_SET.LOADING} className="size-5" /> Saving...
+                        <Icon icon="loading" className="size-5" /> Saving...
                     </>
                 ) : (
                     <>
-                        <Icon icon={ICON_SET.DOWN} className="size-5" /> {mediaStatus?.toLowerCase() ?? 'Add to list'}
+                        <Icon icon="down" className="size-5" /> {mediaStatus?.toLowerCase() ?? 'Add to list'}
                     </>
                 )}
             </button>

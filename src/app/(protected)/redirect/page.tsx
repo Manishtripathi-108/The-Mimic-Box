@@ -4,10 +4,9 @@ import React, { Suspense, useEffect } from 'react';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { Icon } from '@iconify/react';
 import { useSession } from 'next-auth/react';
 
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 
 let callBackUrlLocal = null;
@@ -25,7 +24,7 @@ const RedirectComponent = () => {
     return (
         <div className="grid h-screen place-items-center">
             <h1 className="text-accent font-alegreya text-center text-4xl">Redirecting...</h1>
-            <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-7" />}>
+            <Suspense fallback={<Icon icon="loading" className="size-7" />}>
                 <RedirectLogic />
             </Suspense>
         </div>

@@ -7,14 +7,13 @@ import { redirect } from 'next/navigation';
 
 import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as z from 'zod';
 
 import { editProfileAction } from '@/actions/user.actions';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { profileSchema } from '@/lib/schema/user.validations';
 
@@ -78,7 +77,7 @@ const UserProfileEdit = () => {
         <div className="shadow-floating-sm mx-auto max-w-lg rounded-lg p-6">
             {/* Header */}
             <header className="text-highlight mb-4 flex items-center gap-2 text-2xl">
-                <Icon icon={ICON_SET.EDIT_PROFILE} className="size-7" />
+                <Icon icon="editProfile" className="size-7" />
                 <h2 className="text-2xl font-semibold">Edit Profile</h2>
             </header>
 
@@ -95,7 +94,7 @@ const UserProfileEdit = () => {
                             Name
                         </label>
                         <div className="form-field-wrapper">
-                            <Icon icon={ICON_SET.PERSON} className="form-icon" />
+                            <Icon icon="person" className="form-icon" />
                             <input
                                 id="name"
                                 type="text"
@@ -115,7 +114,7 @@ const UserProfileEdit = () => {
                             Email Address
                         </label>
                         <div className="form-field-wrapper">
-                            <Icon icon={ICON_SET.EMAIL} className="form-icon" />
+                            <Icon icon="email" className="form-icon" />
                             <input
                                 id="email"
                                 type="email"
@@ -159,7 +158,7 @@ const UserProfileEdit = () => {
                         name="root.serverError"
                         render={({ message }) => (
                             <p aria-live="polite" className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                                <Icon icon={ICON_SET.ERROR} className="size-7 shrink-0" />
+                                <Icon icon="error" className="size-7 shrink-0" />
                                 {message}
                             </p>
                         )}

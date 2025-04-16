@@ -4,16 +4,16 @@ import React, { useState } from 'react';
 
 import Image from 'next/image';
 
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
-import { closeModal } from '@/components/Modals';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
+import Input from '@/components/ui/Input';
+import { closeModal } from '@/components/ui/Modals';
+import Select from '@/components/ui/Select';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
 import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
@@ -30,9 +30,9 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
     });
 
     const {
-        register,
+        control,
         handleSubmit,
-        formState: { errors, isSubmitting, isDirty },
+        formState: { isSubmitting, isDirty },
     } = useForm({
         resolver: zodResolver(validationSchema),
         defaultValues: { status: entry.status, progress: entry.progress || 0 },
@@ -93,48 +93,36 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
                 }`}
                 onClick={toggleLike}
                 disabled={isToggling}>
-                <Icon icon={ICON_SET.HEART} className="size-5 text-inherit" />
+                <Icon icon="heart" className="size-5 text-inherit" />
             </button>
 
             <form onSubmit={handleSubmit(onSubmit)} className="px-4 pb-4">
                 <div className="grid grid-cols-2 place-items-center gap-4">
-                    <div className="form-group">
-                        <label htmlFor="media_status" className="form-text">
-                            Status:
-                        </label>
-                        <select {...register('status')} id="media_status" data-invalid={!!errors.status} className="form-field capitalize">
-                            {AnilistMediaListStatusSchema.options.map((option) => (
-                                <option key={option} value={option}>
-                                    {option.toLowerCase()}
-                                </option>
-                            ))}
-                        </select>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="status" aria-live="polite" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="media_progress" className="form-text">
-                            Episode Progress:
-                        </label>
-                        <input
-                            {...register('progress', { valueAsNumber: true })}
-                            type="number"
-                            id="media_progress"
-                            min="0"
-                            max={maxProgress}
-                            data-invalid={!!errors.progress}
-                            className="form-field text-center"
-                        />
+                    <Select
+                        name="status"
+                        label="Status:"
+                        options={AnilistMediaListStatusSchema.options.map((option) => ({ value: option, label: option.toLowerCase() }))}
+                        control={control}
+                        classNames={{ field: 'capitalize' }}
+                        disabled={isToggling || isSubmitting}
+                    />
 
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="progress" aria-live="polite" />
-                    </div>
+                    <Input
+                        name="progress"
+                        label="Episode Progress"
+                        type="number"
+                        disabled={isToggling || isSubmitting}
+                        classNames={{ label: 'font-alegreya text-base' }}
+                        control={control}
+                    />
                 </div>
 
                 <div className="mt-8 flex justify-end space-x-2">
                     <button type="button" className="button button-danger" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
-                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Remove'}
+                        {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Remove'}
                     </button>
                     <button type="submit" className="button button-primary" disabled={isToggling || isSubmitting}>
-                        {isToggling || isSubmitting ? <Icon icon={ICON_SET.LOADING} className="size-5" /> : 'Save'}
+                        {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Save'}
                     </button>
                 </div>
             </form>

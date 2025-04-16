@@ -4,12 +4,13 @@ import Image from 'next/image';
 
 import A_AddToListBtn from '@/app/(protected)/anilist/_components/A_AddToListBtn';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
-import { IMAGE_URL, convertMonthNumberToName } from '@/constants/client.constants';
+import { IMAGE_URL } from '@/constants/client.constants';
 import { AnilistMediaWithRecommendations } from '@/lib/types/anilist.types';
+import { getMonthName } from '@/lib/utils/client.utils';
 
 export default function MediaDetail({ media }: { media: AnilistMediaWithRecommendations }) {
     const { title, startDate, bannerImage, coverImage, recommendations } = media;
-    const formattedDate = `${startDate.day} ${convertMonthNumberToName(startDate.month || 1)} ${startDate.year}`;
+    const formattedDate = `${startDate.day} ${getMonthName(startDate.month || 1)} ${startDate.year}`;
 
     return (
         <main className="bg-primary text-text-primary min-h-screen" itemScope itemType="https://schema.org/CreativeWork">

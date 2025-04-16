@@ -2,9 +2,8 @@
 
 import React from 'react';
 
-import { Icon } from '@iconify/react';
-
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
+import IconSet from '@/constants/icons.constants';
 import cn from '@/lib/utils/cn';
 
 type ModalProps = {
@@ -14,11 +13,11 @@ type ModalProps = {
     children: React.ReactNode;
     shouldClose?: () => boolean;
     onClose?: () => void;
-};
+} & React.HTMLProps<HTMLDialogElement>;
 
 type ConfirmationModalProps = {
     modalId: string;
-    icon: string;
+    icon: keyof typeof IconSet;
     iconClassName?: string;
     onConfirm: () => void;
     onCancel?: () => void;
@@ -28,7 +27,7 @@ type ConfirmationModalProps = {
     isConfirmDanger?: boolean;
     shouldClose?: () => boolean;
     onClose?: () => void;
-};
+} & React.HTMLProps<HTMLDialogElement>;
 
 export const closeModal = (modalId: string) => {
     const modalElement = document.getElementById(modalId) as HTMLDialogElement;
@@ -40,7 +39,7 @@ export const openModal = (modalId: string) => {
     if (modalElement) modalElement.showModal();
 };
 
-const Modal = ({ modalId, className = '', showCloseButton = true, children, shouldClose = () => true, onClose }: ModalProps) => {
+const Modal = ({ modalId, className = '', showCloseButton = true, children, shouldClose = () => true, onClose, ...props }: ModalProps) => {
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget && shouldClose()) {
             closeModal(modalId);
@@ -68,7 +67,8 @@ const Modal = ({ modalId, className = '', showCloseButton = true, children, shou
                 'open:block open:scale-100 open:opacity-100 open:delay-300 open:backdrop:scale-100',
                 'starting:open:scale-0 starting:open:opacity-0 starting:open:backdrop:scale-x-100 starting:open:backdrop:scale-y-0',
                 className
-            )}>
+            )}
+            {...props}>
             <div className="shadow-floating-md w-full max-w-full overflow-hidden rounded-xl">
                 {showCloseButton && (
                     <button
@@ -77,7 +77,7 @@ const Modal = ({ modalId, className = '', showCloseButton = true, children, shou
                         className="text-text-secondary hover:text-text-primary bg-secondary absolute top-2 right-2 z-20 cursor-pointer rounded-full p-1 text-lg select-none"
                         onClick={handleCloseClick}
                         aria-label="Close Modal">
-                        <Icon icon={ICON_SET.CLOSE} className="size-6" />
+                        <Icon icon="close" className="size-6" />
                     </button>
                 )}
                 <div className="scrollbar-thin max-h-[calc(100dvh-6rem)] w-full max-w-full overflow-y-auto overscroll-x-none">{children}</div>
@@ -98,6 +98,7 @@ export const ConfirmationModal = ({
     isConfirmDanger = false,
     shouldClose = () => true,
     onClose,
+    ...props
 }: ConfirmationModalProps) => {
     const handleCancelClick = () => {
         if (onCancel) onCancel();
@@ -111,7 +112,7 @@ export const ConfirmationModal = ({
     };
 
     return (
-        <Modal modalId={modalId} shouldClose={shouldClose} className="max-w-md" onClose={onClose}>
+        <Modal modalId={modalId} shouldClose={shouldClose} className="max-w-md" onClose={onClose} {...props}>
             <div className="relative max-h-full w-full max-w-md p-8 text-center md:p-10">
                 <Icon icon={icon} className={cn('mx-auto mb-4 size-12 text-red-500', iconClassName)} />
                 <h3 className="text-text-primary mb-5 text-lg font-normal">{children}</h3>

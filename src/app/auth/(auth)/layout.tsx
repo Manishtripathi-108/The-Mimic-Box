@@ -4,15 +4,14 @@ import { Suspense } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { Icon } from '@iconify/react';
 import { signIn } from 'next-auth/react';
 
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
-        <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>
+        <Suspense fallback={<Icon icon="loading" className="size-20" />}>
             <AuthLayoutWrapper>{children}</AuthLayoutWrapper>
         </Suspense>
     );
@@ -31,7 +30,7 @@ const AuthLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     return (
         <section className="bg-primary h-calc-full-height flex items-center justify-center px-4">
             <div className="shadow-floating-sm from-secondary to-tertiary w-full max-w-md rounded-2xl bg-linear-150 from-15% to-85% p-6">
-                <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>{children}</Suspense>
+                <Suspense fallback={<Icon icon="loading" className="size-20" />}>{children}</Suspense>
 
                 {/* Divider */}
                 <div className="mt-4 flex items-center gap-2">
@@ -47,7 +46,7 @@ const AuthLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
                         onClick={() => signInSocial('google')}
                         className="button w-full rounded-xl"
                         aria-label="Sign in with Google">
-                        <Icon icon={ICON_SET.GOOGLE} className="size-7" />
+                        <Icon icon="google" className="size-7" />
                         <span className="sr-only text-sm sm:not-sr-only">Sign in with Google</span>
                     </button>
                     <button
@@ -55,7 +54,7 @@ const AuthLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
                         onClick={() => signInSocial('github')}
                         className="button w-full rounded-xl"
                         aria-label="Sign in with GitHub">
-                        <Icon icon={ICON_SET.GITHUB} className="size-7" />
+                        <Icon icon="github" className="size-7" />
                         <span className="sr-only text-sm sm:not-sr-only">Sign in with GitHub</span>
                     </button>
                 </div>

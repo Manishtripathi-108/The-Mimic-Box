@@ -2,11 +2,13 @@
 
 import React from 'react';
 
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import Modal, { closeModal } from '@/components/Modals';
+import Checkbox from '@/components/ui/Checkbox';
+import Input from '@/components/ui/Input';
+import Modal, { closeModal } from '@/components/ui/Modals';
+import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { ANILIST_GENRES } from '@/constants/client.constants';
 import {
@@ -30,14 +32,7 @@ const ResetFilters: AnilistMediaFilters = {
 };
 
 const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; setFilters: (filters: AnilistMediaFilters) => void }) => {
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        reset,
-        watch,
-        formState: { errors },
-    } = useForm<AnilistMediaFilters>({
+    const { control, handleSubmit, setValue, reset, watch } = useForm<AnilistMediaFilters>({
         defaultValues: { ...filters, genres: filters.genres ?? [] },
         resolver: zodResolver(AnilistFilterSchema),
     });
@@ -51,13 +46,14 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
         <Modal modalId="modal-anilist-filters">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg bg-inherit p-6 shadow-lg">
                 {/* Search */}
-                <div className="form-group">
-                    <label htmlFor="filter-search" className="form-text font-alegreya text-base">
-                        Search:
-                    </label>
-                    <input {...register('search')} type="text" id="filter-search" className="form-field" placeholder="eg. Naruto" />
-                    <ErrorMessage errors={errors} name="search" as="p" className="text-sm text-red-500" />
-                </div>
+                <Input
+                    name="search"
+                    label="Search"
+                    type="text"
+                    placeholder="eg. Naruto"
+                    control={control}
+                    classNames={{ label: 'font-alegreya text-base' }}
+                />
 
                 {/* Format */}
                 <div className="form-group relative">
@@ -79,18 +75,13 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 </div>
 
                 {/* Genres */}
-                <div>
-                    <p className="form-text text-text-primary font-alegreya text-base">Genres:</p>
-                    <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                        {ANILIST_GENRES.map((genre) => (
-                            <label key={genre} className="form-checkbox flex items-center">
-                                <input type="checkbox" {...register('genres')} id={genre} value={genre} className="checkbox-field" />
-                                <span className="form-text">{genre}</span>
-                            </label>
-                        ))}
-                    </div>
-                    <ErrorMessage errors={errors} name="genres" as="p" className="text-sm text-red-500" />
-                </div>
+                <Checkbox
+                    options={ANILIST_GENRES}
+                    label="Genres:"
+                    classNames={{ container: 'mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3', label: ' text-text-primary font-alegreya text-base' }}
+                    name="genres"
+                    control={control}
+                />
 
                 {/* Status */}
                 <div className="form-group relative">
@@ -113,50 +104,34 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
 
                 {/* Sort & Year */}
                 <div className="flex gap-4">
-                    <div className="form-group">
-                        <label htmlFor="filter-sort" className="form-text font-alegreya text-base">
-                            Sort By:
-                        </label>
-                        <select {...register('sort')} id="filter-sort" className="form-field">
-                            {AnilistMediaSortOptionsSchema.options.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
-                        <ErrorMessage errors={errors} name="sort" as="p" className="text-sm text-red-500" />
-                    </div>
+                    {/* Sort By */}
+                    <Select
+                        control={control}
+                        name="sort"
+                        label="Sort By:"
+                        classNames={{ label: 'font-alegreya text-base' }}
+                        options={AnilistMediaSortOptionsSchema.options}
+                    />
 
-                    <div className="form-group relative">
-                        <label htmlFor="filter-season" className="form-text font-alegreya text-base">
-                            Season:
-                        </label>
-                        <select {...register('season')} id="filter-season" className="form-field capitalize">
-                            {AnilistFilterSchema.shape.season.options.map((option) => (
-                                <option key={option} value={option}>
-                                    {option.toLowerCase()}
-                                </option>
-                            ))}
-                        </select>
-                        <ErrorMessage errors={errors} name="season" as="p" className="text-sm text-red-500" />
-                    </div>
+                    {/* Season */}
+                    <Select
+                        control={control}
+                        label="Season:"
+                        name="season"
+                        classNames={{ label: 'font-alegreya text-base' }}
+                        options={AnilistFilterSchema.shape.season.options}
+                    />
 
                     {/* Year */}
-                    <div className="form-group">
-                        <label htmlFor="filter-year" className="form-text font-alegreya text-base">
-                            Year:
-                        </label>
-                        <input
-                            {...register('year', { valueAsNumber: true })}
-                            id="filter-year"
-                            type="number"
-                            min="1900"
-                            max={new Date().getFullYear()}
-                            className="form-field"
-                            placeholder="e.g., 2022"
-                        />
-                        <ErrorMessage errors={errors} name="year" as="p" className="text-sm text-red-500" />
-                    </div>
+                    <Input
+                        label="Year"
+                        name="year"
+                        type="number"
+                        placeholder="ie., 2022"
+                        control={control}
+                        classNames={{ label: 'font-alegreya text-base' }}
+                        rules={{ min: 1900, max: new Date().getFullYear() }}
+                    />
                 </div>
 
                 <div className="flex items-center justify-end gap-4">

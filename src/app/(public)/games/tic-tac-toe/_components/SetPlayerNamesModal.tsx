@@ -2,54 +2,40 @@
 
 import React from 'react';
 
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Modal, { closeModal } from '@/components/Modals';
+import Input from '@/components/ui/Input';
+import Modal, { closeModal } from '@/components/ui/Modals';
 
-// ✅ Define Zod schema for validation
-const playerSchema = z
-    .object({
-        playerX: z
-            .string()
-            .min(1, 'Player names cannot be empty!')
-            .max(30, 'Player names cannot exceed 30 characters.')
-            .regex(/^[a-zA-Z0-9 ]+$/, 'Only letters, numbers, and spaces allowed'),
-        playerO: z
-            .string()
-            .min(1, 'Player names cannot be empty!')
-            .max(30, 'Player names cannot exceed 30 characters.')
-            .regex(/^[a-zA-Z0-9 ]+$/, 'Only letters, numbers, and spaces allowed'),
-    })
-    .refine((data) => data.playerX !== data.playerO, {
-        message: 'Player names must be different.',
-        path: ['playerO'],
-    });
+const playerNameSchema = z
+    .string()
+    .min(1, 'Player names cannot be empty!')
+    .max(30, 'Player names cannot exceed 30 characters.')
+    .regex(/^[a-zA-Z0-9 ]+$/, 'Only letters, numbers, and spaces allowed')
+    .transform((val) => val.trim());
 
-// ✅ Define TypeScript type based on Zod schema
-type PlayerFormValues = z.infer<typeof playerSchema>;
+const playerFormSchema = z.object({ playerX: playerNameSchema, playerO: playerNameSchema }).refine((data) => data.playerX !== data.playerO, {
+    message: 'Player names must be different.',
+    path: ['playerO'],
+});
+
+type PlayerFormValues = z.infer<typeof playerFormSchema>;
 
 const SetPlayerNamesModal = () => {
     const { state, setPlayers } = useTicTacToeContext();
     const { playerXData, playerOData } = state;
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        setFocus,
-    } = useForm<PlayerFormValues>({
-        resolver: zodResolver(playerSchema),
+    const { control, handleSubmit } = useForm<PlayerFormValues>({
+        resolver: zodResolver(playerFormSchema),
         defaultValues: {
             playerX: playerXData.name || '',
             playerO: playerOData.name || '',
         },
     });
 
-    // ✅ Handle Form Submission
     const onSubmit = (data: PlayerFormValues) => {
         setPlayers('X', data.playerX);
         setPlayers('O', data.playerO);
@@ -62,48 +48,26 @@ const SetPlayerNamesModal = () => {
                 <h2 className="text-highlight font-alegreya mb-4 text-center text-xl font-bold tracking-wide">Set Player Names</h2>
 
                 {/* Player X Input */}
-                <div className="form-group">
-                    <label htmlFor="playerXInput" className="form-text">
-                        Player X
-                    </label>
-                    <div className="form-field-wrapper">
-                        <span className="form-icon flex items-center justify-center text-center text-2xl">X</span>
-                        <input
-                            id="playerXInput"
-                            className="form-field"
-                            type="text"
-                            placeholder="Player 1 Name"
-                            data-invalid={!!errors.playerX}
-                            {...register('playerX')}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === 'ArrowDown') {
-                                    e.preventDefault();
-                                    setFocus('playerO');
-                                }
-                            }}
-                        />
-                    </div>
-                    <ErrorMessage errors={errors} name="playerX" as="p" className="text-xs text-red-500" aria-live="polite" />
-                </div>
+                <Input
+                    name="playerX"
+                    iconName="close"
+                    iconPosition="right"
+                    label="Player X"
+                    type="text"
+                    placeholder="Player 1 Name"
+                    control={control}
+                />
 
                 {/* Player O Input */}
-                <div className="form-group">
-                    <label htmlFor="playerOInput" className="form-text">
-                        Player O
-                    </label>
-                    <div className="form-field-wrapper">
-                        <span className="form-icon flex items-center justify-center text-center text-2xl">O</span>
-                        <input
-                            id="playerOInput"
-                            className="form-field"
-                            type="text"
-                            data-invalid={!!errors.playerO}
-                            placeholder="Player 2 Name"
-                            {...register('playerO')}
-                        />
-                    </div>
-                    <ErrorMessage errors={errors} name="playerO" as="p" className="text-xs text-red-500" aria-live="polite" />
-                </div>
+                <Input
+                    name="playerO"
+                    label="Player O"
+                    iconPosition="right"
+                    iconName="circle"
+                    type="text"
+                    placeholder="Player 2 Name"
+                    control={control}
+                />
 
                 {/* Submit Button */}
                 <button id="submitBtn" type="submit" className="button button-highlight mt-6 w-full">

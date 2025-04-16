@@ -2,12 +2,11 @@ import React from 'react';
 
 import { Metadata } from 'next';
 
-import { Icon } from '@iconify/react';
 import { LinkedAccountProvider } from '@prisma/client';
 
 import { auth } from '@/auth';
+import Icon from '@/components/ui/Icon';
 import { ConnectAccount, DisconnectAccount } from '@/components/ui/LinkedAccountButtons';
-import ICON_SET from '@/constants/icons';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const metadata: Metadata = {
@@ -29,14 +28,14 @@ const UserLinkedAccounts = async () => {
                             key={account}
                             className="bg-primary border-primary shadow-floating-xs text-text-secondary hover:text-text-primary flex items-center justify-between rounded-lg border px-4 py-2 text-sm">
                             <div className="flex items-center gap-x-2">
-                                <Icon icon={ICON_SET[account.toUpperCase() as keyof typeof ICON_SET]} className="mr-2 inline-block size-6" />
+                                <Icon icon={account} className="mr-2 inline-block size-6" />
                                 <p className="font-medium capitalize">{account}</p>
                             </div>
 
                             {isLinked ? (
                                 <>
                                     <span className="text-center font-medium text-green-600">
-                                        <Icon icon={ICON_SET.LINK} className="mr-1 inline size-5" />
+                                        <Icon icon="link" className="mr-1 inline size-5" />
                                         Connected
                                     </span>
                                     <DisconnectAccount
@@ -48,7 +47,7 @@ const UserLinkedAccounts = async () => {
                             ) : (
                                 <>
                                     <span className="text-center font-medium text-red-600">
-                                        <Icon icon={ICON_SET.UNLINK} className="mr-1 inline size-5" />
+                                        <Icon icon="unlink" className="mr-1 inline size-5" />
                                         Not Connected
                                     </span>
                                     <ConnectAccount

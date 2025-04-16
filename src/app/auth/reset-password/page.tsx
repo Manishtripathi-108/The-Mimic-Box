@@ -2,10 +2,8 @@ import { Suspense } from 'react';
 
 import { Metadata } from 'next';
 
-import { Icon } from '@iconify/react';
-
-import ResetPasswordForm from '@/components/layout/auth/ResetPassword';
-import ICON_SET from '@/constants/icons';
+import ResetPasswordForm from '@/app/auth/_components/ResetPassword';
+import Icon from '@/components/ui/Icon';
 
 export const metadata: Metadata = {
     title: 'Reset Password',
@@ -14,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ResetPassword() {
     return (
-        <Suspense fallback={<Icon icon={ICON_SET.LOADING} className="size-20" />}>
+        <Suspense fallback={<Icon icon="loading" className="size-20" />}>
             <ResetPasswordForm />
         </Suspense>
     );

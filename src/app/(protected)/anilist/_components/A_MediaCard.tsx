@@ -5,12 +5,10 @@ import React, { memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Icon } from '@iconify/react';
-
-import { convertMonthNumberToName } from '@/constants/client.constants';
-import ICON_SET from '@/constants/icons';
+import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { AnilistMedia } from '@/lib/types/anilist.types';
+import { getMonthName } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
 const A_MediaCard = ({
@@ -60,7 +58,7 @@ const A_MediaCard = ({
                         onClick={() => onEdit(media)}
                         className="button absolute top-2 right-2 z-10 size-7 rounded-full p-1"
                         aria-label="Edit">
-                        <Icon icon={ICON_SET.EDIT} className="size-full" />
+                        <Icon icon="edit" className="size-full" />
                     </button>
                 )}
 
@@ -87,7 +85,7 @@ const A_MediaCard = ({
                                 onClick={() => onEdit(media)}
                                 className="button size-7 shrink-0 rounded-full p-1"
                                 aria-label="Edit">
-                                <Icon icon={ICON_SET.EDIT} className="size-full" />
+                                <Icon icon="edit" className="size-full" />
                             </button>
                         )}
                     </header>
@@ -111,7 +109,7 @@ const A_MediaCard = ({
                         <p>
                             <strong>Aired: </strong>
                             {media.startDate.month
-                                ? `${media.startDate.day} ${convertMonthNumberToName(media.startDate.month)} ${media.startDate.year}`
+                                ? `${media.startDate.day} ${getMonthName(media.startDate.month)} ${media.startDate.year}`
                                 : 'Unknown'}
                         </p>
                         <p>
@@ -133,15 +131,15 @@ const A_MediaCard = ({
                     {/* Stats */}
                     <footer className="flex items-center justify-between border-t pt-4 text-sm *:flex *:items-center *:gap-1">
                         <div>
-                            <Icon icon={ICON_SET.SMILE} className="size-4 text-green-500" />
+                            <Icon icon="smile" className="size-4 text-green-500" />
                             <span>{media.averageScore}%</span>
                         </div>
                         <div>
-                            <Icon icon={ICON_SET.HEART} className="size-4 text-red-500" />
+                            <Icon icon="heart" className="size-4 text-red-500" />
                             <span>{media.favourites}</span>
                         </div>
                         <div>
-                            <Icon icon={ICON_SET.EYE} className="size-4 text-blue-400" />
+                            <Icon icon="eye" className="size-4 text-blue-400" />
                             <span>{media.popularity}</span>
                         </div>
                     </footer>

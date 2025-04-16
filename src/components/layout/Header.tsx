@@ -4,10 +4,8 @@ import React, { useEffect } from 'react';
 
 import Link from 'next/link';
 
-import { Icon } from '@iconify/react';
-
+import Icon from '@/components/ui/Icon';
 import InstallPWAButton from '@/components/ui/InstallPWAButton';
-import ICON_SET from '@/constants/icons';
 
 import ProfileDropdown from './ProfileDropdown';
 import Sidebar from './Sidebar';
@@ -61,13 +59,13 @@ const Header = () => {
                         const sidebar = document.getElementById('sidebar') as HTMLDialogElement;
                         sidebar?.showModal();
                     }}>
-                    <Icon icon={ICON_SET.MENU} className="size-6" />
+                    <Icon icon="menu" className="size-6" />
                 </button>
 
                 <div className="flex w-full items-center justify-center">
                     <Link href="/" className="text-text-primary ml-5 flex items-center gap-2">
                         <p className="sr-only">Go to Home</p>
-                        <Icon icon={ICON_SET.APP_LOGO} className="size-8" />
+                        <Icon icon="appLogo" className="size-8" />
                     </Link>
                 </div>
 

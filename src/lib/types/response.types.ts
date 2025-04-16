@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 /** Shared base type for API responses */
 interface BaseResponse {
@@ -33,18 +33,13 @@ export interface ErrorResponseOutput<T = undefined> {
 }
 
 export type MakeApiCallType<TRequest, TResponse> = {
-    url: string;
-    method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
     data?: TRequest;
-    headers?: Record<string, string>;
-    params?: Record<string, unknown>;
-    withCredentials?: boolean;
-    withRetry?: boolean;
     retryCount?: number;
-    responseType?: 'json' | 'text' | 'blob' | 'arraybuffer' | 'document' | 'stream';
-    onUploadProgress?: (progressEvent: ProgressEvent) => void;
-    onStart?: () => Promise<void | boolean> | void | boolean;
-    onSuccess?: (data: TResponse, response: AxiosResponse<SuccessResponseOutput<TResponse>>) => void;
-    onError?: (error: AxiosError<ErrorResponseOutput> | Error | unknown) => void;
+    retryDelay?: number;
+    isExternalApiCall?: boolean;
+    retryCondition?: (error: AxiosError<ErrorResponseOutput> | Error) => boolean;
+    onStart?: () => Promise<void | boolean | TRequest> | void | boolean | TRequest;
+    onSuccess?: (data: TResponse | null, response: AxiosResponse<SuccessResponseOutput<TResponse> | unknown>) => void;
+    onError?: (error: AxiosError<ErrorResponseOutput> | Error | unknown, message: string) => void;
     onEnd?: () => void;
-};
+} & AxiosRequestConfig<TRequest>;
