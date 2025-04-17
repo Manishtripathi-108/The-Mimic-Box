@@ -121,7 +121,7 @@ export default function FileConverter() {
     };
 
     const handleConvert = async (values: T_FormValues) => {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'production') {
             makeApiCall({
                 url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
                 isExternalApiCall: true,
