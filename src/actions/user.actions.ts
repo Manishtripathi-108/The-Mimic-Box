@@ -1,5 +1,6 @@
 'use server';
 
+import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
 import { z } from 'zod';
 
@@ -36,9 +37,11 @@ export const editProfileAction = async (
 
     if (image) {
         const imageBuffer = await image.arrayBuffer();
+        const [error, buffer] = await safeAwait(sharp(imageBuffer).resize(640, 640).toFormat('jpg').toBuffer());
+        if (error) return createErrorReturn('Failed to process image', error);
 
         const uploadResponse = await uploadToCloud({
-            file: Buffer.from(imageBuffer),
+            file: Buffer.from(buffer),
             destinationFolder: 'user/profile-images',
             type: 'image',
         });
