@@ -1,4 +1,5 @@
-import { FileTypesMap, T_AudioAdvanceSettings } from '@/lib/types/client.types';
+import { FileTypesMap } from '@/lib/types/client.types';
+import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 
 export const IMAGE_URL = {
     APP_LOGO: 'https://res.cloudinary.com/dra73suxl/image/upload/v1744229205/mimic_logo_tb4e9r.png',

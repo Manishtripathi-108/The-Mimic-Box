@@ -14,7 +14,7 @@ import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { closeModal } from '@/components/ui/Modals';
 import Select from '@/components/ui/Select';
-import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
+import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
 import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
 const modalId = 'modal-anilist-edit-media';

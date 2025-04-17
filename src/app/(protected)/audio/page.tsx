@@ -20,8 +20,8 @@ import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/const
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import useUploadProgress from '@/hooks/useUploadProgress';
-import { AudioFormatsSchema } from '@/lib/schema/client.validations';
-import { T_AudioAdvanceSettings } from '@/lib/types/client.types';
+import { AudioFormatsSchema } from '@/lib/schema/audio.validations';
+import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { downloadFile } from '@/lib/utils/file.utils';
 
 const MAX_SIZE_MB = 50;

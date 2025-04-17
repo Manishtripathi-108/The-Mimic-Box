@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { getUserMediaEntry, updateMediaProgress } from '@/actions/anilist.actions';
 import Icon from '@/components/ui/Icon';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
-import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
+import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
 import { AnilistMediaListStatus, AnilistMediaType } from '@/lib/types/anilist.types';
 import cn from '@/lib/utils/cn';
 

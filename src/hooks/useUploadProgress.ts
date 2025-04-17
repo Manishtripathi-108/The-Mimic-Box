@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { AxiosProgressEvent } from 'axios';
 
 import { T_UploadState } from '@/lib/types/client.types';
-import { formatDuration, formatFileSize } from '@/lib/utils/file.utils';
+import { formatDuration } from '@/lib/utils/core.utils';
+import { formatFileSize } from '@/lib/utils/file.utils';
 
 const UPLOAD_PROGRESS: T_UploadState = {
     loaded: 0,
