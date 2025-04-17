@@ -94,7 +94,7 @@ export const extractAudioMetadata = async (
 export const editAudioMetadata = async (
     fileUrl: string,
     metadata: FfprobeData['format']['tags'],
-    coverImagePath: string
+    coverImagePath: string | null
 ): Promise<SuccessResponseOutput<{ fileUrl: string }> | ErrorResponseOutput> => {
     try {
         if (!metadata) return createErrorReturn('No metadata provided');
@@ -137,6 +137,8 @@ export const convertAudioFormat = async (
         const outputFilePath = getTempPath('audio', `converted_${fileName.split('.')[0]}.${format}`);
         await createDirectoryIfNotExists(getTempPath('audio'));
 
+        console.log('Converting audio format:', options);
+
         const command = ffmpeg(fileUrl);
 
         // Handle AAC encoder if m4a
@@ -150,7 +152,7 @@ export const convertAudioFormat = async (
 
         // Audio settings
         if (options.audio.channels !== '0') command.audioChannels(Number(options.audio.channels));
-        if (options.audio.sampleRate) command.audioFrequency(parseInt(options.audio.sampleRate));
+        if (options.audio.sampleRate !== 'no change') command.audioFrequency(parseInt(options.audio.sampleRate));
         if (options.trim.trimStart) command.setStartTime(options.trim.trimStart);
         if (options.trim.trimEnd) command.setDuration(options.trim.trimEnd);
 

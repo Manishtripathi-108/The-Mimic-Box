@@ -3,12 +3,14 @@
 import { existsSync } from 'fs';
 import { extname } from 'path';
 import sharp from 'sharp';
+import { v4 as uuidV4 } from 'uuid';
 
 import { AudioFileValidationSchema } from '@/lib/schema/audio.validations';
 import { convertAudioFormat, editAudioMetadata, extractAudioMetadata } from '@/lib/services/audio.service';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
+import { createZipFile } from '@/lib/utils/archiver.utils';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
-import { cleanupFiles, cleanupFilesAfterDelay, getTempPath, saveUploadedFile } from '@/lib/utils/file-server-only.utils';
+import { cleanupFiles, cleanupFilesAfterDelay, createDirectoryIfNotExists, getTempPath, saveUploadedFile } from '@/lib/utils/file-server-only.utils';
 import { safeAwait, safeAwaitAll } from '@/lib/utils/safeAwait.utils';
 
 export const handleExtractAudioMetadata = async (file: File) => {
@@ -60,77 +62,68 @@ export const handleEditMetadata = async (fileName: string, metaTags: string, cov
     return createSuccessReturn(result.message, { downloadUrl: result.payload.fileUrl, fileName: `edited_audio${extname(fileName)}` });
 };
 
-// export const handleConvertAudio = async (files: File[], settings: T_AudioAdvanceSettings | T_AudioAdvanceSettings[]) => {
-//     if (!files || files.length === 0 || !settings || (Array.isArray(settings) && settings.length === 0)) {
-//         return createErrorReturn('No ');
-//     }
+export const handleConvertAudio = async (files: File[], settings: T_AudioAdvanceSettings | T_AudioAdvanceSettings[]) => {
+    if (!files.length || !settings || (Array.isArray(settings) && !settings.length)) {
+        return createErrorReturn('No files or settings provided.');
+    }
 
-//     let downloadFilePath = null;
+    if (Array.isArray(settings) && settings.length !== files.length) {
+        return createErrorReturn('Settings length must match the number of files.');
+    }
 
-//     const parsedFile = AudioFileValidationSchema.safeParse(files);
-//     if (!parsedFile.success) return createErrorReturn('Invalid', null, parsedFile.error.errors);
+    const normalizedSettings = Array.isArray(settings) ? settings : Array(files.length).fill(settings);
 
-//     const savedFiles = await safeAwaitAll(
-//         parsedFile.data.map((file) =>
-//             saveUploadedFile({
-//                 file,
-//                 destinationFolder: 'audio',
-//                 isTemporary: true,
-//             })
-//         )
-//     );
+    const validationResult = AudioFileValidationSchema.safeParse(files);
+    if (!validationResult.success) {
+        return createErrorReturn('Invalid audio files.', null, validationResult.error.errors);
+    }
 
-//     const validFileDetails = savedFiles.flatMap(([, fileDetails]) => (fileDetails ? [fileDetails] : []));
-//     if (validFileDetails.length === 0) return createErrorReturn('Error saving the audio file.');
+    const savedResults = await safeAwaitAll(
+        validationResult.data.map((file) =>
+            saveUploadedFile({
+                file,
+                destinationFolder: 'audio',
+                isTemporary: true,
+            })
+        )
+    );
 
-//     // Convert each file
-//     if (validFileDetails.length === 1) {
-//         const response = await convertAudioFormat(
-//             validFileDetails[0].fullPath,
-//             validFileDetails[0]?.fileName,
-//             formats?.toLowerCase(),
-//             qualities?.toLowerCase(),
-//             JSON.parse(advanceSettings) || {}
-//         );
-//         if (response.success) downloadFilePath = response.payload.fileUrl;
-//         cleanupFiles([req.files[0].path]);
-//     } else {
-//         const convertedFiles = [];
+    const validFiles = savedResults.flatMap(([, result]) => (result ? [result] : []));
 
-//         await Promise.all(
-//             req.files.map(async (file, index) => {
-//                 const { success, fileUrl } = await convertAudioFormat(
-//                     file.path,
-//                     file?.originalname,
-//                     formats[index]?.toLowerCase(),
-//                     qualities[index]?.toLowerCase(),
-//                     JSON.parse(advanceSettings[index]) || {}
-//                 );
-//                 if (success) convertedFiles.push(fileUrl);
-//                 cleanupFiles([file.path]);
-//             })
-//         );
+    if (!validFiles.length) {
+        return createErrorReturn('Error saving the audio files.');
+    }
 
-//         if (convertedFiles.length === 0) {
-//             return createErrorReturn('Failed to convert any files');
-//         }
+    const convertedFileUrls: string[] = [];
 
-//         // Create ZIP file
-//         downloadFilePath = getTempPath('zip', `converted_${Date.now()}.zip`);
-//         await createDirectoryIfNotExists(getTempPath('zip'));
-//         await createZipFile(convertedFiles, downloadFilePath);
+    await Promise.all(
+        validFiles.map(async (fileDetail, i) => {
+            const result = await convertAudioFormat(fileDetail.fullPath, fileDetail.fileName, normalizedSettings[i]);
 
-//         // Delete converted files after zipping
-//         cleanupFiles(convertedFiles);
-//     }
+            if (result.success) {
+                convertedFileUrls.push(result.payload.fileUrl);
+            }
 
-//     // Send ZIP file as response
-//     res.download(downloadFilePath, `converted_${Date.now()}.${extname(downloadFilePath)}`, (err) => {
-//         if (err) {
-//             console.error('Error sending ZIP file:', err);
-//             res.status(500).json({ success: false, message: 'Failed to send zip file' });
-//         } else {
-//             setTimeout(() => cleanupFiles([downloadFilePath]), process.env.TEMP_FILE_DELETE_DELAY);
-//         }
-//     });
-// };
+            cleanupFiles([fileDetail.fullPath]);
+        })
+    );
+
+    if (!convertedFileUrls.length) {
+        return createErrorReturn('Failed to convert any files.');
+    }
+
+    const zipDir = getTempPath('zip');
+    const zipFileName = `converted_${Date.now()}.zip`;
+    const zipFilePath = getTempPath('zip', zipFileName);
+
+    await createDirectoryIfNotExists(zipDir);
+    await createZipFile(convertedFileUrls, zipFilePath);
+
+    cleanupFiles(convertedFileUrls);
+    cleanupFilesAfterDelay([zipFilePath], 60);
+
+    return createSuccessReturn('Files converted successfully!', {
+        downloadUrl: zipFilePath,
+        fileName: `converted_${uuidV4()}.zip`,
+    });
+};

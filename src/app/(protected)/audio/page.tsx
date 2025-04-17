@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { Path, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
+import { handleConvertAudio } from '@/actions/audio.actions';
 import AudioAdvancedSettings from '@/app/(protected)/audio/_components/AudioAdvancedSettings';
 import UploadProgressCard from '@/components/layout/UploadProgressCard';
 import CardContainer from '@/components/ui/CardContainer';
@@ -48,7 +49,7 @@ export default function FileConverter() {
         name: Path<T_FormValues> | null;
     }>({ values: null, name: null });
 
-    const { isPending, makeApiCall } = useSafeApiCall();
+    const { makeApiCall, isPending } = useSafeApiCall();
     const { uploadState, resetUploadProgress, onUploadProgress } = useUploadProgress();
 
     const {
@@ -58,9 +59,10 @@ export default function FileConverter() {
         setValue,
         watch,
         setError,
+
         clearErrors,
         reset,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm<T_FormValues>({ defaultValues });
 
     const { append, remove } = useFieldArray({ control, name: 'fileSettings' });
@@ -119,37 +121,53 @@ export default function FileConverter() {
     };
 
     const handleConvert = async (values: T_FormValues) => {
-        makeApiCall({
-            url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
-            isExternalApiCall: true,
-            method: 'post',
-            responseType: 'blob',
-            onUploadProgress,
-            headers: { 'Content-Type': 'multipart/form-data' },
-            onStart: () => {
-                const formData = new FormData();
-                values.files.forEach((file) => formData.append('files', file));
+        if (process.env.NODE_ENV === 'development') {
+            makeApiCall({
+                url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
+                isExternalApiCall: true,
+                method: 'post',
+                responseType: 'blob',
+                onUploadProgress,
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onStart: () => {
+                    const formData = new FormData();
+                    values.files.forEach((file) => formData.append('files', file));
 
-                values.fileSettings.forEach((settings) => {
-                    formData.append('formats', values.useGlobalSettings ? values.global.audio.format : settings.audio.format);
-                    formData.append('qualities', values.useGlobalSettings ? values.global.audio.bitrate : settings.audio.bitrate);
-                    formData.append('advanceSettings', values.useGlobalSettings ? JSON.stringify(values.global) : JSON.stringify(settings));
-                });
+                    values.fileSettings.forEach((settings) => {
+                        formData.append('formats', values.useGlobalSettings ? values.global.audio.format : settings.audio.format);
+                        formData.append('qualities', values.useGlobalSettings ? values.global.audio.bitrate : settings.audio.bitrate);
+                        formData.append('advanceSettings', values.useGlobalSettings ? JSON.stringify(values.global) : JSON.stringify(settings));
+                    });
 
-                return formData;
-            },
-            onSuccess: (_, response) => {
-                toast.success('Files converted successfully!');
-                const filename = response.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || 'converted_audio';
-                downloadFile(response.data as Blob, filename);
+                    return formData;
+                },
+                onSuccess: (_, response) => {
+                    toast.success('Files converted successfully!');
+                    const filename = response.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || 'converted_audio';
+                    downloadFile(response.data as Blob, filename);
+                    reset(defaultValues);
+                },
+                onError(_, errorMessage) {
+                    toast.error(errorMessage);
+                    setError('root', { message: errorMessage });
+                },
+                onEnd: () => resetUploadProgress(),
+            });
+        } else {
+            const response = await handleConvertAudio(
+                values.files,
+                values.files.length < 2 || values.useGlobalSettings ? values.global : values.fileSettings
+            );
+            if (!response.success) {
+                toast.error(response.message);
+                setError('root', { message: response.message });
+                return;
+            } else {
+                toast.success(response.message);
+                downloadFile(response.payload.downloadUrl, response.payload.fileName);
                 reset(defaultValues);
-            },
-            onError(_, errorMessage) {
-                toast.error(errorMessage);
-                setError('root', { message: errorMessage });
-            },
-            onEnd: () => resetUploadProgress(),
-        });
+            }
+        }
     };
 
     if (isPending && uploadState.progress !== 100) {
@@ -160,7 +178,7 @@ export default function FileConverter() {
         );
     }
 
-    if (isPending && uploadState.progress === 100) {
+    if ((isPending && uploadState.progress === 100) || isSubmitting) {
         return (
             <div className="min-h-calc-full-height grid place-items-center p-2 sm:p-6">
                 <CardContainer contentClassName="w-full items-center flex-col flex justify-center" className="relative w-full max-w-md">
@@ -179,7 +197,7 @@ export default function FileConverter() {
 
                 <form onSubmit={handleSubmit(handleConvert)}>
                     {files.length === 0 ? (
-                        <FileUpload onFilesSelected={handleFileSelect} maxSizeMB={MAX_SIZE_MB} maxFiles={MAX_FILES} />
+                        <FileUpload onFilesSelected={handleFileSelect} accept={ACCEPTED_TYPES} maxSizeMB={MAX_SIZE_MB} maxFiles={MAX_FILES} />
                     ) : (
                         <CardContainer contentClassName="space-y-6">
                             <input id="file-upload" type="file" multiple accept={ACCEPTED_TYPES} className="hidden" onChange={handleFileSelect} />
