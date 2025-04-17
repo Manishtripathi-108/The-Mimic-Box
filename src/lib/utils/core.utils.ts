@@ -49,3 +49,30 @@ export const categoryTitle = (category?: AnilistSearchCategories) => {
             return;
     }
 };
+
+/**
+ * Converts seconds into a human-readable duration.
+ *
+ * @param seconds - The number of seconds.
+ * @returns A formatted duration string (e.g., "1d 2h 30min 5s").
+ */
+export const formatDuration = (seconds: number): string => {
+    if (seconds < 1) return 'Less than 1s';
+
+    const days = Math.floor(seconds / 86400);
+    seconds -= days * 86400;
+
+    const hours = Math.floor(seconds / 3600);
+    seconds -= hours * 3600;
+
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    const parts: string[] = [];
+    if (days) parts.push(`${days}d`);
+    if (hours) parts.push(`${hours}h`);
+    if (minutes) parts.push(`${minutes}min`);
+    if (seconds) parts.push(`${Math.floor(seconds)}s`);
+
+    return parts.join(' ') || '0s';
+};

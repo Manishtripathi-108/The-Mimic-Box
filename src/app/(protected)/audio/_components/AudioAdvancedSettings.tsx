@@ -16,8 +16,8 @@ import {
     AudioPlaybackSpeedsSchema,
     AudioSampleRatesSchema,
     audioAdvanceSettingsSchema,
-} from '@/lib/schema/client.validations';
-import { T_AudioAdvanceSettings } from '@/lib/types/client.types';
+} from '@/lib/schema/audio.validations';
+import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 
 const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSettings; onApply: (data: T_AudioAdvanceSettings) => void }) => {
     const [currentTab, setCurrentTab] = useState<'Audio' | 'Effects' | 'Trim'>('Audio');

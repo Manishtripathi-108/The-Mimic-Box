@@ -39,7 +39,7 @@ export const editProfileAction = async (
 
         const uploadResponse = await uploadToCloud({
             file: Buffer.from(imageBuffer),
-            destinationFolder: 'mimic/profile-images',
+            destinationFolder: 'user/profile-images',
             type: 'image',
         });
 

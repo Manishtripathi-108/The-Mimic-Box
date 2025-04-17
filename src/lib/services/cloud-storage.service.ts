@@ -5,7 +5,7 @@ import cloudinary from '@/lib/config/cloudinary.config';
 import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
 import { CloudUploadParams, CloudUploadResult } from '@/lib/types/server.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
-import { cleanupFiles } from '@/lib/utils/file-path.utils';
+import { cleanupFiles } from '@/lib/utils/file-server-only.utils';
 
 /**
  * Uploads a file to Cloud.
@@ -14,12 +14,13 @@ export const uploadToCloud = async ({
     file,
     destinationFolder,
     type = 'image',
+    isTemporary = false,
     removeLocalCopy = true,
 }: CloudUploadParams): Promise<SuccessResponseOutput<CloudUploadResult> | ErrorResponseOutput> => {
     try {
         const uploadOptions: UploadApiOptions = {
             resource_type: type,
-            folder: destinationFolder,
+            folder: `mimic-box/${isTemporary ? 'temp/' : ''}${destinationFolder}`,
         };
 
         if (typeof file === 'string' && !existsSync(file)) {

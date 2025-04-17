@@ -6,7 +6,7 @@ import {
     AnilistMediaListStatusSchema,
     AnilistMediaSeasonSchema,
     AnilistMediaStatusSchema,
-} from '@/lib/schema/client.validations';
+} from '@/lib/schema/anilist.validations';
 
 /* ----------------------------- Core Types ----------------------------- */
 

@@ -4,42 +4,39 @@ import { isAxiosError } from 'axios';
 
 import { ErrorResponseInput, ErrorResponseOutput, SuccessResponseInput, SuccessResponseOutput } from '@/lib/types/response.types';
 
-/**
- * Creates a standardized success response.
- */
-export const createSuccessResponse = <T>({ message, status = 200, payload }: SuccessResponseInput<T>): NextResponse =>
-    NextResponse.json<SuccessResponseOutput<T>>({ success: true, message, payload }, { status });
+// Creates a standardized success response.
+export const createSuccessResponse = <T = undefined>({ message = 'Success', status = 200, payload }: SuccessResponseInput<T>): NextResponse =>
+    NextResponse.json<SuccessResponseOutput<T>>({ success: true, message, payload: payload as T }, { status });
 
-/**
- * Returns a standardized success object.
- */
-export const createSuccessReturn = <T>(message: string, payload?: T): SuccessResponseOutput<T> => ({ success: true, message, payload });
+// Returns a standardized success object.
+export const createSuccessReturn = <T = undefined>(message: string, payload?: T): SuccessResponseOutput<T> => ({
+    success: true,
+    message,
+    payload: payload as T,
+});
 
-/**
- * Creates a standardized error response.
- */
-export const createErrorResponse = <T>({
+// Creates a standardized error response.
+export const createErrorResponse = <T = undefined>({
     message = 'Internal Server Error',
     status = 500,
     error,
     extraData,
 }: ErrorResponseInput<T>): NextResponse => {
-    if (error) console.error('[API Error]:', error);
-
-    return NextResponse.json<ErrorResponseOutput<T>>({ success: false, message, error, extraData }, { status });
-};
-
-/**
- * Returns a standardized error object.
- */
-export const createErrorReturn = <T>(message: string, error?: Record<string, unknown> | Error, extraData?: T): ErrorResponseOutput<T> => {
     console.error(message, error);
-    return { success: false, message, error, extraData };
+    return NextResponse.json<ErrorResponseOutput<T>>({ success: false, message, error, extraData: extraData as T }, { status });
 };
 
-/**
- * Extracts relevant rate limit headers from an Axios error response.
- */
+// Creates a structured error response.
+export const createErrorReturn = <T = undefined>(
+    message: string,
+    error?: Record<string, unknown> | Error | null,
+    extraData?: T
+): ErrorResponseOutput<T> => {
+    console.error(message, error);
+    return { success: false, message, error, extraData: extraData as T };
+};
+
+/* --------------------------------- Anilist -------------------------------- */
 const extractRateLimitHeaders = (error: unknown) => {
     if (isAxiosError(error) && error.response?.headers) {
         return {
@@ -50,9 +47,7 @@ const extractRateLimitHeaders = (error: unknown) => {
     return undefined;
 };
 
-/**
- * Handles API errors from AniList, extracting rate limit headers if available.
- */
+// Creates a structured error response for AniList API errors.
 export const createAniListError = (message: string, error?: unknown): NextResponse => {
     if (isAxiosError(error) && error.response) {
         return createErrorResponse({
@@ -69,9 +64,7 @@ export const createAniListError = (message: string, error?: unknown): NextRespon
     });
 };
 
-/**
- * Returns a structured error response for AniList API errors, with optional rate limit headers.
- */
+// Creates a structured error return for AniList API errors.
 export const createAniListErrorReturn = (
     message: string,
     error?: unknown

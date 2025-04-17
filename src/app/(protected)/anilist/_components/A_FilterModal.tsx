@@ -16,7 +16,7 @@ import {
     AnilistMediaFormatSchema,
     AnilistMediaSortOptionsSchema,
     AnilistMediaStatusSchema,
-} from '@/lib/schema/client.validations';
+} from '@/lib/schema/anilist.validations';
 import { AnilistMediaFilters, AnilistMediaFormat, AnilistMediaStatus } from '@/lib/types/anilist.types';
 
 const AnilistMediaFormatTabs = AnilistMediaFormatSchema.options.map((option) => option.replace('_', ' ').toLowerCase());

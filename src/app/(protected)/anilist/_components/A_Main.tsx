@@ -11,7 +11,7 @@ import Modal, { openModal } from '@/components/ui/Modals';
 import TabNavigation from '@/components/ui/TabNavigation';
 import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
 import usePagination from '@/hooks/usePagination';
-import { AnilistMediaListStatusSchema } from '@/lib/schema/client.validations';
+import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
 import {
     AnilistFavourites,
     AnilistMedia,
