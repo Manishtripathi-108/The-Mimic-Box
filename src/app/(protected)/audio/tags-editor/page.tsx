@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
+import { handleExtractAudioMetaTags } from '@/actions/audio.actions';
 import UploadProgressCard from '@/components/layout/UploadProgressCard';
 import CardContainer from '@/components/ui/CardContainer';
 import FileUpload from '@/components/ui/FileUpload';
@@ -24,7 +25,7 @@ const validationSchema = z.object({
 type FormValue = z.infer<typeof validationSchema>;
 
 const INITIAL_EXTRACT_STATE: {
-    metaTags: Record<string, string>;
+    metaTags: Record<string, string | number>;
     coverImage: string;
     audioFileName: string | null;
 } = {
@@ -40,7 +41,7 @@ export default function AudioMetaExtractor() {
     const { makeApiCall, cancelRequest, isPending, uploadState } = useSafeApiCall<
         FormData,
         {
-            metadata: Record<string, string>;
+            metadata: Record<string, string | number>;
             coverImage: string;
             audioFileName: string;
         }
@@ -76,29 +77,45 @@ export default function AudioMetaExtractor() {
     }, [reset, cancelRequest]);
 
     const handleTagsExtraction = async (values: FormValue) => {
-        makeApiCall({
-            url: EXTERNAL_ROUTES.AUDIO.EXTRACT_METADATA,
-            method: 'POST',
-            isExternalApiCall: true,
-            onStart: () => {
-                const formData = new FormData();
-                formData.append('audio', values.audio);
-                return formData;
-            },
-            onSuccess: ({ data }) => {
+        if (process.env.NODE_ENV === 'production') {
+            makeApiCall({
+                url: EXTERNAL_ROUTES.AUDIO.EXTRACT_METADATA,
+                method: 'POST',
+                isExternalApiCall: true,
+                onStart: () => {
+                    const formData = new FormData();
+                    formData.append('audio', values.audio);
+                    return formData;
+                },
+                onSuccess: ({ data }) => {
+                    toast.success('Metadata extracted successfully!');
+                    setExtractedData({
+                        metaTags: data.metadata,
+                        coverImage: data.coverImage,
+                        audioFileName: data.audioFileName,
+                    });
+                    reset();
+                },
+                onError: (_, errorMessage) => {
+                    toast.error(errorMessage);
+                    setError('root', { message: errorMessage });
+                },
+            });
+        } else {
+            const response = await handleExtractAudioMetaTags(values.audio);
+            if (response.success) {
                 toast.success('Metadata extracted successfully!');
                 setExtractedData({
-                    metaTags: data.metadata,
-                    coverImage: data.coverImage,
-                    audioFileName: data.audioFileName,
+                    metaTags: response.payload.metaTags || {},
+                    coverImage: response.payload.coverImage,
+                    audioFileName: response.payload.fileName,
                 });
                 reset();
-            },
-            onError: (_, errorMessage) => {
-                toast.error(errorMessage);
-                setError('root', { message: errorMessage });
-            },
-        });
+            } else {
+                toast.error(response.message);
+                setError('root', { message: response.message });
+            }
+        }
     };
 
     const shouldShowProgress = isPending && uploadState.progress !== 100;
@@ -130,7 +147,7 @@ export default function AudioMetaExtractor() {
                 <p className="text-highlight mt-2 mb-10 text-center text-lg">Edit the meta tags for your audio file</p>
 
                 {!extractedData.audioFileName ? (
-                    <form ref={formRef} onSubmit={handleSubmit(handleTagsExtraction)} className="flex flex-col items-center gap-4 *:first:w-full">
+                    <form ref={formRef} onSubmit={handleSubmit(handleTagsExtraction)}>
                         <FileUpload
                             accept="audio/*"
                             maxFiles={1}

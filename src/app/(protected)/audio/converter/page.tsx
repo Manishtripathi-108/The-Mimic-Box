@@ -57,7 +57,6 @@ export default function FileConverter() {
         setValue,
         watch,
         setError,
-
         clearErrors,
         reset,
         formState: { errors, isSubmitting },
@@ -154,14 +153,13 @@ export default function FileConverter() {
                 values.files,
                 values.files.length < 2 || values.useGlobalSettings ? values.global : values.fileSettings
             );
-            if (!response.success) {
-                toast.error(response.message);
-                setError('root', { message: response.message });
-                return;
-            } else {
+            if (response.success) {
                 toast.success(response.message);
                 downloadFile(response.payload.downloadUrl, response.payload.fileName);
                 reset(defaultValues);
+            } else {
+                toast.error(response.message);
+                setError('root', { message: response.message });
             }
         }
     };

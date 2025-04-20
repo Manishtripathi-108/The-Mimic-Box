@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
+import { handleEditMetaTags } from '@/actions/audio.actions';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
@@ -21,7 +22,7 @@ import { T_AudioMetaTags } from '@/lib/types/common.types';
 import { downloadFile } from '@/lib/utils/file.utils';
 
 type Props = {
-    metaTags: Record<string, string>;
+    metaTags: Record<string, string | number>;
     coverImage: string;
     audioFileName: string;
     onCancel: () => void;
@@ -42,7 +43,7 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                 acc[key] = metaTags[key] || '';
                 return acc;
             },
-            {} as Record<string, string>
+            {} as Record<string, string | number>
         );
     }, [metaTags]);
 
@@ -58,30 +59,46 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
     });
 
     const handleFormSubmit = async (values: T_AudioMetaTags) => {
-        await makeApiCall({
-            url: EXTERNAL_ROUTES.AUDIO.EDIT_META_TAGS,
-            method: 'post',
-            responseType: 'blob',
-            isExternalApiCall: true,
-            onStart: () => {
-                const formData = new FormData();
-                formData.append('audioFileName', audioFileName);
-                if (values.cover) formData.append('cover', values.cover);
-                formData.append('metadata', JSON.stringify(values));
-                return formData;
-            },
-            onSuccess: (response) => {
+        const { cover, ...metaTags } = values;
+
+        if (process.env.NODE_ENV === 'production') {
+            await makeApiCall({
+                url: EXTERNAL_ROUTES.AUDIO.EDIT_META_TAGS,
+                method: 'post',
+                responseType: 'blob',
+                isExternalApiCall: true,
+                onStart: () => {
+                    const formData = new FormData();
+                    formData.append('audioFileName', audioFileName);
+                    if (cover) formData.append('cover', cover);
+                    formData.append('metadata', JSON.stringify(metaTags));
+                    return formData;
+                },
+                onSuccess: (response) => {
+                    toast.success('Metadata updated successfully!');
+                    const filename = response.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || 'edited_audio';
+                    downloadFile(response.data, filename);
+                    onSuccess();
+                    reset();
+                },
+                onError: (_, errorMessage) => {
+                    toast.error(errorMessage);
+                    setError('root', { message: errorMessage });
+                },
+            });
+        } else {
+            const response = await handleEditMetaTags(audioFileName, metaTags, cover);
+
+            if (response.success) {
                 toast.success('Metadata updated successfully!');
-                const filename = response.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || 'edited_audio';
-                downloadFile(response.data, filename);
+                downloadFile(response.payload.fileName, response.payload.fileName);
                 onSuccess();
                 reset();
-            },
-            onError: (_, errorMessage) => {
-                toast.error(errorMessage);
-                setError('root', { message: errorMessage });
-            },
-        });
+            } else {
+                toast.error(response.message);
+                setError('root', { message: response.message });
+            }
+        }
     };
 
     const tagsToRender = useMemo(() => (showAllTags ? Object.entries(META_TAGS) : Object.entries(META_TAGS).slice(0, 10)), [showAllTags]);

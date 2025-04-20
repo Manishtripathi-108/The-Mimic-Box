@@ -70,5 +70,5 @@ export const AudioMetaTagsSchema = z.object({
     catalog_number: z.string().optional(),
     encoder: z.string().optional(),
     copyright: z.string().optional(),
-    url: z.string().url({ message: 'Invalid URL' }).nullish(),
+    url: z.string().url({ message: 'Invalid URL' }).or(z.literal('')).optional(),
 });

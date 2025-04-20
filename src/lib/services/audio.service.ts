@@ -48,9 +48,9 @@ const getAudioDuration = (filePath: string): Promise<number> => {
     });
 };
 
-export const extractAudioMetadata = async (
+export const extractAudioMetaTags = async (
     fileUrl: string
-): Promise<SuccessResponseOutput<{ metadata: FfprobeData['format']['tags']; coverImage: string }> | ErrorResponseOutput> => {
+): Promise<SuccessResponseOutput<{ metaTags: FfprobeData['format']['tags']; coverImage: string }> | ErrorResponseOutput> => {
     try {
         const coverImagePath = getTempPath('images', `cover_${Date.now()}.jpg`);
         await createDirectoryIfNotExists(getTempPath('images'));
@@ -83,7 +83,7 @@ export const extractAudioMetadata = async (
         }
 
         return createSuccessReturn('Audio metadata extracted successfully', {
-            metadata: metadata.format.tags ?? {},
+            metaTags: metadata.format.tags ?? {},
             coverImage,
         });
     } catch (error) {
@@ -136,8 +136,6 @@ export const convertAudioFormat = async (
         const format = options.audio.format.toLowerCase();
         const outputFilePath = getTempPath('audio', `converted_${fileName.split('.')[0]}.${format}`);
         await createDirectoryIfNotExists(getTempPath('audio'));
-
-        console.log('Converting audio format:', options);
 
         const command = ffmpeg(fileUrl);
 
