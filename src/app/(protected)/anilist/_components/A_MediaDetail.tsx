@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import A_AddToListBtn from '@/app/(protected)/anilist/_components/A_AddToListBtn';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
-import { IMAGE_URL } from '@/constants/client.constants';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { AnilistMediaWithRecommendations } from '@/lib/types/anilist.types';
 import { getMonthName } from '@/lib/utils/client.utils';
 
@@ -17,7 +17,7 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
             {/* Banner */}
             <section className="relative h-60 w-full overflow-hidden" aria-hidden="true">
                 <Image
-                    src={bannerImage || IMAGE_URL.BANNER}
+                    src={bannerImage || IMAGE_FALLBACKS.BANNER}
                     alt="Banner image"
                     width={2000}
                     height={2000}

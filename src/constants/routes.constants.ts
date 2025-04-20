@@ -79,6 +79,14 @@ export const EXTERNAL_ROUTES = {
             process.env.NODE_ENV === 'development'
                 ? ' http://localhost:4000/api/audio/convert-audio'
                 : 'https://elephoria.onrender.com/api/audio/convert-audio',
+        EXTRACT_METADATA:
+            process.env.NODE_ENV === 'development'
+                ? ' http://localhost:4000/api/audio/extract-metadata'
+                : 'https://elephoria.onrender.com/api/audio/extract-metadata',
+        EDIT_META_TAGS:
+            process.env.NODE_ENV === 'development'
+                ? ' http://localhost:4000/api/audio//edit-metadata'
+                : 'https://elephoria.onrender.com/api/audio//edit-metadata',
     },
 } as const;
 

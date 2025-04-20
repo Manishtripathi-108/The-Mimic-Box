@@ -20,7 +20,6 @@ import TabNavigation from '@/components/ui/TabNavigation';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
-import useUploadProgress from '@/hooks/useUploadProgress';
 import { AudioFormatsSchema } from '@/lib/schema/audio.validations';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { downloadFile } from '@/lib/utils/file.utils';
@@ -49,8 +48,7 @@ export default function FileConverter() {
         name: Path<T_FormValues> | null;
     }>({ values: null, name: null });
 
-    const { makeApiCall, isPending } = useSafeApiCall();
-    const { uploadState, resetUploadProgress, onUploadProgress } = useUploadProgress();
+    const { makeApiCall, isPending, uploadState } = useSafeApiCall();
 
     const {
         control,
@@ -127,7 +125,6 @@ export default function FileConverter() {
                 isExternalApiCall: true,
                 method: 'post',
                 responseType: 'blob',
-                onUploadProgress,
                 headers: { 'Content-Type': 'multipart/form-data' },
                 onStart: () => {
                     const formData = new FormData();
@@ -141,17 +138,16 @@ export default function FileConverter() {
 
                     return formData;
                 },
-                onSuccess: (_, response) => {
+                onSuccess: (response) => {
                     toast.success('Files converted successfully!');
                     const filename = response.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || 'converted_audio';
                     downloadFile(response.data as Blob, filename);
                     reset(defaultValues);
                 },
-                onError(_, errorMessage) {
+                onError: (_, errorMessage) => {
                     toast.error(errorMessage);
                     setError('root', { message: errorMessage });
                 },
-                onEnd: () => resetUploadProgress(),
             });
         } else {
             const response = await handleConvertAudio(
@@ -170,6 +166,7 @@ export default function FileConverter() {
         }
     };
 
+    // Handle file upload progress
     if (isPending && uploadState.progress !== 100) {
         return (
             <div className="min-h-calc-full-height grid place-items-center p-2 sm:p-6">
@@ -178,6 +175,7 @@ export default function FileConverter() {
         );
     }
 
+    // Handle file conversion progress
     if ((isPending && uploadState.progress === 100) || isSubmitting) {
         return (
             <div className="min-h-calc-full-height grid place-items-center p-2 sm:p-6">
@@ -197,7 +195,13 @@ export default function FileConverter() {
 
                 <form onSubmit={handleSubmit(handleConvert)}>
                     {files.length === 0 ? (
-                        <FileUpload onFilesSelected={handleFileSelect} accept={ACCEPTED_TYPES} maxSizeMB={MAX_SIZE_MB} maxFiles={MAX_FILES} />
+                        <FileUpload
+                            onFilesSelected={handleFileSelect}
+                            accept={ACCEPTED_TYPES}
+                            description="MP3, M4A, WAV, FLAC, etc."
+                            maxSizeMB={MAX_SIZE_MB}
+                            maxFiles={MAX_FILES}
+                        />
                     ) : (
                         <CardContainer contentClassName="space-y-6">
                             <input id="file-upload" type="file" multiple accept={ACCEPTED_TYPES} className="hidden" onChange={handleFileSelect} />

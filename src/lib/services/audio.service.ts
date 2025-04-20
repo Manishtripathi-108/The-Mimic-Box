@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import ffmpeg, { FfprobeData } from 'fluent-ffmpeg';
 import { extname } from 'path';
 
-import { IMAGE_URL } from '@/constants/client.constants';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { uploadToCloud } from '@/lib/services/cloud-storage.service';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
@@ -61,7 +61,7 @@ export const extractAudioMetadata = async (
 
         const coverStream = metadata.streams?.find((stream) => stream.codec_name === 'mjpeg' || stream.codec_type === 'video');
 
-        let coverImage = IMAGE_URL.AUDIO_COVER_FALLBACK;
+        let coverImage = IMAGE_FALLBACKS.AUDIO_COVER;
         if (coverStream) {
             try {
                 await new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ export const extractAudioMetadata = async (
                     removeLocalCopy: true,
                 });
 
-                coverImage = uploadResult.success && uploadResult.payload?.url ? uploadResult.payload.url : IMAGE_URL.AUDIO_COVER_FALLBACK;
+                coverImage = uploadResult.success && uploadResult.payload?.url ? uploadResult.payload.url : IMAGE_FALLBACKS.AUDIO_COVER;
             } catch (error) {
                 console.warn('Error uploading or extracting cover image', error);
             }

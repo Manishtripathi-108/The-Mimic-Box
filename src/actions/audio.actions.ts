@@ -5,7 +5,7 @@ import { extname } from 'path';
 import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
 
-import { AudioFileValidationSchema } from '@/lib/schema/audio.validations';
+import { AudioFileArrayValidationSchema, AudioFileValidationSchema } from '@/lib/schema/audio.validations';
 import { convertAudioFormat, editAudioMetadata, extractAudioMetadata } from '@/lib/services/audio.service';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { createZipFile } from '@/lib/utils/archiver.utils';
@@ -16,12 +16,12 @@ import { safeAwait, safeAwaitAll } from '@/lib/utils/safeAwait.utils';
 export const handleExtractAudioMetadata = async (file: File) => {
     console.log('handleExtractAudioMetadata', file.name);
 
-    const parsedFile = AudioFileValidationSchema.safeParse([file]);
+    const parsedFile = AudioFileValidationSchema.safeParse(file);
     if (!parsedFile.success) return createErrorReturn(parsedFile.error.errors[0].message);
 
     const [saveError, fileDetails] = await safeAwait(
         saveUploadedFile({
-            file: parsedFile.data[0],
+            file: parsedFile.data,
             destinationFolder: 'audio',
             isTemporary: true,
         })
@@ -73,7 +73,7 @@ export const handleConvertAudio = async (files: File[], settings: T_AudioAdvance
 
     const normalizedSettings = Array.isArray(settings) ? settings : Array(files.length).fill(settings);
 
-    const validationResult = AudioFileValidationSchema.safeParse(files);
+    const validationResult = AudioFileArrayValidationSchema.safeParse(files);
     if (!validationResult.success) {
         return createErrorReturn('Invalid audio files.', null, validationResult.error.errors);
     }

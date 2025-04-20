@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Tailwind, Text } from '@react-email/components';
 
-import { IMAGE_URL } from '@/constants/client.constants';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 // Load public URL from environment variables
@@ -41,7 +41,7 @@ const AuthEmailTemplate: React.FC<AuthEmailTemplateProps> = ({ heading, preview,
                         <div className="flex w-full items-center justify-center gap-2 border-b p-4 text-center text-[##005a5e] shadow-[3px_3px_5px_var(--lower-shadow),_-3px_-3px_5px_var(--upper-shadow)]">
                             <div className="flex size-12 items-center justify-center rounded-full border p-1 shadow-[2px_4px_4px_var(--lower-shadow),_1px_1px_2px_inset_var(--upper-shadow)]">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={IMAGE_URL.APP_LOGO} alt="Mimic Box" className="size-12" />
+                                <img src={IMAGE_FALLBACKS.APP_LOGO} alt="Mimic Box" className="size-12" />
                             </div>
                             <Heading className="text-lg font-semibold">{heading}</Heading>
                         </div>
