@@ -212,6 +212,7 @@ export const META_TAGS: T_AudioMetaTagsRecords = {
     date: {
         className: 'order-6 col-span-1',
         placeholder: 'e.g., 2021',
+        type: 'number',
     },
     track: {
         className: 'order-7 col-span-1',

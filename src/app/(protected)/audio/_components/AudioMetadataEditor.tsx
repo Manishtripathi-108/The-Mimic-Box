@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import { handleEditMetaTags } from '@/actions/audio.actions';
+import SearchLyrics from '@/app/(protected)/audio/_components/SearchLyrics';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
@@ -51,12 +52,16 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
         control,
         handleSubmit,
         setError,
+        setValue,
+        watch,
         reset,
         formState: { errors, isSubmitting },
     } = useForm<T_AudioMetaTags>({
         resolver: zodResolver(AudioMetaTagsSchema),
         defaultValues: { ...parsedMetadata, cover: undefined },
     });
+
+    const title = watch('title');
 
     const handleFormSubmit = async (values: T_AudioMetaTags) => {
         const { cover, ...metaTags } = values;
@@ -112,9 +117,7 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                 className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-start">
                 {/* Cover Image */}
                 <div className="relative size-3/4 max-w-72 shrink-0">
-                    <label
-                        htmlFor="cover"
-                        className="shadow-neumorphic-inset-xs block aspect-square cursor-pointer overflow-hidden rounded-xl border p-2">
+                    <label htmlFor="cover" className="shadow-pressed-xs block aspect-square cursor-pointer overflow-hidden rounded-xl border p-2">
                         <Image src={cover} width={640} height={640} alt="Cover" className="size-full rounded-lg object-cover" />
                     </label>
 
@@ -146,15 +149,24 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                 <div className="grid w-full grid-cols-1 place-items-center gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {tagsToRender.map(([key, config]) =>
                         config.type === 'textarea' ? (
-                            <Textarea
-                                key={key}
-                                label={key}
-                                control={control}
-                                name={key as keyof T_AudioMetaTags}
-                                placeholder={config.placeholder}
-                                classNames={{ container: config.className }}
-                                disabled={isSubmitting}
-                            />
+                            <div key={key} className={`relative ${config.className} flex w-full items-center justify-center`}>
+                                <Textarea
+                                    label={key}
+                                    control={control}
+                                    name={key as keyof T_AudioMetaTags}
+                                    placeholder={config.placeholder}
+                                    classNames={{ container: config.className }}
+                                    disabled={isSubmitting}
+                                />
+
+                                <button
+                                    type="button"
+                                    title="search lyrics"
+                                    popoverTarget="lyrics-popover"
+                                    className="button button-primary absolute right-2 bottom-4 size-8 rounded-full p-1.5">
+                                    <Icon icon="search" className="size-full -rotate-90" />
+                                </button>
+                            </div>
                         ) : (
                             <Input
                                 key={key}
@@ -177,6 +189,8 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                         {showAllTags ? 'Show Less Tags' : 'Show All Tags'}
                         <Icon icon={showAllTags ? 'minus' : 'plus'} className="size-5" />
                     </button>
+
+                    <ErrorMessage message={errors.root?.message} className="order-last col-span-full" />
 
                     {/* Form Buttons */}
                     <div className="order-last col-span-full flex w-full justify-end gap-3 pt-6">
@@ -207,7 +221,15 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                 </div>
             </form>
 
-            <ErrorMessage message={errors.root?.message} className="absolute right-0 bottom-0 left-0 mx-auto w-full max-w-md text-center" />
+            <div id="lyrics-popover" popover="auto" className="absolute inset-auto m-0 overflow-hidden rounded-xl [position-area:top_left]">
+                <SearchLyrics
+                    defaultParams={{ trackName: title }}
+                    onSelect={(lyrics) => {
+                        document.getElementById('lyrics-popover')?.hidePopover();
+                        setValue('lyrics', lyrics);
+                    }}
+                />
+            </div>
         </CardContainer>
     );
 };

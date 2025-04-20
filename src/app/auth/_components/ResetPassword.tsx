@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { resetPasswordAction } from '@/actions/auth.actions';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
@@ -32,7 +33,7 @@ export default function ResetPasswordForm() {
                 });
             });
 
-            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
+            setError('root', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     }
 
@@ -79,12 +80,7 @@ export default function ResetPasswordForm() {
                             disabled={isSubmitting}
                         />
 
-                        {(errors.root?.serverError || errors.token) && (
-                            <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                                <Icon icon="error" className="size-7" />
-                                {errors.root?.serverError.message || 'Invalid or Missing Token'}
-                            </p>
-                        )}
+                        <ErrorMessage message={errors.root?.message || errors.token?.message} />
 
                         <button type="submit" disabled={isSubmitting} className="button button-highlight mt-4 w-full">
                             {isSubmitting ? 'Please wait...' : 'Reset Password'}

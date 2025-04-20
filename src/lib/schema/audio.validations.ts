@@ -72,3 +72,21 @@ export const AudioMetaTagsSchema = z.object({
     copyright: z.string().optional(),
     url: z.string().url({ message: 'Invalid URL' }).or(z.literal('')).optional(),
 });
+
+export const LyricsQuerySchema = z
+    .object({
+        id: z.coerce.number().optional(),
+        q: z.string().optional(),
+        trackName: z.string().optional(),
+        artistName: z.string().optional(),
+        albumName: z.string().optional(),
+        duration: z.coerce.number().optional(),
+    })
+    .refine(
+        (data) =>
+            data.id !== undefined || (data.q !== undefined && data.q.trim() !== '') || (data.trackName !== undefined && data.trackName.trim() !== ''),
+        {
+            message: 'At least one of Lrclib ID, Search Lyrics, or Track Name must be provided.',
+            path: ['q'],
+        }
+    );

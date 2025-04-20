@@ -393,7 +393,7 @@
     }
 
     textarea& {
-        @apply min-h-5;
+        @apply scrollbar-thin min-h-5;
     }
 
     input[type='range']& {

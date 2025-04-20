@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { loginAction } from '@/actions/auth.actions';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { APP_ROUTES, DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
@@ -45,7 +46,7 @@ export default function LoginInForm() {
                 });
             });
 
-            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
+            setError('root', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     }
 
@@ -89,13 +90,15 @@ export default function LoginInForm() {
                     </Link>
 
                     {/* Server Error Messages */}
-                    {(errors.root?.serverError || UrlError) && (
-                        <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                            <Icon icon="error" className="size-7 shrink-0" />
-                            {errors.root?.serverError.message ||
-                                'Email is already registered with another account. Please login with the correct account.'}
-                        </p>
-                    )}
+                    <ErrorMessage
+                        message={
+                            errors.root?.message
+                                ? errors.root.message
+                                : UrlError
+                                  ? 'Email is already registered with another account. Please login with the correct account.'
+                                  : null
+                        }
+                    />
 
                     <hr className="my-5" />
                     {/* Submit Button */}
