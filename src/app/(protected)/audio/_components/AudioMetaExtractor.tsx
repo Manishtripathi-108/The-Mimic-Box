@@ -76,7 +76,7 @@ export default function AudioMetaExtractor() {
         reset();
     }, [reset, cancelRequest]);
 
-    const handleTagsExtraction = async (values: FormValue) => {
+    const submitTagsExtraction = async (values: FormValue) => {
         if (process.env.NODE_ENV === 'production') {
             makeApiCall({
                 url: EXTERNAL_ROUTES.AUDIO.EXTRACT_METADATA,
@@ -147,7 +147,7 @@ export default function AudioMetaExtractor() {
                 <p className="text-highlight mt-2 mb-10 text-center text-lg">Edit the meta tags for your audio file</p>
 
                 {!extractedData.audioFileName ? (
-                    <form ref={formRef} onSubmit={handleSubmit(handleTagsExtraction)}>
+                    <form ref={formRef} onSubmit={handleSubmit(submitTagsExtraction)}>
                         <FileUpload
                             accept="audio/*"
                             maxFiles={1}

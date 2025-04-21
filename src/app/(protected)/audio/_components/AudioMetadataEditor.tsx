@@ -61,7 +61,7 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
         defaultValues: { ...parsedMetadata, cover: undefined },
     });
 
-    const handleFormSubmit = async (values: T_AudioMetaTags) => {
+    const submitEditTags = async (values: T_AudioMetaTags) => {
         const { cover, ...metaTags } = values;
 
         if (process.env.NODE_ENV === 'production') {
@@ -111,7 +111,7 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
             <h2 className="text-text-primary font-aladin mb-4 text-center text-3xl tracking-wider">Edit Tags</h2>
 
             <form
-                onSubmit={handleSubmit(handleFormSubmit)}
+                onSubmit={handleSubmit(submitEditTags)}
                 className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-start">
                 {/* Cover Image */}
                 <div className="relative size-3/4 max-w-72 shrink-0">

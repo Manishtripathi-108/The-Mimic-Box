@@ -117,7 +117,7 @@ export default function AudioFileConverter() {
         remove(index);
     };
 
-    const handleConvert = async (values: T_FormValues) => {
+    const submitAudioConvert = async (values: T_FormValues) => {
         if (process.env.NODE_ENV === 'production') {
             makeApiCall({
                 url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
@@ -191,7 +191,7 @@ export default function AudioFileConverter() {
                 <h1 className="font-alegreya text-text-primary text-center text-4xl tracking-wide">File Converter</h1>
                 <p className="text-highlight mt-2 mb-10 text-center text-lg">Convert your audio files to any format</p>
 
-                <form onSubmit={handleSubmit(handleConvert)}>
+                <form onSubmit={handleSubmit(submitAudioConvert)}>
                     {files.length === 0 ? (
                         <FileUpload
                             onFilesSelected={handleFileSelect}

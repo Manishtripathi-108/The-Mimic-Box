@@ -10,56 +10,73 @@ import { getLyrics } from '@/actions/lrclib.actions';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Input from '@/components/ui/Input';
 import TabNavigation from '@/components/ui/TabNavigation';
+import Textarea from '@/components/ui/Textarea';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
 
 type SearchLyricsProps = {
     defaultParams?: Partial<T_LyricsQuery>;
-    onSelect: (record: T_LyricsRecord['syncedLyrics' | 'plainLyrics']) => void;
+    onSelect?: (lyrics: string) => void;
 };
 
-const LyricsResult = ({ lyric, onSelect }: { lyric: T_LyricsRecord; onSelect: (lyrics: string) => void }) => {
-    const [tab, setTab] = useState<'Plain Lyrics' | 'Synced Lyrics'>('Plain Lyrics');
+type LyricsResultProps = {
+    lyric: T_LyricsRecord;
+    onSelect?: (lyrics: string) => void;
+};
+
+const TAB_OPTIONS = ['Plain Lyrics', 'Synced Lyrics'];
+
+const LyricsResult = memo(({ lyric, onSelect }: LyricsResultProps) => {
+    const [tab, setTab] = useState('Plain Lyrics');
     const currentLyrics = tab === 'Plain Lyrics' ? lyric.plainLyrics : lyric.syncedLyrics;
 
+    const badgeText = lyric.instrumental ? 'Instrumental' : lyric.syncedLyrics ? 'Synced' : 'Plain';
+
     return (
-        <details key={lyric.id} className="shadow-raised-xs rounded-md border px-4 py-2">
-            <summary className="text-text-primary cursor-pointer truncate select-none">
-                {lyric.trackName} - {lyric.artistName}
-            </summary>
-            <div className="space-y-2">
-                <p className="text-text-secondary ml-2 text-sm">
-                    {lyric.albumName} • {lyric.duration}s
-                    {lyric.instrumental && <span className="ml-2 rounded-full border px-2 text-sm">Instrumental</span>}
-                </p>
-
-                <div className="shadow-pressed-xs rounded-t-xl rounded-b-md border">
-                    <TabNavigation
-                        tabs={['Plain Lyrics', 'Synced Lyrics']}
-                        className="w-full"
-                        buttonClassName="text-sm p-2"
-                        onTabChange={setTab}
-                        currentTab={tab}
-                    />
-                    <p className="text-text-secondary sm:scrollbar-thin h-52 overflow-y-scroll px-2 py-4 whitespace-pre-wrap">{currentLyrics}</p>
+        <details className="shadow-raised-xs relative rounded-md border p-4">
+            <summary title={`${lyric.trackName} - ${lyric.artistName}`} className="text-text-primary cursor-pointer select-none">
+                <div className="inline-grid w-[calc(100%-1rem)] gap-1">
+                    <span className="truncate">
+                        {lyric.trackName} - {lyric.artistName}
+                    </span>
+                    <span className="text-text-secondary shadow-pressed-xs w-fit rounded-md border px-2 text-sm">{badgeText}</span>
+                    <p className="text-text-secondary text-sm">
+                        {lyric.albumName} • {lyric.duration}s
+                    </p>
                 </div>
+            </summary>
 
-                <button onClick={() => onSelect(currentLyrics)} className="button button-highlight mx-auto mt-2">
-                    Select {tab}
-                </button>
-            </div>
+            {!lyric.instrumental && (
+                <div className="mt-3 space-y-2">
+                    <div className="shadow-pressed-xs rounded-t-xl rounded-b-md border">
+                        <TabNavigation tabs={TAB_OPTIONS} className="w-full" buttonClassName="text-sm p-2" onTabChange={setTab} currentTab={tab} />
+                        <p className="text-text-secondary sm:scrollbar-thin h-80 overflow-y-scroll px-2 py-4 whitespace-pre-wrap">
+                            {currentLyrics || 'The lyric gods are on vacation... try again later!'}
+                        </p>
+                    </div>
+
+                    {onSelect && (
+                        <button onClick={() => onSelect(currentLyrics)} className="button button-highlight mx-auto mt-2">
+                            Select {tab}
+                        </button>
+                    )}
+                </div>
+            )}
         </details>
     );
-};
+});
+
+LyricsResult.displayName = 'LyricsResult';
 
 const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
-    const [lyrics, setLyrics] = useState<T_LyricsRecord[] | T_LyricsRecord | null>(null);
+    const [lyrics, setLyrics] = useState<T_LyricsRecord[] | null>(null);
     const [showAdvanced, setShowAdvanced] = useState(false);
 
     const {
         handleSubmit,
         setError,
         control,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm<z.infer<typeof LyricsQuerySchema>>({
         resolver: zodResolver(LyricsQuerySchema),
@@ -72,25 +89,36 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
         },
     });
 
-    const onSubmit = async (data: T_LyricsQuery) => {
+    const submitSearchLyrics = async (data: T_LyricsQuery) => {
         setLyrics(null);
         const res = await getLyrics(data);
 
         if (res.success) {
-            setLyrics(res.payload);
+            const records = Array.isArray(res.payload) ? res.payload : [res.payload];
+            setLyrics(records);
         } else {
             setError('root', { message: res.message });
         }
     };
 
     return (
-        <div style={{ scrollbarGutter: 'stable' }} className="w-full space-y-4 px-2 py-6 sm:px-6">
-            <h3 className="font-aladin text-highlight text-center text-2xl tracking-wider">Search Lyrics</h3>
+        <div className="space-y-4 px-2 py-6 sm:px-6">
+            <h3 className="font-aladin text-highlight text-center text-2xl tracking-wider">
+                Search Lyrics <sub className="text-accent font-karla text-xs">By Lrclib</sub>
+            </h3>
 
-            <form onSubmit={handleSubmit(onSubmit)} className={`space-y-2 ${isSubmitting ? 'pointer-events-none animate-pulse' : ''}`}>
+            <form onSubmit={handleSubmit(submitSearchLyrics)} className={`space-y-2 ${isSubmitting ? 'pointer-events-none animate-pulse' : ''}`}>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <Input control={control} name="trackName" label="Track Name" placeholder="eg: Riders In The Sky" disabled={isSubmitting} />
-                    <Input control={control} name="q" label="Search By Lyrics" placeholder="eg: An old cow polk went..." disabled={isSubmitting} />
+                    <Input control={control} name="trackName" label="Track Name" placeholder="e.g. Departure Lane" disabled={isSubmitting} />
+                    <Textarea
+                        control={control}
+                        name="q"
+                        label="Search By Lyrics"
+                        classNames={{ field: 'field-sizing-content' }}
+                        rows={1}
+                        placeholder="e.g. Khushfehmiyan hein Khudse bani hein..."
+                        disabled={isSubmitting}
+                    />
                 </div>
 
                 <button
@@ -102,36 +130,50 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
 
                 {showAdvanced && (
                     <div className="grid gap-2 sm:grid-cols-2">
-                        <Input control={control} name="albumName" label="Album Name" placeholder="eg: Collectors Series" disabled={isSubmitting} />
-                        <Input control={control} name="duration" label="Duration (sec)" placeholder="eg: 180" type="number" disabled={isSubmitting} />
-                        <Input control={control} name="artistName" label="Artist Name" placeholder="eg: Neil Levang" disabled={isSubmitting} />
+                        <Input
+                            control={control}
+                            name="artistName"
+                            label="Artist Name"
+                            placeholder="e.g. Umair & Talha Anjum"
+                            disabled={isSubmitting}
+                        />
+                        <Input control={control} name="albumName" label="Album Name" placeholder="e.g. My Terrible Mind" disabled={isSubmitting} />
+                        <Input
+                            control={control}
+                            name="duration"
+                            label="Duration (sec)"
+                            placeholder="e.g. 167"
+                            type="number"
+                            disabled={isSubmitting}
+                        />
                     </div>
                 )}
 
                 <ErrorMessage message={errors.root?.message} />
 
-                <button type="submit" disabled={isSubmitting} className="button button-highlight mx-auto">
-                    {isSubmitting ? 'Searching...' : 'Search Lyrics'}
-                </button>
+                <div className="flex items-center justify-end gap-6 pt-2">
+                    <button type="submit" disabled={isSubmitting} className="button button-highlight">
+                        {isSubmitting ? 'Searching...' : 'Search Lyrics'}
+                    </button>
+                    <button type="button" onClick={() => reset()} disabled={isSubmitting} className="button button-danger">
+                        Clear
+                    </button>
+                </div>
             </form>
 
             {!isSubmitting && lyrics && (
-                <>
+                <div className="space-y-4 py-2">
                     <hr />
-                    <div className="space-y-4 p-2">
-                        <h3 className="font-aladin text-text-primary flex items-center justify-between text-xl tracking-wider">
-                            Search Results: <span className="text-text-secondary text-sm">{Array.isArray(lyrics) ? lyrics.length : 1}</span>
-                        </h3>
+                    <h3 className="font-aladin text-text-primary flex items-center justify-between text-xl tracking-wider">
+                        Search Results: <span className="text-text-secondary text-sm">{lyrics.length}</span>
+                    </h3>
 
-                        {(Array.isArray(lyrics) ? lyrics : [lyrics]).map((lyric) => (
-                            <LyricsResult key={lyric.id} lyric={lyric} onSelect={onSelect} />
-                        ))}
-
-                        {Array.isArray(lyrics) && lyrics.length === 0 && (
-                            <div className="text-text-secondary rounded-md border p-4 text-center">No results found.</div>
-                        )}
-                    </div>
-                </>
+                    {lyrics.length > 0 ? (
+                        lyrics.map((lyric) => <LyricsResult key={lyric.id} lyric={lyric} onSelect={onSelect} />)
+                    ) : (
+                        <div className="text-text-secondary rounded-md border p-4 text-center">No results found.</div>
+                    )}
+                </div>
             )}
         </div>
     );

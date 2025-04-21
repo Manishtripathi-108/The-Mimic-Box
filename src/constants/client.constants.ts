@@ -191,41 +191,41 @@ export const AUDIO_ADVANCED_SETTINGS_DEFAULTS: T_AudioAdvanceSettings = {
 export const META_TAGS: T_AudioMetaTagsRecords = {
     title: {
         className: 'order-1 col-span-1 sm:col-span-2',
-        placeholder: 'e.g., My Song',
+        placeholder: 'e.g. My Song',
     },
     artist: {
         className: 'order-2 col-span-1',
-        placeholder: 'e.g., John Doe',
+        placeholder: 'e.g. John Doe',
     },
     album: {
         className: 'order-3 col-span-1',
-        placeholder: 'e.g., My Album',
+        placeholder: 'e.g. My Album',
     },
     album_artist: {
         className: 'order-4 col-span-1 md:col-span-2',
-        placeholder: 'e.g., John Doe, Jane Doe',
+        placeholder: 'e.g. John Doe, Jane Doe',
     },
     genre: {
         className: 'order-5 col-span-1 sm:col-span-2 lg:col-span-2',
-        placeholder: 'e.g., Pop, Rock, Country',
+        placeholder: 'e.g. Pop, Rock, Country',
     },
     date: {
         className: 'order-6 col-span-1',
-        placeholder: 'e.g., 2021',
+        placeholder: 'e.g. 2021',
         type: 'number',
     },
     track: {
         className: 'order-7 col-span-1',
-        placeholder: 'e.g., 1',
+        placeholder: 'e.g. 1',
         type: 'number',
     },
     composer: {
         className: 'order-8 col-span-1',
-        placeholder: 'e.g., Ludwig van Beethoven',
+        placeholder: 'e.g. Ludwig van Beethoven',
     },
     lyricist: {
         className: 'order-9 col-span-1',
-        placeholder: 'e.g., John Doe',
+        placeholder: 'e.g. John Doe',
     },
     lyrics: {
         className: 'order-10 col-span-full',
@@ -238,52 +238,52 @@ export const META_TAGS: T_AudioMetaTagsRecords = {
     },
     publisher: {
         className: 'order-12 col-span-1',
-        placeholder: 'e.g., Universal Music',
+        placeholder: 'e.g. Universal Music',
     },
     isrc: {
         className: 'order-13 col-span-1',
-        placeholder: 'e.g., USRC17607839',
+        placeholder: 'e.g. USRC17607839',
     },
     bpm: {
         className: 'order-14 col-span-1',
-        placeholder: 'e.g., 120',
+        placeholder: 'e.g. 120',
         type: 'number',
     },
     language: {
         className: 'order-15 col-span-1',
-        placeholder: 'e.g., English',
+        placeholder: 'e.g. English',
     },
     conductor: {
         className: 'order-16 col-span-1',
-        placeholder: 'e.g., John Smith',
+        placeholder: 'e.g. John Smith',
     },
     mood: {
         className: 'order-17 col-span-1',
-        placeholder: 'e.g., Happy, Sad',
+        placeholder: 'e.g. Happy, Sad',
     },
     rating: {
         className: 'order-18 col-span-1',
-        placeholder: 'e.g., 5',
+        placeholder: 'e.g. 5',
         type: 'number',
     },
     media_type: {
         className: 'order-19 col-span-1',
-        placeholder: 'e.g., Digital, Vinyl',
+        placeholder: 'e.g. Digital, Vinyl',
     },
     catalog_number: {
         className: 'order-20 col-span-1',
-        placeholder: 'e.g., 123456',
+        placeholder: 'e.g. 123456',
     },
     encoder: {
         className: 'order-21 col-span-1',
-        placeholder: 'e.g., LAME 3.99',
+        placeholder: 'e.g. LAME 3.99',
     },
     copyright: {
         className: 'order-22 col-span-1',
-        placeholder: 'e.g., © 2024',
+        placeholder: 'e.g. © 2024',
     },
     url: {
         className: 'order-23 col-span-1',
-        placeholder: 'e.g., https://themimicbox.com',
+        placeholder: 'e.g. https://themimicbox.com',
     },
 };
