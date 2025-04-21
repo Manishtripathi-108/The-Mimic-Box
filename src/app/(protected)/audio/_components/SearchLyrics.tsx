@@ -23,25 +23,25 @@ const LyricsResult = ({ lyric, onSelect }: { lyric: T_LyricsRecord; onSelect: (l
     const currentLyrics = tab === 'Plain Lyrics' ? lyric.plainLyrics : lyric.syncedLyrics;
 
     return (
-        <details key={lyric.id} className="shadow-raised-xs rounded-md border p-4">
-            <summary className="text-text-primary cursor-pointer select-none">
+        <details key={lyric.id} className="shadow-raised-xs rounded-md border px-4 py-2">
+            <summary className="text-text-primary cursor-pointer truncate select-none">
                 {lyric.trackName} - {lyric.artistName}
             </summary>
-            <div className="mt-2 space-y-2">
-                <p className="text-text-secondary text-sm">
+            <div className="space-y-2">
+                <p className="text-text-secondary ml-2 text-sm">
                     {lyric.albumName} • {lyric.duration}s
                     {lyric.instrumental && <span className="ml-2 rounded-full border px-2 text-sm">Instrumental</span>}
                 </p>
 
-                <div className="shadow-pressed-xs rounded-md border p-1">
+                <div className="shadow-pressed-xs rounded-t-xl rounded-b-md border">
                     <TabNavigation
                         tabs={['Plain Lyrics', 'Synced Lyrics']}
-                        className="mb-4 w-full"
-                        buttonClassName="text-sm"
+                        className="w-full"
+                        buttonClassName="text-sm p-2"
                         onTabChange={setTab}
                         currentTab={tab}
                     />
-                    <p className="text-text-secondary p-2 whitespace-pre-wrap">{currentLyrics}</p>
+                    <p className="text-text-secondary sm:scrollbar-thin h-52 overflow-y-scroll px-2 py-4 whitespace-pre-wrap">{currentLyrics}</p>
                 </div>
 
                 <button onClick={() => onSelect(currentLyrics)} className="button button-highlight mx-auto mt-2">
@@ -84,12 +84,10 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
     };
 
     return (
-        <div
-            style={{ scrollbarGutter: 'stable' }}
-            className="scrollbar-thin bg-tertiary max-h-96 w-full max-w-md space-y-4 overflow-y-auto py-6 shadow-lg">
+        <div style={{ scrollbarGutter: 'stable' }} className="w-full space-y-4 px-2 py-6 sm:px-6">
             <h3 className="font-aladin text-highlight text-center text-2xl tracking-wider">Search Lyrics</h3>
 
-            <form onSubmit={handleSubmit(onSubmit)} className={`space-y-3 px-6 ${isSubmitting ? 'pointer-events-none animate-pulse' : ''}`}>
+            <form onSubmit={handleSubmit(onSubmit)} className={`space-y-2 ${isSubmitting ? 'pointer-events-none animate-pulse' : ''}`}>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <Input control={control} name="trackName" label="Track Name" placeholder="eg: Riders In The Sky" disabled={isSubmitting} />
                     <Input control={control} name="q" label="Search By Lyrics" placeholder="eg: An old cow polk went..." disabled={isSubmitting} />
@@ -103,26 +101,10 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
                 </button>
 
                 {showAdvanced && (
-                    <div className="grid gap-2 sm:grid-cols-3">
+                    <div className="grid gap-2 sm:grid-cols-2">
                         <Input control={control} name="albumName" label="Album Name" placeholder="eg: Collectors Series" disabled={isSubmitting} />
                         <Input control={control} name="duration" label="Duration (sec)" placeholder="eg: 180" type="number" disabled={isSubmitting} />
                         <Input control={control} name="artistName" label="Artist Name" placeholder="eg: Neil Levang" disabled={isSubmitting} />
-
-                        <div className="col-span-3 mt-4 flex items-center gap-2">
-                            <hr className="flex-1" />
-                            <span className="text-text-secondary text-sm">or</span>
-                            <hr className="flex-1" />
-                        </div>
-
-                        <Input
-                            control={control}
-                            name="id"
-                            label="Lrclib ID"
-                            placeholder="eg: 1"
-                            type="number"
-                            classNames={{ container: 'col-span-3' }}
-                            disabled={isSubmitting}
-                        />
                     </div>
                 )}
 
@@ -134,14 +116,22 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
             </form>
 
             {!isSubmitting && lyrics && (
-                <div className="space-y-4 p-2">
-                    <h3 className="font-aladin text-text-primary flex items-center justify-between text-xl tracking-wider">
-                        Search Results: <span className="text-text-secondary text-sm">{Array.isArray(lyrics) ? lyrics.length : 1}</span>
-                    </h3>
-                    {(Array.isArray(lyrics) ? lyrics : [lyrics]).map((lyric) => (
-                        <LyricsResult key={lyric.id} lyric={lyric} onSelect={onSelect} />
-                    ))}
-                </div>
+                <>
+                    <hr />
+                    <div className="space-y-4 p-2">
+                        <h3 className="font-aladin text-text-primary flex items-center justify-between text-xl tracking-wider">
+                            Search Results: <span className="text-text-secondary text-sm">{Array.isArray(lyrics) ? lyrics.length : 1}</span>
+                        </h3>
+
+                        {(Array.isArray(lyrics) ? lyrics : [lyrics]).map((lyric) => (
+                            <LyricsResult key={lyric.id} lyric={lyric} onSelect={onSelect} />
+                        ))}
+
+                        {Array.isArray(lyrics) && lyrics.length === 0 && (
+                            <div className="text-text-secondary rounded-md border p-4 text-center">No results found.</div>
+                        )}
+                    </div>
+                </>
             )}
         </div>
     );

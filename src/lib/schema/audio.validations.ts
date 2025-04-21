@@ -82,11 +82,7 @@ export const LyricsQuerySchema = z
         albumName: z.string().optional(),
         duration: z.coerce.number().optional(),
     })
-    .refine(
-        (data) =>
-            data.id !== undefined || (data.q !== undefined && data.q.trim() !== '') || (data.trackName !== undefined && data.trackName.trim() !== ''),
-        {
-            message: 'At least one of Lrclib ID, Search Lyrics, or Track Name must be provided.',
-            path: ['q'],
-        }
-    );
+    .refine((data) => data.id !== undefined || (data.q && data.q.trim() !== '') || (data.trackName && data.trackName.trim() !== ''), {
+        message: 'At least one of the following fields must be provided: track name, lyrics, or Lrclib ID.',
+        path: ['trackName'],
+    });

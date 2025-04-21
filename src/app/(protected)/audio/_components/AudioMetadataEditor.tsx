@@ -14,6 +14,7 @@ import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
+import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import Textarea from '@/components/ui/Textarea';
 import { META_TAGS } from '@/constants/client.constants';
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
@@ -53,15 +54,12 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
         handleSubmit,
         setError,
         setValue,
-        watch,
         reset,
         formState: { errors, isSubmitting },
     } = useForm<T_AudioMetaTags>({
         resolver: zodResolver(AudioMetaTagsSchema),
         defaultValues: { ...parsedMetadata, cover: undefined },
     });
-
-    const title = watch('title');
 
     const handleFormSubmit = async (values: T_AudioMetaTags) => {
         const { cover, ...metaTags } = values;
@@ -162,7 +160,7 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                                 <button
                                     type="button"
                                     title="search lyrics"
-                                    popoverTarget="lyrics-popover"
+                                    onClick={() => openModal('modal-search-lyrics')}
                                     className="button button-primary absolute right-2 bottom-4 size-8 rounded-full p-1.5">
                                     <Icon icon="search" className="size-full -rotate-90" />
                                 </button>
@@ -221,15 +219,15 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                 </div>
             </form>
 
-            <div id="lyrics-popover" popover="auto" className="absolute inset-auto m-0 overflow-hidden rounded-xl [position-area:top_left]">
+            <Modal modalId="modal-search-lyrics">
                 <SearchLyrics
-                    defaultParams={{ trackName: title }}
+                    defaultParams={{ trackName: parsedMetadata.title as string }}
                     onSelect={(lyrics) => {
-                        document.getElementById('lyrics-popover')?.hidePopover();
+                        closeModal('modal-search-lyrics');
                         setValue('lyrics', lyrics);
                     }}
                 />
-            </div>
+            </Modal>
         </CardContainer>
     );
 };
