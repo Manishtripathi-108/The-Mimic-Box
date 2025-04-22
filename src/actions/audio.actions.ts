@@ -22,6 +22,7 @@ export const handleExtractAudioMetaTags = async (file: File) => {
             file: parsedFile.data,
             destinationFolder: 'audio',
             isTemporary: true,
+            deleteAfterMint: 60,
         })
     );
 

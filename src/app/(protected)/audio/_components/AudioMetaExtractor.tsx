@@ -16,7 +16,7 @@ import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { AudioFileValidationSchema } from '@/lib/schema/audio.validations';
 
-const AudioMetadataEditor = lazy(() => import('@/app/(protected)/audio/_components/AudioMetadataEditor'));
+const AudioMetaTagsEditor = lazy(() => import('@/app/(protected)/audio/_components/AudioMetaTagsEditor'));
 
 const validationSchema = z.object({
     audio: AudioFileValidationSchema,
@@ -159,7 +159,7 @@ export default function AudioMetaExtractor() {
                     </form>
                 ) : (
                     <Suspense fallback={<div>Loading editor...</div>}>
-                        <AudioMetadataEditor
+                        <AudioMetaTagsEditor
                             metaTags={extractedData.metaTags}
                             coverImage={extractedData.coverImage}
                             audioFileName={extractedData.audioFileName}

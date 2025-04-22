@@ -44,6 +44,7 @@ const sidebarMenuItems = [
         children: [
             { name: 'Converter', link: APP_ROUTES.AUDIO_CONVERTER },
             { name: 'Tags Editor', link: APP_ROUTES.AUDIO_TAGS_EDITOR },
+            { name: 'Search Lyrics', link: APP_ROUTES.AUDIO_SEARCH_LYRICS },
         ],
     },
     {

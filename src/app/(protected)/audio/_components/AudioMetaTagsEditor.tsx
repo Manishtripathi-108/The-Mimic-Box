@@ -31,7 +31,7 @@ type Props = {
     onSuccess: () => void;
 };
 
-const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileName, onCancel, onSuccess }) => {
+const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileName, onCancel, onSuccess }) => {
     const { makeApiCall, cancelRequest } = useSafeApiCall<FormData, Blob>();
     const [cover, setCover] = useState(coverImage);
     const [showAllTags, setShowAllTags] = useState(false);
@@ -232,4 +232,4 @@ const AudioMetadataEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
     );
 };
 
-export default AudioMetadataEditor;
+export default AudioMetaTagsEditor;

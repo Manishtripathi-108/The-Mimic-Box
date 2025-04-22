@@ -2,11 +2,10 @@
 
 import axios from 'axios';
 
+import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
-
-const BASE_URL = 'https://lrclib.net';
 
 export async function getLyrics(params: T_LyricsQuery) {
     try {
@@ -17,13 +16,13 @@ export async function getLyrics(params: T_LyricsQuery) {
 
         // 1. Fetch by ID
         if (id) {
-            const { data } = await axios.get<T_LyricsRecord>(`${BASE_URL}/api/get/${id}`);
+            const { data } = await axios.get<T_LyricsRecord>(`${EXTERNAL_ROUTES.LRCLIB.GET_LYRICS}/${id}`);
             return createSuccessReturn('Lyrics fetched successfully!', data);
         }
 
         // 2. Direct GET using track, artist, album, and duration
         if (trackName && artistName && albumName && duration) {
-            const { data } = await axios.get<T_LyricsRecord>(`${BASE_URL}/api/get`, {
+            const { data } = await axios.get<T_LyricsRecord>(EXTERNAL_ROUTES.LRCLIB.GET_LYRICS, {
                 params: {
                     track_name: trackName,
                     artist_name: artistName,
@@ -36,7 +35,7 @@ export async function getLyrics(params: T_LyricsQuery) {
 
         // 3. Search by query or track name
         if (q || trackName) {
-            const { data } = await axios.get<T_LyricsRecord[]>(`${BASE_URL}/api/search`, {
+            const { data } = await axios.get<T_LyricsRecord[]>(EXTERNAL_ROUTES.LRCLIB.SEARCH_LYRICS, {
                 params: {
                     q,
                     track_name: trackName,

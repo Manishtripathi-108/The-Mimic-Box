@@ -5,7 +5,8 @@ import axios from 'axios';
 import { auth } from '@/auth';
 import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_ROUTE, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
-import { getSpotifyUserProfile } from '@/lib/services/spotify/user.service';
+import { getSpotifyUserProfile } from '@/lib/services/spotify.service';
+import { T_SpotifyAccessToken } from '@/lib/types/spotify.types';
 import { createErrorResponse } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
@@ -56,7 +57,7 @@ export async function GET(req: NextRequest) {
         });
     }
 
-    const tokens = exchResponse.data;
+    const tokens = exchResponse.data as T_SpotifyAccessToken;
     const [error, userProfile] = await getSpotifyUserProfile(tokens.access_token);
 
     if (error || !userProfile) {
