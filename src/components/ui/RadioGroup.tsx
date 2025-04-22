@@ -2,11 +2,11 @@
 
 import { FieldValues, useController } from 'react-hook-form';
 
-import { RadioGroupProps } from '@/lib/types/client.types';
+import { FormFieldWithOptionsProps } from '@/lib/types/client.types';
 import { getOptionData } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
-const RadioGroup = <T extends FieldValues>({ label, options, classNames = {}, ...controllerProps }: RadioGroupProps<T>) => {
+const RadioGroup = <T extends FieldValues>({ label, options, classNames = {}, ...controllerProps }: FormFieldWithOptionsProps<T>) => {
     const {
         field,
         fieldState: { error },

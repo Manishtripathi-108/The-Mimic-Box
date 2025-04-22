@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 
 import Icon from '@/components/ui/Icon';
-import { IMAGE_URL } from '@/constants/client.constants';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import IconSet from '@/constants/icons.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
@@ -40,10 +40,11 @@ const sidebarMenuItems = [
     },
     {
         title: 'Audio',
-        icon: 'music',
+        icon: 'audio',
         children: [
             { name: 'Converter', link: APP_ROUTES.AUDIO_CONVERTER },
             { name: 'Tags Editor', link: APP_ROUTES.AUDIO_TAGS_EDITOR },
+            { name: 'Search Lyrics', link: APP_ROUTES.AUDIO_SEARCH_LYRICS },
         ],
     },
     {
@@ -83,7 +84,7 @@ const Sidebar = () => {
             {/* Profile Section */}
             <div className="flex items-center justify-between gap-4 border-b p-4">
                 <div className="flex items-center gap-3">
-                    <Image className="rounded-2xl" width={48} height={48} src={session?.user?.image || IMAGE_URL.PROFILE} alt="Avatar" />
+                    <Image className="rounded-2xl" width={48} height={48} src={session?.user?.image || IMAGE_FALLBACKS.PROFILE} alt="Avatar" />
                     <div>
                         <p id="sidebar-title" className="text-text-primary font-alegreya tracking-wide">
                             {session?.user?.name}

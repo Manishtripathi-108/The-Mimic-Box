@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import ffmpeg, { FfprobeData } from 'fluent-ffmpeg';
 import { extname } from 'path';
 
-import { IMAGE_URL } from '@/constants/client.constants';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { uploadToCloud } from '@/lib/services/cloud-storage.service';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
@@ -48,9 +48,9 @@ const getAudioDuration = (filePath: string): Promise<number> => {
     });
 };
 
-export const extractAudioMetadata = async (
+export const extractAudioMetaTags = async (
     fileUrl: string
-): Promise<SuccessResponseOutput<{ metadata: FfprobeData['format']['tags']; coverImage: string }> | ErrorResponseOutput> => {
+): Promise<SuccessResponseOutput<{ metaTags: FfprobeData['format']['tags']; coverImage: string }> | ErrorResponseOutput> => {
     try {
         const coverImagePath = getTempPath('images', `cover_${Date.now()}.jpg`);
         await createDirectoryIfNotExists(getTempPath('images'));
@@ -61,7 +61,7 @@ export const extractAudioMetadata = async (
 
         const coverStream = metadata.streams?.find((stream) => stream.codec_name === 'mjpeg' || stream.codec_type === 'video');
 
-        let coverImage = IMAGE_URL.AUDIO_COVER_FALLBACK;
+        let coverImage = IMAGE_FALLBACKS.AUDIO_COVER;
         if (coverStream) {
             try {
                 await new Promise((resolve, reject) => {
@@ -76,14 +76,14 @@ export const extractAudioMetadata = async (
                     removeLocalCopy: true,
                 });
 
-                coverImage = uploadResult.success && uploadResult.payload?.url ? uploadResult.payload.url : IMAGE_URL.AUDIO_COVER_FALLBACK;
+                coverImage = uploadResult.success && uploadResult.payload?.url ? uploadResult.payload.url : IMAGE_FALLBACKS.AUDIO_COVER;
             } catch (error) {
                 console.warn('Error uploading or extracting cover image', error);
             }
         }
 
         return createSuccessReturn('Audio metadata extracted successfully', {
-            metadata: metadata.format.tags ?? {},
+            metaTags: metadata.format.tags ?? {},
             coverImage,
         });
     } catch (error) {
@@ -136,8 +136,6 @@ export const convertAudioFormat = async (
         const format = options.audio.format.toLowerCase();
         const outputFilePath = getTempPath('audio', `converted_${fileName.split('.')[0]}.${format}`);
         await createDirectoryIfNotExists(getTempPath('audio'));
-
-        console.log('Converting audio format:', options);
 
         const command = ffmpeg(fileUrl);
 

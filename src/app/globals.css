@@ -229,7 +229,7 @@
     --color-theme-tertiary: #101010;
     --color-theme-text-primary: #ffffff;
     --color-theme-text-secondary: #b3b3b3;
-    --color-theme-border: #393939;
+    --color-theme-border: #505050;
 
     /* Accent colors */
     --color-theme-accent: #ff7043;
@@ -393,7 +393,7 @@
     }
 
     textarea& {
-        @apply min-h-5;
+        @apply scrollbar-thin;
     }
 
     input[type='range']& {

@@ -27,14 +27,24 @@ export type ErrorResponseOutput<T = undefined> = {
 };
 
 // Type for API call responses
-export type MakeApiCallType<TRequest, TResponse> = {
+type BaseApiCallType<TRequest> = {
     data?: TRequest;
     retryCount?: number;
     retryDelay?: number;
-    isExternalApiCall?: boolean;
-    retryCondition?: (error: AxiosError<ErrorResponseOutput> | Error) => boolean;
+    retryCondition?: (err: AxiosError<ErrorResponseOutput> | Error) => boolean;
     onStart?: () => Promise<void | boolean | TRequest> | void | boolean | TRequest;
-    onSuccess?: (data: TResponse | null, response: AxiosResponse<SuccessResponseOutput<TResponse> | unknown>) => void;
-    onError?: (error: AxiosError<ErrorResponseOutput> | Error | unknown, message: string) => void;
+    onError?: (err: AxiosError<ErrorResponseOutput> | Error | unknown, message: string) => void;
     onEnd?: () => void;
 } & AxiosRequestConfig<TRequest>;
+
+type ExternalApiCall<TRequest, TResponse> = BaseApiCallType<TRequest> & {
+    isExternalApiCall: true;
+    onSuccess?: (res: AxiosResponse<TResponse>) => void;
+};
+
+type InternalApiCall<TRequest, TResponse> = BaseApiCallType<TRequest> & {
+    isExternalApiCall?: false;
+    onSuccess?: (data: TResponse, res: AxiosResponse<SuccessResponseOutput<TResponse>>) => void;
+};
+
+export type MakeApiCallType<TRequest, TResponse> = ExternalApiCall<TRequest, TResponse> | InternalApiCall<TRequest, TResponse>;

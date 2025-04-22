@@ -19,6 +19,7 @@ export const APP_ROUTES = {
     // Audio Routes
     AUDIO_TAGS_EDITOR: '/audio/tags-editor',
     AUDIO_CONVERTER: '/audio/converter',
+    AUDIO_SEARCH_LYRICS: '/audio/search-lyrics',
 
     // AniList Routes
     ANILIST_INDEX: '/anilist',
@@ -62,23 +63,53 @@ export enum API_ROUTES {
     AUTH_LA_MYANIMELIST_CALLBACK = '/api/auth-link-account/myanimelist/callback',
 }
 
+const withIds = (base: string, ids?: string | string[]) => {
+    if (!ids) return base;
+
+    if (typeof ids === 'string') return `${base}/${ids}`;
+    if (Array.isArray(ids)) return `${base}?ids=${ids.join(',')}`;
+
+    return base;
+};
+
+const AUDIO_BASE = process.env.NODE_ENV === 'development' ? 'http://localhost:4000/api/audio' : 'https://elephoria.onrender.com/api/audio';
 export const EXTERNAL_ROUTES = {
     ANILIST: {
+        BASE: 'https://anilist.co/api/v2',
         AUTH: 'https://anilist.co/api/v2/oauth/authorize',
         EXCHANGE_TOKEN: 'https://anilist.co/api/v2/oauth/token',
         GRAPHQL: 'https://graphql.anilist.co',
     },
     SPOTIFY: {
+        BASE: 'https://api.spotify.com/v1',
         AUTH: 'https://accounts.spotify.com/authorize',
         EXCHANGE_TOKEN: 'https://accounts.spotify.com/api/token',
-        API: 'https://api.spotify.com/v1',
-        USER_PROFILE: 'https://api.spotify.com/v1/me',
+        SEARCH: '/search',
+        ALBUM: (ids?: string | string[]) => withIds('/albums', ids),
+        ALBUM_TRACKS: (id: string) => `/albums/${id}/tracks`,
+        PLAYLISTS: (ids?: string | string[]) => withIds('/playlists', ids),
+        PLAYLIST_TRACKS: (id: string) => `/playlists/${id}/tracks`,
+        TRACKS: (ids?: string | string[]) => withIds('/tracks', ids),
+        USERS_PROFILE: (id?: string) => `/users/${id}`,
+        USER: {
+            PROFILE: '/me',
+            PLAYLISTS: '/me/playlists',
+            ALBUMS: (ids?: string | string[]) => withIds('/me/albums', ids),
+            TRACKS: (ids?: string | string[]) => withIds('/me/tracks', ids),
+            CREATE_PLAYLIST: (userId: string) => `/users/${userId}/playlists`,
+            FOLLOWING: '/me/following',
+            ARTISTS: '/me/top/artists',
+        },
     },
     AUDIO: {
-        CONVERTER:
-            process.env.NODE_ENV === 'development'
-                ? ' http://localhost:4000/api/audio/convert-audio'
-                : 'https://elephoria.onrender.com/api/audio/convert-audio',
+        CONVERTER: `${AUDIO_BASE}/convert-audio`,
+        EXTRACT_METADATA: `${AUDIO_BASE}/extract-metadata`,
+        EDIT_META_TAGS: `${AUDIO_BASE}/edit-metadata`,
+    },
+    LRCLIB: {
+        BASE: 'https://lrclib.net',
+        GET_LYRICS: 'https://lrclib.net/api/get',
+        SEARCH_LYRICS: 'https://lrclib.net/api/search',
     },
 } as const;
 

@@ -41,12 +41,7 @@ type BaseFormProps = {
     classNames?: BaseClassNames;
 };
 
-export type CheckboxProps<T extends FieldValues> = {
-    options: FormOption[];
-} & BaseFormProps &
-    UseControllerProps<T>;
-
-export type RadioGroupProps<T extends FieldValues> = {
+export type FormFieldWithOptionsProps<T extends FieldValues> = {
     options: FormOption[];
 } & BaseFormProps &
     UseControllerProps<T>;
@@ -70,7 +65,11 @@ export type RangeSliderProps<T extends FieldValues> = {
 } & InputProps<T>;
 
 export type SelectProps<T extends FieldValues> = {
-    options: FormOption[];
+    placeholder?: string;
+} & FormFieldWithOptionsProps<T>;
+
+export type TextareaProps<T extends FieldValues> = {
+    rows?: number;
     placeholder?: string;
 } & BaseFormProps &
     UseControllerProps<T>;

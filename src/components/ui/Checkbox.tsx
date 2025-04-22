@@ -2,11 +2,11 @@
 
 import { FieldValues, useController } from 'react-hook-form';
 
-import { CheckboxProps } from '@/lib/types/client.types';
+import { FormFieldWithOptionsProps } from '@/lib/types/client.types';
 import { getOptionData } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
-const Checkbox = <T extends FieldValues>({ options, label, classNames = {}, ...controllerProps }: CheckboxProps<T>) => {
+const Checkbox = <T extends FieldValues>({ options, label, classNames = {}, ...controllerProps }: FormFieldWithOptionsProps<T>) => {
     const {
         field,
         fieldState: { error },

@@ -5,40 +5,39 @@ import { extname } from 'path';
 import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
 
-import { AudioFileValidationSchema } from '@/lib/schema/audio.validations';
-import { convertAudioFormat, editAudioMetadata, extractAudioMetadata } from '@/lib/services/audio.service';
+import { AudioFileArrayValidationSchema, AudioFileValidationSchema } from '@/lib/schema/audio.validations';
+import { convertAudioFormat, editAudioMetadata, extractAudioMetaTags } from '@/lib/services/audio.service';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { createZipFile } from '@/lib/utils/archiver.utils';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { cleanupFiles, cleanupFilesAfterDelay, createDirectoryIfNotExists, getTempPath, saveUploadedFile } from '@/lib/utils/file-server-only.utils';
 import { safeAwait, safeAwaitAll } from '@/lib/utils/safeAwait.utils';
 
-export const handleExtractAudioMetadata = async (file: File) => {
-    console.log('handleExtractAudioMetadata', file.name);
-
-    const parsedFile = AudioFileValidationSchema.safeParse([file]);
+export const handleExtractAudioMetaTags = async (file: File) => {
+    const parsedFile = AudioFileValidationSchema.safeParse(file);
     if (!parsedFile.success) return createErrorReturn(parsedFile.error.errors[0].message);
 
     const [saveError, fileDetails] = await safeAwait(
         saveUploadedFile({
-            file: parsedFile.data[0],
+            file: parsedFile.data,
             destinationFolder: 'audio',
             isTemporary: true,
+            deleteAfterMint: 60,
         })
     );
 
     if (saveError || !fileDetails) return createErrorReturn('Error saving the audio file.', saveError);
 
-    const [error, response] = await safeAwait(extractAudioMetadata(fileDetails.fullPath));
-    if (error || !response.success) return createErrorReturn(response?.message || 'Error extracting audio metadata', error);
+    const [error, response] = await safeAwait(extractAudioMetaTags(fileDetails.fullPath));
+    if (error || !response.success) return createErrorReturn(response?.message || 'Error extracting audio metaTags', error);
 
     return createSuccessReturn(response.message, { ...response.payload, fileName: fileDetails.fileName });
 };
 
-export const handleEditMetadata = async (fileName: string, metaTags: string, coverImage: File) => {
-    if (!fileName || !metaTags) return createErrorReturn('Audio file or metadata is missing. Please provide valid inputs.');
+export const handleEditMetaTags = async (fileName: string, metaTags: string | Record<string, string | number | null>, coverImage?: File) => {
+    if (!fileName || !metaTags) return createErrorReturn('Audio file or metaTags is missing. Please provide valid inputs.');
 
-    const metadata = typeof metaTags === 'string' ? JSON.parse(metaTags) : metaTags;
+    const parsedMetaTags = typeof metaTags === 'string' ? JSON.parse(metaTags) : metaTags;
     const tempAudioPath = getTempPath('audio', fileName);
 
     if (!existsSync(tempAudioPath)) return createErrorReturn('Audio file not found. Please reupload a valid file.');
@@ -53,7 +52,7 @@ export const handleEditMetadata = async (fileName: string, metaTags: string, cov
         if (!error) coverImagePath = outputPath;
     }
 
-    const result = await editAudioMetadata(tempAudioPath, metadata, coverImagePath);
+    const result = await editAudioMetadata(tempAudioPath, parsedMetaTags, coverImagePath);
     cleanupFiles([tempAudioPath, coverImagePath].filter((path): path is string => path !== null));
 
     if (!result.success) return result;
@@ -73,7 +72,7 @@ export const handleConvertAudio = async (files: File[], settings: T_AudioAdvance
 
     const normalizedSettings = Array.isArray(settings) ? settings : Array(files.length).fill(settings);
 
-    const validationResult = AudioFileValidationSchema.safeParse(files);
+    const validationResult = AudioFileArrayValidationSchema.safeParse(files);
     if (!validationResult.success) {
         return createErrorReturn('Invalid audio files.', null, validationResult.error.errors);
     }

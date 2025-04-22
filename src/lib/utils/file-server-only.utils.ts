@@ -112,7 +112,7 @@ export const saveUploadedFile = async ({
     file,
     destinationFolder,
     isTemporary = false,
-    deleteAfterMint,
+    deleteAfterMint = 15,
 }: {
     file: File;
     destinationFolder: string;
@@ -133,7 +133,7 @@ export const saveUploadedFile = async ({
     await fs.writeFile(fullPath, buffer);
 
     if (isTemporary || deleteAfterMint) {
-        cleanupFilesAfterDelay([fullPath], deleteAfterMint ?? 15);
+        cleanupFilesAfterDelay([fullPath], deleteAfterMint);
     }
 
     return {

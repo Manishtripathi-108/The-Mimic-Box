@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
@@ -35,7 +36,7 @@ const ForgotPasswordForm = () => {
                 });
             });
 
-            setError('root.serverError', { message: response.message || 'Something went wrong. Please try again Later.' });
+            setError('root', { message: response.message || 'Something went wrong. Please try again Later.' });
         }
     }
 
@@ -61,12 +62,7 @@ const ForgotPasswordForm = () => {
                         rules={{ required: 'Email is required' }}
                     />
 
-                    {errors.root?.serverError && (
-                        <p className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
-                            <Icon icon="error" className="size-7" />
-                            {errors.root.serverError.message}
-                        </p>
-                    )}
+                    <ErrorMessage message={errors.root?.message} />
 
                     <button type="submit" disabled={isSubmitting} className="button button-highlight mt-4 w-full">
                         {isSubmitting ? 'Please wait...' : 'Reset Password'}

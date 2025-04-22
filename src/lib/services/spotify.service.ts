@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
-import { SpotifyUserProfile, SpotifyUserProfileErrors } from '@/lib/types/spotify.types';
+import { T_SpotifyErrorResponse, T_SpotifyPrivateUser } from '@/lib/types/spotify.types';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
-export const getSpotifyUserProfile = async (accessToken: string): Promise<[string | null, SpotifyUserProfile | null]> => {
+export const getSpotifyUserProfile = async (accessToken: string): Promise<[string | null, T_SpotifyPrivateUser | null]> => {
     const [error, data] = await safeAwait(
-        axios.get<SpotifyUserProfile>(EXTERNAL_ROUTES.SPOTIFY.USER_PROFILE, {
+        axios.get<T_SpotifyPrivateUser>(EXTERNAL_ROUTES.SPOTIFY.USER.PROFILE, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -15,7 +15,7 @@ export const getSpotifyUserProfile = async (accessToken: string): Promise<[strin
 
     if (error || !data) {
         if (axios.isAxiosError(error)) {
-            const errors = error.response?.data as SpotifyUserProfileErrors;
+            const errors = error.response?.data as T_SpotifyErrorResponse;
             return [errors.error.message, null];
         }
 

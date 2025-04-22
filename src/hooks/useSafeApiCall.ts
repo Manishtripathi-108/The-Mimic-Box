@@ -1,8 +1,10 @@
-// useSafeApiCall.ts
+'use client';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import axios, { AxiosResponse } from 'axios';
 
+import useUploadProgress from '@/hooks/useUploadProgress';
 import { MakeApiCallType, SuccessResponseOutput } from '@/lib/types/response.types';
 
 const ENABLE_DEBUG_LOGS = process.env.NODE_ENV === 'development';
@@ -14,6 +16,8 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<TRes | null>(null);
 
+    const { uploadState, resetUploadProgress, onUploadProgress: onProgress } = useUploadProgress();
+
     const isMounted = useRef(true);
     const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -22,17 +26,19 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
     }, []);
 
     const makeApiCall = useCallback(
-        async ({
-            onStart,
-            onSuccess,
-            isExternalApiCall = false,
-            retryCount = 0,
-            retryDelay = 500,
-            retryCondition,
-            onError,
-            onEnd,
-            ...requestConfig
-        }: MakeApiCallType<TReq, TRes>) => {
+        async (config: MakeApiCallType<TReq, TRes>) => {
+            const {
+                onStart,
+                onSuccess,
+                isExternalApiCall = false,
+                retryCount = 0,
+                retryDelay = 500,
+                retryCondition,
+                onError,
+                onEnd,
+                ...requestConfig
+            } = config;
+
             setIsPending(true);
             setError(null);
             setData(null);
@@ -56,21 +62,28 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
                     try {
                         abortControllerRef.current = new AbortController();
                         requestConfig.signal = abortControllerRef.current.signal;
+                        requestConfig.onUploadProgress = requestConfig.onUploadProgress || onProgress;
 
                         if (ENABLE_DEBUG_LOGS) console.log(`[useSafeApiCall] Attempt ${attempts + 1}`, requestConfig);
 
-                        const response: AxiosResponse<SuccessResponseOutput<TRes>> = await apiClient(requestConfig);
+                        const response = await apiClient.request(requestConfig);
 
                         if (!isMounted.current) return;
 
                         if (isExternalApiCall) {
-                            onSuccess?.(null, response);
-                        } else if (response.data.success === true) {
-                            const payload = response.data.payload ?? null;
-                            setData(payload);
-                            onSuccess?.(payload, response);
+                            (onSuccess as (res: AxiosResponse<TRes>) => void)?.(response);
                         } else {
-                            throw new Error(response.data.message || 'Unexpected response');
+                            const successRes = response.data as SuccessResponseOutput<TRes>;
+
+                            if (successRes.success) {
+                                setData(successRes.payload);
+                                (onSuccess as (data: TRes, response: AxiosResponse<SuccessResponseOutput<TRes>>) => void)?.(
+                                    successRes.payload,
+                                    response
+                                );
+                            } else {
+                                throw new Error(successRes.message || 'Unexpected response');
+                            }
                         }
 
                         return;
@@ -110,12 +123,14 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
                 setError('Initialization failed');
                 onError?.(initErr, 'Initialization failed');
             } finally {
+                if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] Request completed');
                 abortControllerRef.current = null;
+                resetUploadProgress();
                 setIsPending(false);
                 onEnd?.();
             }
         },
-        [apiClient]
+        [apiClient, resetUploadProgress, onProgress]
     );
 
     useEffect(() => {
@@ -131,6 +146,7 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
 
     return {
         isPending,
+        uploadState,
         error,
         data,
         makeApiCall,

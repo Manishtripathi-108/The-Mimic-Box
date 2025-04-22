@@ -6,9 +6,7 @@ import CardContainer from '@/components/ui/CardContainer';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { T_UploadState } from '@/lib/types/client.types';
 
-export default function UploadProgressCard({ uploadState }: { uploadState: T_UploadState }) {
-    if (!uploadState.total) return null;
-
+export default function UploadProgressCard({ uploadState, onCancel }: { uploadState: T_UploadState; onCancel?: () => void }) {
     return (
         <CardContainer className="w-full max-w-md">
             <div className="text-muted-foreground flex items-center justify-between text-sm">
@@ -32,6 +30,12 @@ export default function UploadProgressCard({ uploadState }: { uploadState: T_Upl
                     <span className="text-foreground font-medium">{uploadState.formattedEstimated}</span>
                 </div>
             </div>
+
+            {onCancel && (
+                <button type="button" className="button button-danger" onClick={onCancel}>
+                    Cancel
+                </button>
+            )}
         </CardContainer>
     );
 }
