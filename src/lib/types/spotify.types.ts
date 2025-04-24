@@ -512,6 +512,7 @@ export type T_SpotifySimplifiedPlaylist = {
     external_urls: T_SpotifyExternalUrl;
     href: string;
     id: string;
+    primary_color: string | null;
     images: T_SpotifyImage[];
     name: string;
     owner: T_SpotifyPublicUser;

@@ -10,7 +10,7 @@ const A_Navbar = () => {
     const pathName = usePathname();
 
     return (
-        <nav className="bg-secondary/75 saturate-150 backdrop-blur-xs">
+        <nav className="bg-secondary/75 backdrop-saturate-150 backdrop-blur-xs">
             <ul className="flex justify-center">
                 <li className="relative">
                     <button
