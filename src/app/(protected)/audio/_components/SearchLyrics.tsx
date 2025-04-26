@@ -41,7 +41,7 @@ const LyricsResult = memo(({ lyric, onSelect }: LyricsResultProps) => {
                     </span>
                     <span className="text-text-secondary shadow-pressed-xs w-fit rounded-md border px-2 text-sm">{badgeText}</span>
                     <p className="text-text-secondary text-sm">
-                        {lyric.albumName} • {lyric.duration}s
+                        {lyric.albumName || 'Unknown'} • {lyric.duration || 'N/A'}s
                     </p>
                 </div>
             </summary>

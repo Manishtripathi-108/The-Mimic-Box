@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
@@ -22,10 +22,10 @@ const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
     const { data: session, status } = useSession();
     const anilist = session?.user?.linkedAccounts?.anilist;
 
-    const [isPending, startTransition] = React.useTransition();
-    const [mediaStatus, setMediaStatus] = React.useState<AnilistMediaListStatus | 'add to list'>('add to list');
+    const [isPending, startTransition] = useTransition();
+    const [mediaStatus, setMediaStatus] = useState<AnilistMediaListStatus | 'add to list'>('add to list');
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!anilist?.accessToken) return;
 
         const fetchMediaStatus = async () => {

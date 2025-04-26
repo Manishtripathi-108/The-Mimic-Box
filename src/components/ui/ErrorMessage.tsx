@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Icon from '@/components/ui/Icon';
 import cn from '@/lib/utils/cn';
 

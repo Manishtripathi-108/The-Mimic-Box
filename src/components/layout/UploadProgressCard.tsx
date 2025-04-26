@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import CardContainer from '@/components/ui/CardContainer';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { T_UploadState } from '@/lib/types/client.types';

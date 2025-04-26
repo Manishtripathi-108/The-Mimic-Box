@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUploadItem from '@/components/ui/FileUploadItem';
 import Icon from '@/components/ui/Icon';

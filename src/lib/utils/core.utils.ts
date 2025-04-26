@@ -1,41 +1,55 @@
 import { AnilistMediaType, AnilistQuery, AnilistSearchCategories } from '@/lib/types/anilist.types';
 
-// This function returns the current season based on the current month.
-export const getCurrentSeason = () => {
+/**
+ * Determines the current season based on the current month.
+ */
+export const getCurrentSeason = (): 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL' => {
     const month = new Date().getMonth() + 1;
+
     if (month <= 3) return 'WINTER';
     if (month <= 6) return 'SPRING';
     if (month <= 9) return 'SUMMER';
     return 'FALL';
 };
 
-// This function returns the next season based on the current month and year.
-export const getNextSeason = (): { season: 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER'; year: number } => {
+/**
+ * Determines the next season and corresponding year based on the current month.
+ */
+export const getNextSeasonAndYear = (): { season: 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER'; year: number } => {
     const month = new Date().getMonth() + 1;
     const year = new Date().getFullYear();
+
     if (month <= 3) return { season: 'SPRING', year };
     if (month <= 6) return { season: 'SUMMER', year };
     if (month <= 9) return { season: 'FALL', year };
+
     return { season: 'WINTER', year: year + 1 };
 };
 
-export const getMediaSearchParams = (type: AnilistMediaType, category?: AnilistSearchCategories): AnilistQuery => {
-    const { season, year } = getNextSeason();
+/**
+ * Generates search parameters for querying media based on type and category.
+ */
+export const buildMediaSearchParams = (mediaType: AnilistMediaType, category?: AnilistSearchCategories): AnilistQuery => {
+    const { season, year } = getNextSeasonAndYear();
+
     switch (category) {
         case 'trending':
-            return { type, season: 'ALL', sort: 'TRENDING_DESC' };
+            return { type: mediaType, season: 'ALL', sort: 'TRENDING_DESC' };
         case 'this-season':
-            return { type, season: getCurrentSeason(), year: new Date().getFullYear(), sort: 'POPULARITY_DESC' };
+            return { type: mediaType, season: getCurrentSeason(), year: new Date().getFullYear(), sort: 'POPULARITY_DESC' };
         case 'popular':
-            return { type, season: 'ALL', sort: 'POPULARITY_DESC' };
+            return { type: mediaType, season: 'ALL', sort: 'POPULARITY_DESC' };
         case 'next-season':
-            return { type, season, year };
+            return { type: mediaType, season, year };
         default:
-            return { type, season: 'ALL' };
+            return { type: mediaType, season: 'ALL' };
     }
 };
 
-export const categoryTitle = (category?: AnilistSearchCategories) => {
+/**
+ * Maps a search category to a human-readable title.
+ */
+export const getCategoryDisplayTitle = (category?: AnilistSearchCategories): string | undefined => {
     switch (category) {
         case 'trending':
             return 'TRENDING NOW';
@@ -46,33 +60,54 @@ export const categoryTitle = (category?: AnilistSearchCategories) => {
         case 'next-season':
             return 'UPCOMING';
         default:
-            return;
+            return undefined;
     }
 };
 
 /**
- * Converts seconds into a human-readable duration.
- *
- * @param seconds - The number of seconds.
- * @returns A formatted duration string (e.g., "1d 2h 30min 5s").
+ * Decomposes time in milliseconds into days, hours, minutes, and seconds.
  */
-export const formatDuration = (seconds: number): string => {
-    if (seconds < 1) return 'Less than 1s';
+const decomposeTime = (milliseconds: number) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-    const days = Math.floor(seconds / 86400);
-    seconds -= days * 86400;
+    return { days, hours, minutes, seconds };
+};
 
-    const hours = Math.floor(seconds / 3600);
-    seconds -= hours * 3600;
+/**
+ * Formats a duration into a human-readable string (e.g., "1d 2h 30min 5s").
+ */
+export const formatDurationInReadableFormat = (milliseconds: number): string => {
+    if (milliseconds < 1000) return 'Less than 1s';
 
-    const minutes = Math.floor(seconds / 60);
-    seconds -= minutes * 60;
+    const { days, hours, minutes, seconds } = decomposeTime(milliseconds);
 
-    const parts: string[] = [];
-    if (days) parts.push(`${days}d`);
-    if (hours) parts.push(`${hours}h`);
-    if (minutes) parts.push(`${minutes}min`);
-    if (seconds) parts.push(`${Math.floor(seconds)}s`);
+    const durationParts: string[] = [];
+    if (days) durationParts.push(`${days}d`);
+    if (hours) durationParts.push(`${hours}h`);
+    if (minutes) durationParts.push(`${minutes}min`);
+    if (seconds) durationParts.push(`${seconds}s`);
 
-    return parts.join(' ') || '0s';
+    return durationParts.join(' ') || '0s';
+};
+
+/**
+ * Formats time into a customizable format based on precision.
+ * Precision options: 'seconds', 'minutes', 'hours', 'full' (including days, hours, minutes, seconds).
+ */ export const formatTimeDuration = (milliseconds: number, precision: 'seconds' | 'minutes' | 'hours' | 'full' = 'hours'): string => {
+    const { days, hours, minutes, seconds } = decomposeTime(milliseconds);
+
+    const pad = (n: number) => n.toString().padStart(2, '0');
+
+    if (precision === 'seconds') return pad(seconds);
+    if (precision === 'minutes') return `${pad(minutes)}:${pad(seconds)}`;
+
+    const time = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+
+    if (precision === 'full') return days > 0 ? `${days}:${time}` : time;
+
+    return time;
 };

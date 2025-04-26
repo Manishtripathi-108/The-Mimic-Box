@@ -456,17 +456,7 @@ export type T_SpotifyDevices = { devices: T_SpotifyDevice[] };
 /**
  * The recently played object which is returned by the [Player.getRecentlyPlayed] function.
  */
-export type T_SpotifyRecentlyPlayed = {
-    cursors: T_SpotifyCursor;
-    href: string;
-    limit: number;
-    next?: string;
-    total: number;
-    items: {
-        track: T_SpotifyTrack;
-        playedAt: string;
-    }[];
-};
+export type T_SpotifyRecentlyPlayed = T_SpotifyCursorPaging<T_SpotifyPlayHistory>;
 
 /**
  * The play history object of the player api.
@@ -474,7 +464,7 @@ export type T_SpotifyRecentlyPlayed = {
 export type T_SpotifyPlayHistory = {
     context: T_SpotifyPlayerContext;
     played_at: string;
-    track: T_SpotifySimplifiedTrack;
+    track: T_SpotifyTrack;
 };
 
 /**
@@ -512,6 +502,7 @@ export type T_SpotifySimplifiedPlaylist = {
     external_urls: T_SpotifyExternalUrl;
     href: string;
     id: string;
+    primary_color: string | null;
     images: T_SpotifyImage[];
     name: string;
     owner: T_SpotifyPublicUser;
@@ -525,9 +516,9 @@ export type T_SpotifySimplifiedPlaylist = {
  * The structure containing the complete details of the Spotify Playlist.
  */
 export type T_SpotifyPlaylist = Omit<T_SpotifySimplifiedPlaylist, 'tracks'> & {
-    followers: T_SpotifyFollowers;
+    // followers: T_SpotifyFollowers;
     public: boolean | null;
-    tracks: T_SpotifyPlaylistTrack[];
+    tracks: T_SpotifyPaging<T_SpotifyPlaylistTrack>;
 };
 
 /**

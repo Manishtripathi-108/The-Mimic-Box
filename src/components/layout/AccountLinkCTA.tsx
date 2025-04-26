@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { $Enums } from '@prisma/client';
 
 import Icon from '@/components/ui/Icon';

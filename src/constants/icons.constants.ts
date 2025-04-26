@@ -80,8 +80,12 @@ enum IconSet {
     notFound = 'tabler:error-404',
 
     /* ------------------------------------ P ----------------------------------- */
+    pause = 'line-md:pause',
+    pauseToPlay = 'line-md:play-filled-to-pause-transition',
     person = 'line-md:person-filled',
     personAdd = 'line-md:person-add-filled',
+    play = 'line-md:play-filled',
+    playToPause = 'line-md:pause-to-play-filled-transition',
     player = 'game-icons:centurion-helmet',
     plus = 'line-md:plus',
     presentation = 'hugeicons:presentation-bar-chart-02',
