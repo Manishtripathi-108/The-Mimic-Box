@@ -26,12 +26,12 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
                     <Icon icon={explicit ? 'pauseToPlay' : 'playToPause'} className="size-full" />
                 </button>
                 <div className="flex items-center gap-3">
-                    <Link href={APP_ROUTES.SPOTIFY_TRACK(id)} className="shrink-0 cursor-pointer">
+                    <Link href={APP_ROUTES.SPOTIFY_TRACKS(id)} className="shrink-0 cursor-pointer">
                         <Image src={album.images[0].url} alt={name} width={50} height={50} className="rounded-xl object-cover" />
                     </Link>
                     <div className="flex flex-col">
                         <Link
-                            href={APP_ROUTES.SPOTIFY_TRACK(id)}
+                            href={APP_ROUTES.SPOTIFY_TRACKS(id)}
                             className="text-text-primary line-clamp-1 cursor-pointer font-semibold hover:underline"
                             title={name}>
                             {name}
@@ -42,7 +42,7 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
                                 {artists.map((artist, index) => (
                                     <Link
                                         key={artist.id}
-                                        href={APP_ROUTES.SPOTIFY_ARTIST(artist.id)}
+                                        href={APP_ROUTES.SPOTIFY_ARTISTS(artist.id)}
                                         className="hover:text-text-primary text-text-secondary cursor-pointer hover:underline">
                                         {artist.name}
                                         {index < artists.length - 1 && ', '}
@@ -57,7 +57,7 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
             <div className="flex items-center justify-end gap-4 text-sm @sm:w-full @sm:justify-between">
                 <Link
                     title={album.name}
-                    href={APP_ROUTES.SPOTIFY_ALBUM(album.id)}
+                    href={APP_ROUTES.SPOTIFY_ALBUMS(album.id)}
                     className="text-text-secondary hover:text-text-primary hidden cursor-pointer text-sm hover:underline @sm:line-clamp-1">
                     {album.name}
                 </Link>

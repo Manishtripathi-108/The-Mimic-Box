@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Image from 'next/image';
 
 import A_Navbar from '@/app/(protected)/anilist/_components/A_Navbar';
@@ -9,7 +7,7 @@ const A_Header = ({ displayName, imageUrl, bannerUrl }: { displayName: string; i
         <header className="relative">
             <div
                 style={{ backgroundImage: `url(${bannerUrl})` }}
-                className="shadow-pressed-sm bg-secondary relative -z-10 h-48 border-b bg-cover bg-center bg-no-repeat after:absolute after:inset-0 after:-z-10 after:bg-gradient-to-t after:from-primary/60 after:to-transparent sm:h-72"
+                className="shadow-pressed-sm bg-secondary after:from-primary/60 relative -z-10 h-48 border-b bg-cover bg-center bg-no-repeat after:absolute after:inset-0 after:-z-10 after:bg-gradient-to-t after:to-transparent sm:h-72"
             />
             <div className="absolute inset-x-0 bottom-0 z-0 h-fit">
                 <div className="mx-auto flex w-full max-w-(--breakpoint-md) items-end justify-start gap-3 opacity-100">

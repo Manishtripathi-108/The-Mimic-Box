@@ -1,5 +1,3 @@
-import React from 'react';
-
 import A_Navbar from '@/app/(protected)/anilist/_components/A_Navbar';
 
 const AnilistSearchLayout = async ({ children }: { children: React.ReactNode }) => {

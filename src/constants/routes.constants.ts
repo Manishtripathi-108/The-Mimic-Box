@@ -44,12 +44,10 @@ export const APP_ROUTES = {
     SPOTIFY_SEARCH: '/spotify/search',
     SPOTIFY_PLAYLISTS: '/spotify/playlists',
     SPOTIFY_PLAYLIST: (id: string) => `/spotify/playlists/${id}`,
-    SPOTIFY_ALBUM: (id: string) => `/spotify/albums/${id}`,
-    SPOTIFY_TRACK: (id: string) => `/spotify/tracks/${id}`,
-    SPOTIFY_ARTIST: (id: string) => `/spotify/artists/${id}`,
+    SPOTIFY_ALBUMS: (id: string) => `/spotify/albums/${id}`,
+    SPOTIFY_TRACKS: (id: string) => `/spotify/tracks/${id}`,
+    SPOTIFY_ARTISTS: (id: string) => `/spotify/artists/${id}`,
     SPOTIFY_RECENTLY_PLAYED: '/spotify/recently-played',
-    SPOTIFY_TOP_TRACKS: '/spotify/top-tracks',
-    SPOTIFY_TOP_ARTISTS: '/spotify/top-artists',
     SPOTIFY_USER_PROFILE: '/spotify/user/profile',
 
     // User Routes
@@ -107,12 +105,13 @@ export const EXTERNAL_ROUTES = {
         USER: {
             PROFILE: '/me',
             PLAYLISTS: '/me/playlists',
-            ALBUMS: (ids?: string | string[]) => withIds('/me/albums', ids),
-            TRACKS: (ids?: string | string[]) => withIds('/me/tracks', ids),
             CREATE_PLAYLIST: (userId: string) => `/users/${userId}/playlists`,
             FOLLOWING: '/me/following',
             ARTISTS: '/me/top/artists',
             RECENTLY_PLAYED: '/me/player/recently-played',
+            TOP_TRACKS: '/me/top/tracks',
+            TOP_ARTISTS: '/me/top/artists',
+            CHECK_SAVED_TRACK: (ids?: string | string[]) => withIds('/me/tracks/contains', ids),
         },
     },
     AUDIO: {

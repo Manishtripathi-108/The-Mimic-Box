@@ -1,26 +1,3 @@
-import MusicCardGrid from '@/app/(protected)/spotify/_components/MusicCardGrid';
-import MusicCategoryList from '@/app/(protected)/spotify/_components/MusicCategoryList';
-import MusicPlaylist from '@/app/(protected)/spotify/_components/MusicPlaylist';
-
-const recentlyPlayed = Array.from({ length: 15 }).map((_, i) => ({
-    title: `Playlist #${i + 1}`,
-    artist: `Artist ${i + 1}`,
-    id: `${i.toString().padStart(2, '0')}0X0X0X0X`,
-    thumbnailUrl: `https://picsum.photos/200?random=${i}`,
-}));
-
-export default function Dashboard() {
-    return (
-        <div className="@container flex flex-col gap-6 p-4 sm:p-6">
-            <MusicCategoryList />
-
-            <div className="grid gap-8 @3xl:grid-cols-3">
-                <MusicPlaylist />
-                <div className="-ml-4 grid gap-6 @3xl:col-span-2">
-                    <MusicCardGrid title="Recently Played" items={recentlyPlayed} />
-                    <MusicCardGrid title="Top" items={recentlyPlayed} />
-                </div>
-            </div>
-        </div>
-    );
+export default function Dev() {
+    return <div>There Is nothing to see here</div>;
 }

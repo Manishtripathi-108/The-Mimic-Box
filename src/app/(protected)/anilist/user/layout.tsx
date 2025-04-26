@@ -1,5 +1,3 @@
-import React from 'react';
-
 import A_Header from '@/app/(protected)/anilist/_components/A_Header';
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';

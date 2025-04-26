@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 import { PlayerData } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
 
@@ -25,4 +25,4 @@ const ScoreBoard = ({ playerX, playerO, drawScore }: { playerX: PlayerData; play
     );
 };
 
-export default React.memo(ScoreBoard);
+export default memo(ScoreBoard);

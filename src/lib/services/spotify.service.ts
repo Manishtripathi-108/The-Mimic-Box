@@ -3,12 +3,14 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import spotifyConfig from '@/lib/config/spotify.config';
 import {
+    T_SpotifyArtist,
     T_SpotifyErrorResponse,
     T_SpotifyPaging,
     T_SpotifyPlaylist,
     T_SpotifyPrivateUser,
     T_SpotifyRecentlyPlayed,
     T_SpotifySimplifiedPlaylist,
+    T_SpotifyTrack,
 } from '@/lib/types/spotify.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
@@ -79,6 +81,36 @@ export const getUserRecentlyPlayedTracks = async (accessToken: string, limit?: n
     return createSuccessReturn('User playlists fetched successfully!', response?.data);
 };
 
+export const getUserTopTracks = async (accessToken: string, limit?: number) => {
+    const [error, response] = await safeAwait(
+        spotifyConfig.get<T_SpotifyPaging<T_SpotifyTrack>>(EXTERNAL_ROUTES.SPOTIFY.USER.TOP_TRACKS, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            params: { limit },
+        })
+    );
+
+    if (error || !response) {
+        return createErrorReturn('Failed to fetch user playlists', error);
+    }
+
+    return createSuccessReturn('User playlists fetched successfully!', response?.data);
+};
+
+export const getUserTopArtists = async (accessToken: string, limit?: number) => {
+    const [error, response] = await safeAwait(
+        spotifyConfig.get<T_SpotifyPaging<T_SpotifyArtist>>(EXTERNAL_ROUTES.SPOTIFY.USER.TOP_ARTISTS, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            params: { limit },
+        })
+    );
+
+    if (error || !response) {
+        return createErrorReturn('Failed to fetch user playlists', error);
+    }
+
+    return createSuccessReturn('User playlists fetched successfully!', response?.data);
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                   No User                                  */
 /* -------------------------------------------------------------------------- */
@@ -101,6 +133,8 @@ const spotifyApi = {
     getUserProfile,
     getUserPlaylists,
     getUserRecentlyPlayedTracks,
+    getUserTopTracks,
+    getUserTopArtists,
 
     // No User
     getPlaylistDetails,

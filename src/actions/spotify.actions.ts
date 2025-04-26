@@ -67,3 +67,25 @@ export const getSpotifyRecentlyPlayedTracks = async (limit: number = 50) => {
     const tracksRes = await spotifyApi.getUserRecentlyPlayedTracks(accessToken, limit);
     return tracksRes;
 };
+
+export const getSpotifyTopArtists = async (limit: number = 50) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const artistsRes = await spotifyApi.getUserTopArtists(accessToken, limit);
+    return artistsRes;
+};
+
+export const getSpotifyTopTracks = async (limit: number = 50) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const tracksRes = await spotifyApi.getUserTopTracks(accessToken, limit);
+    return tracksRes;
+};

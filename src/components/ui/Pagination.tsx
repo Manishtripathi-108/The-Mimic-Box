@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import Icon from '@/components/ui/Icon';
 import { getPageNumbers } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
