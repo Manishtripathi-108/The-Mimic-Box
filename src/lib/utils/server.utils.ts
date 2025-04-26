@@ -1,7 +1,5 @@
-import { AxiosRequestConfig } from 'axios';
-
 import anilistConfig from '@/lib/config/anilist.config';
-import spotifyConfig from '@/lib/config/spotify.config';
+import { T_SpotifyPlayHistory } from '@/lib/types/spotify.types';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 // This function fetches data from the AniList API using a GraphQL query and optional variables.
@@ -17,14 +15,20 @@ export const fetchAniListData = async <T>(
     return [error, (response?.data?.data as T) ?? null];
 };
 
-export const fetchSpotifyData = async <T>({ token, ...reqConfig }: AxiosRequestConfig & { token: string }): Promise<[Error, null] | [null, T]> => {
-    const reqConfigHeaders = { ...reqConfig.headers, Authorization: `Bearer ${token}` };
+export const extractRecentPlaylists = (items: T_SpotifyPlayHistory[]) => {
+    const playlistIds: Set<string> = new Set();
 
-    const [error, response] = await safeAwait(spotifyConfig<T>({ ...reqConfig, headers: reqConfigHeaders }));
-
-    if (error || !response) {
-        return [error || new Error('No response'), null];
+    for (const item of items) {
+        const context = item.context;
+        console.log('Context:', context);
+        
+        if (context?.type === 'playlist' && context.uri) {
+            const uriParts = context.uri.split(':');
+            if (uriParts[1] === 'playlist') {
+                playlistIds.add(uriParts[2]); // playlist ID
+            }
+        }
     }
 
-    return [null, response.data];
+    return Array.from(playlistIds);
 };

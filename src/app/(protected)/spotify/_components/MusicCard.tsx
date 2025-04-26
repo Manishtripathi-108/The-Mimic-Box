@@ -13,7 +13,7 @@ type MusicCardProps = {
 
 export default function MusicCard({ title, sub, thumbnailUrl, onClick }: MusicCardProps) {
     return (
-        <div className="group text-text-primary grid shrink-0 cursor-pointer" onClick={onClick}>
+        <div className="group text-text-primary grid shrink-0 w-40 cursor-pointer" onClick={onClick}>
             <div className="relative mb-1 overflow-hidden rounded-xl">
                 <Image
                     src={thumbnailUrl}

@@ -5,9 +5,10 @@ import { useState } from 'react';
 import { AxiosProgressEvent } from 'axios';
 
 import { T_UploadState } from '@/lib/types/client.types';
-import { formatDuration } from '@/lib/utils/core.utils';
+import { formatDurationInReadableFormat } from '@/lib/utils/core.utils';
 import { formatFileSize } from '@/lib/utils/file.utils';
 
+// Default upload progress state
 const UPLOAD_PROGRESS: T_UploadState = {
     loaded: 0,
     total: 0,
@@ -50,7 +51,7 @@ function useUploadProgress() {
             formattedTotal: formatFileSize(event.total!),
             formattedProgress: `${(progress * 100).toFixed(2)}%`,
             formattedRate: rate > 0 ? `${formatFileSize(rate)}/s` : '0 B/s',
-            formattedEstimated: estimated > 0 ? formatDuration(estimated) : '0s',
+            formattedEstimated: estimated > 0 ? formatDurationInReadableFormat(estimated * 1000) : '0s',
         }));
     };
 

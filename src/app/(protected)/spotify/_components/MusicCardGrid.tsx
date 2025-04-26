@@ -6,7 +6,6 @@ import Icon from '@/components/ui/Icon';
 type MusicItem = {
     id: string;
     title: string;
-    artist: string;
     thumbnailUrl: string;
 };
 

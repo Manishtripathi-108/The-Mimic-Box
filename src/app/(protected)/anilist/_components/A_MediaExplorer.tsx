@@ -10,7 +10,7 @@ import ErrorCard from '@/components/layout/ErrorCard';
 import { NoDataCard } from '@/components/layout/NoDataCard';
 import Pagination from '@/components/ui/Pagination';
 import { AnilistMedia, AnilistMediaFilters, AnilistMediaType, AnilistPageInfo, AnilistSearchCategories } from '@/lib/types/anilist.types';
-import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
+import { buildMediaSearchParams, getCategoryDisplayTitle } from '@/lib/utils/core.utils';
 
 const INITIAL_PAGE_INFO: AnilistPageInfo = {
     total: 0,
@@ -28,7 +28,7 @@ const A_MediaExplorer = ({ type, category }: { type: AnilistMediaType; category?
     const [detailedView, setDetailedView] = useState(false);
     const [isPending, startTransition] = useTransition();
 
-    const searchParams = useMemo(() => getMediaSearchParams(type, category), [type, category]);
+    const searchParams = useMemo(() => buildMediaSearchParams(type, category), [type, category]);
 
     const appliedFilters = useMemo(
         () => ({
@@ -96,7 +96,7 @@ const A_MediaExplorer = ({ type, category }: { type: AnilistMediaType; category?
         <>
             {/* Toolbar */}
             <A_Toolbar
-                text={categoryTitle(category) || 'Search'}
+                text={getCategoryDisplayTitle(category) || 'Search'}
                 search={filters.search}
                 setSearch={(search) => setFilters((prev) => ({ ...prev, search }))}
                 detailedView={detailedView}

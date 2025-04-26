@@ -39,6 +39,19 @@ export const APP_ROUTES = {
     // Import Routes
     IMPORT_ANIME_MANGA: '/import/anime-manga',
 
+    // Spotify Routes
+    SPOTIFY_DASHBOARD: '/spotify/dashboard',
+    SPOTIFY_SEARCH: '/spotify/search',
+    SPOTIFY_PLAYLISTS: '/spotify/playlists',
+    SPOTIFY_PLAYLIST: (id: string) => `/spotify/playlists/${id}`,
+    SPOTIFY_ALBUM: (id: string) => `/spotify/albums/${id}`,
+    SPOTIFY_TRACK: (id: string) => `/spotify/tracks/${id}`,
+    SPOTIFY_ARTIST: (id: string) => `/spotify/artists/${id}`,
+    SPOTIFY_RECENTLY_PLAYED: '/spotify/recently-played',
+    SPOTIFY_TOP_TRACKS: '/spotify/top-tracks',
+    SPOTIFY_TOP_ARTISTS: '/spotify/top-artists',
+    SPOTIFY_USER_PROFILE: '/spotify/user/profile',
+
     // User Routes
     USER_PROFILE: '/user/profile',
     USER_EDIT_PROFILE: '/user/profile/edit',
@@ -87,7 +100,7 @@ export const EXTERNAL_ROUTES = {
         SEARCH: '/search',
         ALBUM: (ids?: string | string[]) => withIds('/albums', ids),
         ALBUM_TRACKS: (id: string) => `/albums/${id}/tracks`,
-        PLAYLISTS: (ids?: string | string[]) => withIds('/playlists', ids),
+        PLAYLISTS: (id?: string) => `/playlists/${id}`,
         PLAYLIST_TRACKS: (id: string) => `/playlists/${id}/tracks`,
         TRACKS: (ids?: string | string[]) => withIds('/tracks', ids),
         USERS_PROFILE: (id?: string) => `/users/${id}`,
@@ -99,6 +112,7 @@ export const EXTERNAL_ROUTES = {
             CREATE_PLAYLIST: (userId: string) => `/users/${userId}/playlists`,
             FOLLOWING: '/me/following',
             ARTISTS: '/me/top/artists',
+            RECENTLY_PLAYED: '/me/player/recently-played',
         },
     },
     AUDIO: {

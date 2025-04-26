@@ -48,6 +48,17 @@ const sidebarMenuItems = [
         ],
     },
     {
+        title: 'Spotify',
+        icon: 'spotify',
+        children: [
+            { name: 'Dashboard', link: APP_ROUTES.SPOTIFY_DASHBOARD },
+            { name: 'Playlists', link: APP_ROUTES.SPOTIFY_PLAYLISTS },
+            { name: 'Top Artists', link: APP_ROUTES.SPOTIFY_TOP_ARTISTS },
+            { name: 'Top Tracks', link: APP_ROUTES.SPOTIFY_TOP_TRACKS },
+        ],
+    },
+
+    {
         title: 'Profile',
         badge: 14,
         icon: 'person',

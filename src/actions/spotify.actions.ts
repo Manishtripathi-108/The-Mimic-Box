@@ -2,8 +2,8 @@
 
 import { auth } from '@/auth';
 import spotifyApi from '@/lib/services/spotify.service';
-import { createErrorReturn } from '@/lib/utils/createResponse.utils';
-import { fetchSpotifyData } from '@/lib/utils/server.utils';
+import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { extractRecentPlaylists } from '@/lib/utils/server.utils';
 
 export const getSpotifyCurrentUserPlaylists = async () => {
     const session = await auth();
@@ -23,10 +23,47 @@ export const getSpotifyData = async (url: string) => {
         return createErrorReturn('Spotify access token not found');
     }
 
-    const [error, res] = await fetchSpotifyData({ token: accessToken, url });
+    const [error, res] = await spotifyApi.fetchSpotifyData({ token: accessToken, url });
     if (error) {
         return createErrorReturn(error.message || 'Failed to fetch Spotify data', error);
     }
 
     return res;
+};
+
+export const getSpotifyRecentlyPlayedPlaylists = async () => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const tracksRes = await spotifyApi.getUserRecentlyPlayedTracks(accessToken);
+    if (!tracksRes.success) {
+        return createErrorReturn(tracksRes.message || 'Failed to fetch user recently played tracks', tracksRes.error);
+    }
+
+    const playlistIds = extractRecentPlaylists(tracksRes.payload.items);
+    console.log('Playlist IDs:', playlistIds);
+
+    const playlists = [];
+    for (const id of playlistIds) {
+        const metadata = await spotifyApi.getPlaylistDetails(accessToken, id);
+        if (metadata.success) {
+            playlists.push(metadata.payload);
+        }
+    }
+
+    return createSuccessReturn('User recently played playlists fetched successfully!', playlists);
+};
+
+export const getSpotifyRecentlyPlayedTracks = async (limit: number = 50) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const tracksRes = await spotifyApi.getUserRecentlyPlayedTracks(accessToken, limit);
+    return tracksRes;
 };

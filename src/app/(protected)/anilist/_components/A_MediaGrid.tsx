@@ -8,7 +8,7 @@ import { getFilteredMediaList } from '@/actions/anilist.actions';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { AnilistMedia, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
-import { categoryTitle, getMediaSearchParams } from '@/lib/utils/core.utils';
+import { buildMediaSearchParams, getCategoryDisplayTitle } from '@/lib/utils/core.utils';
 
 interface AnilistMediaGridProps {
     type: AnilistMediaType;
@@ -22,7 +22,7 @@ const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDeta
     const [error, setError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
 
-    const searchParams = useMemo(() => getMediaSearchParams(type, category), [type, category]);
+    const searchParams = useMemo(() => buildMediaSearchParams(type, category), [type, category]);
 
     const fetchMediaData = useCallback(() => {
         startTransition(async () => {
@@ -43,7 +43,7 @@ const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDeta
     return (
         <article className={className}>
             <div className="mb-2 flex items-center justify-between">
-                <h1 className="text-highlight text-lg font-bold capitalize">{categoryTitle(category)}</h1>
+                <h1 className="text-highlight text-lg font-bold capitalize">{getCategoryDisplayTitle(category)}</h1>
                 <Link
                     href={APP_ROUTES.ANILIST_SEARCH(type.toLowerCase() as 'anime' | 'manga', category)}
                     className="text-text-secondary hover:text-text-primary text-sm hover:underline">

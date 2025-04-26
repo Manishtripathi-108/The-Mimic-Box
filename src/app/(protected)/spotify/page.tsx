@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
-import { getSpotifyCurrentUserPlaylists } from '@/actions/spotify.actions';
+import { getSpotifyCurrentUserPlaylists, getSpotifyRecentlyPlayedTracks } from '@/actions/spotify.actions';
 import MusicCardGrid from '@/app/(protected)/spotify/_components/MusicCardGrid';
 import MusicCategoryList from '@/app/(protected)/spotify/_components/MusicCategoryList';
 import MusicPlaylist from '@/app/(protected)/spotify/_components/MusicPlaylist';
 
-const recentlyPlayed = Array.from({ length: 15 }).map((_, i) => ({
-    title: `Playlist #${i + 1}`,
-    artist: `Artist ${i + 1}`,
-    id: `${i.toString().padStart(2, '0')}0X0X0X0X`,
-    thumbnailUrl: `https://picsum.photos/200?random=${i}`,
-}));
-
 const page = async () => {
     const res = await getSpotifyCurrentUserPlaylists();
-    console.log('Playlists:', res);
+    let recentlyPlayed = null;
+    const recentlyPlayedRes = await getSpotifyRecentlyPlayedTracks();
+    if (recentlyPlayedRes.success) {
+        const tracks = recentlyPlayedRes.payload.items.map((item) => item.track);
+        recentlyPlayed = tracks.map((track, index) => ({
+            title: track.name,
+            id: track.id + index,
+            thumbnailUrl: track.album.images[0]?.url,
+            hrefId: track.id,
+        }));
+    }
 
     if (!res.success) {
         return <div className="text-text-secondary">Error fetching playlists</div>;
@@ -25,9 +28,11 @@ const page = async () => {
 
             <div className="grid gap-8 @3xl:grid-cols-3">
                 <MusicPlaylist playlists={res.payload.items} />
-                <div className="-ml-4 flex flex-col gap-6 @3xl:col-span-2">
-                    <MusicCardGrid title="Recently Played" items={recentlyPlayed} />
-                    <MusicCardGrid title="Top" items={recentlyPlayed} />
+                <div className="-ml-4 flex w-[calc(100vw-1.5rem)] flex-col gap-6 @3xl:col-span-2 @3xl:w-auto">
+                    <Suspense fallback={<div>Loading...</div>}>
+                        {recentlyPlayed && <MusicCardGrid title="Recently Played" items={recentlyPlayed} />}
+                    </Suspense>
+                    <Suspense fallback={<div>Loading...</div>}>{recentlyPlayed && <MusicCardGrid title="Top" items={recentlyPlayed} />}</Suspense>
                 </div>
             </div>
         </div>
