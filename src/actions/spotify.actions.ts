@@ -16,19 +16,33 @@ export const getSpotifyCurrentUserPlaylists = async () => {
     return res;
 };
 
-export const getSpotifyData = async (url: string) => {
+export const getSpotifyPlaylistDetails = async (playlistId: string) => {
     const session = await auth();
     const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
     if (!accessToken) {
         return createErrorReturn('Spotify access token not found');
     }
 
-    const [error, res] = await spotifyApi.fetchSpotifyData({ token: accessToken, url });
+    const res = await spotifyApi.getPlaylistDetails(accessToken, playlistId);
+    if (!res.success) {
+        return createErrorReturn(res.message || 'Failed to fetch playlist details', res.error);
+    }
+    return createSuccessReturn('Playlist details fetched successfully!', res.payload);
+};
+
+export const getSpotifyData = async <T>(url: string) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const [error, res] = await spotifyApi.fetchSpotifyData<T>({ token: accessToken, url });
     if (error) {
         return createErrorReturn(error.message || 'Failed to fetch Spotify data', error);
     }
 
-    return res;
+    return createSuccessReturn('Spotify data fetched successfully!', res);
 };
 
 export const getSpotifyRecentlyPlayedPlaylists = async () => {
