@@ -42,17 +42,19 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
                             {name}
                         </Link>
 
-                        <div className="text-sm select-none">
-                            {artists.map((artist, index) => (
-                                <Link
-                                    key={artist.id}
-                                    href={APP_ROUTES.SPOTIFY_ARTISTS(artist.id)}
-                                    className="hover:text-text-primary cursor-pointer hover:underline">
-                                    {artist.name}
-                                    {index < artists.length - 1 && ', '}
-                                </Link>
-                            ))}
-                        </div>
+                        <span className="line-clamp-1 overflow-hidden text-sm">
+                            <div className="select-none">
+                                {artists.map((artist, index) => (
+                                    <Link
+                                        key={artist.id}
+                                        href={APP_ROUTES.SPOTIFY_ARTISTS(artist.id)}
+                                        className="hover:text-text-primary cursor-pointer hover:underline">
+                                        {artist.name}
+                                        {index < artists.length - 1 && ', '}
+                                    </Link>
+                                ))}
+                            </div>
+                        </span>
                     </div>
                 </div>
             </div>
