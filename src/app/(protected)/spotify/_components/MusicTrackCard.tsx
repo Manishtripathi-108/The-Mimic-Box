@@ -19,7 +19,7 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
     const [albumCover] = album.images;
 
     return (
-        <div className="from-secondary to-tertiary text-text-secondary shadow-floating-xs @container flex items-center justify-between gap-4 rounded-2xl bg-linear-150 from-15% to-85% p-3 pr-5 transition-transform hover:scale-101">
+        <div className="from-secondary to-tertiary text-text-secondary shadow-floating-xs @container flex items-center justify-between gap-4 rounded-2xl bg-linear-120 from-15% to-85% p-3 pr-5 transition-transform hover:scale-101">
             {/* Left: Play Button + Info */}
             <div className="flex w-full items-center gap-3">
                 <button

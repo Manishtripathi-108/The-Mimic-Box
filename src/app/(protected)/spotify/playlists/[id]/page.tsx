@@ -2,16 +2,17 @@ import React from 'react';
 
 import { getSpotifyPlaylistDetails } from '@/actions/spotify.actions';
 import Playlist from '@/app/(protected)/spotify/_components/PlayList';
+import ErrorCard from '@/components/layout/ErrorCard';
 
-const ComponentName = async ({ params }: { params: Promise<{ id: string }> }) => {
+const PlayListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
 
     const res = await getSpotifyPlaylistDetails(id);
     if (!res.success || !res.payload) {
-        return <div className="text-text-primary">Failed to fetch playlist details</div>;
+        return <ErrorCard message={res.message || 'Failed to fetch playlist'} />;
     }
 
     return <Playlist playlist={res.payload} />;
 };
 
-export default ComponentName;
+export default PlayListDetails;
