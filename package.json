@@ -5,6 +5,7 @@
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "prisma generate && next build",
+        "postbuild": "next-sitemap",
         "start": "next start",
         "lint": "next lint",
         "format": "prettier --write ."
@@ -25,6 +26,7 @@
         "motion": "^12.5.0",
         "next": "^15.2.2",
         "next-auth": "^5.0.0-beta.25",
+        "next-sitemap": "^4.2.3",
         "nodemailer": "^6.10.0",
         "postcss": "^8.5.3",
         "react": "^19.0.0",
