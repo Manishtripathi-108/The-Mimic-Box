@@ -131,7 +131,9 @@ export const EXTERNAL_ROUTES = {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Array of routes accessible without authentication.
+ * PUBLIC_ROUTES is an array of route paths that are accessible without requiring user authentication.
+    APP_ROUTES.INDEX,
+ * Additionally, it includes paths for sitemap and robots.txt files for SEO purposes.
  */
 export const PUBLIC_ROUTES: string[] = [
     /* ------------------------------ General Routes ----------------------------- */
@@ -147,6 +149,10 @@ export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.GAMES_TIC_TAC_TOE_INDEX,
     APP_ROUTES.GAMES_TIC_TAC_TOE_CLASSIC,
     APP_ROUTES.GAMES_TIC_TAC_TOE_ULTIMATE,
+
+    /* -------------------------- Sitemap & Robots.txt -------------------------- */
+    '/sitemap.xml',
+    '/robots.txt',
 ];
 
 /**

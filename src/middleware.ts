@@ -5,15 +5,35 @@ import { API_AUTH_PREFIX, AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE
 
 const { auth } = NextAuth(authConfig);
 
-const ENABLE_LOGGING = false;
+const ENABLE_LOGGING = true;
+const BOTS = [
+    'Googlebot',
+    'Bingbot',
+    'Slurp',
+    'DuckDuckBot',
+    'Baiduspider',
+    'YandexBot',
+    'Sogou',
+    'Exabot',
+    'facebookexternalhit',
+    'facebot',
+    'Twitterbot',
+    'LinkedInBot',
+];
 
 export default auth((req) => {
     const { pathname, search } = req.nextUrl;
     const isAuthenticated = !!req.auth;
+    const userAgent = req.headers.get('user-agent') || '';
+
+    const isBot = BOTS.some((bot) => userAgent.includes(bot));
 
     if (ENABLE_LOGGING) {
         console.log('------------------------------------------------------');
         console.log(`🔗 Path: ${pathname}`);
+        console.log(`bot: ${isBot}`);
+        console.log(`user-agent: ${userAgent}`);
+        console.log(`user-agent: ${userAgent}`);
         console.log(`🔐 Authenticated: ${isAuthenticated}`);
     }
 
@@ -21,7 +41,7 @@ export default auth((req) => {
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
     const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
-    if (isApiAuthRoute) return undefined;
+    if (isApiAuthRoute || isBot) return undefined;
 
     const redirectTo = (destination: string) => Response.redirect(new URL(destination, req.nextUrl));
 
