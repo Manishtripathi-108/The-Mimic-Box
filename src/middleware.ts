@@ -5,7 +5,7 @@ import { API_AUTH_PREFIX, AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE
 
 const { auth } = NextAuth(authConfig);
 
-const ENABLE_LOGGING = true;
+const ENABLE_LOGGING = false;
 const BOTS = [
     'Googlebot',
     'Bingbot',
@@ -31,9 +31,6 @@ export default auth((req) => {
     if (ENABLE_LOGGING) {
         console.log('------------------------------------------------------');
         console.log(`🔗 Path: ${pathname}`);
-        console.log(`bot: ${isBot}`);
-        console.log(`user-agent: ${userAgent}`);
-        console.log(`user-agent: ${userAgent}`);
         console.log(`🔐 Authenticated: ${isAuthenticated}`);
     }
 
