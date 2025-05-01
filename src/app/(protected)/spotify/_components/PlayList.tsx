@@ -62,10 +62,8 @@ export default function Playlist({ playlist }: { playlist: T_SpotifyPlaylist }) 
 
             {/* Top Section */}
             <section className="text-text-primary mt-4 mb-8 flex flex-col gap-6 px-4 sm:flex-row sm:items-end">
-                <div className="shadow-floating-sm bg-tertiary mx-auto aspect-square w-full max-w-60 shrink-0 rounded-xl p-2 sm:mx-0">
-                    <div className="relative size-full rounded-lg">
-                        {coverImage && <Image src={coverImage.url} alt="Playlist Cover" fill className="rounded object-cover" />}
-                    </div>
+                <div className="shadow-floating-sm bg-secondary relative mx-auto aspect-square w-full max-w-60 shrink-0 rounded-2xl p-2 sm:mx-0">
+                    {coverImage && <Image src={coverImage.url} alt="Playlist Cover" width={240} height={240} className="rounded-xl border" />}
                 </div>
 
                 <div>

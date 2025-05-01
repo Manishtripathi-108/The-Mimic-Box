@@ -8,7 +8,7 @@ const TrackDetailCardSkeleton = () => {
             <main className="w-full max-w-4xl">
                 <CardContainer contentClassName="animate-pulse">
                     {/* Album Image */}
-                    <div className="shadow-pressed-xs bg-primary relative mx-auto -mt-32 size-40 rounded-2xl sm:size-60" />
+                    <div className="shadow-pressed-xs bg-secondary relative mx-auto -mt-32 size-40 rounded-2xl sm:size-60" />
 
                     {/* Track Name */}
                     <div className="bg-primary mx-auto mt-6 h-10 w-64 rounded sm:h-16 sm:w-96" />

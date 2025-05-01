@@ -11,18 +11,16 @@ const TrackDetailCard = ({ track }: { track: T_SpotifyTrack }) => {
     return (
         <section className="min-h-calc-full-height flex items-center justify-center p-6">
             <main className="w-full max-w-4xl">
-                <CardContainer className="px-4 py-8">
-                    <div className="relative mx-auto -mt-32 w-fit">
-                        <div className="overflow-hidden rounded-2xl shadow-xl ring-1 ring-black/10">
-                            <Image
-                                src={track.album.images?.[0]?.url}
-                                alt={`Album cover for ${track.album.name}`}
-                                width={300}
-                                height={300}
-                                className="size-44 object-cover sm:size-60"
-                                priority
-                            />
-                        </div>
+                <CardContainer>
+                    <div className="shadow-pressed-xs bg-secondary relative mx-auto -mt-20 w-fit overflow-hidden rounded-2xl border p-1 sm:-mt-32 sm:p-2">
+                        <Image
+                            src={track.album.images?.[0]?.url}
+                            alt={`Album cover for ${track.album.name}`}
+                            width={300}
+                            height={300}
+                            className="size-44 rounded-xl border object-cover sm:size-60"
+                            priority
+                        />
                     </div>
 
                     <h1 className="text-text-primary text-center font-serif text-3xl leading-tight font-bold tracking-tight sm:text-6xl">

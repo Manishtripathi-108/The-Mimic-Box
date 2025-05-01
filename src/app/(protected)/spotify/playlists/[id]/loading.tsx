@@ -9,7 +9,7 @@ const PlaylistPageSkeleton = () => {
             {/* Top Section */}
             <section className="text-text-primary mt-4 mb-8 flex animate-pulse flex-col gap-6 px-4 sm:flex-row sm:items-end">
                 {/* Cover Image Skeleton */}
-                <div className="shadow-floating-sm bg-tertiary mx-auto aspect-square w-full max-w-60 shrink-0 rounded-xl p-2 sm:mx-0" />
+                <div className="shadow-floating-sm bg-secondary mx-auto aspect-square w-full max-w-60 shrink-0 rounded-xl p-2 sm:mx-0" />
 
                 {/* Right Side Info */}
                 <div className="flex flex-col gap-3">
