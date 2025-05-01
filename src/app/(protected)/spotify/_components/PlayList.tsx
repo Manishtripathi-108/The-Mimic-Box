@@ -16,7 +16,6 @@ import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/li
 export default function Playlist({ playlist }: { playlist: T_SpotifyPlaylist }) {
     const { name, description, images, owner, tracks: initialTracks } = playlist;
     const [coverImage] = images;
-    console.log('Playlist:', playlist);
 
     const [tracks, setTracks] = useState(initialTracks.items);
     const [nextUrl, setNextUrl] = useState(initialTracks.next);
@@ -89,13 +88,13 @@ export default function Playlist({ playlist }: { playlist: T_SpotifyPlaylist }) 
 
             {/* Action Buttons */}
             <div className="mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between">
-                <button className="button inline-flex size-8 cursor-pointer rounded-full p-1.5">
+                <button type="button" aria-label="Share Track" className="button inline-flex size-9 rounded-full p-2">
                     <Icon icon="share" className="size-full" />
                 </button>
-                <button className="button button-highlight inline-flex size-12 rounded-full p-2">
+                <button type="button" aria-label="Play Track" className="button button-highlight inline-flex size-14 rounded-full p-2">
                     <Icon icon="play" className="size-full" />
                 </button>
-                <button className="button inline-flex size-8 cursor-pointer rounded-full p-1.5">
+                <button type="button" aria-label="More Options" className="button inline-flex size-9 rounded-full p-2">
                     <Icon icon="moreDots" className="size-full rotate-90" />
                 </button>
             </div>

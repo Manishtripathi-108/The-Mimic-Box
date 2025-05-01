@@ -128,6 +128,34 @@ export const getPlaylistDetails = async (accessToken: string, playlistId: string
     return createSuccessReturn('Playlist details fetched successfully!', res?.data);
 };
 
+export const getTrackDetails = async (accessToken: string, trackId: string) => {
+    const [error, res] = await safeAwait(
+        spotifyConfig.get<T_SpotifyTrack>(EXTERNAL_ROUTES.SPOTIFY.TRACKS(trackId), {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        })
+    );
+
+    if (error || !res) {
+        return createErrorReturn('Failed to fetch track details', error);
+    }
+
+    return createSuccessReturn('Track details fetched successfully!', res?.data);
+};
+
+export const getMultipleTracksDetails = async (accessToken: string, trackIds: string[]) => {
+    const [error, res] = await safeAwait(
+        spotifyConfig.get<T_SpotifyTrack>(EXTERNAL_ROUTES.SPOTIFY.TRACKS(trackIds), {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        })
+    );
+
+    if (error || !res) {
+        return createErrorReturn('Failed to fetch track details', error);
+    }
+
+    return createSuccessReturn('Track details fetched successfully!', res?.data);
+};
+
 const spotifyApi = {
     fetchSpotifyData,
     getUserProfile,
@@ -138,6 +166,8 @@ const spotifyApi = {
 
     // No User
     getPlaylistDetails,
+    getTrackDetails,
+    getMultipleTracksDetails,
 };
 
 export default spotifyApi;
