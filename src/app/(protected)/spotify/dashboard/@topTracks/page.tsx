@@ -11,7 +11,7 @@ const TopTracks = async () => {
     }
 
     return (
-        <HorizontalScrollSection className="-ml-4" title="Top Artists">
+        <HorizontalScrollSection className="-ml-4" title="Top Tracks">
             {res.payload.items.map((item) => (
                 <MusicCard key={item.id} title={item.name} thumbnailUrl={item.album.images[0].url} href={APP_ROUTES.SPOTIFY_TRACKS(item.id)} />
             ))}
