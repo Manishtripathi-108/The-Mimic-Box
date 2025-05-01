@@ -18,7 +18,7 @@ export const generateMetadata = async ({ params }: { params: { id: string } }): 
     const track = res.payload;
 
     return {
-        title: `${track.name}`,
+        title: `${track.name} by ${track.artists[0].name}`,
         description: `View details about "${track.name}" by ${track.artists.map((a) => a.name).join(', ')}.`,
         keywords: ['Spotify', 'Track', 'Music', 'Details', track.name, ...track.artists.map((a) => a.name)],
         openGraph: {
