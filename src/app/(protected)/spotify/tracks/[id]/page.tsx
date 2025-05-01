@@ -1,12 +1,12 @@
-// app/spotify/track/[id]/page.tsx
 import { Metadata } from 'next';
 
 import { getSpotifyTrackDetails } from '@/actions/spotify.actions';
 import TrackDetailCard from '@/app/(protected)/spotify/_components/TrackDetails';
 import ErrorCard from '@/components/layout/ErrorCard';
 
-export const generateMetadata = async ({ params }: { params: { id: string } }): Promise<Metadata> => {
-    const res = await getSpotifyTrackDetails(params.id);
+export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
+    const { id } = await params;
+    const res = await getSpotifyTrackDetails(id);
 
     if (!res.success || !res.payload) {
         return {
@@ -34,9 +34,9 @@ export const generateMetadata = async ({ params }: { params: { id: string } }): 
     };
 };
 
-export default async function TrackDetailsPage({ params }: { params: { id: string } }) {
-    const res = await getSpotifyTrackDetails(params.id);
-
+export default async function TrackDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const res = await getSpotifyTrackDetails(id);
     if (!res.success || !res.payload) {
         return <ErrorCard message={res.message || 'Failed to fetch track'} />;
     }

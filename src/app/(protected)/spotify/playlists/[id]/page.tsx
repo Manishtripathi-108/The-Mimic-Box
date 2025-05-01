@@ -1,13 +1,11 @@
-import React from 'react';
-
 import { Metadata } from 'next';
 
 import { getSpotifyPlaylistDetails } from '@/actions/spotify.actions';
 import Playlist from '@/app/(protected)/spotify/_components/PlayList';
 import ErrorCard from '@/components/layout/ErrorCard';
 
-export const generateMetadata = async ({ params }: { params: { id: string } }): Promise<Metadata> => {
-    const { id } = params;
+export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
+    const { id } = await params;
 
     const res = await getSpotifyPlaylistDetails(id);
 
@@ -39,7 +37,6 @@ export const generateMetadata = async ({ params }: { params: { id: string } }): 
 
 export default async function PlayListDetails({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-
     const res = await getSpotifyPlaylistDetails(id);
     if (!res.success || !res.payload) {
         return <ErrorCard message={res.message || 'Failed to fetch playlist'} />;

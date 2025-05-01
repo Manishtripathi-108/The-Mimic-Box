@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/MusicTrackCardSkeleton';
 
 export const RecentlyPlayedSkeleton = () => {
