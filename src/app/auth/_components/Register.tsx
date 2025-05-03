@@ -17,7 +17,7 @@ import Input from '@/components/ui/Input';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { registerSchema } from '@/lib/schema/auth.validations';
 
-export default function RegisterForm() {
+const RegisterForm = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -105,4 +105,6 @@ export default function RegisterForm() {
             </footer>
         </>
     );
-}
+};
+
+export default RegisterForm;

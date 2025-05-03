@@ -8,7 +8,7 @@ import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { AnilistMediaWithRecommendations } from '@/lib/types/anilist.types';
 import { getMonthName } from '@/lib/utils/client.utils';
 
-export default function MediaDetail({ media }: { media: AnilistMediaWithRecommendations }) {
+const MediaDetail = ({ media }: { media: AnilistMediaWithRecommendations }) => {
     const { title, startDate, bannerImage, coverImage, recommendations } = media;
     const formattedDate = `${startDate.day} ${getMonthName(startDate.month || 1)} ${startDate.year}`;
 
@@ -145,4 +145,6 @@ export default function MediaDetail({ media }: { media: AnilistMediaWithRecommen
             </div>
         </main>
     );
-}
+};
+
+export default MediaDetail;

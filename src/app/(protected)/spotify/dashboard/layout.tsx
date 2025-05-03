@@ -10,7 +10,7 @@ const Layout = async ({
     topArtists: React.ReactNode;
 }) => {
     return (
-        <div className="@container flex flex-col gap-6 p-4 sm:p-6">
+        <div className="@container flex flex-col gap-6">
             {topTracks}
 
             <div className="grid gap-8 @3xl:grid-cols-3">

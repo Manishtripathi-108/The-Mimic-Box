@@ -12,7 +12,7 @@ import MusicMediaHeader from '@/app/(protected)/spotify/_components/MusicMediaHe
 import MusicTrackCard, { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/lib/types/spotify.types';
 
-const Playlist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
+const MusicPlaylist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
     const { name, description, images, owner, tracks: initialTracks } = playlist;
 
     const [tracks, setTracks] = useState(initialTracks.items);
@@ -79,4 +79,4 @@ const Playlist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
     );
 };
 
-export default Playlist;
+export default MusicPlaylist;

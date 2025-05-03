@@ -34,7 +34,7 @@ const INITIAL_EXTRACT_STATE: {
     audioFileName: null,
 };
 
-export default function AudioMetaExtractor() {
+const AudioMetaExtractor = () => {
     const [extractedData, setExtractedData] = useState(INITIAL_EXTRACT_STATE);
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -171,4 +171,6 @@ export default function AudioMetaExtractor() {
             </div>
         </div>
     );
-}
+};
+
+export default AudioMetaExtractor;

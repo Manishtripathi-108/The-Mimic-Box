@@ -58,7 +58,6 @@ export const getSpotifyRecentlyPlayedPlaylists = async () => {
     }
 
     const playlistIds = extractRecentPlaylists(tracksRes.payload.items);
-    console.log('Playlist IDs:', playlistIds);
 
     const playlists = [];
     for (const id of playlistIds) {

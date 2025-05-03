@@ -2,7 +2,7 @@
 
 import ErrorCard from '@/components/layout/ErrorCard';
 
-export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+const GlobalError = ({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) => {
     return (
         <html>
             <body className="bg-primary h-calc-full-height grid place-items-center rounded-lg p-6 text-center">
@@ -10,4 +10,6 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             </body>
         </html>
     );
-}
+};
+
+export default GlobalError;
