@@ -64,7 +64,7 @@ const MusicPlaylist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns />
+            <MusicActionBtns className="mt-4" />
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">

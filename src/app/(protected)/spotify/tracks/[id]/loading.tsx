@@ -1,11 +1,9 @@
-'use client';
-
 import CardContainer from '@/components/ui/CardContainer';
 
 const Loading = () => {
     return (
-        <section className="min-h-calc-full-height flex items-center justify-center p-6">
-            <main className="w-full max-w-4xl">
+        <section className="h-calc-full-height flex items-center justify-center">
+            <div className="mt-20 w-full max-w-4xl">
                 <CardContainer contentClassName="animate-pulse">
                     <div className="shadow-pressed-xs bg-secondary relative mx-auto -mt-32 size-40 rounded-2xl sm:size-60" />
 
@@ -25,7 +23,7 @@ const Loading = () => {
                         <div className="bg-primary size-9 rounded-full" />
                     </div>
                 </CardContainer>
-            </main>
+            </div>
         </section>
     );
 };

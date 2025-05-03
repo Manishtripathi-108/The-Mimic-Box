@@ -4,7 +4,7 @@ import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/Mu
 
 const Loading = () => {
     return (
-        <div className="min-h-calc-full-height p-2 sm:p-6">
+        <>
             <MusicMediaHeaderSkeleton />
             <MusicActionBtnsSkeleton />
 
@@ -13,7 +13,7 @@ const Loading = () => {
                     <MusicTrackCardSkeleton key={idx} />
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 

@@ -10,6 +10,7 @@ import { getSpotifyData } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/spotify/_components/MusicActionBtns';
 import MusicMediaHeader from '@/app/(protected)/spotify/_components/MusicMediaHeader';
 import MusicTrackCard, { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
 const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
@@ -58,13 +59,13 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
             <MusicMediaHeader title={name} coverImage={images?.[0]?.url} metadata={`${initialTracks.total} songs`}>
                 <>
                     By:&nbsp;
-                    <Link href={artists[0].external_urls.spotify} className="text-text-primary hover:underline">
+                    <Link href={APP_ROUTES.SPOTIFY_ARTISTS(artists[0].id)} className="text-text-primary hover:underline">
                         {artists[0].name}
                     </Link>
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns />
+            <MusicActionBtns className="mt-4" />
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">

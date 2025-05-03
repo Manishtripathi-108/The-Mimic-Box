@@ -9,8 +9,8 @@ import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const TrackDetailCard = ({ track }: { track: T_SpotifyTrack }) => {
     return (
-        <section className="min-h-calc-full-height flex items-center justify-center p-6">
-            <main className="w-full max-w-4xl">
+        <section className="h-calc-full-height flex items-center justify-center">
+            <div className="mt-20 w-full max-w-4xl">
                 <CardContainer>
                     <div className="shadow-pressed-xs bg-secondary relative mx-auto -mt-20 w-fit overflow-hidden rounded-2xl border p-1 sm:-mt-32 sm:p-2">
                         <Image
@@ -23,7 +23,7 @@ const TrackDetailCard = ({ track }: { track: T_SpotifyTrack }) => {
                         />
                     </div>
 
-                    <h1 className="text-text-primary text-center font-serif text-3xl leading-tight font-bold tracking-tight sm:text-6xl">
+                    <h1 className="text-text-primary mt-4 text-center font-serif text-3xl leading-tight font-bold tracking-tight sm:text-5xl">
                         {track.name}
                     </h1>
 
@@ -65,7 +65,7 @@ const TrackDetailCard = ({ track }: { track: T_SpotifyTrack }) => {
                         </button>
                     </div>
                 </CardContainer>
-            </main>
+            </div>
         </section>
     );
 };

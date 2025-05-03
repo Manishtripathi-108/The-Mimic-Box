@@ -6,11 +6,11 @@ import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
 
 import '@/app/globals.css';
-import { ReactScan } from '@/components/ReactScan';
 import Header from '@/components/layout/Header';
 import Icon from '@/components/ui/Icon';
 import { ThemeScript } from '@/hooks/useTheme';
 import '@/lib/iconSetup';
+import ReactScan from '@/components/ReactScan';
 
 const fontKarla = Karla({
     variable: '--font-karla',

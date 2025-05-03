@@ -12,7 +12,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     const { name, images, followers, popularity } = res.payload;
 
-    return <MusicMediaHeader title={name} coverImage={images?.[0]?.url} metadata={`Followers: ${followers.total} | Popularity: ${popularity}%`} />;
+    return <MusicMediaHeader title={name} coverImage={images?.[0]?.url} metadata={`Followers: ${followers.total} • Popularity: ${popularity}%`} />;
 };
 
 export default Page;

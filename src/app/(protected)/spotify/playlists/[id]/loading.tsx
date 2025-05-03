@@ -4,9 +4,9 @@ import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/Mu
 
 const Loading = () => {
     return (
-        <div className="min-h-calc-full-height p-2 sm:p-6">
+        <div className="min-h-calc-full-height">
             <MusicMediaHeaderSkeleton />
-            <MusicActionBtnsSkeleton />
+            <MusicActionBtnsSkeleton className="mt-4" />
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">

@@ -13,7 +13,7 @@ const Page = async () => {
     const sortedPlaylists = res.payload.items.sort((a, b) => a.name.localeCompare(b.name));
 
     return (
-        <section className="px-4 py-6">
+        <section>
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Your Playlists</h1>
             {sortedPlaylists.length === 0 ? (
                 <NoDataCard className="w-full max-w-2xl" message="You don't have any playlists yet." />
