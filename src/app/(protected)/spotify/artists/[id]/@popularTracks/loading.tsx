@@ -1,6 +1,6 @@
 import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 
-export const loading = () => {
+const Loading = () => {
     const skeletonArray = Array.from({ length: 5 });
 
     return (
@@ -16,4 +16,4 @@ export const loading = () => {
     );
 };
 
-export default loading;
+export default Loading;

@@ -2,7 +2,7 @@ import { MusicActionBtnsSkeleton } from '@/app/(protected)/spotify/_components/M
 import { MusicMediaHeaderSkeleton } from '@/app/(protected)/spotify/_components/MusicMediaHeader';
 import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 
-const PlayListDetailsLoading = () => {
+const Loading = () => {
     return (
         <div className="min-h-calc-full-height p-2 sm:p-6">
             <MusicMediaHeaderSkeleton />
@@ -18,4 +18,4 @@ const PlayListDetailsLoading = () => {
     );
 };
 
-export default PlayListDetailsLoading;
+export default Loading;

@@ -2,7 +2,7 @@
 
 import CardContainer from '@/components/ui/CardContainer';
 
-const TrackDetailCardSkeleton = () => {
+const Loading = () => {
     return (
         <section className="min-h-calc-full-height flex items-center justify-center p-6">
             <main className="w-full max-w-4xl">
@@ -38,4 +38,4 @@ const TrackDetailCardSkeleton = () => {
     );
 };
 
-export default TrackDetailCardSkeleton;
+export default Loading;

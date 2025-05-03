@@ -1,6 +1,6 @@
 import { MusicCardSkeleton } from '@/app/(protected)/spotify/_components/MusicCard';
 
-export const loading = () => {
+const Loading = () => {
     return (
         <section className="text-text-secondary">
             <h2 className="text-highlight font-alegreya mb-2 text-2xl font-semibold tracking-wide">Popular Tracks</h2>
@@ -14,4 +14,4 @@ export const loading = () => {
     );
 };
 
-export default loading;
+export default Loading;

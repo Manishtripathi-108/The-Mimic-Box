@@ -1,6 +1,6 @@
 import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 
-export const MusicDashboardRecentlyPlayedTracksLoading = () => {
+const Loading = () => {
     const skeletonArray = Array.from({ length: 5 }); // Show 5 skeleton cards
 
     return (
@@ -16,4 +16,4 @@ export const MusicDashboardRecentlyPlayedTracksLoading = () => {
     );
 };
 
-export default MusicDashboardRecentlyPlayedTracksLoading;
+export default Loading;

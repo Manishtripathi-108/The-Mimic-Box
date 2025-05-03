@@ -1,5 +1,7 @@
 import { HorizontalScrollSectionSkeleton } from '@/app/(protected)/spotify/_components/HorizontalScrollSection';
 
-export default function MusicDashboardPlaylistGridPageLoading() {
+const Loading = () => {
     return <HorizontalScrollSectionSkeleton />;
-}
+};
+
+export default Loading;
