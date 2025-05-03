@@ -58,7 +58,7 @@ export default function Album({ album }: { album: T_SpotifyAlbum }) {
     return (
         <main className="min-h-calc-full-height p-2 sm:p-6">
             {/* Mobile Title */}
-            <h1 className="font-alegreya text-center text-3xl font-bold tracking-wide sm:hidden">{name}</h1>
+            <h1 className="font-alegreya text-center text-2xl font-bold tracking-wide sm:hidden">{name}</h1>
 
             {/* Top Section */}
             <section className="text-text-primary mt-4 mb-8 flex flex-col gap-6 px-4 sm:flex-row sm:items-end">
@@ -68,7 +68,7 @@ export default function Album({ album }: { album: T_SpotifyAlbum }) {
 
                 <div>
                     {/* Desktop Title */}
-                    <h1 className="mb-4 hidden text-4xl font-extrabold sm:block md:text-5xl lg:text-7xl">{name}</h1>
+                    <h1 className="mb-4 hidden text-4xl font-extrabold sm:block md:text-5xl">{name}</h1>
 
                     {/* artists Info */}
                     <p className="text-text-secondary text-center text-sm sm:text-left">
@@ -103,6 +103,14 @@ export default function Album({ album }: { album: T_SpotifyAlbum }) {
                     {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={idx} />)}
                 </div>
             </div>
+
+            {/* Copyrights Section */}
+            <footer className="text-text-secondary mt-8 text-xs sm:text-sm">
+                <time dateTime={album.release_date}>Released: {new Date(album.release_date).toDateString()}</time>
+                <p className="whitespace-pre-line" role="contentinfo">
+                    {album.copyrights.map((c) => c.text).join('\n')}
+                </p>
+            </footer>
         </main>
     );
 }

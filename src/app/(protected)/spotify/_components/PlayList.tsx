@@ -58,7 +58,7 @@ export default function Playlist({ playlist }: { playlist: T_SpotifyPlaylist }) 
     return (
         <main className="min-h-calc-full-height p-2 sm:p-6">
             {/* Mobile Title */}
-            <h1 className="font-alegreya text-center text-3xl font-bold tracking-wide sm:hidden">{name}</h1>
+            <h1 className="font-alegreya text-center text-2xl font-bold tracking-wide sm:hidden">{name}</h1>
 
             {/* Top Section */}
             <section className="text-text-primary mt-4 mb-8 flex flex-col gap-6 px-4 sm:flex-row sm:items-end">
@@ -68,7 +68,7 @@ export default function Playlist({ playlist }: { playlist: T_SpotifyPlaylist }) 
 
                 <div>
                     {/* Desktop Title */}
-                    <h1 className="mb-4 hidden text-4xl font-extrabold sm:block md:text-5xl lg:text-7xl">{name}</h1>
+                    <h1 className="mb-4 hidden text-4xl font-extrabold sm:block md:text-5xl">{name}</h1>
 
                     {/* Description */}
                     {description && <p className="text-text-secondary text-center text-sm sm:text-left">{description}</p>}
