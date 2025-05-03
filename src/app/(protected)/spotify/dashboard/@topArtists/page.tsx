@@ -4,7 +4,7 @@ import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const MusicDashboardTopArtistsPage = async () => {
+const Page = async () => {
     const res = await getSpotifyTopArtists();
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch top artists'} />;
@@ -19,4 +19,4 @@ const MusicDashboardTopArtistsPage = async () => {
     );
 };
 
-export default MusicDashboardTopArtistsPage;
+export default Page;

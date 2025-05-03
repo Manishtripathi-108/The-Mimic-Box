@@ -35,7 +35,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
     };
 };
 
-const PlayListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
     const res = await getSpotifyPlaylistDetails(id);
     if (!res.success || !res.payload) {
@@ -45,4 +45,4 @@ const PlayListDetails = async ({ params }: { params: Promise<{ id: string }> }) 
     return <Playlist playlist={res.payload} />;
 };
 
-export default PlayListDetails;
+export default Page;

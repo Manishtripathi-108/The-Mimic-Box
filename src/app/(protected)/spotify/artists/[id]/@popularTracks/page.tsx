@@ -2,7 +2,7 @@ import { getSpotifyArtistTopTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 
-const page = async ({ params }: { params: Promise<{ id: string }> }) => {
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
     const res = await getSpotifyArtistTopTracks(id);
 
@@ -28,4 +28,4 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     );
 };
 
-export default page;
+export default Page;

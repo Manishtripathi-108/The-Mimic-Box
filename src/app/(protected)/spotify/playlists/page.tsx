@@ -3,7 +3,7 @@ import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
 import { NoDataCard } from '@/components/layout/NoDataCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const UserPlaylistsPage = async () => {
+const Page = async () => {
     const res = await getSpotifyCurrentUserPlaylists();
 
     if (!res.success || !res.payload) {
@@ -34,4 +34,4 @@ const UserPlaylistsPage = async () => {
     );
 };
 
-export default UserPlaylistsPage;
+export default Page;

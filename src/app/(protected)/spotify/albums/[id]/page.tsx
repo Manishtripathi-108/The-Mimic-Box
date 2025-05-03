@@ -35,7 +35,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
     };
 };
 
-export default async function albumDetails({ params }: { params: Promise<{ id: string }> }) {
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
     const res = await getSpotifyAlbumDetails(id);
     if (!res.success || !res.payload) {
@@ -43,4 +43,6 @@ export default async function albumDetails({ params }: { params: Promise<{ id: s
     }
 
     return <Album album={res.payload} />;
-}
+};
+
+export default Page;

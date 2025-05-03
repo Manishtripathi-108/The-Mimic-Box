@@ -7,6 +7,8 @@ export const metadata: Metadata = {
     description: 'Forgot your password? No worries! Reset your password in a few easy steps.',
 };
 
-export default function ForgotPassword() {
+const Page = () => {
     return <ForgotPasswordForm />;
-}
+};
+
+export default Page;

@@ -2,7 +2,7 @@
 
 import useNetworkStatus from '@/hooks/useNetworkStatus';
 
-export default function Home() {
+const Page = () => {
     const isOnline = useNetworkStatus();
 
     return (
@@ -12,4 +12,6 @@ export default function Home() {
             </h1>
         </div>
     );
-}
+};
+
+export default Page;

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     keywords: ['Tic Tac Toe Classic', 'Ultimate Tic Tac Toe', 'Multiplayer Tic Tac Toe', 'Local Tic Tac Toe'],
 };
 
-const TicTacToeIndex = () => {
+const Page = () => {
     return (
         <main className="h-calc-full-height bg-primary flex flex-col items-center justify-center p-6">
             <div className="shadow-floating-sm from-secondary to-tertiary text-text-primary w-full max-w-lg rounded-2xl border bg-linear-150 from-15% to-85% p-6">
@@ -49,4 +49,4 @@ const TicTacToeIndex = () => {
     );
 };
 
-export default TicTacToeIndex;
+export default Page;

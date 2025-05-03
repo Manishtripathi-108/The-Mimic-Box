@@ -56,7 +56,7 @@ export const viewport: Viewport = {
     colorScheme: 'light dark',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const page = ({ children }: { children: React.ReactNode }) => {
     return (
         <html lang="en" suppressHydrationWarning className="scroll-smooth">
             <head>
@@ -70,8 +70,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable} ${fontAlegreya.variable}`}>
                     <Header />
                     {children}
-
-                    {/* ✅ Global Toaster with Custom Icons */}
                     <Toaster
                         toastOptions={{
                             success: {
@@ -81,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 icon: <Icon icon="error" className="size-7 shrink-0 text-red-500" />,
                             },
                             loading: {
-                                icon: <Icon icon="error" className="text-highlight size-5 shrink-0" />,
+                                icon: <Icon icon="loading" className="text-highlight size-5 shrink-0" />,
                             },
                         }}
                     />
@@ -89,4 +87,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SessionProvider>
         </html>
     );
-}
+};
+
+export default page;

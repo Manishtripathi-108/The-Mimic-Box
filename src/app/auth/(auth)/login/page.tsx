@@ -7,6 +7,8 @@ export const metadata: Metadata = {
     description: 'Sign in to your account on The Mimic Box. Secure and easy access to your dashboard.',
 };
 
-export default function SignInPage() {
+const Page = () => {
     return <LoginInForm />;
-}
+};
+
+export default Page;

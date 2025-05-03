@@ -2,7 +2,7 @@ import { getSpotifyRecentlyPlayedTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 
-const MusicDashboardRecentlyPlayedTracksPage = async () => {
+const Page = async () => {
     const res = await getSpotifyRecentlyPlayedTracks(5);
 
     if (!res.success || !res.payload) {
@@ -27,4 +27,4 @@ const MusicDashboardRecentlyPlayedTracksPage = async () => {
     );
 };
 
-export default MusicDashboardRecentlyPlayedTracksPage;
+export default Page;

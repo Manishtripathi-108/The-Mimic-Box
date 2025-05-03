@@ -34,7 +34,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
     };
 };
 
-export default async function TrackDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
     const res = await getSpotifyTrackDetails(id);
     if (!res.success || !res.payload) {
@@ -42,4 +42,6 @@ export default async function TrackDetailsPage({ params }: { params: Promise<{ i
     }
 
     return <TrackDetailCard track={res.payload} />;
-}
+};
+
+export default Page;

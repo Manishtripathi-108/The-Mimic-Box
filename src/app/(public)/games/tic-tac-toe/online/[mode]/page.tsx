@@ -20,9 +20,9 @@ export const generateMetadata = async ({ params }: { params: Promise<{ mode: Gam
     };
 };
 
-const TicTacToeOnlineWrapper = async ({ params }: { params: Promise<{ mode: GameMode | 'waiting-room' }> }) => {
+const Page = async ({ params }: { params: Promise<{ mode: GameMode | 'waiting-room' }> }) => {
     const { mode } = await params;
     return <OnlineGameLobby mode={mode} />;
 };
 
-export default TicTacToeOnlineWrapper;
+export default Page;

@@ -24,6 +24,8 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RegisterPage() {
+const Page = () => {
     return <RegisterForm />;
-}
+};
+
+export default Page;

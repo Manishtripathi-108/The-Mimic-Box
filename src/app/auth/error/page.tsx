@@ -5,6 +5,8 @@ export const metadata = {
     description: 'An unexpected error occurred. Please log in again.',
 };
 
-export default function AuthErrorPage() {
+const Page = () => {
     return <AuthError />;
-}
+};
+
+export default Page;

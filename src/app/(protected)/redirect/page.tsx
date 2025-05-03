@@ -20,7 +20,7 @@ if (typeof window !== 'undefined') {
 
 let redirected = false;
 
-const RedirectComponent = () => {
+const Page = () => {
     return (
         <div className="grid h-screen place-items-center">
             <h1 className="text-accent font-alegreya text-center text-4xl">Redirecting...</h1>
@@ -30,6 +30,8 @@ const RedirectComponent = () => {
         </div>
     );
 };
+
+export default Page;
 
 const RedirectLogic = () => {
     const { data: session, update, status } = useSession();
@@ -51,5 +53,3 @@ const RedirectLogic = () => {
 
     return null;
 };
-
-export default RedirectComponent;

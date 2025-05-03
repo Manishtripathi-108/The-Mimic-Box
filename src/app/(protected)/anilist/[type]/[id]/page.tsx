@@ -29,7 +29,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ type: 'an
     };
 };
 
-const AnilistMediaPage = async ({ params }: { params: Promise<{ type: 'anime' | 'manga'; id: number }> }) => {
+const Page = async ({ params }: { params: Promise<{ type: 'anime' | 'manga'; id: number }> }) => {
     const { type, id } = await params;
     if (!['anime', 'manga'].includes(type) || isNaN(Number(id))) notFound();
 
@@ -48,4 +48,4 @@ const AnilistMediaPage = async ({ params }: { params: Promise<{ type: 'anime' | 
     );
 };
 
-export default AnilistMediaPage;
+export default Page;

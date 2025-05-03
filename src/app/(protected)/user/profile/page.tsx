@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     description: 'View and manage your profile on The Mimic Box.',
 };
 
-const UserProfile = async () => {
+const Page = async () => {
     const session = await auth();
     if (!session?.user) return null;
 
@@ -57,4 +57,4 @@ const UserProfile = async () => {
     );
 };
 
-export default UserProfile;
+export default Page;
