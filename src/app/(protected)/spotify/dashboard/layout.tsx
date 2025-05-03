@@ -1,4 +1,4 @@
-const layout = async ({
+const Layout = async ({
     topTracks,
     playlistGrid,
     recentlyPlayedTracks,
@@ -24,4 +24,4 @@ const layout = async ({
     );
 };
 
-export default layout;
+export default Layout;

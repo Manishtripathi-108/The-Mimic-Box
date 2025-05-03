@@ -56,7 +56,7 @@ export const viewport: Viewport = {
     colorScheme: 'light dark',
 };
 
-const page = ({ children }: { children: React.ReactNode }) => {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <html lang="en" suppressHydrationWarning className="scroll-smooth">
             <head>
@@ -89,4 +89,4 @@ const page = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-export default page;
+export default RootLayout;

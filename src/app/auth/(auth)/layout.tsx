@@ -9,13 +9,15 @@ import { signIn } from 'next-auth/react';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <Suspense fallback={<Icon icon="loading" className="size-20" />}>
             <AuthLayoutWrapper>{children}</AuthLayoutWrapper>
         </Suspense>
     );
-}
+};
+
+export default Layout;
 
 const AuthLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const searchParams = useSearchParams();
