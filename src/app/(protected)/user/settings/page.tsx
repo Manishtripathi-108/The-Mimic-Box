@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 
-const UserProfile = async () => {
+const Page = async () => {
     const session = await auth();
 
     if (!session?.user) {
@@ -49,4 +49,4 @@ const UserProfile = async () => {
     );
 };
 
-export default UserProfile;
+export default Page;

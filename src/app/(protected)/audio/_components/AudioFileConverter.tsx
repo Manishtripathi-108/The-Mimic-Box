@@ -42,7 +42,7 @@ const defaultValues: T_FormValues = {
     files: [],
 };
 
-export default function AudioFileConverter() {
+const AudioFileConverter = () => {
     const [open, setOpen] = useState<{
         values: T_AudioAdvanceSettings | null;
         name: Path<T_FormValues> | null;
@@ -328,4 +328,6 @@ export default function AudioFileConverter() {
             </div>
         </div>
     );
-}
+};
+
+export default AudioFileConverter;

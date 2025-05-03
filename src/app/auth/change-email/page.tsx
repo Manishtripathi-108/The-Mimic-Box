@@ -10,10 +10,12 @@ export const metadata: Metadata = {
     description: 'Verify your email to change your email on The Mimic Box.',
 };
 
-export default function VerifyEmailPage() {
+const Page = () => {
     return (
         <Suspense fallback={<Icon icon="loading" className="size-20" />}>
             <VerifyEmail type="change" />
         </Suspense>
     );
-}
+};
+
+export default Page;

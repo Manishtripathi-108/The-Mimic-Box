@@ -1,4 +1,12 @@
-const MusicDashboardLayout = async ({
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Music Dashboard',
+    description: 'Your personalized music dashboard with top tracks, playlists, and more.',
+    keywords: ['Spotify', 'Music', 'Dashboard', 'Top Tracks', 'Playlists', 'Recently Played', 'Top Artists', 'Mimic Box Music Dashboard'],
+};
+
+const Layout = async ({
     topTracks,
     playlistGrid,
     recentlyPlayedTracks,
@@ -10,7 +18,7 @@ const MusicDashboardLayout = async ({
     topArtists: React.ReactNode;
 }) => {
     return (
-        <div className="@container flex flex-col gap-6 p-4 sm:p-6">
+        <div className="@container flex flex-col gap-6">
             {topTracks}
 
             <div className="grid gap-8 @3xl:grid-cols-3">
@@ -24,4 +32,4 @@ const MusicDashboardLayout = async ({
     );
 };
 
-export default MusicDashboardLayout;
+export default Layout;

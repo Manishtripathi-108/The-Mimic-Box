@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 
-export default function AuthError() {
+const AuthError = () => {
     return (
         <main className="h-calc-full-height flex items-center justify-center">
             <article className="shadow-floating-sm from-secondary to-tertiary text-text-primary grid w-full max-w-md place-items-center space-y-5 rounded-2xl bg-linear-150 from-15% to-85% p-6">
@@ -15,4 +15,6 @@ export default function AuthError() {
             </article>
         </main>
     );
-}
+};
+
+export default AuthError;

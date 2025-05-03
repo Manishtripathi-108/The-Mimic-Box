@@ -7,6 +7,8 @@ export const metadata: Metadata = {
     description: 'Convert and edit audio files easily with our online audio converter.',
 };
 
-export default function AudioFileConverterPage() {
+const Page = () => {
     return <AudioFileConverter />;
-}
+};
+
+export default Page;

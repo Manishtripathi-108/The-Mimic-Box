@@ -12,7 +12,7 @@ import Icon from '@/components/ui/Icon';
 import { ConfirmationModal, openModal } from '@/components/ui/Modals';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
     const { state, restartGame, resetBoard } = useTicTacToeContext();
     const { gameMode, isNextX, hasGameEnded, gameWinner, isStalemate, stalemateCount, playerXData, playerOData } = state;
 
@@ -91,4 +91,4 @@ const TicTacToeOfflineLayout = ({ children }: { children: React.ReactNode }) => 
     );
 };
 
-export default TicTacToeOfflineLayout;
+export default Layout;

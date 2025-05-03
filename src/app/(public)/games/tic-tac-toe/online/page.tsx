@@ -8,8 +8,8 @@ export const metadata: Metadata = {
     keywords: ['Tic Tac Toe Online', 'Multiplayer Tic Tac Toe', 'Play Tic Tac Toe with Friends', 'Tic Tac Toe Game'],
 };
 
-const TicTacToeOnline = () => {
+const Page = () => {
     return <OnlineGameSetupForm />;
 };
 
-export default TicTacToeOnline;
+export default Page;

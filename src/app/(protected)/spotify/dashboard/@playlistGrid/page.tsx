@@ -1,10 +1,10 @@
 import { getSpotifyCurrentUserPlaylists } from '@/actions/spotify.actions';
-import HorizontalScrollSection from '@/app/(protected)/spotify/_components/HorizontalScrollSection';
 import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const PlaylistGrid = async () => {
+const Page = async () => {
     const res = await getSpotifyCurrentUserPlaylists();
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch playlists'} />;
@@ -21,10 +21,16 @@ const PlaylistGrid = async () => {
     return (
         <HorizontalScrollSection title="Playlists" href={APP_ROUTES.SPOTIFY_PLAYLISTS}>
             {sortedPlaylists.map((item) => (
-                <MusicCard key={item.id} title={item.name} thumbnailUrl={item.images[0].url} href={APP_ROUTES.SPOTIFY_PLAYLIST(item.id)} />
+                <MusicCard
+                    key={item.id}
+                    title={item.name}
+                    sub={`${item.tracks.total} tracks`}
+                    thumbnailUrl={item.images[0].url}
+                    href={APP_ROUTES.SPOTIFY_PLAYLIST(item.id)}
+                />
             ))}
         </HorizontalScrollSection>
     );
 };
 
-export default PlaylistGrid;
+export default Page;

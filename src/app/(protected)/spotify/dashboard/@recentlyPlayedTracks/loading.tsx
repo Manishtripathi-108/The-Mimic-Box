@@ -1,10 +1,6 @@
-'use client';
+import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 
-import React from 'react';
-
-import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/MusicTrackCardSkeleton';
-
-export const RecentlyPlayedSkeleton = () => {
+const Loading = () => {
     const skeletonArray = Array.from({ length: 5 }); // Show 5 skeleton cards
 
     return (
@@ -20,4 +16,4 @@ export const RecentlyPlayedSkeleton = () => {
     );
 };
 
-export default RecentlyPlayedSkeleton;
+export default Loading;

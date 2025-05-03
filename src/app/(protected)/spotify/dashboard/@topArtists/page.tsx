@@ -1,10 +1,10 @@
 import { getSpotifyTopArtists } from '@/actions/spotify.actions';
-import HorizontalScrollSection from '@/app/(protected)/spotify/_components/HorizontalScrollSection';
 import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const TopArtists = async () => {
+const Page = async () => {
     const res = await getSpotifyTopArtists();
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch top artists'} />;
@@ -19,4 +19,4 @@ const TopArtists = async () => {
     );
 };
 
-export default TopArtists;
+export default Page;

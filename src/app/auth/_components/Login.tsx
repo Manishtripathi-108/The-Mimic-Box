@@ -18,7 +18,7 @@ import Input from '@/components/ui/Input';
 import { APP_ROUTES, DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
 import { loginSchema } from '@/lib/schema/auth.validations';
 
-export default function LoginInForm() {
+const LoginInForm = () => {
     const { update } = useSession();
     const searchParams = useSearchParams();
     const UrlError = searchParams.get('error') === 'OAuthAccountNotLinked';
@@ -116,4 +116,6 @@ export default function LoginInForm() {
             </footer>
         </>
     );
-}
+};
+
+export default LoginInForm;

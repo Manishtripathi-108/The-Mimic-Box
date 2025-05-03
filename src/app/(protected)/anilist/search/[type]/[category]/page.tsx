@@ -27,11 +27,11 @@ export const generateMetadata = async ({
     };
 };
 
-const AnilistSearch = async ({ params }: { params: Promise<{ category: AnilistSearchCategories; type: 'anime' | 'manga' }> }) => {
+const Page = async ({ params }: { params: Promise<{ category: AnilistSearchCategories; type: 'anime' | 'manga' }> }) => {
     const { category, type } = await params;
     const UpperCaseType = type.toUpperCase() as AnilistMediaType;
 
     return <A_MediaExplorer type={UpperCaseType} category={category} />;
 };
 
-export default AnilistSearch;
+export default Page;

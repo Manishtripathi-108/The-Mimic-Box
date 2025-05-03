@@ -20,9 +20,9 @@ export const generateMetadata = async ({ params }: { params: Promise<{ mode: Gam
     };
 };
 
-const TicTacToeOfflineMode = async ({ params }: { params: Promise<{ mode: GameMode }> }) => {
+const Page = async ({ params }: { params: Promise<{ mode: GameMode }> }) => {
     const { mode } = await params;
     return <TicTacToeBoard mode={mode} />;
 };
 
-export default TicTacToeOfflineMode;
+export default Page;

@@ -15,7 +15,7 @@ import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
-export default function ResetPasswordForm() {
+const ResetPasswordForm = () => {
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
     const [showPassword, setShowPassword] = useState(false);
@@ -90,4 +90,6 @@ export default function ResetPasswordForm() {
             </article>
         </main>
     );
-}
+};
+
+export default ResetPasswordForm;

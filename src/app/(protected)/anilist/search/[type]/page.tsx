@@ -21,7 +21,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ type: 'an
     };
 };
 
-const AnilistSearch = async ({ params }: { params: Promise<{ type: 'anime' | 'manga' }> }) => {
+const Page = async ({ params }: { params: Promise<{ type: 'anime' | 'manga' }> }) => {
     const { type } = await params;
     const UpperCaseType = type.toUpperCase() as AnilistMediaType;
 
@@ -40,4 +40,4 @@ const AnilistSearch = async ({ params }: { params: Promise<{ type: 'anime' | 'ma
     );
 };
 
-export default AnilistSearch;
+export default Page;

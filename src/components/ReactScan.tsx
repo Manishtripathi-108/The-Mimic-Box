@@ -4,7 +4,7 @@ import { scan } from 'react-scan';
 
 import { useEffect } from 'react';
 
-export function ReactScan() {
+const ReactScan = () => {
     useEffect(() => {
         scan({
             enabled: false,
@@ -12,4 +12,6 @@ export function ReactScan() {
     }, []);
 
     return null;
-}
+};
+
+export default ReactScan;

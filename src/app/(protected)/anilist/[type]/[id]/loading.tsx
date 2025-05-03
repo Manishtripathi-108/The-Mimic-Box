@@ -1,13 +1,10 @@
-export default function MediaDetailSkeleton() {
+const Loading = () => {
     return (
         <div className="bg-primary text-text-primary min-h-calc-full-height animate-pulse">
-            {/* Banner Skeleton */}
             <div className="bg-secondary relative h-60 w-full" />
 
-            {/* Content */}
             <div className="mx-auto -mt-32 max-w-6xl px-4 sm:px-8">
                 <div className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10">
-                    {/* Header */}
                     <div className="flex flex-col items-center gap-6 sm:flex-row">
                         <div className="bg-primary aspect-[5/7] w-52 rounded-md" />
                         <div className="space-y-2">
@@ -18,14 +15,12 @@ export default function MediaDetailSkeleton() {
                         </div>
                     </div>
 
-                    {/* Info Grid */}
                     <div className="mt-8 grid grid-cols-2 gap-2 text-sm sm:gap-4 md:grid-cols-3">
                         {Array.from({ length: 7 }).map((_, i) => (
                             <div key={i} className="bg-primary h-4 w-32 rounded-md" />
                         ))}
                     </div>
 
-                    {/* Genres */}
                     <div className="mt-6">
                         <h2 className="text-highlight mb-2 text-lg font-semibold">Genres</h2>
                         <div className="flex flex-wrap gap-2">
@@ -35,7 +30,6 @@ export default function MediaDetailSkeleton() {
                         </div>
                     </div>
 
-                    {/* Description */}
                     <div className="mt-8 space-y-2">
                         <h2 className="text-highlight mb-2 text-lg font-semibold">Description</h2>
                         {Array.from({ length: 4 }).map((_, i) => (
@@ -43,7 +37,6 @@ export default function MediaDetailSkeleton() {
                         ))}
                     </div>
 
-                    {/* Recommendations */}
                     <div className="mt-8">
                         <h2 className="text-highlight mb-4 text-lg font-semibold">Recommendations</h2>
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -56,4 +49,6 @@ export default function MediaDetailSkeleton() {
             </div>
         </div>
     );
-}
+};
+
+export default Loading;

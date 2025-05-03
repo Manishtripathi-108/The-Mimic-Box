@@ -2,7 +2,7 @@ import { getSpotifyRecentlyPlayedTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 
-const RecentlyPlayedTracksPage = async () => {
+const Page = async () => {
     const res = await getSpotifyRecentlyPlayedTracks(5);
 
     if (!res.success || !res.payload) {
@@ -17,7 +17,7 @@ const RecentlyPlayedTracksPage = async () => {
             {playHistory.length === 0 ? (
                 <p>No recently played tracks found.</p>
             ) : (
-                <div className="flex flex-col gap-2 sm:gap-4">
+                <div className="flex flex-col gap-2">
                     {playHistory.map((item, index) => (
                         <MusicTrackCard key={item.track.id + index} track={item.track} />
                     ))}
@@ -27,4 +27,4 @@ const RecentlyPlayedTracksPage = async () => {
     );
 };
 
-export default RecentlyPlayedTracksPage;
+export default Page;

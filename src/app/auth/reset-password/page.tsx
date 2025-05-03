@@ -10,10 +10,12 @@ export const metadata: Metadata = {
     description: 'Reset your password',
 };
 
-export default function ResetPassword() {
+const Page = () => {
     return (
         <Suspense fallback={<Icon icon="loading" className="size-20" />}>
             <ResetPasswordForm />
         </Suspense>
     );
-}
+};
+
+export default Page;

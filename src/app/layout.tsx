@@ -6,11 +6,11 @@ import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
 
 import '@/app/globals.css';
-import { ReactScan } from '@/components/ReactScan';
 import Header from '@/components/layout/Header';
 import Icon from '@/components/ui/Icon';
+import { ThemeScript } from '@/hooks/useTheme';
 import '@/lib/iconSetup';
-import { ThemeScript } from '@/lib/utils/theme';
+import ReactScan from '@/components/ReactScan';
 
 const fontKarla = Karla({
     variable: '--font-karla',
@@ -56,7 +56,7 @@ export const viewport: Viewport = {
     colorScheme: 'light dark',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <html lang="en" suppressHydrationWarning className="scroll-smooth">
             <head>
@@ -71,8 +71,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable} ${fontAlegreya.variable}`}>
                     <Header />
                     {children}
-
-                    {/* ✅ Global Toaster with Custom Icons */}
                     <Toaster
                         toastOptions={{
                             success: {
@@ -82,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 icon: <Icon icon="error" className="size-7 shrink-0 text-red-500" />,
                             },
                             loading: {
-                                icon: <Icon icon="error" className="text-highlight size-5 shrink-0" />,
+                                icon: <Icon icon="loading" className="text-highlight size-5 shrink-0" />,
                             },
                         }}
                     />
@@ -90,4 +88,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SessionProvider>
         </html>
     );
-}
+};
+
+export default RootLayout;

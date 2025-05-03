@@ -2,7 +2,7 @@ import A_Header from '@/app/(protected)/anilist/_components/A_Header';
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
 
-const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
     const session = await auth();
     const anilist = session?.user?.linkedAccounts?.anilist;
 
@@ -22,4 +22,4 @@ const AnilistLayout = async ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-export default AnilistLayout;
+export default Layout;

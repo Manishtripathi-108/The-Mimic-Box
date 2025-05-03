@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     description: 'Manage your linked accounts on The Mimic Box.',
 };
 
-const UserLinkedAccounts = async () => {
+const Page = async () => {
     const session = await auth();
     const linkedAccounts = session?.user?.linkedAccounts ?? {};
     return (
@@ -64,4 +64,4 @@ const UserLinkedAccounts = async () => {
     );
 };
 
-export default UserLinkedAccounts;
+export default Page;

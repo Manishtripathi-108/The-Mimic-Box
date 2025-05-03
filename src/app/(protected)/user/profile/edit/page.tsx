@@ -19,7 +19,7 @@ import { profileSchema } from '@/lib/schema/user.validations';
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-const UserProfileEdit = () => {
+const Page = () => {
     const { data: session, update } = useSession();
     const [previewImage, setPreviewImage] = useState<string | null>(session?.user?.image || null);
 
@@ -176,4 +176,4 @@ const UserProfileEdit = () => {
     );
 };
 
-export default UserProfileEdit;
+export default Page;

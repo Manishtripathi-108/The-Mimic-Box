@@ -47,8 +47,6 @@ export const APP_ROUTES = {
     SPOTIFY_ALBUMS: (id: string) => `/spotify/albums/${id}`,
     SPOTIFY_TRACKS: (id: string) => `/spotify/tracks/${id}`,
     SPOTIFY_ARTISTS: (id: string) => `/spotify/artists/${id}`,
-    SPOTIFY_RECENTLY_PLAYED: '/spotify/recently-played',
-    SPOTIFY_USER_PROFILE: '/spotify/user/profile',
 
     // User Routes
     USER_PROFILE: '/user/profile',
@@ -97,7 +95,10 @@ export const EXTERNAL_ROUTES = {
         EXCHANGE_TOKEN: 'https://accounts.spotify.com/api/token',
         SEARCH: '/search',
         ALBUM: (ids?: string | string[]) => withIds('/albums', ids),
+        ARTIST: (ids?: string | string[]) => withIds('/artists', ids),
         ALBUM_TRACKS: (id: string) => `/albums/${id}/tracks`,
+        ARTIST_TRACKS: (id: string) => `/artists/${id}/top-tracks`,
+        ARTIST_ALBUMS: (id: string) => `/artists/${id}/albums`,
         PLAYLISTS: (id?: string) => `/playlists/${id}`,
         PLAYLIST_TRACKS: (id: string) => `/playlists/${id}/tracks`,
         TRACKS: (ids?: string | string[]) => withIds('/tracks', ids),

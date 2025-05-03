@@ -3,7 +3,7 @@ import React, { Suspense } from 'react';
 import NavLink from '@/components/ui/NavLink';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const UserLayout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="h-calc-full-height grid place-items-center">
             <div className="shadow-floating-md to-tertiary from-secondary w-full max-w-(--breakpoint-md) rounded-2xl bg-linear-120 from-15% to-85% p-6">
@@ -24,4 +24,4 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-export default UserLayout;
+export default Layout;

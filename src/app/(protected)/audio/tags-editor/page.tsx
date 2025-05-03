@@ -7,6 +7,8 @@ export const metadata: Metadata = {
     description: 'Extract and edit audio metadata easily with our online audio meta extractor.',
 };
 
-export default function AudioMetaExtractorPage() {
+const Page = () => {
     return <AudioMetaExtractor />;
-}
+};
+
+export default Page;

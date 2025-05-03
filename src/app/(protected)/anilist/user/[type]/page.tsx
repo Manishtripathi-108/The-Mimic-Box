@@ -30,7 +30,7 @@ export const generateMetadata = async ({ params }: AnilistMediaPageProps): Promi
     };
 };
 
-const AnilistMediaPage = async ({ params }: AnilistMediaPageProps) => {
+const Page = async ({ params }: AnilistMediaPageProps) => {
     const session = await auth();
     const anilist = session?.user?.linkedAccounts?.anilist;
     if (!anilist) return null;
@@ -73,4 +73,4 @@ const AnilistMediaPage = async ({ params }: AnilistMediaPageProps) => {
     );
 };
 
-export default AnilistMediaPage;
+export default Page;

@@ -13,7 +13,7 @@ import { verifyEmailChangeToken } from '@/actions/user.actions';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 
-export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
+const VerifyEmail = ({ type }: { type: 'verify' | 'change' }) => {
     const { data: session, update } = useSession();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -95,4 +95,6 @@ export default function VerifyEmail({ type }: { type: 'verify' | 'change' }) {
             </article>
         </main>
     );
-}
+};
+
+export default VerifyEmail;
