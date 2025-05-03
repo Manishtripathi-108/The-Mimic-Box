@@ -1,7 +1,7 @@
 import { getSpotifyTopArtists } from '@/actions/spotify.actions';
-import HorizontalScrollSection from '@/app/(protected)/spotify/_components/HorizontalScrollSection';
 import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const Page = async () => {
