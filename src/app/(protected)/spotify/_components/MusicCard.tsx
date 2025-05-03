@@ -12,7 +12,7 @@ type MusicCardProps = {
     href: string;
 };
 
-export default function MusicCard({ title, sub, thumbnailUrl, href }: MusicCardProps) {
+const MusicCard = ({ title, sub, thumbnailUrl, href }: MusicCardProps) => {
     return (
         <article
             className="text-text-primary relative grid w-40 shrink-0 grid-rows-[auto_1fr] gap-1"
@@ -44,4 +44,19 @@ export default function MusicCard({ title, sub, thumbnailUrl, href }: MusicCardP
             </div>
         </article>
     );
-}
+};
+
+export const MusicCardSkeleton = () => {
+    return (
+        <div className="text-text-primary relative grid w-40 shrink-0 animate-pulse grid-rows-[auto_1fr] gap-1">
+            <div className="bg-secondary relative block aspect-square w-full overflow-hidden rounded-xl" />
+
+            <div className="flex flex-col gap-0.5 overflow-hidden">
+                <div className="bg-secondary h-4 w-full rounded" />
+                <div className="bg-secondary h-3 w-2/3 rounded" />
+            </div>
+        </div>
+    );
+};
+
+export default MusicCard;

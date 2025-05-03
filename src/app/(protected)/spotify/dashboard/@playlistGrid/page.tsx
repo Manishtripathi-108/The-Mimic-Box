@@ -4,7 +4,7 @@ import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const PlaylistGrid = async () => {
+const MusicDashboardPlaylistGridPage = async () => {
     const res = await getSpotifyCurrentUserPlaylists();
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch playlists'} />;
@@ -33,4 +33,4 @@ const PlaylistGrid = async () => {
     );
 };
 
-export default PlaylistGrid;
+export default MusicDashboardPlaylistGridPage;

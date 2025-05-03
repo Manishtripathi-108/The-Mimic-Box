@@ -1,8 +1,6 @@
-'use client';
+import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 
-import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/MusicTrackCardSkeleton';
-
-export const RecentlyPlayedSkeleton = () => {
+export const MusicDashboardRecentlyPlayedTracksLoading = () => {
     const skeletonArray = Array.from({ length: 5 }); // Show 5 skeleton cards
 
     return (
@@ -18,4 +16,4 @@ export const RecentlyPlayedSkeleton = () => {
     );
 };
 
-export default RecentlyPlayedSkeleton;
+export default MusicDashboardRecentlyPlayedTracksLoading;

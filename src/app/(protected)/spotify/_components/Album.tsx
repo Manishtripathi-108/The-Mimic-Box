@@ -8,8 +8,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 
 import { getSpotifyData } from '@/actions/spotify.actions';
-import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
-import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/MusicTrackCardSkeleton';
+import MusicTrackCard, { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import Icon from '@/components/ui/Icon';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
@@ -63,7 +62,9 @@ export default function Album({ album }: { album: T_SpotifyAlbum }) {
             {/* Top Section */}
             <section className="text-text-primary mt-4 mb-8 flex flex-col gap-6 px-4 sm:flex-row sm:items-end">
                 <div className="shadow-floating-sm bg-secondary relative mx-auto aspect-square w-full max-w-60 shrink-0 rounded-2xl p-2 sm:mx-0">
-                    {coverImage && <Image src={coverImage.url} alt="Album Cover" width={240} height={240} className="rounded-xl border" />}
+                    {coverImage && (
+                        <Image src={coverImage.url} alt="Album Cover" width={240} height={240} className="aspect-square rounded-xl border" />
+                    )}
                 </div>
 
                 <div>

@@ -136,3 +136,36 @@ export const getSpotifyAlbumDetails = async (ids: string) => {
     const tracksRes = await spotifyApi.getAlbumDetails(accessToken, ids);
     return tracksRes;
 };
+
+export const getSpotifyArtistDetails = async (ids: string) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const tracksRes = await spotifyApi.getArtistDetails(accessToken, ids);
+    return tracksRes;
+};
+
+export const getSpotifyArtistTopTracks = async (ids: string) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const tracksRes = await spotifyApi.getArtistTopTracks(accessToken, ids);
+    return tracksRes;
+};
+
+export const getSpotifyArtistAlbums = async (ids: string, limit: number = 10) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const tracksRes = await spotifyApi.getArtistAlbums(accessToken, ids, limit);
+    return tracksRes;
+};

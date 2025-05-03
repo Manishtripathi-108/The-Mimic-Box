@@ -1,4 +1,4 @@
-export default function PlaylistGridSkeleton() {
+export default function UserPlaylistsLoading() {
     return (
         <section className="px-4 py-6">
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Your Playlists</h1>

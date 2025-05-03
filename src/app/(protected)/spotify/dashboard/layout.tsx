@@ -1,4 +1,4 @@
-const MusicDashboardLayout = async ({
+const layout = async ({
     topTracks,
     playlistGrid,
     recentlyPlayedTracks,
@@ -24,4 +24,4 @@ const MusicDashboardLayout = async ({
     );
 };
 
-export default MusicDashboardLayout;
+export default layout;

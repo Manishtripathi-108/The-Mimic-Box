@@ -1,5 +1,5 @@
-import HorizontalScrollSkeleton from '@/app/(protected)/spotify/_components/HorizontalScrollSkeleton';
+import { HorizontalScrollSectionSkeleton } from '@/app/(protected)/spotify/_components/HorizontalScrollSection';
 
-export default function loading() {
-    return <HorizontalScrollSkeleton />;
+export default function MusicDashboardTopArtistsLoading() {
+    return <HorizontalScrollSectionSkeleton />;
 }
