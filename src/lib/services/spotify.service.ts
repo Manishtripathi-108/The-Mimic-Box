@@ -36,7 +36,7 @@ export const fetchSpotifyData = async <T>({ token, ...reqConfig }: AxiosRequestC
 /*                                  User Scope                                */
 /* -------------------------------------------------------------------------- */
 
-export const getUserProfile = async (accessToken: string) => {
+export const getUserProfile = async (accessToken: string): Promise<[string | null, T_SpotifyPrivateUser | null]> => {
     const [error, data] = await safeAwait(
         spotifyConfig.get<T_SpotifyPrivateUser>(EXTERNAL_ROUTES.SPOTIFY.USER.PROFILE, { headers: withAuthHeader(accessToken) })
     );

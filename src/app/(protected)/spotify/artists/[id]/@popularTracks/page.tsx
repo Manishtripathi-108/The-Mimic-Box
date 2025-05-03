@@ -10,7 +10,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         return <ErrorMessage message={res.message || 'Failed to fetch popular tracks'} />;
     }
 
-    const tracks = res.payload.tracks;
+    const tracks = res.payload;
 
     return (
         <section className="text-text-secondary">
