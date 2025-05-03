@@ -125,3 +125,14 @@ export const getMultipleTracksDetails = async (ids: string[]) => {
     const tracksRes = await spotifyApi.getMultipleTracksDetails(accessToken, ids);
     return tracksRes;
 };
+
+export const getSpotifyAlbumDetails = async (ids: string) => {
+    const session = await auth();
+    const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
+    if (!accessToken) {
+        return createErrorReturn('Spotify access token not found');
+    }
+
+    const tracksRes = await spotifyApi.getAlbumDetails(accessToken, ids);
+    return tracksRes;
+};

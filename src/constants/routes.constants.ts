@@ -47,8 +47,6 @@ export const APP_ROUTES = {
     SPOTIFY_ALBUMS: (id: string) => `/spotify/albums/${id}`,
     SPOTIFY_TRACKS: (id: string) => `/spotify/tracks/${id}`,
     SPOTIFY_ARTISTS: (id: string) => `/spotify/artists/${id}`,
-    SPOTIFY_RECENTLY_PLAYED: '/spotify/recently-played',
-    SPOTIFY_USER_PROFILE: '/spotify/user/profile',
 
     // User Routes
     USER_PROFILE: '/user/profile',

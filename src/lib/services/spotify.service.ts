@@ -1,19 +1,16 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
+
+
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import spotifyConfig from '@/lib/config/spotify.config';
-import {
-    T_SpotifyArtist,
-    T_SpotifyErrorResponse,
-    T_SpotifyPaging,
-    T_SpotifyPlaylist,
-    T_SpotifyPrivateUser,
-    T_SpotifyRecentlyPlayed,
-    T_SpotifySimplifiedPlaylist,
-    T_SpotifyTrack,
-} from '@/lib/types/spotify.types';
+import { T_SpotifyAlbum, T_SpotifyArtist, T_SpotifyErrorResponse, T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPrivateUser, T_SpotifyRecentlyPlayed, T_SpotifySimplifiedPlaylist, T_SpotifyTrack } from '@/lib/types/spotify.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
+
+
+
+
 
 export const fetchSpotifyData = async <T>({ token, ...reqConfig }: AxiosRequestConfig & { token: string }): Promise<[Error, null] | [null, T]> => {
     const reqConfigHeaders = { ...reqConfig.headers, Authorization: `Bearer ${token}` };
@@ -142,6 +139,20 @@ export const getTrackDetails = async (accessToken: string, trackId: string) => {
     return createSuccessReturn('Track details fetched successfully!', res?.data);
 };
 
+export const getAlbumDetails = async (accessToken: string, trackId: string) => {
+    const [error, res] = await safeAwait(
+        spotifyConfig.get<T_SpotifyAlbum>(EXTERNAL_ROUTES.SPOTIFY.ALBUM(trackId), {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        })
+    );
+
+    if (error || !res) {
+        return createErrorReturn('Failed to fetch track details', error);
+    }
+
+    return createSuccessReturn('Track details fetched successfully!', res?.data);
+};
+
 export const getMultipleTracksDetails = async (accessToken: string, trackIds: string[]) => {
     const [error, res] = await safeAwait(
         spotifyConfig.get<T_SpotifyTrack>(EXTERNAL_ROUTES.SPOTIFY.TRACKS(trackIds), {
@@ -168,6 +179,7 @@ const spotifyApi = {
     getPlaylistDetails,
     getTrackDetails,
     getMultipleTracksDetails,
+    getAlbumDetails,
 };
 
 export default spotifyApi;

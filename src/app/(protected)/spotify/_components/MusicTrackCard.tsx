@@ -7,16 +7,15 @@ import Link from 'next/link';
 
 import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { T_SpotifyTrack } from '@/lib/types/spotify.types';
+import { T_SpotifySimplifiedTrack, T_SpotifyTrack } from '@/lib/types/spotify.types';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 type MusicTrackCardProps = {
-    track: T_SpotifyTrack;
+    track: T_SpotifyTrack | T_SpotifySimplifiedTrack;
 };
 
 const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
-    const { id, name, duration_ms, explicit, album, artists } = track;
-    const [albumCover] = album.images;
+    const { id, name, duration_ms, explicit, artists } = track;
 
     return (
         <div className="from-secondary to-tertiary text-text-secondary shadow-floating-xs @container flex items-center justify-between gap-4 rounded-2xl bg-linear-120 from-15% to-85% p-3 pr-5 transition-transform hover:scale-101">
@@ -30,9 +29,11 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
                 </button>
 
                 <div className="flex items-center gap-3">
-                    <Link href={APP_ROUTES.SPOTIFY_TRACKS(id)} className="shrink-0 cursor-pointer">
-                        {albumCover && <Image src={albumCover.url} alt={name} width={50} height={50} className="rounded-xl object-cover" />}
-                    </Link>
+                    {'album' in track && (
+                        <Link href={APP_ROUTES.SPOTIFY_TRACKS(id)} className="shrink-0 cursor-pointer">
+                            <Image src={track.album.images?.[0]?.url} alt={name} width={50} height={50} className="rounded-xl object-cover" />
+                        </Link>
+                    )}
 
                     <div className="flex flex-col">
                         <Link
@@ -60,13 +61,16 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
             </div>
 
             {/* Right: Album Name + Duration (Desktop Only) */}
-            <div className="hidden items-center justify-end gap-4 text-sm @md:flex @md:w-full @md:justify-between">
-                <Link
-                    title={album.name}
-                    href={APP_ROUTES.SPOTIFY_ALBUMS(album.id)}
-                    className="hover:text-text-primary line-clamp-1 cursor-pointer text-sm hover:underline">
-                    {album.name}
-                </Link>
+            <div
+                className={`hidden items-center justify-end gap-4 text-sm @md:flex @md:w-full ${'album' in track ? '@md:justify-between' : '@md:justify-end'}`}>
+                {'album' in track && (
+                    <Link
+                        title={track.album.name}
+                        href={APP_ROUTES.SPOTIFY_ALBUMS(track.album.id)}
+                        className="hover:text-text-primary line-clamp-1 cursor-pointer text-sm hover:underline">
+                        {track.album.name}
+                    </Link>
+                )}
 
                 <span>{formatTimeDuration(duration_ms, 'minutes')}</span>
             </div>

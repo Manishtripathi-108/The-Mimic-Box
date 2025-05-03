@@ -17,7 +17,7 @@ const RecentlyPlayedTracksPage = async () => {
             {playHistory.length === 0 ? (
                 <p>No recently played tracks found.</p>
             ) : (
-                <div className="flex flex-col gap-2 sm:gap-4">
+                <div className="flex flex-col gap-2">
                     {playHistory.map((item, index) => (
                         <MusicTrackCard key={item.track.id + index} track={item.track} />
                     ))}

@@ -53,7 +53,6 @@ const sidebarMenuItems = [
         children: [
             { name: 'Dashboard', link: APP_ROUTES.SPOTIFY_DASHBOARD },
             { name: 'Playlists', link: APP_ROUTES.SPOTIFY_PLAYLISTS },
-            { name: 'Recently Played', link: APP_ROUTES.SPOTIFY_RECENTLY_PLAYED },
             { name: 'Search', link: APP_ROUTES.SPOTIFY_SEARCH },
         ],
     },
