@@ -7,7 +7,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const res = await getSpotifyArtistTopTracks(id);
 
     if (!res.success || !res.payload) {
-        return <ErrorMessage message={res.message || 'Failed to fetch recently played tracks'} />;
+        return <ErrorMessage message={res.message || 'Failed to fetch popular tracks'} />;
     }
 
     const tracks = res.payload.tracks;

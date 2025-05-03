@@ -1,13 +1,22 @@
+import { Metadata } from 'next';
+
 import { getSpotifyCurrentUserPlaylists } from '@/actions/spotify.actions';
 import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
+import ErrorCard from '@/components/layout/ErrorCard';
 import { NoDataCard } from '@/components/layout/NoDataCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
+
+export const metadata: Metadata = {
+    title: 'Your Playlists',
+    description: 'Browse your personal playlists including track counts and covers, powered by Mimic.',
+    keywords: ['Spotify', 'Playlists', 'Music', 'User Playlists', 'Mimic', 'Music Library'],
+};
 
 const Page = async () => {
     const res = await getSpotifyCurrentUserPlaylists();
 
     if (!res.success || !res.payload) {
-        return <NoDataCard message={res.message || 'Failed to fetch playlists'} />;
+        return <ErrorCard message={res.message || 'Failed to fetch playlists'} />;
     }
 
     const sortedPlaylists = res.payload.items.sort((a, b) => a.name.localeCompare(b.name));

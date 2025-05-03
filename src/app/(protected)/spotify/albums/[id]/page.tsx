@@ -13,16 +13,17 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
         return {
             title: 'Album Not Found',
             description: 'The requested Spotify album could not be found.',
-            keywords: ['Spotify', 'Album', 'Music', 'Mimic', 'Metadata'],
+            keywords: ['Spotify', 'Album', 'Music', 'Mimic', 'Metadata', 'Not Found'],
         };
     }
 
     const album = res.payload;
+    const artistNames = album.artists?.map((artist) => artist.name).filter(Boolean) || ['Unknown'];
 
     return {
-        title: `${album.name}`,
-        description: `View details of the album "${album.name}" by ${album.artists[0]?.name || 'Unknown'}.`,
-        keywords: ['Spotify', 'Album', 'Music', 'Mimic', 'Metadata', album.name, album.artists[0]?.name || 'Unknown'],
+        title: album.name,
+        description: `View details of the album "${album.name}" by ${artistNames.join(', ')}.`,
+        keywords: ['Spotify', 'Album', 'Music', 'Mimic', 'Metadata', album.name, ...artistNames],
         openGraph: {
             images: [
                 {
@@ -39,6 +40,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
     const res = await getSpotifyAlbumDetails(id);
+
     if (!res.success || !res.payload) {
         return <ErrorCard message={res.message || 'Failed to fetch album'} />;
     }
