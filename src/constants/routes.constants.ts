@@ -150,10 +150,6 @@ export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.GAMES_TIC_TAC_TOE_INDEX,
     APP_ROUTES.GAMES_TIC_TAC_TOE_CLASSIC,
     APP_ROUTES.GAMES_TIC_TAC_TOE_ULTIMATE,
-
-    /* -------------------------- Sitemap & Robots.txt -------------------------- */
-    '/sitemap.xml',
-    '/robots.txt',
 ];
 
 /**
