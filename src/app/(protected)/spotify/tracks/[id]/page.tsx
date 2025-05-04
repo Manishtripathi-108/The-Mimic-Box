@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 
 import Image from 'next/image';
-
-import { Link } from '@react-email/components';
+import Link from 'next/link';
 
 import { getSpotifyTrackDetails } from '@/actions/spotify.actions';
 import ErrorCard from '@/components/layout/ErrorCard';
@@ -80,7 +79,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                             <Link
                                 key={artist.id}
                                 href={APP_ROUTES.SPOTIFY_ARTISTS(artist.id)}
-                                className="hover:text-text-primary underline-offset-2 hover:underline">
+                                className="text-text-secondary hover:text-text-primary underline-offset-2 hover:underline">
                                 {artist.name}
                                 {index < track.artists.length - 1 && ', '}
                             </Link>
@@ -88,7 +87,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                     </p>
 
                     <p className="text-text-secondary mt-1 text-center text-sm">
-                        <Link href={APP_ROUTES.SPOTIFY_ALBUMS(track.album.id)} className="hover:text-text-primary underline-offset-2 hover:underline">
+                        <Link
+                            href={APP_ROUTES.SPOTIFY_ALBUMS(track.album.id)}
+                            className="text-text-secondary hover:text-text-primary underline-offset-2 hover:underline">
                             {track.album.name}
                         </Link>
                     </p>
