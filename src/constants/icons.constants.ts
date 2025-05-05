@@ -43,6 +43,7 @@ enum IconSet {
     filePlus = 'line-md:file-plus-filled',
     filter = 'line-md:filter-filled',
     font = 'hugeicons:tiff-02',
+    fullscreen = 'solar:full-screen-bold',
 
     /* ------------------------------------ G ----------------------------------- */
     gamepad = 'emojione-monotone:video-game',
@@ -75,9 +76,11 @@ enum IconSet {
     moon = 'meteocons:clear-night-fill',
     moreDots = 'pepicons-pop:dots-y',
     myanimelist = 'simple-icons:myanimelist',
+    musicQueue = 'mdi:queue-music',
 
     /* ------------------------------------ N ----------------------------------- */
     notFound = 'tabler:error-404',
+    next = 'solar:skip-next-bold',
 
     /* ------------------------------------ P ----------------------------------- */
     pause = 'line-md:pause',
@@ -89,14 +92,21 @@ enum IconSet {
     player = 'game-icons:centurion-helmet',
     plus = 'line-md:plus',
     presentation = 'hugeicons:presentation-bar-chart-02',
+    previous = 'solar:skip-previous-bold',
+
+    /* ------------------------------------ Q ----------------------------------- */
+    quitFullscreen = 'solar:quit-full-screen-bold',
 
     /* ------------------------------------ R ----------------------------------- */
     right = 'formkit:right',
     rightArrow = 'line-md:arrow-right',
     refresh = 'grommet-icons:power-reset',
+    repeat = 'solar:repeat-bold',
+    repeatOne = 'solar:repeat-one-bold',
 
     /* ------------------------------------ S ----------------------------------- */
     script = 'proicons:script',
+    shuffle = 'solar:shuffle-linear',
     search = 'line-md:search',
     settings = 'solar:settings-bold',
     settingsOutlined = 'solar:settings-outline',
@@ -118,6 +128,9 @@ enum IconSet {
 
     /* ------------------------------------ V ----------------------------------- */
     video = 'tabler:video-filled',
+    volumeLoud = 'solar:volume-loud-bold',
+    volumeSmall = 'solar:volume-small-bold',
+    volumeOff = 'solar:volume-cross-bold',
     vector = 'bi:filetype-psd',
 
     /* ------------------------------------ W ----------------------------------- */
