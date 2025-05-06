@@ -1,15 +1,16 @@
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import jioSaavnConfig from '@/lib/config/jio-saavn.config';
-import { T_AlbumAPIResponse, T_SearchAlbumAPIResponse } from '@/lib/types/jio-saavn/albums.types';
-import { T_ArtistAPIResponse, T_ArtistAlbumAPIResponse, T_ArtistSongAPIResponse } from '@/lib/types/jio-saavn/artists.type';
-import { T_PlaylistAPIResponse } from '@/lib/types/jio-saavn/playlist.types';
+import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/jio-saavn/albums.types';
+import { T_Artist, T_ArtistAPIResponse, T_ArtistAlbumAPIResponse, T_ArtistBase, T_ArtistSongAPIResponse } from '@/lib/types/jio-saavn/artists.type';
+import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/jio-saavn/playlist.types';
 import {
     T_SearchAPIResponse,
     T_SearchArtistAPIResponse,
+    T_SearchPlaylist,
     T_SearchPlaylistAPIResponse,
     T_SearchSongAPIResponse,
 } from '@/lib/types/jio-saavn/search.types';
-import { T_SongAPIResponse, T_SongSuggestionAPIResponse } from '@/lib/types/jio-saavn/song.types';
+import { T_Song, T_SongAPIResponse, T_SongSuggestionAPIResponse } from '@/lib/types/jio-saavn/song.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import {
     createAlbumPayload,
@@ -23,105 +24,97 @@ import {
 } from '@/lib/utils/jio-saavn.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
-export const searchAll = async (query: string) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_SearchAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.ALL, {
-            params: { query },
-        })
-    );
+type T_SearchParams = { query: string; page: number; limit: number };
 
-    return error || !response
-        ? createErrorReturn('Failed to fetch search results', error)
-        : createSuccessReturn('Search results fetched successfully!', createSearchPayload(response.data));
+const apiHandler = async <T, R>(
+    url: string,
+    params: Record<string, string | number>,
+    transform: (data: T) => R,
+    errorMsg: string = 'Failed to fetch data',
+    successMsg: string = 'Data fetched successfully!'
+) => {
+    const [error, response] = await safeAwait(jioSaavnConfig.get<T>(url, { params }));
+    return error || !response ? createErrorReturn(errorMsg, error) : createSuccessReturn(successMsg, transform(response.data));
 };
 
-export const searchSongs = async ({ query, limit, page }: { query: string; page: number; limit: number }) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_SearchSongAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.SONGS, {
-            params: { q: query, p: page, n: limit },
-        })
+/* -------------------------------------------------------------------------- */
+/*                                   Search                                   */
+/* -------------------------------------------------------------------------- */
+export const searchAll = async (query: string) =>
+    apiHandler<T_SearchAPIResponse, ReturnType<typeof createSearchPayload>>(
+        EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.ALL,
+        { query },
+        createSearchPayload,
+        'Failed to fetch search results',
+        'Search results fetched successfully!'
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to fetch search results', error)
-        : createSuccessReturn('Search results fetched successfully!', {
-              total: response.data.total,
-              start: response.data.start,
-              results: response.data.results?.map(createSongPayload).slice(0, limit) || [],
-          });
-};
-
-export const searchAlbums = async ({ query, limit, page }: { query: string; page: number; limit: number }) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_SearchAlbumAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.ALBUMS, {
-            params: { q: query, p: page, n: limit },
-        })
+export const searchSongs = async ({ query, page, limit }: T_SearchParams) =>
+    apiHandler<T_SearchSongAPIResponse, { total: number; start: number; results: T_Song[] }>(
+        EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.SONGS,
+        { q: query, p: page, n: limit },
+        (data) => ({
+            total: data.total,
+            start: data.start,
+            results: data.results?.map(createSongPayload).slice(0, limit) || [],
+        }),
+        'Failed to fetch search results',
+        'Search results fetched successfully!'
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to fetch search results', error)
-        : createSuccessReturn('Search results fetched successfully!', createSearchAlbumPayload(response.data));
-};
-
-export const searchArtists = async ({ query, limit, page }: { query: string; page: number; limit: number }) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_SearchArtistAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.ARTISTS, {
-            params: { q: query, p: page, n: limit },
-        })
+export const searchAlbums = async ({ query, page, limit }: T_SearchParams) =>
+    apiHandler<T_SearchAlbumAPIResponse, T_SearchAlbum>(
+        EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.ALBUMS,
+        { q: query, p: page, n: limit },
+        createSearchAlbumPayload,
+        'Failed to fetch search results',
+        'Search results fetched successfully!'
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to fetch search results', error)
-        : createSuccessReturn('Search results fetched successfully!', {
-              total: response.data.total,
-              start: response.data.start,
-              results: response.data.results?.map(createArtistBasePayload).slice(0, limit) || [],
-          });
-};
-
-export const searchPlaylists = async ({ query, limit, page }: { query: string; page: number; limit: number }) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_SearchPlaylistAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.PLAYLISTS, {
-            params: { q: query, p: page, n: limit },
-        })
+export const searchArtists = async ({ query, page, limit }: T_SearchParams) =>
+    apiHandler<T_SearchArtistAPIResponse, { total: number; start: number; results: T_ArtistBase[] }>(
+        EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.ARTISTS,
+        { q: query, p: page, n: limit },
+        (data) => ({
+            total: data.total,
+            start: data.start,
+            results: data.results?.map(createArtistBasePayload).slice(0, limit) || [],
+        }),
+        'Failed to fetch search results',
+        'Search results fetched successfully!'
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to fetch search results', error)
-        : createSuccessReturn('Search results fetched successfully!', createSearchPlaylistPayload(response.data));
-};
+export const searchPlaylists = async ({ query, page, limit }: T_SearchParams) =>
+    apiHandler<T_SearchPlaylistAPIResponse, T_SearchPlaylist>(
+        EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.PLAYLISTS,
+        { q: query, p: page, n: limit },
+        createSearchPlaylistPayload,
+        'Failed to fetch search results',
+        'Search results fetched successfully!'
+    );
 
 /* -------------------------------------------------------------------------- */
 /*                                    Songs                                   */
 /* -------------------------------------------------------------------------- */
-export const getSongByIds = async (ids: string) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_SongAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.SONG.ID, {
-            params: { pids: ids },
-        })
+export const getSongByIds = async (ids: string) =>
+    apiHandler<T_SongAPIResponse, T_Song>(
+        EXTERNAL_ROUTES.JIO_SAAVN.SONG.ID,
+        { pids: ids },
+        createSongPayload,
+        'Failed to fetch song',
+        'Song fetched successfully!'
     );
-
-    return error || !response
-        ? createErrorReturn('Failed to fetch song', error)
-        : createSuccessReturn('Song fetched successfully!', createSongPayload(response.data));
-};
 
 export const getSongByLink = async (link: string) => {
     const token = link.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/)?.[1];
-
-    if (!token) {
-        return createErrorReturn('Invalid song link');
-    }
-
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_SongAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.SONG.LINK, {
-            params: { token, type: 'song' },
-        })
+    if (!token) return createErrorReturn('Invalid song link');
+    return apiHandler<T_SongAPIResponse, T_Song>(
+        EXTERNAL_ROUTES.JIO_SAAVN.SONG.LINK,
+        { token, type: 'song' },
+        createSongPayload,
+        'Failed to fetch song',
+        'Song fetched successfully!'
     );
-
-    return error || !response
-        ? createErrorReturn('Failed to fetch song', error)
-        : createSuccessReturn('Song fetched successfully!', createSongPayload(response.data));
 };
 
 export const getSongStation = async (id: string) => {
@@ -180,17 +173,14 @@ export const getSongSuggestions = async ({ id, limit }: { id: string; limit: num
 /* -------------------------------------------------------------------------- */
 /*                                    Album                                   */
 /* -------------------------------------------------------------------------- */
-export const getAlbumById = async (id: string) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_AlbumAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.ALBUM.DETAILS, {
-            params: { id },
-        })
+export const getAlbumById = async (id: string) =>
+    apiHandler<T_AlbumAPIResponse, T_Album>(
+        EXTERNAL_ROUTES.JIO_SAAVN.ALBUM.DETAILS,
+        { id },
+        createAlbumPayload,
+        'Failed to fetch album',
+        'Album fetched successfully!'
     );
-
-    return error || !response
-        ? createErrorReturn('Failed to fetch album', error)
-        : createSuccessReturn('Album fetched successfully!', createAlbumPayload(response.data));
-};
 
 export const getAlbumByLink = async (link: string) => {
     const token = link.match(/jiosaavn\.com\/album\/[^/]+\/([^/]+)$/)?.[1];
@@ -199,15 +189,13 @@ export const getAlbumByLink = async (link: string) => {
         return createErrorReturn('Invalid album link');
     }
 
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_AlbumAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.ALBUM.LINK, {
-            params: { token, type: 'album' },
-        })
+    return apiHandler<T_AlbumAPIResponse, T_Album>(
+        EXTERNAL_ROUTES.JIO_SAAVN.ALBUM.LINK,
+        { token, type: 'album' },
+        createAlbumPayload,
+        'Failed to fetch album',
+        'Album fetched successfully!'
     );
-
-    return error || !response
-        ? createErrorReturn('Failed to fetch album', error)
-        : createSuccessReturn('Album fetched successfully!', createAlbumPayload(response.data));
 };
 
 /* -------------------------------------------------------------------------- */
@@ -227,24 +215,14 @@ export const getArtistById = async ({
     albumCount: number;
     sortBy: string;
     sortOrder: string;
-}) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_ArtistAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.DETAILS, {
-            params: {
-                id,
-                page,
-                n_song: songCount,
-                n_album: albumCount,
-                sort_order: sortOrder,
-                category: sortBy,
-            },
-        })
+}) =>
+    apiHandler<T_ArtistAPIResponse, T_Artist>(
+        EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.DETAILS,
+        { id, page, n_song: songCount, n_album: albumCount, sort_order: sortOrder, category: sortBy },
+        createArtistPayload,
+        'Failed to fetch artist',
+        'Artist fetched successfully!'
     );
-
-    return error || !response
-        ? createErrorReturn('Failed to fetch artist', error)
-        : createSuccessReturn('Artist fetched successfully!', createArtistPayload(response.data));
-};
 
 export const getArtistByLink = async ({
     link,
@@ -267,87 +245,57 @@ export const getArtistByLink = async ({
         return createErrorReturn('Invalid artist link');
     }
 
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_ArtistAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.LINK, {
-            params: {
-                token,
-                page,
-                type: 'artist',
-                n_song: songCount,
-                n_album: albumCount,
-                sort_order: sortOrder,
-                category: sortBy,
-            },
-        })
+    return apiHandler<T_ArtistAPIResponse, T_Artist>(
+        EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.LINK,
+        { token, page, type: 'artist', n_song: songCount, n_album: albumCount, sort_order: sortOrder, category: sortBy },
+        createArtistPayload,
+        'Failed to fetch artist',
+        'Artist fetched successfully!'
     );
-
-    return error || !response
-        ? createErrorReturn('Failed to fetch artist', error)
-        : createSuccessReturn('Artist fetched successfully!', createArtistPayload(response.data));
 };
 
-export const getArtistSongs = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_ArtistSongAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.SONGS, {
-            params: {
-                id,
-                page,
-                sort_order: sortOrder,
-                category: sortBy,
-            },
-        })
+export const getArtistSongs = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) =>
+    apiHandler<T_ArtistSongAPIResponse, { total: number; songs: T_Song[] }>(
+        EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.SONGS,
+        { id, page, sort_order: sortOrder, category: sortBy },
+        (data) => ({
+            total: data.topSongs.total,
+            songs: data.topSongs.songs.map((song) => createSongPayload(song)),
+        }),
+        'Failed to fetch artist songs',
+        'Artist songs fetched successfully!'
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to fetch artist songs', error)
-        : createSuccessReturn('Artist songs fetched successfully!', {
-              total: response.data.topSongs.total,
-              songs: response.data.topSongs.songs.map((song) => createSongPayload(song)),
-          });
-};
-
-export const getArtistAlbums = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_ArtistAlbumAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.ALBUMS, {
-            params: {
-                id,
-                page,
-                sort_order: sortOrder,
-                category: sortBy,
-            },
-        })
+export const getArtistAlbums = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) =>
+    apiHandler<T_ArtistAlbumAPIResponse, { total: number; albums: T_Album[] }>(
+        EXTERNAL_ROUTES.JIO_SAAVN.ARTIST.ALBUMS,
+        { id, page, sort_order: sortOrder, category: sortBy },
+        (data) => ({
+            total: data.topAlbums.total,
+            albums: data.topAlbums.albums.map((album) => createAlbumPayload(album)),
+        }),
+        'Failed to fetch artist albums',
+        'Artist albums fetched successfully!'
     );
-
-    return error || !response
-        ? createErrorReturn('Failed to fetch artist albums', error)
-        : createSuccessReturn('Artist albums fetched successfully!', {
-              total: response.data.topAlbums.total,
-              albums: response.data.topAlbums.albums.map((album) => createAlbumPayload(album)),
-          });
-};
 
 /* -------------------------------------------------------------------------- */
 /*                                  Playlist                                  */
 /* -------------------------------------------------------------------------- */
-export const getPlaylistById = async ({ id, limit, page }: { id: string; page: number; limit: number }) => {
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_PlaylistAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.PLAYLIST.DETAILS, {
-            params: { id, p: page, n: limit },
-        })
+export const getPlaylistById = async ({ id, limit, page }: { id: string; page: number; limit: number }) =>
+    apiHandler<T_PlaylistAPIResponse, T_Playlist & { songCount: number | null; songs: T_Song[] }>(
+        EXTERNAL_ROUTES.JIO_SAAVN.PLAYLIST.DETAILS,
+        { id, p: page, n: limit },
+        (data) => {
+            const playlist = createPlaylistPayload(data);
+            return {
+                ...playlist,
+                songCount: playlist?.songs?.length || null,
+                songs: playlist?.songs?.slice(0, limit) || [],
+            };
+        },
+        'Failed to fetch playlist',
+        'Playlist fetched successfully!'
     );
-
-    if (error || !response) {
-        return createErrorReturn('Failed to fetch playlist', error);
-    }
-
-    const playlist = createPlaylistPayload(response.data);
-
-    return createSuccessReturn('Playlist fetched successfully!', {
-        ...playlist,
-        songCount: playlist?.songs?.length || null,
-        songs: playlist?.songs?.slice(0, limit) || [],
-    });
-};
 
 export const getPlaylistByLink = async ({ link, limit, page }: { link: string; page: number; limit: number }) => {
     const token = link.match(/jiosaavn\.com\/playlist\/([^/]+)$/)?.[1];
@@ -356,21 +304,44 @@ export const getPlaylistByLink = async ({ link, limit, page }: { link: string; p
         return createErrorReturn('Invalid playlist link');
     }
 
-    const [error, response] = await safeAwait(
-        jioSaavnConfig.get<T_PlaylistAPIResponse>(EXTERNAL_ROUTES.JIO_SAAVN.PLAYLIST.LINK, {
-            params: { token, type: 'playlist', p: page, n: limit },
-        })
+    return apiHandler<T_PlaylistAPIResponse, T_Playlist & { songCount: number | null; songs: T_Song[] }>(
+        EXTERNAL_ROUTES.JIO_SAAVN.PLAYLIST.LINK,
+        { token, type: 'playlist', p: page, n: limit },
+        (data) => {
+            const playlist = createPlaylistPayload(data);
+            return {
+                ...playlist,
+                songCount: playlist?.songs?.length || null,
+                songs: playlist?.songs?.slice(0, limit) || [],
+            };
+        },
+        'Failed to fetch playlist',
+        'Playlist fetched successfully!'
     );
-
-    if (error || !response) {
-        return createErrorReturn('Failed to fetch playlist', error);
-    }
-
-    const playlist = createPlaylistPayload(response.data);
-
-    return createSuccessReturn('Playlist fetched successfully!', {
-        ...playlist,
-        songCount: playlist?.songs?.length || null,
-        songs: playlist?.songs?.slice(0, limit) || [],
-    });
 };
+
+const jioSaavnApi = {
+    searchArtists,
+    searchAlbums,
+    searchSongs,
+    searchPlaylists,
+    searchAll,
+
+    getSongByIds,
+    getSongByLink,
+    getSongStation,
+    getSongSuggestions,
+
+    getAlbumById,
+    getAlbumByLink,
+
+    getArtistById,
+    getArtistByLink,
+    getArtistSongs,
+    getArtistAlbums,
+
+    getPlaylistById,
+    getPlaylistByLink,
+};
+
+export default jioSaavnApi;
