@@ -31,12 +31,12 @@ const A_Navbar = () => {
                         className="bg-tertiary text-text-secondary absolute inset-auto m-0 rounded-md shadow-lg [position-area:bottom]">
                         <ul className="divide-y">
                             <li>
-                                <Link href={APP_ROUTES.ANILIST_SEARCH('anime')} className="hover:bg-highlight block px-4 py-2 hover:text-white">
+                                <Link href={APP_ROUTES.ANILIST.SEARCH('anime')} className="hover:bg-highlight block px-4 py-2 hover:text-white">
                                     Anime
                                 </Link>
                             </li>
                             <li>
-                                <Link href={APP_ROUTES.ANILIST_SEARCH('manga')} className="hover:bg-highlight block px-4 py-2 hover:text-white">
+                                <Link href={APP_ROUTES.ANILIST.SEARCH('manga')} className="hover:bg-highlight block px-4 py-2 hover:text-white">
                                     Manga
                                 </Link>
                             </li>
@@ -45,9 +45,9 @@ const A_Navbar = () => {
                 </li>
                 <li>
                     <Link
-                        href={APP_ROUTES.ANILIST_ANIME}
+                        href={APP_ROUTES.ANILIST.ANIME}
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
-                            pathName === APP_ROUTES.ANILIST_ANIME
+                            pathName === APP_ROUTES.ANILIST.ANIME
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
@@ -57,9 +57,9 @@ const A_Navbar = () => {
                 </li>
                 <li>
                     <Link
-                        href={APP_ROUTES.ANILIST_MANGA}
+                        href={APP_ROUTES.ANILIST.MANGA}
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
-                            pathName === APP_ROUTES.ANILIST_MANGA
+                            pathName === APP_ROUTES.ANILIST.MANGA
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
@@ -70,9 +70,9 @@ const A_Navbar = () => {
                 </li>
                 <li>
                     <Link
-                        href={APP_ROUTES.ANILIST_FAVOURITES}
+                        href={APP_ROUTES.ANILIST.FAVOURITES}
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
-                            pathName === APP_ROUTES.ANILIST_FAVOURITES
+                            pathName === APP_ROUTES.ANILIST.FAVOURITES
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>

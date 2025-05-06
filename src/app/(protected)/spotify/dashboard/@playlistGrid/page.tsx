@@ -19,14 +19,14 @@ const Page = async () => {
     });
 
     return (
-        <HorizontalScrollSection title="Playlists" href={APP_ROUTES.SPOTIFY_PLAYLISTS}>
+        <HorizontalScrollSection title="Playlists" href={APP_ROUTES.SPOTIFY.PLAYLISTS}>
             {sortedPlaylists.map((item) => (
                 <MusicCard
                     key={item.id}
                     title={item.name}
                     sub={`${item.tracks.total} tracks`}
                     thumbnailUrl={item.images[0].url}
-                    href={APP_ROUTES.SPOTIFY_PLAYLIST(item.id)}
+                    href={APP_ROUTES.SPOTIFY.PLAYLIST(item.id)}
                 />
             ))}
         </HorizontalScrollSection>

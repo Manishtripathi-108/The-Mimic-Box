@@ -63,7 +63,7 @@ const A_MediaCard = ({
                 )}
 
                 <Link
-                    href={APP_ROUTES.ANILIST_MEDIA_DETAIL(media.type.toLowerCase() as 'anime' | 'manga', media.id)}
+                    href={APP_ROUTES.ANILIST.MEDIA_DETAIL(media.type.toLowerCase() as 'anime' | 'manga', media.id)}
                     className="absolute inset-0 z-0"
                     aria-label={`View details for ${title}`}>
                     <span className="sr-only">View details for {title}</span>

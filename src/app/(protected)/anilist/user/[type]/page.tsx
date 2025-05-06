@@ -62,7 +62,7 @@ const Page = async ({ params }: AnilistMediaPageProps) => {
         <NoDataCard message={`Your ${type} list is looking a little empty!`}>
             <p className="text-text-secondary">Start adding your favorite anime/manga to your list or import an existing list.</p>
             <div className="mt-3 flex gap-3">
-                <Link target="_blank" href={APP_ROUTES.ANILIST_SEARCH(type === 'favourites' ? 'anime' : type)} className="button">
+                <Link target="_blank" href={APP_ROUTES.ANILIST.SEARCH(type === 'favourites' ? 'anime' : type)} className="button">
                     Browse
                 </Link>
                 <Link href={APP_ROUTES.IMPORT_ANIME_MANGA} className="button">

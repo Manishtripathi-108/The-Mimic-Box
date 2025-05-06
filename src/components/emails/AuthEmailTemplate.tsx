@@ -87,7 +87,7 @@ export const generateEmailVerificationEmail = (token: string) => (
         body="Thank you for creating an account with The Mimic Box. Please click the link below to confirm your email address. This link is valid for 15 minutes."
         buttonText="Verify Email"
         footerText="If you didn’t request this, you can safely ignore this email."
-        url={`${PUBLIC_URL}${APP_ROUTES.AUTH_VERIFY_EMAIL}?token=${token}`}
+        url={`${PUBLIC_URL}${APP_ROUTES.AUTH.VERIFY_EMAIL}?token=${token}`}
     />
 );
 
@@ -114,6 +114,6 @@ export const generateEmailChangeEmail = (token: string) => (
         body="We received a request to change the email address for your The Mimic Box account. If you did not make this request, please ignore this email. This link is valid for 15 minutes."
         buttonText="Change Email"
         footerText="If you didn’t request this, you can safely ignore this email."
-        url={`${PUBLIC_URL}${APP_ROUTES.AUTH_CHANGE_EMAIL}?token=${token}`}
+        url={`${PUBLIC_URL}${APP_ROUTES.AUTH.CHANGE_EMAIL}?token=${token}`}
     />
 );

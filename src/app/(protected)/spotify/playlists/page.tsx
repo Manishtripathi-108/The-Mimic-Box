@@ -34,7 +34,7 @@ const Page = async () => {
                             title={playlist.name}
                             sub={`${playlist.tracks.total} tracks`}
                             thumbnailUrl={playlist.images[0].url}
-                            href={APP_ROUTES.SPOTIFY_PLAYLIST(playlist.id)}
+                            href={APP_ROUTES.SPOTIFY.PLAYLIST(playlist.id)}
                         />
                     ))}
                 </div>

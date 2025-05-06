@@ -18,7 +18,7 @@ const WaitingRoom = () => {
                 .share({
                     title: `Join my Tic Tac Toe game: ${gameRoomName}`,
                     text: `Use this room Id to join: ${gameRoomId}`,
-                    url: `${APP_ROUTES.GAMES_TIC_TAC_TOE_ONLINE}?roomId=${gameRoomId}`,
+                    url: `${APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE}?roomId=${gameRoomId}`,
                 })
                 .catch(() => {
                     toast('Error sharing room code. Please try again.');

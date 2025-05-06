@@ -78,7 +78,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                         {track.artists.map((artist, index) => (
                             <Link
                                 key={artist.id}
-                                href={APP_ROUTES.SPOTIFY_ARTISTS(artist.id)}
+                                href={APP_ROUTES.SPOTIFY.ARTISTS(artist.id)}
                                 className="text-text-secondary hover:text-text-primary underline-offset-2 hover:underline">
                                 {artist.name}
                                 {index < track.artists.length - 1 && ', '}
@@ -88,7 +88,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
                     <p className="text-text-secondary mt-1 text-center text-sm">
                         <Link
-                            href={APP_ROUTES.SPOTIFY_ALBUMS(track.album.id)}
+                            href={APP_ROUTES.SPOTIFY.ALBUMS(track.album.id)}
                             className="text-text-secondary hover:text-text-primary underline-offset-2 hover:underline">
                             {track.album.name}
                         </Link>

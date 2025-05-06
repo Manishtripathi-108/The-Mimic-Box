@@ -59,7 +59,7 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
             <MusicMediaHeader title={name} coverImage={images?.[0]?.url} metadata={`${initialTracks.total} songs`}>
                 <>
                     By:&nbsp;
-                    <Link href={APP_ROUTES.SPOTIFY_ARTISTS(artists[0].id)} className="text-text-primary hover:underline">
+                    <Link href={APP_ROUTES.SPOTIFY.ARTISTS(artists[0].id)} className="text-text-primary hover:underline">
                         {artists[0].name}
                     </Link>
                 </>

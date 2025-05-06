@@ -13,7 +13,7 @@ const Page = async () => {
     return (
         <HorizontalScrollSection title="Top Artists">
             {res.payload.items.map((item) => (
-                <MusicCard key={item.id} title={item.name} thumbnailUrl={item.images[0].url} href={APP_ROUTES.SPOTIFY_ARTISTS(item.id)} />
+                <MusicCard key={item.id} title={item.name} thumbnailUrl={item.images[0].url} href={APP_ROUTES.SPOTIFY.ARTISTS(item.id)} />
             ))}
         </HorizontalScrollSection>
     );

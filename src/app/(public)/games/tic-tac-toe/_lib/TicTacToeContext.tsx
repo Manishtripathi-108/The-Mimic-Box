@@ -102,7 +102,7 @@ export const TicTacToeProvider = ({ children }: { children: React.ReactNode }) =
                 ({ success, message, mode }: { success: boolean; message: string; mode: GameMode | 'waiting-room' }) => {
                     dispatch({ type: 'TOGGLE_LOADING', payload: false });
                     toast.error(message);
-                    redirect(success ? APP_ROUTES.GAMES_TIC_TAC_TOE_ONLINE_MODE(mode) : APP_ROUTES.GAMES_TIC_TAC_TOE_ONLINE);
+                    redirect(success ? APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE_MODE(mode) : APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE);
                 }
             );
         },

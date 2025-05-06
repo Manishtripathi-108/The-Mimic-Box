@@ -25,7 +25,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                             key={album.id}
                             title={album.name}
                             thumbnailUrl={album.images?.[0]?.url || ''}
-                            href={APP_ROUTES.SPOTIFY_ALBUMS(album.id)}
+                            href={APP_ROUTES.SPOTIFY.ALBUMS(album.id)}
                         />
                     ))}
                 </div>
