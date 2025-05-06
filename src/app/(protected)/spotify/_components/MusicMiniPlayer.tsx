@@ -29,7 +29,7 @@ const MusicMiniPlayer = () => {
                 </div>
 
                 {/* Playback Controls */}
-                <div className="flex w-full max-w-xl flex-col items-center justify-self-center @md:col-span-2 @xl:col-span-3">
+                <div className="flex w-full max-w-xl flex-col items-center gap-1 justify-self-center @md:col-span-2 @xl:col-span-3">
                     <div className="flex items-center justify-center gap-5">
                         <button
                             type="button"

@@ -59,15 +59,15 @@ const MediaDetail = ({ media }: { media: AnilistMediaWithRecommendations }) => {
                     <dl className="[&>div>dt]:text-text-primary [&>div>dd]:text-text-secondary mt-8 grid grid-cols-2 gap-4 text-sm capitalize md:grid-cols-3">
                         <div>
                             <dt>Type</dt>
-                            <dd itemProp="genre">{media.type.toLowerCase()}</dd>
+                            <dd itemProp="genre">{media.type?.toLowerCase()}</dd>
                         </div>
                         <div>
                             <dt>Status</dt>
-                            <dd>{media.status.toLowerCase().replaceAll('_', ' ')}</dd>
+                            <dd>{media.status?.toLowerCase().replaceAll('_', ' ')}</dd>
                         </div>
                         <div>
                             <dt>Format</dt>
-                            <dd>{media.format.toLowerCase().replace('_', ' ')}</dd>
+                            <dd>{media.format?.toLowerCase().replace('_', ' ')}</dd>
                         </div>
                         {media.type === 'ANIME' ? (
                             <>
