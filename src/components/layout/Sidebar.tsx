@@ -18,9 +18,9 @@ const sidebarMenuItems = [
         title: 'AniList',
         icon: 'anilist',
         children: [
-            { name: 'Anime', link: APP_ROUTES.ANILIST.ANIME },
-            { name: 'Manga', link: APP_ROUTES.ANILIST.MANGA },
-            { name: 'Favourites', link: APP_ROUTES.ANILIST.FAVOURITES },
+            { name: 'Anime', link: APP_ROUTES.ANILIST.USER.ANIME },
+            { name: 'Manga', link: APP_ROUTES.ANILIST.USER.MANGA },
+            { name: 'Favourites', link: APP_ROUTES.ANILIST.USER.FAVOURITES },
             { name: 'Import/Export', link: APP_ROUTES.IMPORT_ANIME_MANGA },
         ],
     },

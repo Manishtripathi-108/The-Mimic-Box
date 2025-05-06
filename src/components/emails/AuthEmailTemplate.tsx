@@ -103,7 +103,7 @@ export const generatePasswordResetEmail = (token: string) => (
         body="We received a request to reset the password for your The Mimic Box account. If you did not make this request, please ignore this email. This link is valid for 15 minutes."
         buttonText="Reset Password"
         footerText="If you didn’t request this, you can safely ignore this email."
-        url={`${PUBLIC_URL}${APP_ROUTES.AUTH_RESET_PASSWORD}?token=${token}`}
+        url={`${PUBLIC_URL}${APP_ROUTES.AUTH.RESET_PASSWORD}?token=${token}`}
     />
 );
 

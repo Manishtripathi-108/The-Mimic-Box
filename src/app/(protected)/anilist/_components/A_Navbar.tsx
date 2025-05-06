@@ -45,9 +45,9 @@ const A_Navbar = () => {
                 </li>
                 <li>
                     <Link
-                        href={APP_ROUTES.ANILIST.ANIME}
+                        href={APP_ROUTES.ANILIST.USER.ANIME}
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
-                            pathName === APP_ROUTES.ANILIST.ANIME
+                            pathName === APP_ROUTES.ANILIST.USER.ANIME
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
@@ -57,9 +57,9 @@ const A_Navbar = () => {
                 </li>
                 <li>
                     <Link
-                        href={APP_ROUTES.ANILIST.MANGA}
+                        href={APP_ROUTES.ANILIST.USER.MANGA}
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
-                            pathName === APP_ROUTES.ANILIST.MANGA
+                            pathName === APP_ROUTES.ANILIST.USER.MANGA
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>
@@ -70,9 +70,9 @@ const A_Navbar = () => {
                 </li>
                 <li>
                     <Link
-                        href={APP_ROUTES.ANILIST.FAVOURITES}
+                        href={APP_ROUTES.ANILIST.USER.FAVOURITES}
                         className={`flex items-center justify-center gap-2 border-b-2 px-4 py-3 transition-colors ${
-                            pathName === APP_ROUTES.ANILIST.FAVOURITES
+                            pathName === APP_ROUTES.ANILIST.USER.FAVOURITES
                                 ? 'text-highlight border-highlight'
                                 : 'hover:text-highlight text-text-secondary hover:border-highlight border-transparent'
                         }`}>

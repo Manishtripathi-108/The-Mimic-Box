@@ -43,7 +43,7 @@ export const APP_ROUTES = {
             CLASSIC: '/games/tic-tac-toe/classic',
             ULTIMATE: '/games/tic-tac-toe/ultimate',
             ONLINE: '/games/tic-tac-toe/online',
-            MODE: (mode: 'classic' | 'ultimate' | 'waiting-room') => `/games/tic-tac-toe/online/${mode}`,
+            ONLINE_MODE: (mode: 'classic' | 'ultimate' | 'waiting-room') => `/games/tic-tac-toe/online/${mode}`,
         },
     },
 
@@ -185,7 +185,7 @@ export const EXTERNAL_ROUTES = {
 /*                                   Configs                                  */
 /* -------------------------------------------------------------------------- */
 
-export const PUBLIC_ROUTES = [
+export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.ROOT,
     APP_ROUTES.DEV,
     APP_ROUTES.AUTH.VERIFY_EMAIL,
@@ -196,7 +196,7 @@ export const PUBLIC_ROUTES = [
     APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE,
 ];
 
-export const AUTH_ROUTES = [APP_ROUTES.AUTH.LOGIN, APP_ROUTES.AUTH.REGISTER, APP_ROUTES.AUTH.FORGOT_PASSWORD, APP_ROUTES.AUTH.ERROR];
+export const AUTH_ROUTES: string[] = [APP_ROUTES.AUTH.LOGIN, APP_ROUTES.AUTH.REGISTER, APP_ROUTES.AUTH.FORGOT_PASSWORD, APP_ROUTES.AUTH.ERROR];
 
 export const API_AUTH_PREFIX = '/api/auth';
 export const DEFAULT_AUTH_ROUTE = APP_ROUTES.AUTH.LOGIN;
