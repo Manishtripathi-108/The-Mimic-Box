@@ -1,14 +1,28 @@
 'use client';
 
-import { useState } from 'react';
-
 import Image from 'next/image';
 
 import Icon from '@/components/ui/Icon';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
+import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicMiniPlayer = () => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const togglePlay = () => setIsPlaying(!isPlaying);
+    const {
+        onProgressChange,
+        isPlaying,
+        togglePlay,
+        loop,
+        toggleLoop,
+        next,
+        shuffled,
+        toggleShuffle,
+        previous,
+        setVolume,
+        current,
+        currentTime,
+        duration,
+    } = useAudioPlayer();
 
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
@@ -16,15 +30,15 @@ const MusicMiniPlayer = () => {
                 {/* Track Info */}
                 <div className="flex items-center gap-3 justify-self-start">
                     <Image
-                        src="https://picsum.photos/400"
-                        alt="Album Art"
+                        src={current?.coverUrl || IMAGE_FALLBACKS.AUDIO_COVER}
+                        alt={current?.title || 'Album Art'}
                         width={40}
                         height={40}
                         className="rounded-full border object-cover @md:rounded-xl"
                     />
                     <div>
-                        <h3 className="text-text-primary line-clamp-1 text-base font-semibold">idfc</h3>
-                        <p className="line-clamp-1 text-xs">blackbear</p>
+                        <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
+                        <p className="line-clamp-1 text-xs">{current?.artist}</p>
                     </div>
                 </div>
 
@@ -35,11 +49,13 @@ const MusicMiniPlayer = () => {
                             type="button"
                             aria-label="Shuffle"
                             title="Shuffle"
-                            className="hover:text-text-primary hidden cursor-pointer rounded-full p-1 @sm:inline">
+                            onClick={toggleShuffle}
+                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${shuffled ? 'text-highlight' : 'hover:text-text-primary'}`}>
                             <Icon icon="shuffle" className="size-5" />
                         </button>
 
                         <button
+                            onClick={previous}
                             type="button"
                             aria-label="Previous"
                             title="Previous"
@@ -51,35 +67,45 @@ const MusicMiniPlayer = () => {
                             type="button"
                             onClick={togglePlay}
                             aria-label={isPlaying ? 'Pause' : 'Play'}
-                            title={isPlaying ? 'Pause' : 'Play'}
                             className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5">
                             <Icon icon={isPlaying ? 'pauseToPlay' : 'playToPause'} className="size-full" />
                         </button>
 
-                        <button type="button" aria-label="Next" title="Next" className="hover:text-text-primary cursor-pointer rounded-full p-1">
+                        <button
+                            type="button"
+                            onClick={next}
+                            aria-label="Next"
+                            title="Next"
+                            className="hover:text-text-primary cursor-pointer rounded-full p-1">
                             <Icon icon="next" className="size-4" />
                         </button>
 
                         <button
                             type="button"
-                            aria-label="Queue"
-                            title="Queue"
-                            className="hover:text-text-primary hidden cursor-pointer rounded-full p-1 @sm:inline">
-                            <Icon icon="repeat" className="size-5" />
+                            aria-label={`Loop ${loop ? 'loop' : 'off'}`}
+                            title={`Loop ${loop ? loop : 'off'}`}
+                            onClick={toggleLoop}
+                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${loop ? 'text-highlight' : 'hover:text-text-primary'}`}>
+                            <Icon icon={loop ? loop : 'repeat'} className="size-5" />
                         </button>
                     </div>
 
                     {/* Progress Bar */}
                     <div className="hidden w-full items-center justify-center gap-3 text-xs @md:flex">
-                        <span>0:30</span>
+                        <span>{formatTimeDuration(currentTime * 1000, 'minutes')}</span>
                         <label className="group flex w-full max-w-md items-center">
                             <input
                                 type="range"
                                 aria-label="Song Progress"
+                                min={0}
+                                max={duration}
+                                step={0.1}
+                                value={currentTime}
+                                onChange={(e) => onProgressChange(parseFloat(e.target.value))}
                                 className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
                         </label>
-                        <span>3:27</span>
+                        <span>{formatTimeDuration(duration * 1000, 'minutes')}</span>
                     </div>
                 </div>
 
@@ -91,6 +117,11 @@ const MusicMiniPlayer = () => {
                             <input
                                 type="range"
                                 aria-label="Volume"
+                                min={0}
+                                max={1}
+                                step={0.01}
+                                defaultValue={1}
+                                onChange={(e) => setVolume(parseFloat(e.target.value))}
                                 className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
                         </label>
