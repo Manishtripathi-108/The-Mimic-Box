@@ -2,44 +2,142 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+/**
+ * A single track in the playlist.
+ */
 type Track = {
+    album?: string;
+    artist?: string;
+    coverUrl?: string;
     id: string;
     src: string;
-    coverUrl?: string;
     title: string;
-    artist?: string;
-    album?: string;
 };
 
-type LoopMode = null | 'repeatOne' | 'repeat';
+type LoopMode = null | 'repeat' | 'repeatOne';
 
+/**
+ * The type for the AudioPlayerContext.
+ */
 type AudioPlayerContextType = {
+    /**
+     * Play the current track.
+     */
     play: () => void;
+    /**
+     * Pause the current track.
+     */
     pause: () => void;
+    /**
+     * Toggle play/pause.
+     */
     togglePlay: () => void;
+    /**
+     * Skip to the next track in the queue.
+     */
     next: () => void;
+    /**
+     * Skip to the previous track in the queue.
+     */
     previous: () => void;
+    /**
+     * Whether the queue is shuffled.
+     */
     shuffled: boolean;
+    /**
+     * Toggle shuffle on/off.
+     */
     toggleShuffle: () => void;
+    /**
+     * Set the volume.
+     * @param {number} vol The new volume.
+     */
     setVolume: (vol: number) => void;
+    /**
+     * Set the playback rate.
+     * @param {number} rate The new playback rate.
+     */
     setRate: (rate: number) => void;
+    /**
+     * The loop mode.
+     * @see LoopMode
+     */
     loop: LoopMode;
+    /**
+     * Toggle loop on/off.
+     */
     toggleLoop: () => void;
+    /**
+     * Fade the audio to the specified volume.
+     * @param {number} toVolume The volume to fade to.
+     * @param {function} [callback] The callback to call after the fade.
+     * @param {number} [duration] The duration of the fade in ms.
+     */
     fadeAudio: (toVolume: number, callback?: () => void, duration?: number) => void;
+    /**
+     * The callback for when the track's progress changes.
+     * @param {number} time The new progress in ms.
+     */
     onProgressChange: (time: number) => void;
+    /**
+     * The callback for when the audio is aborted.
+     * @param {React.SyntheticEvent<HTMLAudioElement>} e The event.
+     */
     onAbort: (e: React.SyntheticEvent<HTMLAudioElement>) => void;
+    /**
+     * The callback for when the audio encounters an error.
+     * @param {React.SyntheticEvent<HTMLAudioElement>} e The event.
+     */
     onError: (e: React.SyntheticEvent<HTMLAudioElement>) => void;
+    /**
+     * The current queue.
+     */
     queue: Track[];
+    /**
+     * The current track.
+     */
     current: Track | null;
+    /**
+     * Whether the audio is playing.
+     */
     isPlaying: boolean;
+    /**
+     * Set the queue.
+     * @param {Track[]} tracks The new queue.
+     */
     setQueue: (tracks: Track[]) => void;
+    /**
+     * Whether the audio is loading.
+     */
+    isLoading: boolean;
+    /**
+     * Clear the queue.
+     */
     clearQueue: () => void;
+    /**
+     * The current time of the track in ms.
+     */
     currentTime: number;
+    /**
+     * The duration of the track in ms.
+     */
     duration: number;
+    /**
+     * Whether the audio is muted.
+     */
+    isMuted: boolean;
+    /**
+     * Toggle mute on/off.
+     */
+    toggleMute: () => void;
 };
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
 
+/**
+ * Returns the context of the audio player.
+ * @throws {Error} if used outside of AudioPlayerProvider
+ */
 export const useAudioPlayer = () => {
     const ctx = useContext(AudioPlayerContext);
     if (!ctx) throw new Error('useAudioPlayer must be used within AudioPlayerProvider');
@@ -50,6 +148,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const audioRef = useRef<HTMLAudioElement>(null);
     const preloadRef = useRef<HTMLAudioElement>(null);
 
+    const [isLoading, setIsLoading] = useState(false);
     const [originalQueue, setOriginalQueue] = useState<Track[]>([]);
     const [queue, setQueue] = useState<Track[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -60,22 +159,21 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [shuffled, setShuffled] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    const [isMuted, setIsMuted] = useState(false);
 
     const hasPreloadedRef = useRef(false);
     const retryCountRef = useRef(0);
 
     const current = useMemo(() => queue[currentIndex] || null, [queue, currentIndex]);
 
-    // Apply volume & rate on changes
     useEffect(() => {
         const audio = audioRef.current;
         if (audio) {
-            audio.volume = volume;
+            audio.volume = isMuted ? 0 : volume;
             audio.playbackRate = rate;
         }
-    }, [volume, rate]);
+    }, [volume, rate, isMuted]);
 
-    // Update current time & duration
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -93,7 +191,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         };
     }, []);
 
-    // Conditionally preload next audio (>50% played)
     useEffect(() => {
         const audio = audioRef.current;
         const preload = preloadRef.current;
@@ -116,6 +213,23 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         };
     }, [currentIndex, queue]);
 
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || !current) return;
+
+        setIsLoading(true);
+
+        const handleCanPlay = () => setIsLoading(false);
+
+        audio.addEventListener('canplaythrough', handleCanPlay);
+        audio.addEventListener('loadeddata', handleCanPlay);
+
+        return () => {
+            audio.removeEventListener('canplaythrough', handleCanPlay);
+            audio.removeEventListener('loadeddata', handleCanPlay);
+        };
+    }, [current]);
+
     const fadeAudio = useCallback((toVol: number, cb?: () => void, duration = 400) => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -124,7 +238,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         const steps = 50;
         const delta = (toVol - currentVol) / (duration / steps);
 
-        // If volume is already at target, do nothing
         if (delta === 0 || duration === 0) {
             audio.volume = toVol;
             cb?.();
@@ -132,13 +245,10 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
 
         let vol = currentVol;
-
         const interval = setInterval(() => {
             vol += delta;
             audio.volume = Math.max(0, Math.min(1, vol));
-
             const done = (delta > 0 && vol >= toVol) || (delta < 0 && vol <= toVol);
-
             if (done) {
                 clearInterval(interval);
                 audio.volume = toVol;
@@ -152,12 +262,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (!audio) return;
         audio
             .play()
-            .then(() => {
-                setIsPlaying(true);
-            })
-            .catch((e) => {
-                console.warn('Play error:', e);
-            });
+            .then(() => setIsPlaying(true))
+            .catch((e) => console.warn('Play error:', e));
     }, []);
 
     const pause = useCallback(() => {
@@ -171,7 +277,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         const audio = audioRef.current;
         if (!audio) return;
         audio.volume = 0;
-        audio.play().then(() => fadeAudio(volume));
+        audio.play().then(() => fadeAudio(isMuted ? 0 : volume));
         setIsPlaying(true);
     };
 
@@ -180,24 +286,20 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (!audio) return;
         fadeAudio(0, () => {
             audio.pause();
-            audio.volume = volume;
+            audio.volume = isMuted ? 0 : volume;
             setIsPlaying(false);
         });
     };
-
-    const togglePlay = () => (isPlaying ? pauseWithFade() : playWithFade());
 
     const next = useCallback(() => {
         retryCountRef.current = 0;
         hasPreloadedRef.current = false;
         const isLast = currentIndex >= queue.length - 1;
-
         if (loop === 'repeatOne') {
             audioRef.current!.currentTime = 0;
             play();
             return;
         }
-
         if (isLast) {
             if (loop === 'repeat') setCurrentIndex(0);
             else pause();
@@ -210,6 +312,52 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setCurrentIndex((i) => (i - 1 + queue.length) % queue.length);
         hasPreloadedRef.current = false;
     }, [queue.length]);
+
+    // Media Session API integration
+    useEffect(() => {
+        if (!current || typeof window === 'undefined' || !('mediaSession' in navigator)) return;
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: current.title,
+            artist: current.artist || '',
+            album: current.album || '',
+            artwork: current.coverUrl ? [{ src: current.coverUrl, sizes: '512x512', type: 'image/png' }] : [],
+        });
+
+        // Core controls
+        navigator.mediaSession.setActionHandler('play', play);
+        navigator.mediaSession.setActionHandler('pause', pause);
+        navigator.mediaSession.setActionHandler('previoustrack', previous);
+        navigator.mediaSession.setActionHandler('nexttrack', next);
+
+        // Seek controls
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+            const skipTime = details.seekOffset || 10;
+            if (audioRef.current) {
+                audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - skipTime);
+            }
+        });
+
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+            const skipTime = details.seekOffset || 10;
+            if (audioRef.current) {
+                audioRef.current.currentTime = Math.min(audioRef.current.duration, audioRef.current.currentTime + skipTime);
+            }
+        });
+
+        // Seekto (scrubbing to an exact position)
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+            const position = details.seekTime || 0;
+            if (audioRef.current) {
+                audioRef.current.currentTime = position;
+            }
+        });
+
+        return () => {
+            const handlers: MediaSessionAction[] = ['play', 'pause', 'previoustrack', 'nexttrack', 'seekbackward', 'seekforward', 'seekto'];
+            handlers.forEach((action) => navigator.mediaSession.setActionHandler(action, null));
+        };
+    }, [current, play, pause, next, previous]);
 
     const retryPlayback = useCallback(() => {
         if (retryCountRef.current < 2) {
@@ -288,7 +436,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const contextValue: AudioPlayerContextType = {
         play,
         pause,
-        togglePlay,
+        togglePlay: () => (isPlaying ? pauseWithFade() : playWithFade()),
         next,
         previous,
         shuffled,
@@ -304,10 +452,13 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         queue,
         current,
         isPlaying,
+        isLoading,
         setQueue: updateQueue,
         clearQueue,
         currentTime,
         duration,
+        isMuted,
+        toggleMute: () => setIsMuted((prev) => !prev),
     };
 
     return (

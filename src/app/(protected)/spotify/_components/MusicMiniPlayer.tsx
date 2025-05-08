@@ -10,6 +10,7 @@ import { formatTimeDuration } from '@/lib/utils/core.utils';
 const MusicMiniPlayer = () => {
     const {
         onProgressChange,
+        isLoading,
         isPlaying,
         togglePlay,
         loop,
@@ -68,7 +69,7 @@ const MusicMiniPlayer = () => {
                             onClick={togglePlay}
                             aria-label={isPlaying ? 'Pause' : 'Play'}
                             className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5">
-                            <Icon icon={isPlaying ? 'pauseToPlay' : 'playToPause'} className="size-full" />
+                            <Icon icon={isLoading ? 'loading' : isPlaying ? 'pauseToPlay' : 'playToPause'} className="size-full" />
                         </button>
 
                         <button
