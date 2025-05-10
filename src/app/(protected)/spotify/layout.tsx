@@ -1,10 +1,17 @@
-import MusicMiniPlayer from '@/app/(protected)/spotify/_components/MusicMiniPlayer';
-import { auth } from '@/auth';
-import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
+'use client';
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
-    const session = await auth();
-    const spotify = session?.user?.linkedAccounts?.spotify;
+import { useSession } from 'next-auth/react';
+
+import MusicMiniPlayer from '@/app/(protected)/spotify/_components/MusicMiniPlayer';
+import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
+import { AudioPlayerProvider } from '@/contexts/AudioPlayerContext';
+
+const Layout = ({ children }: { children: React.ReactNode }) => {
+    const session = useSession();
+
+    if (session.status === 'loading') return null;
+
+    const spotify = session?.data?.user?.linkedAccounts?.spotify;
 
     if (!spotify) {
         return (
@@ -16,8 +23,10 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div className="min-h-calc-full-height p-2 sm:p-6">
-            <main className="mb-16">{children}</main>
-            <MusicMiniPlayer />
+            <AudioPlayerProvider>
+                <main className="mb-16">{children}</main>
+                <MusicMiniPlayer />
+            </AudioPlayerProvider>
         </div>
     );
 };

@@ -8,7 +8,10 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 type Track = {
     album?: string;
     artist?: string;
-    coverUrl?: string;
+    covers?: {
+        quality: string;
+        url: string;
+    }[];
     id: string;
     src: string;
     title: string;
@@ -17,119 +20,142 @@ type Track = {
 type LoopMode = null | 'repeat' | 'repeatOne';
 
 /**
- * The type for the AudioPlayerContext.
+ * The context type for the audio player.
  */
 type AudioPlayerContextType = {
     /**
      * Play the current track.
      */
     play: () => void;
+
     /**
      * Pause the current track.
      */
     pause: () => void;
+
     /**
-     * Toggle play/pause.
+     * Toggle play or pause.
      */
     togglePlay: () => void;
+
     /**
      * Skip to the next track in the queue.
      */
     next: () => void;
+
     /**
      * Skip to the previous track in the queue.
      */
     previous: () => void;
+
     /**
-     * Whether the queue is shuffled.
-     */
-    shuffled: boolean;
-    /**
-     * Toggle shuffle on/off.
-     */
-    toggleShuffle: () => void;
-    /**
-     * Set the volume.
-     * @param {number} vol The new volume.
-     */
-    setVolume: (vol: number) => void;
-    /**
-     * Set the playback rate.
-     * @param {number} rate The new playback rate.
-     */
-    setRate: (rate: number) => void;
-    /**
-     * The loop mode.
-     * @see LoopMode
-     */
-    loop: LoopMode;
-    /**
-     * Toggle loop on/off.
-     */
-    toggleLoop: () => void;
-    /**
-     * Fade the audio to the specified volume.
-     * @param {number} toVolume The volume to fade to.
-     * @param {function} [callback] The callback to call after the fade.
-     * @param {number} [duration] The duration of the fade in ms.
+     * Fade the audio to a specified volume.
+     * @param toVolume The target volume level (0 to 1).
+     * @param callback Optional callback to execute after fading.
+     * @param duration Optional duration of the fade in milliseconds.
      */
     fadeAudio: (toVolume: number, callback?: () => void, duration?: number) => void;
+
     /**
-     * The callback for when the track's progress changes.
-     * @param {number} time The new progress in ms.
+     * Update the playback progress.
+     * @param time The new playback time in seconds.
      */
     onProgressChange: (time: number) => void;
-    /**
-     * The callback for when the audio is aborted.
-     * @param {React.SyntheticEvent<HTMLAudioElement>} e The event.
-     */
-    onAbort: (e: React.SyntheticEvent<HTMLAudioElement>) => void;
+
     /**
      * The callback for when the audio encounters an error.
-     * @param {React.SyntheticEvent<HTMLAudioElement>} e The event.
+     * @param e The error event.
      */
     onError: (e: React.SyntheticEvent<HTMLAudioElement>) => void;
+
     /**
-     * The current queue.
-     */
-    queue: Track[];
-    /**
-     * The current track.
-     */
-    current: Track | null;
-    /**
-     * Whether the audio is playing.
-     */
-    isPlaying: boolean;
-    /**
-     * Set the queue.
-     * @param {Track[]} tracks The new queue.
-     */
-    setQueue: (tracks: Track[]) => void;
-    /**
-     * Whether the audio is loading.
-     */
-    isLoading: boolean;
-    /**
-     * Clear the queue.
+     * Clear the current queue.
      */
     clearQueue: () => void;
+
     /**
-     * The current time of the track in ms.
+     * Update the queue with a new list of tracks.
+     * @param tracks The new queue of tracks.
      */
-    currentTime: number;
+    setQueue: (tracks: Track[]) => void;
+
     /**
-     * The duration of the track in ms.
+     * Add tracks to the current queue.
+     * @param tracks The tracks to add to the queue.
      */
-    duration: number;
+    addToQueue: (tracks: Track[]) => void;
+
     /**
-     * Whether the audio is muted.
+     * Toggle shuffle mode on or off.
      */
-    isMuted: boolean;
+    toggleShuffle: () => void;
+
     /**
-     * Toggle mute on/off.
+     * Toggle the loop mode.
+     */
+    toggleLoop: () => void;
+
+    /**
+     * Toggle mute on or off.
      */
     toggleMute: () => void;
+
+    /**
+     * Set the volume level.
+     * @param vol The new volume level (0 to 1).
+     */
+    setVolume: (vol: number) => void;
+
+    /**
+     * Set the playback rate.
+     * @param rate The new playback rate.
+     */
+    setRate: (rate: number) => void;
+
+    /**
+     * The current track being played.
+     */
+    current: Track | null;
+
+    /**
+     * The current queue of tracks.
+     */
+    queue: Track[];
+
+    /**
+     * The current playback time of the track in seconds.
+     */
+    currentTime: number;
+
+    /**
+     * The total duration of the current track in seconds.
+     */
+    duration: number;
+
+    /**
+     * Whether the audio is currently playing.
+     */
+    isPlaying: boolean;
+
+    /**
+     * Whether the audio is currently loading.
+     */
+    isLoading: boolean;
+
+    /**
+     * Whether the audio is currently muted.
+     */
+    isMuted: boolean;
+
+    /**
+     * Whether the queue is currently shuffled.
+     */
+    isShuffled: boolean;
+
+    /**
+     * The loop mode for playback.
+     */
+    loop: LoopMode;
 };
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
@@ -156,7 +182,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [volume, setVolume] = useState(1);
     const [rate, setRate] = useState(1);
     const [loop, setLoop] = useState<LoopMode>(null);
-    const [shuffled, setShuffled] = useState(false);
+    const [isShuffled, setIsShuffled] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isMuted, setIsMuted] = useState(false);
@@ -166,6 +192,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const current = useMemo(() => queue[currentIndex] || null, [queue, currentIndex]);
 
+    // Set the volume and playback rate
     useEffect(() => {
         const audio = audioRef.current;
         if (audio) {
@@ -174,6 +201,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, [volume, rate, isMuted]);
 
+    // handles time updates and duration changes
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -191,6 +219,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         };
     }, []);
 
+    // handles preload of the next track when the current track is halfway through
     useEffect(() => {
         const audio = audioRef.current;
         const preload = preloadRef.current;
@@ -199,6 +228,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         const handleTimeUpdate = () => {
             if (!hasPreloadedRef.current && audio.duration && audio.currentTime >= audio.duration / 2) {
                 const next = queue[currentIndex + 1];
+                console.log('preloading next track', next);
                 if (next?.src) {
                     preload.src = next.src;
                     preload.load();
@@ -213,6 +243,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         };
     }, [currentIndex, queue]);
 
+    // handles loading state
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio || !current) return;
@@ -256,6 +287,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
             }
         }, steps);
     }, []);
+
+    /* -------------------------------- Controls -------------------------------- */
 
     const play = useCallback(() => {
         const audio = audioRef.current;
@@ -321,7 +354,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
             title: current.title,
             artist: current.artist || '',
             album: current.album || '',
-            artwork: current.coverUrl ? [{ src: current.coverUrl, sizes: '512x512', type: 'image/png' }] : [],
+            artwork: current.covers ? current.covers.map((cover) => ({ src: cover.url, sizes: cover.quality, type: 'image/png' })) : [],
         });
 
         // Core controls
@@ -359,6 +392,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         };
     }, [current, play, pause, next, previous]);
 
+    /* ----------------------------- Shuffle & Loop ----------------------------- */
+
     const retryPlayback = useCallback(() => {
         if (retryCountRef.current < 2) {
             retryCountRef.current++;
@@ -379,8 +414,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const toggleShuffle = useCallback(() => {
         if (queue.length <= 1) return;
-        const isNowShuffled = !shuffled;
-        setShuffled(isNowShuffled);
+        const isNowShuffled = !isShuffled;
+        setIsShuffled(isNowShuffled);
 
         const newQueue = isNowShuffled ? shuffleArray(originalQueue) : originalQueue;
         const cur = current;
@@ -388,17 +423,23 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
         setQueue(newQueue);
         if (idx !== -1) setCurrentIndex(idx);
-    }, [shuffled, originalQueue, queue.length, current, shuffleArray]);
+    }, [isShuffled, originalQueue, queue.length, current, shuffleArray]);
+
+    const toggleLoop = () => {
+        setLoop((prev) => (prev === null ? 'repeatOne' : prev === 'repeatOne' ? 'repeat' : null));
+    };
+
+    /* ---------------------------------- Queue --------------------------------- */
 
     const updateQueue = useCallback(
         (tracks: Track[]) => {
             setOriginalQueue(tracks);
-            const newQ = shuffled && tracks.length > 1 ? shuffleArray(tracks) : tracks;
+            const newQ = isShuffled && tracks.length > 1 ? shuffleArray(tracks) : tracks;
             setQueue(newQ);
             setCurrentIndex(0);
             hasPreloadedRef.current = false;
         },
-        [shuffled, shuffleArray]
+        [isShuffled, shuffleArray]
     );
 
     const clearQueue = useCallback(() => {
@@ -409,21 +450,20 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         hasPreloadedRef.current = false;
     }, [pause]);
 
+    const addToQueue = useCallback(
+        (tracks: Track[]) => {
+            setOriginalQueue((prev) => [...prev, ...tracks]);
+            const newQ = isShuffled && tracks.length > 1 ? shuffleArray([...queue, ...tracks]) : [...queue, ...tracks];
+            setQueue(newQ);
+            if (current) setCurrentIndex(newQ.findIndex((t) => t.id === current.id));
+            hasPreloadedRef.current = false;
+        },
+        [isShuffled, queue, current, shuffleArray]
+    );
+
     const onProgressChange = useCallback((time: number) => {
         if (audioRef.current) audioRef.current.currentTime = time;
     }, []);
-
-    const toggleLoop = () => {
-        setLoop((prev) => (prev === null ? 'repeatOne' : prev === 'repeatOne' ? 'repeat' : null));
-    };
-
-    const onAbort = useCallback(
-        (e: React.SyntheticEvent<HTMLAudioElement>) => {
-            console.warn('Audio aborted', e);
-            retryPlayback();
-        },
-        [retryPlayback]
-    );
 
     const onError = useCallback(
         (e: React.SyntheticEvent<HTMLAudioElement>) => {
@@ -434,37 +474,48 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     );
 
     const contextValue: AudioPlayerContextType = {
+        // Playback controls
         play,
         pause,
         togglePlay: () => (isPlaying ? pauseWithFade() : playWithFade()),
         next,
         previous,
-        shuffled,
+
+        // Queue management
+        current,
+        queue,
+        setQueue: updateQueue,
+        addToQueue,
+        clearQueue,
+        isShuffled,
         toggleShuffle,
+
+        // Playback state
+        isPlaying,
+        isLoading,
+        currentTime,
+        duration,
+
+        // Volume and mute controls
         setVolume,
+        isMuted,
+        toggleMute: () => setIsMuted((prev) => !prev),
+        fadeAudio,
+
+        // Playback rate and loop controls
         setRate,
         loop,
         toggleLoop,
-        fadeAudio,
+
+        // Event handlers
         onProgressChange,
-        onAbort,
         onError,
-        queue,
-        current,
-        isPlaying,
-        isLoading,
-        setQueue: updateQueue,
-        clearQueue,
-        currentTime,
-        duration,
-        isMuted,
-        toggleMute: () => setIsMuted((prev) => !prev),
     };
 
     return (
         <AudioPlayerContext.Provider value={contextValue}>
             {children}
-            <audio ref={audioRef} src={current?.src} onEnded={next} onAbort={onAbort} onError={onError} />
+            <audio ref={audioRef} src={current?.src} onEnded={next} onError={onError} />
             <audio ref={preloadRef} preload="auto" style={{ display: 'none' }} />
         </AudioPlayerContext.Provider>
     );

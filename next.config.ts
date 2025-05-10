@@ -35,6 +35,11 @@ const nextConfig: NextConfig = {
                 protocol: 'https',
                 hostname: 'image-cdn-fa.spotifycdn.com',
             },
+            // jio saavn Image API
+            {
+                protocol: 'https',
+                hostname: 'c.saavncdn.com',
+            },
             // anilist Image API
             {
                 protocol: 'https',

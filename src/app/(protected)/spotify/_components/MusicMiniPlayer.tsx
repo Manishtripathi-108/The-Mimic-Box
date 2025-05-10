@@ -9,18 +9,18 @@ import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicMiniPlayer = () => {
     const {
-        onProgressChange,
         isLoading,
         isPlaying,
+        current,
+        previous,
         togglePlay,
+        next,
+        isShuffled,
+        toggleShuffle,
         loop,
         toggleLoop,
-        next,
-        shuffled,
-        toggleShuffle,
-        previous,
         setVolume,
-        current,
+        onProgressChange,
         currentTime,
         duration,
     } = useAudioPlayer();
@@ -31,7 +31,7 @@ const MusicMiniPlayer = () => {
                 {/* Track Info */}
                 <div className="flex items-center gap-3 justify-self-start">
                     <Image
-                        src={current?.coverUrl || IMAGE_FALLBACKS.AUDIO_COVER}
+                        src={current?.covers?.[0].url || IMAGE_FALLBACKS.AUDIO_COVER}
                         alt={current?.title || 'Album Art'}
                         width={40}
                         height={40}
@@ -51,7 +51,7 @@ const MusicMiniPlayer = () => {
                             aria-label="Shuffle"
                             title="Shuffle"
                             onClick={toggleShuffle}
-                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${shuffled ? 'text-highlight' : 'hover:text-text-primary'}`}>
+                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${isShuffled ? 'text-highlight' : 'hover:text-text-primary'}`}>
                             <Icon icon="shuffle" className="size-5" />
                         </button>
 
