@@ -12,9 +12,9 @@ const QUALITIES = [
     { id: '_96', bitrate: '96kbps' },
     { id: '_160', bitrate: '160kbps' },
     { id: '_320', bitrate: '320kbps' },
-];
+] as const;
 
-const IMAGE_SIZES = ['50x50', '150x150', '500x500'];
+const IMAGE_SIZES = ['50x50', '150x150', '500x500'] as const;
 const QUALITY_REGEX = /150x150|50x50/;
 const PROTOCOL_REGEX = /^http:\/\//;
 const DES_KEY = '38346591';

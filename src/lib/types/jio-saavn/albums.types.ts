@@ -1,5 +1,5 @@
 import { T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/jio-saavn/artists.type';
-import { T_DownloadLink, T_EntityBase } from '@/lib/types/jio-saavn/global.types';
+import { T_EntityBase, T_ImageLink } from '@/lib/types/jio-saavn/global.types';
 import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
 
 export type T_SearchAlbumAPIResponse = {
@@ -52,7 +52,7 @@ export type T_SearchAlbum = {
             all: T_ArtistBase[];
         };
         url: string;
-        image: T_DownloadLink[];
+        image: T_ImageLink[];
     }[];
 };
 
@@ -85,6 +85,6 @@ export type T_Album = {
     artists: T_Song['artists'];
     songCount: number | null;
     url: string;
-    image: T_DownloadLink[];
+    image: T_ImageLink[];
     songs: T_Song[] | null;
 };

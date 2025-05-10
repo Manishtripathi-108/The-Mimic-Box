@@ -14,12 +14,12 @@ const jioSaavnConfig = axios.create({
 jioSaavnConfig.interceptors.request.use((config) => {
     config.params = {
         ...config.params,
-        __call: config.url?.toString(),
         _format: 'json',
         _marker: '0',
         api_version: 4,
-        ctx: config.params.ctx || 'web6dot0',
+        ctx: config.params?.ctx || 'web6dot0',
     };
+
     return config;
 });
 

@@ -1,5 +1,5 @@
 import { T_Album, T_AlbumAPIResponse } from '@/lib/types/jio-saavn/albums.types';
-import { T_DownloadLink } from '@/lib/types/jio-saavn/global.types';
+import { T_ImageLink } from '@/lib/types/jio-saavn/global.types';
 import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
 
 type T_SocialLinks = {
@@ -70,7 +70,7 @@ export type T_ArtistBase = {
     name: string;
     role?: string;
     type: string;
-    image: T_DownloadLink[];
+    image: T_ImageLink[];
     url?: string;
 };
 
@@ -107,7 +107,7 @@ export type T_Artist = T_SocialLinks & {
     name: string;
     url: string;
     type: string;
-    image: T_DownloadLink[];
+    image: T_ImageLink[];
     followerCount: number | null;
     fanCount: string | null;
     isVerified: boolean | null;

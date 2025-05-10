@@ -2,20 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-/**
- * A single track in the playlist.
- */
-type Track = {
-    album?: string;
-    artist?: string;
-    covers?: {
-        quality: string;
-        url: string;
-    }[];
-    id: string;
-    src: string;
-    title: string;
-};
+import { T_AudioPlayerTrack, T_TrackContext } from '@/lib/types/client.types';
 
 type LoopMode = null | 'repeat' | 'repeatOne';
 
@@ -77,13 +64,13 @@ type AudioPlayerContextType = {
      * Update the queue with a new list of tracks.
      * @param tracks The new queue of tracks.
      */
-    setQueue: (tracks: Track[]) => void;
+    setQueue: (tracks: T_AudioPlayerTrack[], context?: T_TrackContext) => void;
 
     /**
      * Add tracks to the current queue.
      * @param tracks The tracks to add to the queue.
      */
-    addToQueue: (tracks: Track[]) => void;
+    addToQueue: (tracks: T_AudioPlayerTrack[]) => void;
 
     /**
      * Toggle shuffle mode on or off.
@@ -115,12 +102,17 @@ type AudioPlayerContextType = {
     /**
      * The current track being played.
      */
-    current: Track | null;
+    current: T_AudioPlayerTrack | null;
+
+    /**
+     * The current track context.
+     */
+    trackContext: T_TrackContext | null;
 
     /**
      * The current queue of tracks.
      */
-    queue: Track[];
+    queue: T_AudioPlayerTrack[];
 
     /**
      * The current playback time of the track in seconds.
@@ -175,8 +167,9 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const preloadRef = useRef<HTMLAudioElement>(null);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [originalQueue, setOriginalQueue] = useState<Track[]>([]);
-    const [queue, setQueue] = useState<Track[]>([]);
+    const [originalQueue, setOriginalQueue] = useState<T_AudioPlayerTrack[]>([]);
+    const [queue, setQueue] = useState<T_AudioPlayerTrack[]>([]);
+    const [trackContext, setTrackContext] = useState<T_TrackContext | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(1);
@@ -224,13 +217,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         const audio = audioRef.current;
         const preload = preloadRef.current;
         if (!audio || !preload) return;
+        const next = queue[currentIndex + 1];
+        const nextSrc = next?.urls.find((url) => url.quality === '320kbps')?.url || next?.urls[0]?.url;
 
         const handleTimeUpdate = () => {
-            if (!hasPreloadedRef.current && audio.duration && audio.currentTime >= audio.duration / 2) {
-                const next = queue[currentIndex + 1];
+            if (!hasPreloadedRef.current && nextSrc && audio.duration && audio.currentTime >= audio.duration / 2) {
                 console.log('preloading next track', next);
-                if (next?.src) {
-                    preload.src = next.src;
+                if (nextSrc) {
+                    preload.src = nextSrc;
                     preload.load();
                     hasPreloadedRef.current = true;
                 }
@@ -292,7 +286,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const play = useCallback(() => {
         const audio = audioRef.current;
-        if (!audio) return;
+        if (!audio?.src) return;
         audio
             .play()
             .then(() => setIsPlaying(true))
@@ -301,14 +295,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const pause = useCallback(() => {
         const audio = audioRef.current;
-        if (!audio) return;
+        if (!audio?.src) return;
         audio.pause();
         setIsPlaying(false);
     }, []);
 
     const playWithFade = () => {
         const audio = audioRef.current;
-        if (!audio) return;
+        if (!audio?.src) return;
         audio.volume = 0;
         audio.play().then(() => fadeAudio(isMuted ? 0 : volume));
         setIsPlaying(true);
@@ -316,7 +310,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const pauseWithFade = () => {
         const audio = audioRef.current;
-        if (!audio) return;
+        if (!audio?.src) return;
         fadeAudio(0, () => {
             audio.pause();
             audio.volume = isMuted ? 0 : volume;
@@ -352,7 +346,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
         navigator.mediaSession.metadata = new MediaMetadata({
             title: current.title,
-            artist: current.artist || '',
+            artist: current.artists || '',
             album: current.album || '',
             artwork: current.covers ? current.covers.map((cover) => ({ src: cover.url, sizes: cover.quality, type: 'image/png' })) : [],
         });
@@ -403,7 +397,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, [play, next]);
 
-    const shuffleArray = useCallback((arr: Track[]) => {
+    const shuffleArray = useCallback((arr: T_AudioPlayerTrack[]) => {
         const shuffled = [...arr];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -418,8 +412,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsShuffled(isNowShuffled);
 
         const newQueue = isNowShuffled ? shuffleArray(originalQueue) : originalQueue;
-        const cur = current;
-        const idx = newQueue.findIndex((t) => t.id === cur?.id);
+        const idx = newQueue.findIndex((t) => t.id === current?.id);
 
         setQueue(newQueue);
         if (idx !== -1) setCurrentIndex(idx);
@@ -432,11 +425,12 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     /* ---------------------------------- Queue --------------------------------- */
 
     const updateQueue = useCallback(
-        (tracks: Track[]) => {
+        (tracks: T_AudioPlayerTrack[], context?: T_TrackContext) => {
             setOriginalQueue(tracks);
             const newQ = isShuffled && tracks.length > 1 ? shuffleArray(tracks) : tracks;
             setQueue(newQ);
             setCurrentIndex(0);
+            setTrackContext(context ?? null);
             hasPreloadedRef.current = false;
         },
         [isShuffled, shuffleArray]
@@ -451,7 +445,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }, [pause]);
 
     const addToQueue = useCallback(
-        (tracks: Track[]) => {
+        (tracks: T_AudioPlayerTrack[]) => {
             setOriginalQueue((prev) => [...prev, ...tracks]);
             const newQ = isShuffled && tracks.length > 1 ? shuffleArray([...queue, ...tracks]) : [...queue, ...tracks];
             setQueue(newQ);
@@ -482,6 +476,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         previous,
 
         // Queue management
+        trackContext,
         current,
         queue,
         setQueue: updateQueue,
@@ -515,7 +510,12 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return (
         <AudioPlayerContext.Provider value={contextValue}>
             {children}
-            <audio ref={audioRef} src={current?.src} onEnded={next} onError={onError} />
+            <audio
+                ref={audioRef}
+                src={current?.urls.find((url) => url.quality === '320kbps')?.url || current?.urls[0]?.url}
+                onEnded={next}
+                onError={onError}
+            />
             <audio ref={preloadRef} preload="auto" style={{ display: 'none' }} />
         </AudioPlayerContext.Provider>
     );

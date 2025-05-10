@@ -8,6 +8,7 @@ import {
     T_SearchArtistAPIResponse,
     T_SearchPlaylist,
     T_SearchPlaylistAPIResponse,
+    T_SearchResponse,
     T_SearchSongAPIResponse,
 } from '@/lib/types/jio-saavn/search.types';
 import { T_Song, T_SongAPIResponse, T_SongSuggestionAPIResponse } from '@/lib/types/jio-saavn/song.types';
@@ -27,13 +28,14 @@ import { safeAwait } from '@/lib/utils/safeAwait.utils';
 type T_SearchParams = { query: string; page: number; limit: number };
 
 const apiHandler = async <T, R>(
-    url: string,
+    endPoint: string,
     params: Record<string, string | number>,
     transform: (data: T) => R,
     errorMsg: string = 'Failed to fetch data',
     successMsg: string = 'Data fetched successfully!'
 ) => {
-    const [error, response] = await safeAwait(jioSaavnConfig.get<T>(url, { params }));
+    const [error, response] = await safeAwait(jioSaavnConfig.get<T>('/', { params: { ...params, __call: endPoint } }));
+
     return error || !response ? createErrorReturn(errorMsg, error) : createSuccessReturn(successMsg, transform(response.data));
 };
 
@@ -41,7 +43,7 @@ const apiHandler = async <T, R>(
 /*                                   Search                                   */
 /* -------------------------------------------------------------------------- */
 export const searchAll = async (query: string) =>
-    apiHandler<T_SearchAPIResponse, ReturnType<typeof createSearchPayload>>(
+    apiHandler<T_SearchAPIResponse, T_SearchResponse>(
         EXTERNAL_ROUTES.JIO_SAAVN.SEARCH.ALL,
         { query },
         createSearchPayload,

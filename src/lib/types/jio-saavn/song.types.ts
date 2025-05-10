@@ -1,5 +1,5 @@
 import { T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/jio-saavn/artists.type';
-import { T_DownloadLink, T_EntityBase } from '@/lib/types/jio-saavn/global.types';
+import { T_DownloadLink, T_EntityBase, T_ImageLink } from '@/lib/types/jio-saavn/global.types';
 
 export type T_SongAPIResponse = T_EntityBase & {
     header_desc: string;
@@ -64,7 +64,7 @@ export type T_Song = {
     explicitContent: boolean;
     playCount: number | null;
     copyright: string | null;
-    image: T_DownloadLink[];
+    image: T_ImageLink[];
     downloadUrl: T_DownloadLink[];
     album: {
         id: string | null;

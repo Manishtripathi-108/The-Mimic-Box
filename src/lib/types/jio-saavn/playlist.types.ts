@@ -1,5 +1,5 @@
 import { T_ArtistBase } from '@/lib/types/jio-saavn/artists.type';
-import { T_DownloadLink } from '@/lib/types/jio-saavn/global.types';
+import { T_ImageLink } from '@/lib/types/jio-saavn/global.types';
 import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
 
 export type T_PlaylistAPIResponse = {
@@ -59,7 +59,7 @@ export type T_Playlist = {
     explicitContent: boolean;
     songCount: number | null;
     url: string;
-    image: T_DownloadLink[];
+    image: T_ImageLink[];
     songs: T_Song[] | null;
     artists: T_ArtistBase[] | null;
 };

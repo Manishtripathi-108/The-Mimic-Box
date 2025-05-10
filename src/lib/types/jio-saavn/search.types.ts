@@ -1,11 +1,5 @@
 import { T_ArtistBase } from '@/lib/types/jio-saavn/artists.type';
-import {
-    T_DownloadLink,
-    T_EntityBase,
-    T_NormalizedEntityBase,
-    T_SearchAPIResponseSection,
-    T_SearchSection,
-} from '@/lib/types/jio-saavn/global.types';
+import { T_EntityBase, T_ImageLink, T_NormalizedEntityBase, T_SearchAPIResponseSection, T_SearchSection } from '@/lib/types/jio-saavn/global.types';
 import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
 
 type T_AlbumRaw = T_EntityBase & {
@@ -125,7 +119,7 @@ export type T_SearchPlaylist = {
         id: string;
         name: string;
         type: string;
-        image: T_DownloadLink[];
+        image: T_ImageLink[];
         url: string;
         songCount: number | null;
         language: string;

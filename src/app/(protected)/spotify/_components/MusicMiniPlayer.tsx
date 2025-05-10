@@ -25,9 +25,13 @@ const MusicMiniPlayer = () => {
         duration,
     } = useAudioPlayer();
 
+    if (!current) {
+        return null;
+    }
+
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
-            <section className="from-secondary to-tertiary text-text-secondary shadow-floating-sm mx-2 grid grid-cols-2 items-center justify-between rounded-full bg-linear-150 from-15% to-85% px-2 py-2 @md:grid-cols-3 @md:px-4 @xl:grid-cols-5">
+            <section className="from-secondary to-tertiary text-text-secondary shadow-floating-sm grid grid-cols-2 items-center justify-between rounded-full bg-linear-150 from-15% to-85% px-2 py-2 @sm:mx-2 @md:grid-cols-3 @md:px-4 @xl:grid-cols-5">
                 {/* Track Info */}
                 <div className="flex items-center gap-3 justify-self-start">
                     <Image
@@ -39,7 +43,7 @@ const MusicMiniPlayer = () => {
                     />
                     <div>
                         <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
-                        <p className="line-clamp-1 text-xs">{current?.artist}</p>
+                        <p className="line-clamp-1 text-xs">{current?.artists}</p>
                     </div>
                 </div>
 
