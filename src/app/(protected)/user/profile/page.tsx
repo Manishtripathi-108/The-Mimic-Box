@@ -21,7 +21,7 @@ const Page = async () => {
 
     return (
         <div className="grid place-items-center">
-            <div className="mt-4 w-full max-w-xl px-3 pt-24 md:pt-20">
+            <div className="w-full max-w-xl">
                 <div className="from-secondary to-tertiary shadow-floating-xs rounded-2xl bg-linear-150 from-15% to-85% p-3 sm:p-6">
                     <div className="rounded-xl border p-3 sm:p-6">
                         <div className="from-secondary to-tertiary shadow-pressed-xs -mt-20 size-32 rounded-full border bg-linear-150 from-15% to-85% p-2 sm:-mt-24 sm:size-44">
