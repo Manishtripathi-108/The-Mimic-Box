@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
-import { saavnSearchSongs } from '@/actions/jio-saavn.actions';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_TrackContext } from '@/lib/types/client.types';
+import { T_Song } from '@/lib/types/jio-saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 import cn from '@/lib/utils/cn';
 
@@ -16,58 +17,80 @@ type Props = {
 };
 
 const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
-    const { setQueue, isPlaying, trackContext, togglePlay } = useAudioPlayer();
-    const [isPending, setIsPending] = useState(false);
-
+    const { setQueue, addToQueue, isPlaying, trackContext, togglePlay } = useAudioPlayer();
+    const { isPending, makeParallelApiCalls } = useSafeApiCall<
+        null,
+        {
+            total: number;
+            start: number;
+            results: T_Song[];
+        }
+    >();
     const isCurrentTrack = trackContext?.id === context?.id;
     const isTrackPlaying = isCurrentTrack && isPlaying;
 
     const mapSpotifyToSaavn = useCallback(async () => {
         const start = performance.now();
-        setIsPending(true);
         const cacheKey = `saavn:${context.type}${context.id}`;
 
         let playableQueue: T_AudioPlayerTrack[] = [];
 
-        if (!localStorage.getItem(cacheKey)) {
-            const saavnResults = await Promise.allSettled(
-                spotifyTracks.map(async (track, i) => {
-                    console.log(`🎵 Starting fetch for track ${i}`);
-                    const artistNames = track.artists.map((artist) => artist.name).join(' ');
-                    const saavnRes = await saavnSearchSongs({
-                        query: `${track.name} ${artistNames}`,
+        const saavnResults = await makeParallelApiCalls(
+            spotifyTracks.map((track, i) => {
+                const name = track.name;
+                const artistNames = track.artists.map((artist) => artist.name).join(' ');
+                return {
+                    url: '/api/saavn/search/songs',
+                    params: {
+                        query: `${name} ${artistNames}`,
                         limit: 5,
-                    });
+                    },
+                    onSuccess:
+                        i === 0
+                            ? (data) => {
+                                  setQueue(
+                                      [
+                                          {
+                                              id: data.results[0].id,
+                                              urls: data.results[0].downloadUrl,
+                                              title: data.results[0].name,
+                                              album: data.results[0].album.name,
+                                              artists: artistNames,
+                                              covers: data.results[0].image,
+                                          },
+                                      ],
+                                      context,
+                                      true
+                                  );
+                              }
+                            : undefined,
+                };
+            })
+        );
 
-                    if (!saavnRes.success || !saavnRes.payload?.results?.length) return null;
+        console.log(saavnResults);
 
-                    const saavnTrack = saavnRes.payload.results[0];
+        playableQueue = saavnResults
+            .map((res) => {
+                return (
+                    res.results.length > 0 && {
+                        id: res.results[0].id,
+                        urls: res.results[0].downloadUrl,
+                        title: res.results[0].name,
+                        album: res.results[0].album.name,
+                        artists: res.results[0].artists.primary.map((artist) => artist.name).join(', '),
+                        covers: res.results[0].image,
+                    }
+                );
+            })
+            .filter((track) => track !== false || track !== null) as T_AudioPlayerTrack[];
 
-                    return {
-                        id: saavnTrack.id,
-                        urls: saavnTrack.downloadUrl,
-                        title: saavnTrack.name,
-                        album: saavnTrack.album.name,
-                        artists: artistNames,
-                        covers: saavnTrack.image,
-                    } satisfies T_AudioPlayerTrack;
-                })
-            );
+        localStorage.setItem(cacheKey, JSON.stringify(playableQueue));
 
-            playableQueue = saavnResults
-                .filter((res) => res.status === 'fulfilled' && res.value)
-                .map((res) => (res as PromiseFulfilledResult<T_AudioPlayerTrack>).value);
-
-            localStorage.setItem(cacheKey, JSON.stringify(playableQueue));
-        } else {
-            playableQueue = JSON.parse(localStorage.getItem(cacheKey) || '[]');
-        }
-
-        setIsPending(false);
         const end = performance.now();
         console.log(`⏱️ Took ${(end - start) / 1000}s`);
         return playableQueue;
-    }, [spotifyTracks, context]);
+    }, [spotifyTracks, context, setQueue, makeParallelApiCalls]);
 
     const handlePlay = useCallback(() => {
         if (isCurrentTrack) {
@@ -76,11 +99,11 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
             const queue = mapSpotifyToSaavn();
             queue.then((playableQueue) => {
                 if (playableQueue.length > 0) {
-                    setQueue(playableQueue, context, true);
+                    addToQueue(playableQueue);
                 }
             });
         }
-    }, [isCurrentTrack, togglePlay, setQueue, mapSpotifyToSaavn, context]);
+    }, [isCurrentTrack, togglePlay, addToQueue, mapSpotifyToSaavn]);
 
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>

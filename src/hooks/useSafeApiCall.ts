@@ -8,7 +8,6 @@ import useUploadProgress from '@/hooks/useUploadProgress';
 import { MakeApiCallType, SuccessResponseOutput } from '@/lib/types/response.types';
 
 const ENABLE_DEBUG_LOGS = process.env.NODE_ENV === 'development';
-
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios = axios) => {
@@ -16,7 +15,7 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<TRes | null>(null);
 
-    const { uploadState, resetUploadProgress, onUploadProgress: onProgress } = useUploadProgress();
+    const { uploadState, resetUploadProgress, onUploadProgress } = useUploadProgress();
 
     const isMounted = useRef(true);
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -25,33 +24,26 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
         abortControllerRef.current?.abort(reason);
     }, []);
 
-    const makeApiCall = useCallback(
+    const performRequestWithRetry = useCallback(
         async (config: MakeApiCallType<TReq, TRes>) => {
             const {
                 onStart,
                 onSuccess,
+                onError,
+                onEnd,
                 isExternalApiCall = false,
                 retryCount = 0,
                 retryDelay = 500,
                 retryCondition,
-                onError,
-                onEnd,
                 ...requestConfig
             } = config;
 
-            setIsPending(true);
-            setError(null);
-            setData(null);
             let attempts = 0;
 
             try {
                 if (onStart) {
-                    if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] onStart triggered');
                     const startResult = await onStart();
-                    if (startResult === false) {
-                        setIsPending(false);
-                        return;
-                    }
+                    if (startResult === false) return { data: null, error: null };
                     if (startResult && !requestConfig.data && startResult !== true) {
                         requestConfig.data = startResult;
                     }
@@ -59,78 +51,120 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
 
                 while (attempts <= retryCount) {
                     if (!isMounted.current) break;
+
+                    abortControllerRef.current = new AbortController();
+                    requestConfig.signal = abortControllerRef.current.signal;
+                    requestConfig.onUploadProgress ||= onUploadProgress;
+
                     try {
-                        abortControllerRef.current = new AbortController();
-                        requestConfig.signal = abortControllerRef.current.signal;
-                        requestConfig.onUploadProgress = requestConfig.onUploadProgress || onProgress;
-
                         if (ENABLE_DEBUG_LOGS) console.log(`[useSafeApiCall] Attempt ${attempts + 1}`, requestConfig);
-
                         const response = await apiClient.request(requestConfig);
 
-                        if (!isMounted.current) return;
+                        if (!isMounted.current) return { data: null, error: null };
 
                         if (isExternalApiCall) {
                             (onSuccess as (res: AxiosResponse<TRes>) => void)?.(response);
-                        } else {
-                            const successRes = response.data as SuccessResponseOutput<TRes>;
-
-                            if (successRes.success) {
-                                setData(successRes.payload);
-                                (onSuccess as (data: TRes, response: AxiosResponse<SuccessResponseOutput<TRes>>) => void)?.(
-                                    successRes.payload,
-                                    response
-                                );
-                            } else {
-                                throw new Error(successRes.message || 'Unexpected response');
-                            }
+                            return { data: response.data as TRes, error: null };
                         }
 
-                        return;
+                        const successRes = response.data as SuccessResponseOutput<TRes>;
+
+                        if (successRes.success) {
+                            setData(successRes.payload);
+                            (onSuccess as (data: TRes, res: AxiosResponse<SuccessResponseOutput<TRes>>) => void)?.(successRes.payload, response);
+                            return { data: successRes.payload, error: null };
+                        }
+
+                        throw new Error(successRes.message || 'Unexpected response');
                     } catch (err) {
-                        if (!isMounted.current) return;
+                        if (!isMounted.current) return { data: null, error: null };
 
                         attempts++;
-                        const isFinalAttempt = attempts > retryCount;
+                        const isFinal = attempts > retryCount;
 
-                        let errorMessage = 'An error occurred';
+                        let message = 'An error occurred';
                         if (axios.isAxiosError(err)) {
                             if (err.name === 'CanceledError') {
                                 if (ENABLE_DEBUG_LOGS) console.warn('Request cancelled:', err.message);
-                                return;
+                                return { data: null, error: null };
                             }
-
-                            errorMessage = err.response?.data?.message || err.message || errorMessage;
+                            message = err.response?.data?.message || err.message || message;
                         } else if (err instanceof Error) {
-                            errorMessage = err.message;
+                            message = err.message;
                         }
 
-                        setError(errorMessage);
-                        onError?.(err, errorMessage);
-
-                        if (ENABLE_DEBUG_LOGS) console.error(`[useSafeApiCall] Error on attempt ${attempts}:`, err);
+                        setError(message);
+                        onError?.(err, message);
+                        if (ENABLE_DEBUG_LOGS) console.error(`[useSafeApiCall] Error attempt ${attempts}:`, err);
 
                         const shouldRetry = retryCondition && (axios.isAxiosError(err) || err instanceof Error) ? retryCondition(err) : true;
-                        if (!shouldRetry || isFinalAttempt) break;
+                        if (!shouldRetry || isFinal) return { data: null, error: message };
 
                         const delay = retryDelay * 2 ** (attempts - 1);
-                        const jitter = Math.random() * 100;
-                        await sleep(delay + jitter);
+                        await sleep(delay + Math.random() * 100);
                     }
                 }
             } catch (initErr) {
-                console.error('[useSafeApiCall] Error during initialization:', initErr);
+                console.error('[useSafeApiCall] Initialization error:', initErr);
                 setError('Initialization failed');
                 onError?.(initErr, 'Initialization failed');
             } finally {
-                if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] Request completed');
-                abortControllerRef.current = null;
-                resetUploadProgress();
-                setIsPending(false);
                 onEnd?.();
+                abortControllerRef.current = null;
             }
+
+            return { data: null, error: null };
         },
-        [apiClient, resetUploadProgress, onProgress]
+        [apiClient, onUploadProgress]
+    );
+
+    const makeApiCall = useCallback(
+        async (config: MakeApiCallType<TReq, TRes>) => {
+            setIsPending(true);
+            setError(null);
+            setData(null);
+
+            const result = await performRequestWithRetry(config);
+
+            resetUploadProgress();
+            setIsPending(false);
+
+            if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] Request complete');
+            return result;
+        },
+        [performRequestWithRetry, resetUploadProgress]
+    );
+
+    const makeParallelApiCalls = useCallback(
+        async (configs: Array<MakeApiCallType<TReq, TRes>>): Promise<TRes[]> => {
+            setIsPending(true);
+            setError(null);
+
+            const settledResults = await Promise.allSettled(configs.map((config) => performRequestWithRetry(config)));
+
+            const results = settledResults.map((res) => {
+                if (res.status === 'fulfilled') return res.value;
+                return { data: null, error: res.reason instanceof Error ? res.reason.message : String(res.reason) };
+            });
+
+            resetUploadProgress();
+            setIsPending(false);
+
+            return results
+                .map((res) => {
+                    if (res.error) {
+                        setError(res.error);
+                        if (ENABLE_DEBUG_LOGS) console.error('[useSafeApiCall] Parallel request error:', res.error);
+                    }
+                    if (res.data) {
+                        setData(res.data);
+                        if (ENABLE_DEBUG_LOGS) console.log('[useSafeApiCall] Parallel request success:', res.data);
+                    }
+                    return res.data;
+                })
+                .filter((res) => res !== null);
+        },
+        [performRequestWithRetry, resetUploadProgress]
     );
 
     useEffect(() => {
@@ -150,6 +184,7 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
         error,
         data,
         makeApiCall,
+        makeParallelApiCalls,
         cancelRequest,
     };
 };
