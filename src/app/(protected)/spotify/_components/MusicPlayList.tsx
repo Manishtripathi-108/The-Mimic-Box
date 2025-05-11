@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
@@ -12,10 +12,14 @@ import MusicMediaHeader from '@/app/(protected)/spotify/_components/MusicMediaHe
 import MusicTrackCard, { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/lib/types/spotify.types';
 
-const MusicPlaylist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
+type Props = {
+    playlist: T_SpotifyPlaylist;
+};
+
+const MusicPlaylist = ({ playlist }: Props) => {
     const { name, description, images, owner, tracks: initialTracks } = playlist;
 
-    const [tracks, setTracks] = useState(initialTracks.items);
+    const [playlistTracks, setPlaylistTracks] = useState(initialTracks.items);
     const [nextUrl, setNextUrl] = useState(initialTracks.next);
     const [isPending, startTransition] = useTransition();
     const loadingRef = useRef<HTMLDivElement>(null);
@@ -29,14 +33,14 @@ const MusicPlaylist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
             return;
         }
 
-        setTracks((prev) => [...prev, ...res.payload.items]);
+        setPlaylistTracks((prev) => [...prev, ...res.payload.items]);
         setNextUrl(res.payload.next);
     }, [nextUrl]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && nextUrl) {
+            ([entry]) => {
+                if (entry.isIntersecting && nextUrl) {
                     startTransition(() => {
                         fetchNextTracks();
                     });
@@ -53,6 +57,11 @@ const MusicPlaylist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
         };
     }, [fetchNextTracks, nextUrl]);
 
+    const tracks = useMemo(
+        () => playlistTracks.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null),
+        [playlistTracks]
+    );
+
     return (
         <>
             <MusicMediaHeader title={name} description={description} coverImage={images?.[0]?.url} metadata={`${initialTracks.total} Songs`}>
@@ -64,15 +73,15 @@ const MusicPlaylist = ({ playlist }: { playlist: T_SpotifyPlaylist }) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns className="mt-4" />
+            <MusicActionBtns context={{ id: playlist.id, type: 'playlist' }} spotifyTracks={tracks} className="mt-4" />
 
-            {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">
-                {tracks.map(({ track }, idx) => (track && !('show' in track) ? <MusicTrackCard key={`${track.id}-${idx}`} track={track} /> : null))}
+                {tracks.map((track, idx) => (
+                    <MusicTrackCard key={track.id + idx} track={track} />
+                ))}
 
-                {/* Loading Indicator */}
                 <div ref={loadingRef} className="grid w-full gap-2">
-                    {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={idx} />)}
+                    {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={`skeleton-${idx}`} />)}
                 </div>
             </div>
         </>

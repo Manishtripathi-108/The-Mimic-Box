@@ -23,6 +23,8 @@ const MusicMiniPlayer = () => {
         onProgressChange,
         currentTime,
         duration,
+        isMuted,
+        toggleMute,
     } = useAudioPlayer();
 
     if (!current) {
@@ -39,7 +41,7 @@ const MusicMiniPlayer = () => {
                         alt={current?.title || 'Album Art'}
                         width={40}
                         height={40}
-                        className="rounded-full border object-cover @md:rounded-xl"
+                        className="size-10 rounded-full border object-cover @md:rounded-xl"
                     />
                     <div>
                         <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
@@ -117,7 +119,13 @@ const MusicMiniPlayer = () => {
                 {/* Volume & Extras */}
                 <div className="hidden items-center gap-1 justify-self-end @xl:flex">
                     <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
-                        <Icon icon="volumeLoud" className="size-5 shrink-0" />
+                        <button
+                            type="button"
+                            title={isMuted ? 'Unmute' : 'Mute'}
+                            onClick={toggleMute}
+                            className="hover:text-text-primary shrink-0 cursor-pointer rounded-full p-1">
+                            <Icon icon={isMuted ? 'volumeOff' : 'volumeLoud'} className="size-5 shrink-0" />
+                        </button>
                         <label className="group flex w-full items-center">
                             <input
                                 type="range"

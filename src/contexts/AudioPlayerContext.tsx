@@ -64,7 +64,7 @@ type AudioPlayerContextType = {
      * Update the queue with a new list of tracks.
      * @param tracks The new queue of tracks.
      */
-    setQueue: (tracks: T_AudioPlayerTrack[], context?: T_TrackContext) => void;
+    setQueue: (tracks: T_AudioPlayerTrack[], context?: T_TrackContext, playQueue?: boolean) => void;
 
     /**
      * Add tracks to the current queue.
@@ -425,15 +425,21 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     /* ---------------------------------- Queue --------------------------------- */
 
     const updateQueue = useCallback(
-        (tracks: T_AudioPlayerTrack[], context?: T_TrackContext) => {
+        (tracks: T_AudioPlayerTrack[], context?: T_TrackContext, playQueue = false) => {
             setOriginalQueue(tracks);
             const newQ = isShuffled && tracks.length > 1 ? shuffleArray(tracks) : tracks;
             setQueue(newQ);
             setCurrentIndex(0);
             setTrackContext(context ?? null);
             hasPreloadedRef.current = false;
+            if (playQueue) {
+                setIsLoading(true);
+                setTimeout(() => {
+                    play();
+                }, 1000);
+            }
         },
-        [isShuffled, shuffleArray]
+        [isShuffled, shuffleArray, play]
     );
 
     const clearQueue = useCallback(() => {
@@ -514,6 +520,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 ref={audioRef}
                 src={current?.urls.find((url) => url.quality === '320kbps')?.url || current?.urls[0]?.url}
                 onEnded={next}
+                onAbort={retryPlayback}
                 onError={onError}
             />
             <audio ref={preloadRef} preload="auto" style={{ display: 'none' }} />

@@ -86,7 +86,7 @@ type T_TrackSourceType = 'album' | 'playlist' | 'track' | 'artist';
 
 export type T_TrackContext = {
     type: T_TrackSourceType;
-    id?: string;
+    id: string;
     name?: string;
 };
 
@@ -94,7 +94,7 @@ export type T_AudioPlayerTrack = {
     id: string;
     urls: { quality: '12kbps' | '48kbps' | '96kbps' | '160kbps' | '320kbps'; url: string }[];
     title: string;
-    album?: string;
+    album?: string | null;
     artists?: string;
     covers?: { quality: '50x50' | '150x150' | '500x500'; url: string }[];
 };

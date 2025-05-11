@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { saavnSearchSongs } from '@/actions/jio-saavn.actions';
 import { getSpotifyTrackDetails } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/spotify/_components/MusicActionBtns';
 import ErrorCard from '@/components/layout/ErrorCard';
@@ -54,29 +53,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     }
 
     const track = res.payload;
-    const artistNames = track.artists.map((a) => a.name).join(' ');
-
-    const saavnRes = await saavnSearchSongs({
-        query: `${track.name} ${artistNames}`,
-        limit: 5,
-    });
-
-    if (!saavnRes.success || !saavnRes.payload?.results?.length) {
-        return <ErrorCard message="Could not find corresponding Saavn track." />;
-    }
-
-    const saavnTrack = saavnRes.payload.results[0];
-
-    const queue = [
-        {
-            id: track.id,
-            urls: saavnTrack.downloadUrl,
-            title: track.name,
-            album: track.album.name,
-            artists: artistNames,
-            covers: saavnTrack.image,
-        },
-    ];
 
     return (
         <section className="h-calc-full-height flex items-center justify-center">
@@ -125,7 +101,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                         <span>{track.popularity}% Popularity</span>
                     </div>
 
-                    <MusicActionBtns className="mt-8 sm:justify-center" queue={queue} context={{ type: 'track', id: track.id }} />
+                    <MusicActionBtns className="mt-8 sm:justify-center" spotifyTracks={[track]} context={{ type: 'track', id: track.id }} />
                 </CardContainer>
             </div>
         </section>

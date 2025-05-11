@@ -1,25 +1,27 @@
+'use server';
+
 import { z } from 'zod';
 
 import jioSaavnApi from '@/lib/services/jio-saavn.service';
 import { createErrorReturn } from '@/lib/utils/createResponse.utils';
 
-export const validatePaginationOptions = z.object({
+const validatePaginationOptions = z.object({
     page: z.number().min(0, 'Page must be non-negative').optional().default(0),
     limit: z.number().gt(0, 'Limit must be greater than 0').optional().default(10),
 });
 
-export const validateSortOptions = z.object({
+const validateSortOptions = z.object({
     sortBy: z.enum(['popularity', 'latest', 'alphabetical']).optional().default('popularity'),
     sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
 });
 
-export const validateSearchOptions = validatePaginationOptions.extend({
+const validateSearchOptions = validatePaginationOptions.extend({
     query: z.string().min(1, 'Query is required'),
 });
 
-export type PaginationOptions = z.input<typeof validatePaginationOptions>;
-export type SortOptions = z.input<typeof validateSortOptions>;
-export type SearchOptions = z.input<typeof validateSearchOptions>;
+type PaginationOptions = z.input<typeof validatePaginationOptions>;
+type SortOptions = z.input<typeof validateSortOptions>;
+type SearchOptions = z.input<typeof validateSearchOptions>;
 
 /**
  * Perform a global search on JioSaavn.
