@@ -29,7 +29,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
 
         let playableQueue: T_AudioPlayerTrack[] = [];
 
-        if (localStorage.getItem(cacheKey)) {
+        if (!localStorage.getItem(cacheKey)) {
             const saavnResults = await Promise.allSettled(
                 spotifyTracks.map(async (track, i) => {
                     console.log(`🎵 Starting fetch for track ${i}`);
