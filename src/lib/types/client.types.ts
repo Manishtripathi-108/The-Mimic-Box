@@ -98,3 +98,30 @@ export type T_AudioPlayerTrack = {
     artists?: string;
     covers?: { quality: '50x50' | '150x150' | '500x500'; url: string }[];
 };
+
+export type T_AudioPlayerState = {
+    playbackContext: T_TrackContext | null;
+    currentTrackIndex: number;
+    playbackOrder: number[];
+    queue: T_AudioPlayerTrack[];
+
+    isLoading: boolean;
+    isPlaying: boolean;
+    loopMode: null | 'all' | 'one';
+    isShuffled: boolean;
+
+    volumeLevel: number;
+    playbackRate: number;
+};
+
+export type T_AudioPlayerAction =
+    | { type: 'SET_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext } }
+    | { type: 'ADD_TO_QUEUE'; payload: T_AudioPlayerTrack[] }
+    | { type: 'PLAY_INDEX'; payload: number }
+    | { type: 'TOGGLE_PLAY' }
+    | { type: 'SET_VOLUME'; payload: number }
+    | { type: 'SET_PLAYBACK_RATE'; payload: number }
+    | { type: 'TOGGLE_LOOP' }
+    | { type: 'TOGGLE_SHUFFLE' }
+    | { type: 'NEXT_TRACK' }
+    | { type: 'PREV_TRACK' };

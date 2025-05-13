@@ -336,8 +336,15 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }, [currentIndex, queue.length, loop, play, pause]);
 
     const previous = useCallback(() => {
-        setCurrentIndex((i) => (i - 1 + queue.length) % queue.length);
-        hasPreloadedRef.current = false;
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        if (audio.currentTime > 5 || queue.length <= 1) {
+            audio.currentTime = 0;
+        } else {
+            setCurrentIndex((i) => (i - 1 + queue.length) % queue.length);
+            hasPreloadedRef.current = false;
+        }
     }, [queue.length]);
 
     // Media Session API integration
@@ -397,14 +404,14 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, [play, next]);
 
-    const shuffleArray = useCallback((arr: T_AudioPlayerTrack[]) => {
+    const shuffleArray = (arr: T_AudioPlayerTrack[]) => {
         const shuffled = [...arr];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         return shuffled;
-    }, []);
+    };
 
     const toggleShuffle = useCallback(() => {
         if (queue.length <= 1) return;
@@ -416,7 +423,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
         setQueue(newQueue);
         if (idx !== -1) setCurrentIndex(idx);
-    }, [isShuffled, originalQueue, queue.length, current, shuffleArray]);
+    }, [isShuffled, originalQueue, queue.length, current]);
 
     const toggleLoop = () => {
         setLoop((prev) => (prev === null ? 'repeatOne' : prev === 'repeatOne' ? 'repeat' : null));
@@ -439,7 +446,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 }, 1000);
             }
         },
-        [isShuffled, shuffleArray, play]
+        [isShuffled, play]
     );
 
     const clearQueue = useCallback(() => {
@@ -453,12 +460,15 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const addToQueue = useCallback(
         (tracks: T_AudioPlayerTrack[]) => {
             setOriginalQueue((prev) => [...prev, ...tracks]);
+            console.log('Adding to queue', queue);
+
             const newQ = isShuffled && tracks.length > 1 ? shuffleArray([...queue, ...tracks]) : [...queue, ...tracks];
             setQueue(newQ);
             if (current) setCurrentIndex(newQ.findIndex((t) => t.id === current.id));
+            setTimeout(() => setIsLoading(false), 500);
             hasPreloadedRef.current = false;
         },
-        [isShuffled, queue, current, shuffleArray]
+        [isShuffled, queue, current]
     );
 
     const onProgressChange = useCallback((time: number) => {

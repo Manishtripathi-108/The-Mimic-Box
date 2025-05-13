@@ -4,28 +4,31 @@ import Image from 'next/image';
 
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicMiniPlayer = () => {
     const {
-        isLoading,
-        isPlaying,
+        loading,
+        playing,
         current,
         previous,
         togglePlay,
+        queue,
         next,
         isShuffled,
         toggleShuffle,
-        loop,
+        loopMode,
         toggleLoop,
         setVolume,
-        onProgressChange,
+        seek,
+        setQueue,
+        addToQueue,
         currentTime,
         duration,
-        isMuted,
         toggleMute,
-    } = useAudioPlayer();
+        volume,
+    } = useAudioPlayerContext();
 
     if (!current) {
         return null;
@@ -73,9 +76,9 @@ const MusicMiniPlayer = () => {
                         <button
                             type="button"
                             onClick={togglePlay}
-                            aria-label={isPlaying ? 'Pause' : 'Play'}
+                            aria-label={playing ? 'Pause' : 'Play'}
                             className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5">
-                            <Icon icon={isLoading ? 'loading' : isPlaying ? 'pauseToPlay' : 'playToPause'} className="size-full" />
+                            <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} className="size-full" />
                         </button>
 
                         <button
@@ -89,11 +92,11 @@ const MusicMiniPlayer = () => {
 
                         <button
                             type="button"
-                            aria-label={`Loop ${loop ? 'loop' : 'off'}`}
-                            title={`Loop ${loop ? loop : 'off'}`}
+                            aria-label={`Loop ${loopMode ? 'loopMode' : 'off'}`}
+                            title={`Loop ${loopMode ? loopMode : 'off'}`}
                             onClick={toggleLoop}
-                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${loop ? 'text-highlight' : 'hover:text-text-primary'}`}>
-                            <Icon icon={loop ? loop : 'repeat'} className="size-5" />
+                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${loopMode ? 'text-highlight' : 'hover:text-text-primary'}`}>
+                            <Icon icon={loopMode ? (loopMode === 'one' ? 'repeatOne' : 'repeat') : 'repeat'} className="size-5" />
                         </button>
                     </div>
 
@@ -108,7 +111,7 @@ const MusicMiniPlayer = () => {
                                 max={duration}
                                 step={0.1}
                                 value={currentTime}
-                                onChange={(e) => onProgressChange(parseFloat(e.target.value))}
+                                onChange={(e) => seek(parseFloat(e.target.value))}
                                 className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
                         </label>
@@ -121,10 +124,10 @@ const MusicMiniPlayer = () => {
                     <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
                         <button
                             type="button"
-                            title={isMuted ? 'Unmute' : 'Mute'}
+                            title={volume === 0 ? 'Unmute' : 'Mute'}
                             onClick={toggleMute}
                             className="hover:text-text-primary shrink-0 cursor-pointer rounded-full p-1">
-                            <Icon icon={isMuted ? 'volumeOff' : 'volumeLoud'} className="size-5 shrink-0" />
+                            <Icon icon={volume === 0 ? 'volumeOff' : 'volumeLoud'} className="size-5 shrink-0" />
                         </button>
                         <label className="group flex w-full items-center">
                             <input
@@ -133,7 +136,7 @@ const MusicMiniPlayer = () => {
                                 min={0}
                                 max={1}
                                 step={0.01}
-                                defaultValue={1}
+                                value={volume}
                                 onChange={(e) => setVolume(parseFloat(e.target.value))}
                                 className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
@@ -144,6 +147,7 @@ const MusicMiniPlayer = () => {
                         type="button"
                         aria-label="Queue"
                         title="Queue"
+                        onClick={() => console.log(queue)}
                         className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
                         <Icon icon="musicQueue" className="size-5" />
                     </button>
@@ -152,6 +156,105 @@ const MusicMiniPlayer = () => {
                         type="button"
                         aria-label="Fullscreen"
                         title="Fullscreen"
+                        onClick={() =>
+                            setQueue([
+                                {
+                                    id: 'FiWvT7d2',
+                                    urls: [
+                                        {
+                                            quality: '12kbps',
+                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_12.mp4',
+                                        },
+                                        {
+                                            quality: '48kbps',
+                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_48.mp4',
+                                        },
+                                        {
+                                            quality: '96kbps',
+                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_96.mp4',
+                                        },
+                                        {
+                                            quality: '160kbps',
+                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_160.mp4',
+                                        },
+                                        {
+                                            quality: '320kbps',
+                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_320.mp4',
+                                        },
+                                    ],
+                                    title: 'LOS VOLTAJE (Super Slowed)',
+                                    album: 'LOS VOLTAJE',
+                                    artists: "Sayfalse, Yb Wasg'ood, ARIIS",
+                                    covers: [
+                                        {
+                                            quality: '50x50',
+                                            url: 'https://c.saavncdn.com/949/LOS-VOLTAJE-Portuguese-2025-20250417025343-50x50.jpg',
+                                        },
+                                        {
+                                            quality: '150x150',
+                                            url: 'https://c.saavncdn.com/949/LOS-VOLTAJE-Portuguese-2025-20250417025343-150x150.jpg',
+                                        },
+                                        {
+                                            quality: '500x500',
+                                            url: 'https://c.saavncdn.com/949/LOS-VOLTAJE-Portuguese-2025-20250417025343-500x500.jpg',
+                                        },
+                                    ],
+                                },
+                            ])
+                        }
+                        className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
+                        <Icon icon="fullscreen" className="size-4" />
+                    </button>
+                    <button
+                        type="button"
+                        aria-label="Fullscreen"
+                        title="Fullscreen"
+                        onClick={() =>
+                            addToQueue([
+                                {
+                                    id: 'l-FULCFa',
+                                    urls: [
+                                        {
+                                            quality: '12kbps',
+                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_12.mp4',
+                                        },
+                                        {
+                                            quality: '48kbps',
+                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_48.mp4',
+                                        },
+                                        {
+                                            quality: '96kbps',
+                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_96.mp4',
+                                        },
+                                        {
+                                            quality: '160kbps',
+                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_160.mp4',
+                                        },
+                                        {
+                                            quality: '320kbps',
+                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_320.mp4',
+                                        },
+                                    ],
+                                    title: 'Nature',
+                                    album: 'Nature',
+                                    artists: 'Kabira, NJ Nindaniya',
+                                    covers: [
+                                        {
+                                            quality: '50x50',
+                                            url: 'https://c.saavncdn.com/002/Nature-Haryanvi-2022-20240813033302-50x50.jpg',
+                                        },
+                                        {
+                                            quality: '150x150',
+                                            url: 'https://c.saavncdn.com/002/Nature-Haryanvi-2022-20240813033302-150x150.jpg',
+                                        },
+                                        {
+                                            quality: '500x500',
+                                            url: 'https://c.saavncdn.com/002/Nature-Haryanvi-2022-20240813033302-500x500.jpg',
+                                        },
+                                    ],
+                                },
+                            ])
+                        }
                         className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
                         <Icon icon="fullscreen" className="size-4" />
                     </button>

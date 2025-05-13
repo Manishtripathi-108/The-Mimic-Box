@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 
 import Icon from '@/components/ui/Icon';
-import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_TrackContext } from '@/lib/types/client.types';
 import { T_Song } from '@/lib/types/jio-saavn/song.types';
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
-    const { setQueue, addToQueue, isPlaying, trackContext, togglePlay } = useAudioPlayer();
+    const { setQueue, addToQueue, playing, playbackContext, togglePlay } = useAudioPlayerContext();
     const { isPending, makeParallelApiCalls } = useSafeApiCall<
         null,
         {
@@ -26,8 +26,8 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
             results: T_Song[];
         }
     >();
-    const isCurrentTrack = trackContext?.id === context?.id;
-    const isTrackPlaying = isCurrentTrack && isPlaying;
+    const isCurrentTrack = playbackContext?.id === context?.id;
+    const isTrackPlaying = isCurrentTrack && playing;
 
     const mapSpotifyToSaavn = useCallback(async () => {
         const start = performance.now();
@@ -83,7 +83,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                     }
                 );
             })
-            .filter((track) => track !== false || track !== null) as T_AudioPlayerTrack[];
+            .filter((track) => track !== false && track !== null);
 
         localStorage.setItem(cacheKey, JSON.stringify(playableQueue));
 
