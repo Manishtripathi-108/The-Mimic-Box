@@ -41,7 +41,7 @@ const Page = async () => {
                             ) : (
                                 <>
                                     <ConnectAccount
-                                        callBackUrl={APP_ROUTES.USER_LINKED_ACCOUNTS}
+                                        callBackUrl={APP_ROUTES.USER.LINKED_ACCOUNTS}
                                         className="w-20 cursor-pointer text-center text-green-500 capitalize disabled:text-green-600"
                                         account={account}>
                                         Connect

@@ -1,13 +1,12 @@
 import { Metadata } from 'next';
 
 import Image from 'next/image';
-
-import { Link } from '@react-email/components';
+import Link from 'next/link';
 
 import { getSpotifyTrackDetails } from '@/actions/spotify.actions';
+import MusicActionBtns from '@/app/(protected)/spotify/_components/MusicActionBtns';
 import ErrorCard from '@/components/layout/ErrorCard';
 import CardContainer from '@/components/ui/CardContainer';
-import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
@@ -23,16 +22,15 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
         };
     }
 
-    const track = res.payload;
-    const trackName = track.name;
-    const artistNames = track.artists?.map((a) => a.name).filter(Boolean) || ['Unknown'];
-    const albumName = track.album?.name || 'Unknown Album';
-    const coverImage = track.album?.images?.[0]?.url || '';
+    const { name, artists, album } = res.payload;
+    const artistNames = artists?.map((a) => a.name).filter(Boolean) || ['Unknown'];
+    const albumName = album?.name || 'Unknown Album';
+    const coverImage = album?.images?.[0]?.url || '';
 
     return {
-        title: `${trackName} by ${artistNames[0]}`,
-        description: `Listen to "${trackName}" by ${artistNames.join(', ')} from the album "${albumName}".`,
-        keywords: ['Spotify', 'Track', 'Music', 'Mimic', 'Metadata', trackName, albumName, ...artistNames],
+        title: `${name} by ${artistNames[0]}`,
+        description: `Listen to "${name}" by ${artistNames.join(', ')} from the album "${albumName}".`,
+        keywords: ['Spotify', 'Track', 'Music', 'Mimic', 'Metadata', name, albumName, ...artistNames],
         openGraph: {
             images: [
                 {
@@ -76,19 +74,21 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                     </h1>
 
                     <p className="text-text-secondary text-center text-base sm:text-lg">
-                        {track.artists.map((artist, index) => (
+                        {track.artists.map((artist, idx) => (
                             <Link
                                 key={artist.id}
-                                href={APP_ROUTES.SPOTIFY_ARTISTS(artist.id)}
-                                className="hover:text-text-primary underline-offset-2 hover:underline">
+                                href={APP_ROUTES.SPOTIFY.ARTISTS(artist.id)}
+                                className="text-text-secondary hover:text-text-primary underline-offset-2 hover:underline">
                                 {artist.name}
-                                {index < track.artists.length - 1 && ', '}
+                                {idx < track.artists.length - 1 && ', '}
                             </Link>
                         ))}
                     </p>
 
                     <p className="text-text-secondary mt-1 text-center text-sm">
-                        <Link href={APP_ROUTES.SPOTIFY_ALBUMS(track.album.id)} className="hover:text-text-primary underline-offset-2 hover:underline">
+                        <Link
+                            href={APP_ROUTES.SPOTIFY.ALBUMS(track.album.id)}
+                            className="text-text-secondary hover:text-text-primary underline-offset-2 hover:underline">
                             {track.album.name}
                         </Link>
                     </p>
@@ -101,17 +101,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                         <span>{track.popularity}% Popularity</span>
                     </div>
 
-                    <div className="mt-8 flex items-center justify-center gap-6">
-                        <button type="button" aria-label="Share Track" className="button inline-flex size-9 rounded-full p-2">
-                            <Icon icon="share" className="size-full" />
-                        </button>
-                        <button type="button" aria-label="Play Track" className="button button-highlight inline-flex size-14 rounded-full p-2">
-                            <Icon icon="play" className="size-full" />
-                        </button>
-                        <button type="button" aria-label="More Options" className="button inline-flex size-9 rounded-full p-2">
-                            <Icon icon="moreDots" className="size-full rotate-90" />
-                        </button>
-                    </div>
+                    <MusicActionBtns className="mt-8 sm:justify-center" spotifyTracks={[track]} context={{ type: 'track', id: track.id }} />
                 </CardContainer>
             </div>
         </section>

@@ -3,7 +3,7 @@ import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard
 import ErrorMessage from '@/components/ui/ErrorMessage';
 
 const Page = async () => {
-    const res = await getSpotifyRecentlyPlayedTracks(5);
+    const res = await getSpotifyRecentlyPlayedTracks(6);
 
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch recently played tracks'} />;

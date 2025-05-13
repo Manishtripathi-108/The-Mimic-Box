@@ -85,7 +85,7 @@ const LoginInForm = () => {
                     />
 
                     {/* Forgot Password Link */}
-                    <Link href={APP_ROUTES.AUTH_FORGOT_PASSWORD} className="text-highlight mt-2 block text-right text-xs hover:underline">
+                    <Link href={APP_ROUTES.AUTH.FORGOT_PASSWORD} className="text-highlight mt-2 block text-right text-xs hover:underline">
                         Forgot password?
                     </Link>
 
@@ -110,7 +110,7 @@ const LoginInForm = () => {
 
             <footer className="text-text-secondary mt-2 text-center text-sm">
                 Don’t have an account?{' '}
-                <Link href={APP_ROUTES.AUTH_REGISTER} className="text-highlight hover:underline">
+                <Link href={APP_ROUTES.AUTH.REGISTER} className="text-highlight hover:underline">
                     Create account
                 </Link>
             </footer>

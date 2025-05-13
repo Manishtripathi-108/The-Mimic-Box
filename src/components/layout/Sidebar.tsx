@@ -18,9 +18,9 @@ const sidebarMenuItems = [
         title: 'AniList',
         icon: 'anilist',
         children: [
-            { name: 'Anime', link: APP_ROUTES.ANILIST_ANIME },
-            { name: 'Manga', link: APP_ROUTES.ANILIST_MANGA },
-            { name: 'Favourites', link: APP_ROUTES.ANILIST_FAVOURITES },
+            { name: 'Anime', link: APP_ROUTES.ANILIST.USER.ANIME },
+            { name: 'Manga', link: APP_ROUTES.ANILIST.USER.MANGA },
+            { name: 'Favourites', link: APP_ROUTES.ANILIST.USER.FAVOURITES },
             { name: 'Import/Export', link: APP_ROUTES.IMPORT_ANIME_MANGA },
         ],
     },
@@ -31,8 +31,8 @@ const sidebarMenuItems = [
             {
                 name: 'Tic Tac Toe',
                 children: [
-                    { name: 'Classic', link: APP_ROUTES.GAMES_TIC_TAC_TOE_CLASSIC },
-                    { name: 'Ultimate', link: APP_ROUTES.GAMES_TIC_TAC_TOE_ULTIMATE },
+                    { name: 'Classic', link: APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC },
+                    { name: 'Ultimate', link: APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE },
                 ],
             },
             { name: 'Ludo', link: '/games/ludo' },
@@ -42,18 +42,18 @@ const sidebarMenuItems = [
         title: 'Audio',
         icon: 'audio',
         children: [
-            { name: 'Converter', link: APP_ROUTES.AUDIO_CONVERTER },
-            { name: 'Tags Editor', link: APP_ROUTES.AUDIO_TAGS_EDITOR },
-            { name: 'Search Lyrics', link: APP_ROUTES.AUDIO_SEARCH_LYRICS },
+            { name: 'Converter', link: APP_ROUTES.AUDIO.CONVERTER },
+            { name: 'Tags Editor', link: APP_ROUTES.AUDIO.TAGS_EDITOR },
+            { name: 'Search Lyrics', link: APP_ROUTES.AUDIO.SEARCH },
         ],
     },
     {
         title: 'Spotify',
         icon: 'spotify',
         children: [
-            { name: 'Dashboard', link: APP_ROUTES.SPOTIFY_DASHBOARD },
-            { name: 'Playlists', link: APP_ROUTES.SPOTIFY_PLAYLISTS },
-            { name: 'Search', link: APP_ROUTES.SPOTIFY_SEARCH },
+            { name: 'Dashboard', link: APP_ROUTES.SPOTIFY.DASHBOARD },
+            { name: 'Playlists', link: APP_ROUTES.SPOTIFY.PLAYLISTS },
+            { name: 'Search', link: APP_ROUTES.SPOTIFY.SEARCH },
         ],
     },
 

@@ -30,11 +30,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <h1 className="text-highlight text-lg font-bold tracking-wide capitalize md:text-4xl">{gameMode}</h1>
                 <nav className="flex gap-2">
                     <Link
-                        href={gameMode === 'ultimate' ? APP_ROUTES.GAMES_TIC_TAC_TOE_CLASSIC : APP_ROUTES.GAMES_TIC_TAC_TOE_ULTIMATE}
+                        href={gameMode === 'ultimate' ? APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC : APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE}
                         className="button">
                         {gameMode === 'ultimate' ? 'Play Classic' : 'Play Ultimate'}
                     </Link>
-                    <Link href={APP_ROUTES.GAMES_TIC_TAC_TOE_ONLINE} className="button">
+                    <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE} className="button">
                         Play Online
                     </Link>
                 </nav>

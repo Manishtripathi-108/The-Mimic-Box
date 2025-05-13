@@ -45,7 +45,7 @@ const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDeta
             <div className="mb-2 flex items-center justify-between">
                 <h1 className="text-highlight text-lg font-bold capitalize">{getCategoryDisplayTitle(category)}</h1>
                 <Link
-                    href={APP_ROUTES.ANILIST_SEARCH(type.toLowerCase() as 'anime' | 'manga', category)}
+                    href={APP_ROUTES.ANILIST.SEARCH(type.toLowerCase() as 'anime' | 'manga', category)}
                     className="text-text-secondary hover:text-text-primary text-sm hover:underline">
                     View More
                 </Link>

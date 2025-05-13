@@ -34,14 +34,14 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
 
                 <div className="flex items-center gap-3">
                     {isFullTrack && albumImage && (
-                        <Link href={APP_ROUTES.SPOTIFY_TRACKS(id)} className="shrink-0">
+                        <Link href={APP_ROUTES.SPOTIFY.TRACKS(id)} className="shrink-0">
                             <Image src={albumImage} alt={name} width={50} height={50} className="rounded-xl object-cover" />
                         </Link>
                     )}
 
                     <div className="flex flex-col">
                         <Link
-                            href={APP_ROUTES.SPOTIFY_TRACKS(id)}
+                            href={APP_ROUTES.SPOTIFY.TRACKS(id)}
                             className="text-text-primary line-clamp-1 font-semibold hover:underline"
                             title={name}>
                             {name}
@@ -52,7 +52,7 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
                                 {artists.map((artist, index) => (
                                     <Link
                                         key={artist.id}
-                                        href={APP_ROUTES.SPOTIFY_ARTISTS(artist.id)}
+                                        href={APP_ROUTES.SPOTIFY.ARTISTS(artist.id)}
                                         className="hover:text-text-primary hover:underline">
                                         {artist.name}
                                         {index < artists.length - 1 && ', '}
@@ -69,7 +69,7 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
                 {isFullTrack && albumName && albumId && (
                     <Link
                         title={albumName}
-                        href={APP_ROUTES.SPOTIFY_ALBUMS(albumId)}
+                        href={APP_ROUTES.SPOTIFY.ALBUMS(albumId)}
                         className="hover:text-text-primary line-clamp-1 hover:underline">
                         {albumName}
                     </Link>

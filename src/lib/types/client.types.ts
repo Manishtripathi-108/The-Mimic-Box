@@ -74,10 +74,6 @@ export type TextareaProps<T extends FieldValues> = {
 } & BaseFormProps &
     UseControllerProps<T>;
 
-/* -------------------------------------------------------------------------- */
-/*                                   Upload                                   */
-/* -------------------------------------------------------------------------- */
-
 export type T_UploadState = {
     formattedLoaded: string;
     formattedTotal: string;
@@ -85,3 +81,37 @@ export type T_UploadState = {
     formattedRate: string;
     formattedEstimated: string;
 } & AxiosProgressEvent;
+
+type T_TrackSourceType = 'album' | 'playlist' | 'track' | 'artist';
+
+export type T_TrackContext = {
+    type: T_TrackSourceType;
+    id: string;
+    name?: string;
+};
+
+export type T_AudioPlayerTrack = {
+    id: string;
+    urls: { quality: '12kbps' | '48kbps' | '96kbps' | '160kbps' | '320kbps'; url: string }[];
+    title: string;
+    album?: string | null;
+    artists?: string;
+    covers?: { quality: '50x50' | '150x150' | '500x500'; url: string }[];
+};
+
+export type T_AudioPlayerState = {
+    playbackContext: T_TrackContext | null;
+    currentTrackIndex: number;
+    playbackOrder: number[];
+    queue: T_AudioPlayerTrack[];
+    isShuffled: boolean;
+};
+
+export type T_AudioPlayerAction =
+    | { type: 'SET_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext | null } }
+    | { type: 'ADD_TO_QUEUE'; payload: T_AudioPlayerTrack[] }
+    | { type: 'CLEAR_QUEUE' }
+    | { type: 'PLAY_INDEX'; payload: number }
+    | { type: 'TOGGLE_SHUFFLE' }
+    | { type: 'NEXT_TRACK' }
+    | { type: 'PREV_TRACK' };

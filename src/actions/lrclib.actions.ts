@@ -16,13 +16,13 @@ export async function getLyrics(params: T_LyricsQuery) {
 
         // 1. Fetch by ID
         if (id) {
-            const { data } = await axios.get<T_LyricsRecord>(`${EXTERNAL_ROUTES.LRCLIB.GET_LYRICS}/${id}`);
+            const { data } = await axios.get<T_LyricsRecord>(`${EXTERNAL_ROUTES.LRCLIB.GET}/${id}`);
             return createSuccessReturn('Lyrics fetched successfully!', data);
         }
 
         // 2. Direct GET using track, artist, album, and duration
         if (trackName && artistName && albumName && duration) {
-            const { data } = await axios.get<T_LyricsRecord>(EXTERNAL_ROUTES.LRCLIB.GET_LYRICS, {
+            const { data } = await axios.get<T_LyricsRecord>(EXTERNAL_ROUTES.LRCLIB.GET, {
                 params: {
                     track_name: trackName,
                     artist_name: artistName,
@@ -35,7 +35,7 @@ export async function getLyrics(params: T_LyricsQuery) {
 
         // 3. Search by query or track name
         if (q || trackName) {
-            const { data } = await axios.get<T_LyricsRecord[]>(EXTERNAL_ROUTES.LRCLIB.SEARCH_LYRICS, {
+            const { data } = await axios.get<T_LyricsRecord[]>(EXTERNAL_ROUTES.LRCLIB.SEARCH, {
                 params: {
                     q,
                     track_name: trackName,
