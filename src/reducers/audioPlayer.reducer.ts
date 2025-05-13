@@ -20,10 +20,16 @@ const generateShuffleOrder = (length: number): number[] => {
 export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPlayerAction): T_AudioPlayerState {
     switch (action.type) {
         case 'SET_QUEUE': {
-            const queueLength = action.payload.tracks.length;
+            const trackMap = new Map();
+            for (const track of action.payload.tracks) {
+                trackMap.set(track.id, track);
+            }
+            const uniqueTracks = Array.from(trackMap.values());
+            const queueLength = uniqueTracks.length;
+
             return {
                 ...state,
-                queue: action.payload.tracks,
+                queue: uniqueTracks,
                 playbackContext: action.payload.context,
                 currentTrackIndex: 0,
                 playbackOrder: state.isShuffled ? generateShuffleOrder(queueLength) : Array.from({ length: queueLength }, (_, i) => i),
@@ -31,10 +37,23 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
         }
 
         case 'ADD_TO_QUEUE': {
-            const addedCount = action.payload.length;
-            const updatedQueue = [...state.queue, ...action.payload];
+            const trackMap = new Map();
+
+            // Add existing queue tracks first
+            for (const track of state.queue) {
+                trackMap.set(track.id, track);
+            }
+
+            // Add new tracks
+            for (const track of action.payload) {
+                trackMap.set(track.id, track);
+            }
+
+            const updatedQueue = Array.from(trackMap.values());
+            const newTrackCount = updatedQueue.length - state.queue.length;
+
             const baseIndex = state.queue.length;
-            const newOrderEntries = Array.from({ length: addedCount }, (_, i) => baseIndex + i);
+            const newOrderEntries = Array.from({ length: newTrackCount }, (_, i) => baseIndex + i);
 
             return {
                 ...state,
