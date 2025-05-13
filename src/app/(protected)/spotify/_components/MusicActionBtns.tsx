@@ -17,7 +17,7 @@ type Props = {
 };
 
 const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
-    const { setQueue, addToQueue, playbackContext } = useAudioPlayerContext();
+    const { setQueue, toggleFadePlay, addToQueue, playbackContext, playing } = useAudioPlayerContext();
     const { isPending, makeParallelApiCalls } = useSafeApiCall<
         null,
         {
@@ -27,7 +27,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
         }
     >();
     const isCurrentTrack = playbackContext?.id === context?.id;
-    const isTrackPlaying = isCurrentTrack;
+    const isTrackPlaying = isCurrentTrack && playing;
 
     const mapSpotifyToSaavn = useCallback(async () => {
         const start = performance.now();
@@ -94,7 +94,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
 
     const handlePlay = useCallback(() => {
         if (isCurrentTrack) {
-            window.audioPlayer?.togglePlay();
+            toggleFadePlay();
         } else {
             const queue = mapSpotifyToSaavn();
             queue.then((playableQueue) => {

@@ -5,7 +5,6 @@ export const audioPlayerInitialState: T_AudioPlayerState = {
     currentTrackIndex: 0,
     queue: [],
     playbackOrder: [],
-    loopMode: null,
     isShuffled: false,
 };
 
@@ -56,12 +55,6 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
         case 'PLAY_INDEX':
             return { ...state, currentTrackIndex: action.payload };
 
-        case 'TOGGLE_LOOP':
-            return {
-                ...state,
-                loopMode: state.loopMode === null ? 'one' : state.loopMode === 'one' ? 'all' : null,
-            };
-
         case 'TOGGLE_SHUFFLE': {
             const isShuffleEnabled = !state.isShuffled;
             return {
@@ -72,8 +65,7 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
         }
 
         case 'NEXT_TRACK': {
-            const { loopMode, currentTrackIndex, playbackOrder } = state;
-            if (loopMode === 'one') return state;
+            const { currentTrackIndex, playbackOrder } = state;
 
             const currentIdxInOrder = playbackOrder.indexOf(currentTrackIndex);
             const isLastTrack = currentIdxInOrder === playbackOrder.length - 1;

@@ -10,7 +10,6 @@ import Header from '@/components/layout/Header';
 import Icon from '@/components/ui/Icon';
 import { ThemeScript } from '@/hooks/useTheme';
 import '@/lib/iconSetup';
-import ReactScan from '@/components/ReactScan';
 
 const fontKarla = Karla({
     variable: '--font-karla',
@@ -63,7 +62,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 {/* <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" /> */}
                 <meta name="apple-mobile-web-app-title" content="Mimic Box" />
                 <ThemeScript />
-                <ReactScan />
             </head>
             <SessionProvider>
                 <body

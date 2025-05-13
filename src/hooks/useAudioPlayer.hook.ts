@@ -236,23 +236,6 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
         }
     }, [updateState]);
 
-    // Attach to global window object for dev tools / external access
-    useEffect(() => {
-        window.audioPlayer = {
-            play,
-            pause,
-            togglePlay,
-            toggleFadePlay,
-            get audioEl(): HTMLAudioElement | null {
-                return audioRef.current;
-            },
-        };
-
-        return () => {
-            delete window.audioPlayer;
-        };
-    }, [play, pause, togglePlay, toggleFadePlay, seek, setVolume, setRate, toggleMute, state]);
-
     return {
         ...state,
         play,

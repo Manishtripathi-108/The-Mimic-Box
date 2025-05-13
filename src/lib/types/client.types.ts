@@ -104,8 +104,6 @@ export type T_AudioPlayerState = {
     currentTrackIndex: number;
     playbackOrder: number[];
     queue: T_AudioPlayerTrack[];
-
-    loopMode: null | 'all' | 'one';
     isShuffled: boolean;
 };
 
@@ -114,7 +112,6 @@ export type T_AudioPlayerAction =
     | { type: 'ADD_TO_QUEUE'; payload: T_AudioPlayerTrack[] }
     | { type: 'CLEAR_QUEUE' }
     | { type: 'PLAY_INDEX'; payload: number }
-    | { type: 'TOGGLE_LOOP' }
     | { type: 'TOGGLE_SHUFFLE' }
     | { type: 'NEXT_TRACK' }
     | { type: 'PREV_TRACK' };

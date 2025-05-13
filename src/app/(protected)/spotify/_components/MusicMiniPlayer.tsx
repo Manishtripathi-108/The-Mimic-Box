@@ -1,25 +1,69 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import Image from 'next/image';
 
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
-import useAudioPlayer from '@/hooks/useAudioPlayer.hook';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicMiniPlayer = () => {
-    const { current, previous, queue, next, isShuffled, toggleShuffle, loopMode, toggleLoop, setQueue, currentTrackIndex, addToQueue } =
-        useAudioPlayerContext();
-
-    const { playing, loading, seek, currentTime, duration, volume, toggleFadePlay, muted, toggleMute, setVolume } = useAudioPlayer({
-        src: current?.urls.find((url) => url.quality === '320kbps')?.url || current?.urls[0]?.url || '',
-        preloadNext: queue[currentTrackIndex + 1]?.urls.find((u) => u.quality === '320kbps')?.url,
+    const [playbackState, setPlaybackState] = useState({
+        currentTime: 0,
+        buffered: null as TimeRanges | null,
     });
 
-    // if (!current) {
-    //     return null;
-    // }
+    const lastTimeUpdateRef = useRef(0);
+    const {
+        current,
+        queue,
+        duration,
+        volume,
+        muted,
+        playing,
+        loading,
+        loop,
+        isShuffled,
+        togglePlay,
+        toggleMute,
+        toggleLoop,
+        toggleShuffle,
+        seek,
+        setVolume,
+        next,
+        previous,
+        addToQueue,
+        setQueue,
+        getAudioElement,
+    } = useAudioPlayerContext();
+
+    const audio = getAudioElement();
+
+    const updatePlaybackTime = useCallback(() => {
+        if (!audio) return;
+        const now = performance.now();
+        if (now - lastTimeUpdateRef.current < 500) return;
+
+        lastTimeUpdateRef.current = now;
+        setPlaybackState({
+            currentTime: audio.currentTime,
+            buffered: audio.buffered,
+        });
+    }, [audio]);
+
+    useEffect(() => {
+        if (!audio) return;
+
+        audio.addEventListener('timeupdate', updatePlaybackTime);
+        return () => audio.removeEventListener('timeupdate', updatePlaybackTime);
+    }, [audio, updatePlaybackTime]);
+
+    const getBufferedEnd = () => {
+        if (!playbackState.buffered || playbackState.buffered.length === 0) return 0;
+        return playbackState.buffered.end(playbackState.buffered.length - 1);
+    };
 
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
@@ -27,7 +71,7 @@ const MusicMiniPlayer = () => {
                 {/* Track Info */}
                 <div className="flex items-center gap-3 justify-self-start">
                     <Image
-                        src={current?.covers?.[0].url || IMAGE_FALLBACKS.AUDIO_COVER}
+                        src={current?.covers?.[0]?.url || IMAGE_FALLBACKS.AUDIO_COVER}
                         alt={current?.title || 'Album Art'}
                         width={40}
                         height={40}
@@ -35,7 +79,7 @@ const MusicMiniPlayer = () => {
                     />
                     <div>
                         <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
-                        <p className="line-clamp-1 text-xs">{current?.artists}</p>
+                        <p className="line-clamp-1 text-xs">{current?.artists || 'Unknown Artist'}</p>
                     </div>
                 </div>
 
@@ -44,70 +88,83 @@ const MusicMiniPlayer = () => {
                     <div className="flex items-center justify-center gap-5">
                         <button
                             type="button"
-                            aria-label="Shuffle"
                             title="Shuffle"
                             onClick={toggleShuffle}
-                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${isShuffled ? 'text-highlight' : 'hover:text-text-primary'}`}>
+                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${isShuffled ? 'text-highlight' : 'hover:text-text-primary'}`}
+                            aria-label="Toggle Shuffle">
                             <Icon icon="shuffle" className="size-5" />
                         </button>
 
                         <button
-                            onClick={previous}
                             type="button"
-                            aria-label="Previous"
                             title="Previous"
-                            className="hover:text-text-primary cursor-pointer rounded-full p-1">
+                            onClick={previous}
+                            className="hover:text-text-primary cursor-pointer rounded-full p-1"
+                            aria-label="Previous Track">
                             <Icon icon="previous" className="size-4" />
                         </button>
 
                         <button
                             type="button"
-                            onClick={() => toggleFadePlay()}
-                            aria-label={playing ? 'Pause' : 'Play'}
-                            className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5">
+                            onClick={togglePlay}
+                            className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5"
+                            aria-label={playing ? 'Pause' : 'Play'}>
                             <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} className="size-full" />
                         </button>
 
                         <button
                             type="button"
-                            onClick={next}
-                            aria-label="Next"
                             title="Next"
-                            className="hover:text-text-primary cursor-pointer rounded-full p-1">
+                            onClick={next}
+                            className="hover:text-text-primary cursor-pointer rounded-full p-1"
+                            aria-label="Next Track">
                             <Icon icon="next" className="size-4" />
                         </button>
 
                         <button
                             type="button"
-                            aria-label={`Loop ${loopMode ? 'loop' : 'off'}`}
-                            title={`Loop ${loopMode ? loopMode : 'off'}`}
+                            title={loop ? 'Loop One' : 'Loop'}
                             onClick={toggleLoop}
-                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${loopMode ? 'text-highlight' : 'hover:text-text-primary'}`}>
-                            <Icon icon={loopMode ? (loopMode === 'all' ? 'repeat' : 'repeatOne') : 'repeat'} className="size-5" />
+                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${loop ? 'text-highlight' : 'hover:text-text-primary'}`}
+                            aria-label="Toggle Loop Mode">
+                            <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
                     </div>
 
                     {/* Progress Bar */}
                     <div className="hidden w-full items-center justify-center gap-3 text-xs @md:flex">
-                        <span>{formatTimeDuration(currentTime * 1000, 'minutes')}</span>
-                        <label className="group flex w-full max-w-md items-center">
+                        <span>{formatTimeDuration(playbackState.currentTime * 1000, 'minutes')}</span>
+
+                        <div className="group relative flex w-full max-w-md items-center overflow-hidden rounded-full bg-neutral-700">
+                            {/* Buffered Bar */}
+                            <div
+                                className="absolute top-1/2 left-0 h-full -translate-y-1/2 rounded-full bg-neutral-500"
+                                style={{
+                                    width: `${(getBufferedEnd() / duration) * 100}%`,
+                                    zIndex: 1,
+                                }}
+                            />
+
+                            {/* Seek Bar */}
                             <input
                                 type="range"
                                 aria-label="Song Progress"
                                 min={0}
                                 max={duration}
                                 step={0.1}
-                                value={currentTime}
+                                value={playbackState.currentTime}
                                 onChange={(e) => seek(parseFloat(e.target.value))}
-                                className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
+                                className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] relative z-10 h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
-                        </label>
+                        </div>
+
                         <span>{formatTimeDuration(duration * 1000, 'minutes')}</span>
                     </div>
                 </div>
 
-                {/* Volume & Extras */}
+                {/* Volume + Actions */}
                 <div className="hidden items-center gap-1 justify-self-end @xl:flex">
+                    {/* Volume */}
                     <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
                         <button
                             type="button"
@@ -130,9 +187,9 @@ const MusicMiniPlayer = () => {
                         </label>
                     </div>
 
+                    {/* Debug + Test Buttons */}
                     <button
                         type="button"
-                        aria-label="Queue"
                         title="Queue"
                         onClick={() => console.log(queue)}
                         className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
