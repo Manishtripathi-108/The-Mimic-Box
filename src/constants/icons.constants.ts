@@ -28,6 +28,7 @@ enum IconSet {
     desktop = 'noto:desktop-computer',
     document = 'solar:document-text-linear',
     down = 'formkit:down',
+    download = 'line-md:download-loop',
     draw = 'fa-solid:handshake',
 
     /* ------------------------------------ E ----------------------------------- */
@@ -68,6 +69,7 @@ enum IconSet {
     lock = 'solar:lock-password-bold',
     login = 'majesticons:login',
     logout = 'majesticons:logout',
+    lyrics = 'solar:microphone-bold',
 
     /* ------------------------------------ M ----------------------------------- */
     markup = 'garden:markup-stroke-12',

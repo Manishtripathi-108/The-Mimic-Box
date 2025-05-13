@@ -34,8 +34,6 @@ const MusicMiniPlayer = () => {
         setVolume,
         next,
         previous,
-        addToQueue,
-        setQueue,
         getAudioElement,
     } = useAudioPlayerContext();
 
@@ -65,11 +63,13 @@ const MusicMiniPlayer = () => {
         return playbackState.buffered.end(playbackState.buffered.length - 1);
     };
 
+    if (!current) return null;
+
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
-            <section className="from-secondary to-tertiary text-text-secondary shadow-floating-sm grid grid-cols-2 items-center justify-between rounded-full bg-linear-150 from-15% to-85% px-2 py-2 @sm:mx-2 @md:grid-cols-3 @md:px-4 @xl:grid-cols-5">
+            <section className="from-secondary to-tertiary shadow-floating-sm text-text-secondary flex w-full flex-wrap items-center justify-between gap-2 rounded-full bg-linear-150 from-15% to-85% px-3 py-2 @md:px-4">
                 {/* Track Info */}
-                <div className="flex items-center gap-3 justify-self-start">
+                <div className="flex min-w-0 flex-2 items-center gap-3">
                     <Image
                         src={current?.covers?.[0]?.url || IMAGE_FALLBACKS.AUDIO_COVER}
                         alt={current?.title || 'Album Art'}
@@ -77,15 +77,23 @@ const MusicMiniPlayer = () => {
                         height={40}
                         className="size-10 rounded-full border object-cover @md:rounded-xl"
                     />
-                    <div>
+                    <div className="min-w-0">
                         <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
                         <p className="line-clamp-1 text-xs">{current?.artists || 'Unknown Artist'}</p>
                     </div>
                 </div>
 
                 {/* Playback Controls */}
-                <div className="flex w-full max-w-xl flex-col items-center gap-1 justify-self-center @md:col-span-2 @xl:col-span-3">
-                    <div className="flex items-center justify-center gap-5">
+                <div className="@8xl:flex-8 flex flex-1 flex-col items-center gap-1 @md:flex-2 @xl:flex-4">
+                    <div className="flex items-center justify-center gap-4">
+                        <button
+                            type="button"
+                            title="Lyrics"
+                            className="hover:text-text-primary hidden cursor-pointer rounded-full p-1 @md:inline"
+                            aria-label="Open Lyrics">
+                            <Icon icon="lyrics" className="size-5" />
+                        </button>
+
                         <button
                             type="button"
                             title="Shuffle"
@@ -97,7 +105,7 @@ const MusicMiniPlayer = () => {
 
                         <button
                             type="button"
-                            title="Previous"
+                            title="Previous Track"
                             onClick={previous}
                             className="hover:text-text-primary cursor-pointer rounded-full p-1"
                             aria-label="Previous Track">
@@ -114,7 +122,7 @@ const MusicMiniPlayer = () => {
 
                         <button
                             type="button"
-                            title="Next"
+                            title="Next Track"
                             onClick={next}
                             className="hover:text-text-primary cursor-pointer rounded-full p-1"
                             aria-label="Next Track">
@@ -129,23 +137,29 @@ const MusicMiniPlayer = () => {
                             aria-label="Toggle Loop Mode">
                             <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
+
+                        <button
+                            type="button"
+                            title="Download"
+                            className="hover:text-text-primary hidden cursor-pointer rounded-full p-1 @md:inline"
+                            aria-label="Download">
+                            <Icon icon="download" className="size-6" />
+                        </button>
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="hidden w-full items-center justify-center gap-3 text-xs @md:flex">
+                    <div className="hidden w-full max-w-md items-center gap-3 text-xs @md:flex">
                         <span>{formatTimeDuration(playbackState.currentTime * 1000, 'minutes')}</span>
 
-                        <div className="group relative flex w-full max-w-md items-center overflow-hidden rounded-full bg-neutral-700">
-                            {/* Buffered Bar */}
+                        <div className="group relative flex w-full items-center overflow-hidden rounded-full bg-neutral-700">
+                            {/* Buffered */}
                             <div
-                                className="absolute top-1/2 left-0 h-full -translate-y-1/2 rounded-full bg-neutral-500"
+                                className="absolute top-1/2 left-0 z-10 h-full -translate-y-1/2 rounded-full bg-neutral-500"
                                 style={{
                                     width: `${(getBufferedEnd() / duration) * 100}%`,
-                                    zIndex: 1,
                                 }}
                             />
-
-                            {/* Seek Bar */}
+                            {/* Slider */}
                             <input
                                 type="range"
                                 aria-label="Song Progress"
@@ -154,7 +168,7 @@ const MusicMiniPlayer = () => {
                                 step={0.1}
                                 value={playbackState.currentTime}
                                 onChange={(e) => seek(parseFloat(e.target.value))}
-                                className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] relative z-10 h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
+                                className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] relative z-10 h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
                         </div>
 
@@ -162,9 +176,8 @@ const MusicMiniPlayer = () => {
                     </div>
                 </div>
 
-                {/* Volume + Actions */}
-                <div className="hidden items-center gap-1 justify-self-end @xl:flex">
-                    {/* Volume */}
+                {/* Volume & Actions */}
+                <div className="hidden shrink-0 items-center gap-2 @xl:flex">
                     <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
                         <button
                             type="button"
@@ -182,12 +195,12 @@ const MusicMiniPlayer = () => {
                                 step={0.01}
                                 value={volume}
                                 onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                className="[&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
+                                className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
                         </label>
                     </div>
 
-                    {/* Debug + Test Buttons */}
+                    {/* Dev Buttons */}
                     <button
                         type="button"
                         title="Queue"
@@ -198,107 +211,16 @@ const MusicMiniPlayer = () => {
 
                     <button
                         type="button"
-                        aria-label="Fullscreen"
                         title="Fullscreen"
-                        onClick={() =>
-                            setQueue([
-                                {
-                                    id: 'FiWvT7d2',
-                                    urls: [
-                                        {
-                                            quality: '12kbps',
-                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_12.mp4',
-                                        },
-                                        {
-                                            quality: '48kbps',
-                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_48.mp4',
-                                        },
-                                        {
-                                            quality: '96kbps',
-                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_96.mp4',
-                                        },
-                                        {
-                                            quality: '160kbps',
-                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_160.mp4',
-                                        },
-                                        {
-                                            quality: '320kbps',
-                                            url: 'http://aac.saavncdn.com/949/6ba8b7e19ce3ae92d146ccf6929d921a_320.mp4',
-                                        },
-                                    ],
-                                    title: 'LOS VOLTAJE (Super Slowed)',
-                                    album: 'LOS VOLTAJE',
-                                    artists: "Sayfalse, Yb Wasg'ood, ARIIS",
-                                    covers: [
-                                        {
-                                            quality: '50x50',
-                                            url: 'https://c.saavncdn.com/949/LOS-VOLTAJE-Portuguese-2025-20250417025343-50x50.jpg',
-                                        },
-                                        {
-                                            quality: '150x150',
-                                            url: 'https://c.saavncdn.com/949/LOS-VOLTAJE-Portuguese-2025-20250417025343-150x150.jpg',
-                                        },
-                                        {
-                                            quality: '500x500',
-                                            url: 'https://c.saavncdn.com/949/LOS-VOLTAJE-Portuguese-2025-20250417025343-500x500.jpg',
-                                        },
-                                    ],
-                                },
-                            ])
-                        }
+                        // onClick={() => setQueue(/** test queue */)}
                         className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
                         <Icon icon="fullscreen" className="size-4" />
                     </button>
+
                     <button
                         type="button"
-                        aria-label="Fullscreen"
-                        title="Fullscreen"
-                        onClick={() =>
-                            addToQueue([
-                                {
-                                    id: 'l-FULCFa',
-                                    urls: [
-                                        {
-                                            quality: '12kbps',
-                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_12.mp4',
-                                        },
-                                        {
-                                            quality: '48kbps',
-                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_48.mp4',
-                                        },
-                                        {
-                                            quality: '96kbps',
-                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_96.mp4',
-                                        },
-                                        {
-                                            quality: '160kbps',
-                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_160.mp4',
-                                        },
-                                        {
-                                            quality: '320kbps',
-                                            url: 'http://aac.saavncdn.com/002/34392dd4582139e0bd4952b9b04ae045_320.mp4',
-                                        },
-                                    ],
-                                    title: 'Nature',
-                                    album: 'Nature',
-                                    artists: 'Kabira, NJ Nindaniya',
-                                    covers: [
-                                        {
-                                            quality: '50x50',
-                                            url: 'https://c.saavncdn.com/002/Nature-Haryanvi-2022-20240813033302-50x50.jpg',
-                                        },
-                                        {
-                                            quality: '150x150',
-                                            url: 'https://c.saavncdn.com/002/Nature-Haryanvi-2022-20240813033302-150x150.jpg',
-                                        },
-                                        {
-                                            quality: '500x500',
-                                            url: 'https://c.saavncdn.com/002/Nature-Haryanvi-2022-20240813033302-500x500.jpg',
-                                        },
-                                    ],
-                                },
-                            ])
-                        }
+                        title="Add to Queue"
+                        // onClick={() => addToQueue(/** test add */)}
                         className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
                         <Icon icon="fullscreen" className="size-4" />
                     </button>

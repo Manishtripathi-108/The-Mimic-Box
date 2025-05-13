@@ -2,6 +2,8 @@
 
 import { useCallback } from 'react';
 
+import stringSimilarity from 'string-similarity';
+
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -33,57 +35,60 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
         const start = performance.now();
         const cacheKey = `saavn:${context.type}${context.id}`;
 
-        let playableQueue: T_AudioPlayerTrack[] = [];
-
         const saavnResults = await makeParallelApiCalls(
-            spotifyTracks.map((track, i) => {
+            spotifyTracks.map((track) => {
                 const name = track.name;
-                const artistNames = track.artists.map((artist) => artist.name).join(' ');
+                const artistNames = track.artists.map((a) => a.name).join(' ');
                 return {
                     url: '/api/saavn/search/songs',
                     params: {
                         query: `${name} ${artistNames}`,
                         limit: 5,
                     },
-                    onSuccess:
-                        i === 0
-                            ? (data) => {
-                                  setQueue(
-                                      [
-                                          {
-                                              id: data.results[0].id,
-                                              urls: data.results[0].downloadUrl,
-                                              title: data.results[0].name,
-                                              album: data.results[0].album.name,
-                                              artists: artistNames,
-                                              covers: data.results[0].image,
-                                          },
-                                      ],
-                                      context,
-                                      true
-                                  );
-                              }
-                            : undefined,
                 };
             })
         );
 
-        console.log(saavnResults);
+        const playableQueue: T_AudioPlayerTrack[] = [];
+        const seenTrackIds = new Set<string>();
 
-        playableQueue = saavnResults
-            .map((res) => {
-                return (
-                    res.results.length > 0 && {
-                        id: res.results[0].id,
-                        urls: res.results[0].downloadUrl,
-                        title: res.results[0].name,
-                        album: res.results[0].album.name,
-                        artists: res.results[0].artists.primary.map((artist) => artist.name).join(', '),
-                        covers: res.results[0].image,
-                    }
-                );
-            })
-            .filter((track) => track !== false && track !== null);
+        spotifyTracks.forEach((spotifyTrack, i) => {
+            const saavnRes = saavnResults[i];
+            if (!saavnRes?.results?.length) return;
+
+            const spotifyTitle = spotifyTrack.name.trim().toLowerCase();
+            const spotifyArtists = spotifyTrack.artists.map((a) => a.name.toLowerCase());
+
+            const match = saavnRes.results.find((saavnTrack) => {
+                const saavnTitle = saavnTrack.name.trim().toLowerCase();
+                const similarity = stringSimilarity.compareTwoStrings(spotifyTitle, saavnTitle);
+
+                if (similarity < 0.6) return false; // skip low-confidence matches
+
+                const saavnArtists = saavnTrack.artists.primary.map((a) => a.name.toLowerCase());
+                const hasOverlap = saavnArtists.some((a) => spotifyArtists.includes(a));
+                return hasOverlap;
+            });
+
+            if (match && !seenTrackIds.has(match.id)) {
+                seenTrackIds.add(match.id);
+
+                const newTrack: T_AudioPlayerTrack = {
+                    id: match.id,
+                    urls: match.downloadUrl,
+                    title: match.name,
+                    album: match.album.name,
+                    artists: match.artists.primary.map((a) => a.name).join(', '),
+                    covers: match.image,
+                };
+
+                playableQueue.push(newTrack);
+
+                if (i === 0) {
+                    setQueue([newTrack], context, true);
+                }
+            }
+        });
 
         localStorage.setItem(cacheKey, JSON.stringify(playableQueue));
 
@@ -96,14 +101,13 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
         if (isCurrentTrack) {
             toggleFadePlay();
         } else {
-            const queue = mapSpotifyToSaavn();
-            queue.then((playableQueue) => {
+            mapSpotifyToSaavn().then((playableQueue) => {
                 if (playableQueue.length > 0) {
                     addToQueue(playableQueue);
                 }
             });
         }
-    }, [isCurrentTrack, addToQueue, mapSpotifyToSaavn]);
+    }, [isCurrentTrack, mapSpotifyToSaavn, addToQueue, toggleFadePlay]);
 
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>
