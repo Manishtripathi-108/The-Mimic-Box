@@ -1,7 +1,7 @@
 import MusicMiniPlayer from '@/app/(protected)/spotify/_components/MusicMiniPlayer';
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
-import { AudioPlayerProvider } from '@/contexts/AudioPlayerContext';
+import { AudioPlayerProvider } from '@/contexts/audioPlayer.context';
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
     const session = await auth();

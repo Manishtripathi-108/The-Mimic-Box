@@ -17,7 +17,7 @@ type Props = {
 };
 
 const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
-    const { setQueue, addToQueue, playing, playbackContext, togglePlay } = useAudioPlayerContext();
+    const { setQueue, addToQueue, playbackContext } = useAudioPlayerContext();
     const { isPending, makeParallelApiCalls } = useSafeApiCall<
         null,
         {
@@ -27,7 +27,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
         }
     >();
     const isCurrentTrack = playbackContext?.id === context?.id;
-    const isTrackPlaying = isCurrentTrack && playing;
+    const isTrackPlaying = isCurrentTrack;
 
     const mapSpotifyToSaavn = useCallback(async () => {
         const start = performance.now();
@@ -94,7 +94,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
 
     const handlePlay = useCallback(() => {
         if (isCurrentTrack) {
-            togglePlay();
+            window.audioPlayer?.togglePlay();
         } else {
             const queue = mapSpotifyToSaavn();
             queue.then((playableQueue) => {
@@ -103,7 +103,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                 }
             });
         }
-    }, [isCurrentTrack, togglePlay, addToQueue, mapSpotifyToSaavn]);
+    }, [isCurrentTrack, addToQueue, mapSpotifyToSaavn]);
 
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>

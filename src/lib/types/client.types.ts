@@ -105,22 +105,15 @@ export type T_AudioPlayerState = {
     playbackOrder: number[];
     queue: T_AudioPlayerTrack[];
 
-    isLoading: boolean;
-    isPlaying: boolean;
     loopMode: null | 'all' | 'one';
     isShuffled: boolean;
-
-    volumeLevel: number;
-    playbackRate: number;
 };
 
 export type T_AudioPlayerAction =
-    | { type: 'SET_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext } }
+    | { type: 'SET_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext | null } }
     | { type: 'ADD_TO_QUEUE'; payload: T_AudioPlayerTrack[] }
+    | { type: 'CLEAR_QUEUE' }
     | { type: 'PLAY_INDEX'; payload: number }
-    | { type: 'TOGGLE_PLAY' }
-    | { type: 'SET_VOLUME'; payload: number }
-    | { type: 'SET_PLAYBACK_RATE'; payload: number }
     | { type: 'TOGGLE_LOOP' }
     | { type: 'TOGGLE_SHUFFLE' }
     | { type: 'NEXT_TRACK' }

@@ -5,34 +5,21 @@ import Image from 'next/image';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import useAudioPlayer from '@/hooks/useAudioPlayer.hook';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicMiniPlayer = () => {
-    const {
-        loading,
-        playing,
-        current,
-        previous,
-        togglePlay,
-        queue,
-        next,
-        isShuffled,
-        toggleShuffle,
-        loopMode,
-        toggleLoop,
-        setVolume,
-        seek,
-        setQueue,
-        addToQueue,
-        currentTime,
-        duration,
-        toggleMute,
-        volume,
-    } = useAudioPlayerContext();
+    const { current, previous, queue, next, isShuffled, toggleShuffle, loopMode, toggleLoop, setQueue, currentTrackIndex, addToQueue } =
+        useAudioPlayerContext();
 
-    if (!current) {
-        return null;
-    }
+    const { playing, loading, seek, currentTime, duration, volume, toggleFadePlay, muted, toggleMute, setVolume } = useAudioPlayer({
+        src: current?.urls.find((url) => url.quality === '320kbps')?.url || current?.urls[0]?.url || '',
+        preloadNext: queue[currentTrackIndex + 1]?.urls.find((u) => u.quality === '320kbps')?.url,
+    });
+
+    // if (!current) {
+    //     return null;
+    // }
 
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
@@ -75,7 +62,7 @@ const MusicMiniPlayer = () => {
 
                         <button
                             type="button"
-                            onClick={togglePlay}
+                            onClick={() => toggleFadePlay()}
                             aria-label={playing ? 'Pause' : 'Play'}
                             className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5">
                             <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} className="size-full" />
@@ -92,11 +79,11 @@ const MusicMiniPlayer = () => {
 
                         <button
                             type="button"
-                            aria-label={`Loop ${loopMode ? 'loopMode' : 'off'}`}
+                            aria-label={`Loop ${loopMode ? 'loop' : 'off'}`}
                             title={`Loop ${loopMode ? loopMode : 'off'}`}
                             onClick={toggleLoop}
                             className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${loopMode ? 'text-highlight' : 'hover:text-text-primary'}`}>
-                            <Icon icon={loopMode ? (loopMode === 'one' ? 'repeatOne' : 'repeat') : 'repeat'} className="size-5" />
+                            <Icon icon={loopMode ? (loopMode === 'all' ? 'repeat' : 'repeatOne') : 'repeat'} className="size-5" />
                         </button>
                     </div>
 
@@ -124,10 +111,10 @@ const MusicMiniPlayer = () => {
                     <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
                         <button
                             type="button"
-                            title={volume === 0 ? 'Unmute' : 'Mute'}
+                            title={muted ? 'Unmute' : 'Mute'}
                             onClick={toggleMute}
                             className="hover:text-text-primary shrink-0 cursor-pointer rounded-full p-1">
-                            <Icon icon={volume === 0 ? 'volumeOff' : 'volumeLoud'} className="size-5 shrink-0" />
+                            <Icon icon={muted ? 'volumeOff' : 'volumeLoud'} className="size-5 shrink-0" />
                         </button>
                         <label className="group flex w-full items-center">
                             <input

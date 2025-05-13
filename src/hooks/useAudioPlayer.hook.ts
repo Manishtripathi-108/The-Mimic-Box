@@ -1,5 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+// Declare global audioPlayer interface
+declare global {
+    interface Window {
+        audioPlayer?: {
+            play: () => void;
+            pause: () => void;
+            togglePlay: () => void;
+            toggleFadePlay: (fadeDuration?: number) => void;
+            audioEl: HTMLAudioElement | null;
+        };
+    }
+}
+
+// Define the audio player state shape
 type AudioPlayerState = {
     playing: boolean;
     loading: boolean;
@@ -7,6 +21,7 @@ type AudioPlayerState = {
     currentTime: number;
     duration: number;
     volume: number;
+    muted: boolean;
     playbackRate: number;
     buffered: TimeRanges | null;
 };
@@ -21,18 +36,10 @@ type UseAudioPlayerOptions = {
 const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOptions) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const preloadRef = useRef<HTMLAudioElement | null>(null);
-
     const preloadNextRef = useRef(preloadNext);
     const onEndRef = useRef(onEnd);
     const onErrorRef = useRef(onError);
-
-    useEffect(() => {
-        console.log('preloadNext, onEnd, onError');
-
-        preloadNextRef.current = preloadNext;
-        onEndRef.current = onEnd;
-        onErrorRef.current = onError;
-    }, [preloadNext, onEnd, onError]);
+    const lastUpdateRef = useRef(0);
 
     const [state, setState] = useState<AudioPlayerState>({
         playing: false,
@@ -41,48 +48,21 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
         currentTime: 0,
         duration: 0,
         volume: 1,
+        muted: false,
         playbackRate: 1,
         buffered: null,
     });
 
+    // Update refs on change
+    useEffect(() => {
+        preloadNextRef.current = preloadNext;
+        onEndRef.current = onEnd;
+        onErrorRef.current = onError;
+    }, [preloadNext, onEnd, onError]);
+
     const updateState = useCallback((partial: Partial<AudioPlayerState>) => {
         setState((prev) => ({ ...prev, ...partial }));
     }, []);
-
-    const handleLoadedMetadata = useCallback(() => {
-        const audio = audioRef.current;
-        if (audio) {
-            updateState({ duration: audio.duration, loading: false });
-        }
-    }, [updateState]);
-
-    const handleTimeUpdate = useCallback(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        updateState({ currentTime: audio.currentTime, buffered: audio.buffered });
-
-        const preloadNext = preloadNextRef.current;
-        if (preloadNext && audio.currentTime > audio.duration / 2 && preloadRef.current?.src !== preloadNext) {
-            preloadRef.current = new Audio(preloadNext);
-            preloadRef.current.preload = 'auto';
-        }
-    }, [updateState]);
-
-    const handleEnded = useCallback(() => {
-        updateState({ playing: false });
-        onEndRef.current?.();
-    }, [updateState]);
-
-    const handleError = useCallback(() => {
-        const audio = audioRef.current;
-        const error = audio?.error?.message || 'Playback error';
-        updateState({ error, loading: false });
-        onErrorRef.current?.(error);
-    }, [updateState]);
-
-    const handleWaiting = useCallback(() => updateState({ loading: true }), [updateState]);
-    const handlePlaying = useCallback(() => updateState({ loading: false }), [updateState]);
 
     const setupAudio = useCallback(() => {
         if (!src) return () => {};
@@ -91,27 +71,55 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
         audioRef.current = audio;
         audio.preload = 'auto';
 
-        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-        audio.addEventListener('timeupdate', handleTimeUpdate);
-        audio.addEventListener('ended', handleEnded);
-        audio.addEventListener('error', handleError);
-        audio.addEventListener('waiting', handleWaiting);
-        audio.addEventListener('playing', handlePlaying);
+        const updateHandlers = () => {
+            updateState({ duration: audio.duration, loading: false });
+        };
+
+        const updateTime = () => {
+            const now = performance.now();
+            if (now - lastUpdateRef.current < 500) return;
+            lastUpdateRef.current = now;
+
+            updateState({
+                currentTime: audio.currentTime,
+                buffered: audio.buffered,
+            });
+
+            if (preloadNextRef.current && audio.currentTime > audio.duration / 2 && preloadRef.current?.src !== preloadNextRef.current) {
+                preloadRef.current = new Audio(preloadNextRef.current);
+                preloadRef.current.preload = 'auto';
+            }
+        };
+
+        const handleEnded = () => {
+            updateState({ playing: false });
+            onEndRef.current?.();
+        };
+
+        const handleError = () => {
+            const error = audio?.error?.message || 'Playback error';
+            updateState({ error, loading: false });
+            onErrorRef.current?.(error);
+        };
+
+        const events: [keyof HTMLMediaElementEventMap, EventListener][] = [
+            ['loadedmetadata', updateHandlers],
+            ['timeupdate', updateTime],
+            ['ended', handleEnded],
+            ['error', handleError],
+            ['waiting', () => updateState({ loading: true })],
+            ['playing', () => updateState({ loading: false })],
+        ];
+
+        events.forEach(([event, handler]) => audio.addEventListener(event, handler));
 
         return () => {
-            console.log('src, handleLoadedMetadata, handleTimeUpdate, handleEnded, handleError, handleWaiting, handlePlaying');
-
             audio.pause();
             audio.removeAttribute('src');
             audio.load();
-            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-            audio.removeEventListener('timeupdate', handleTimeUpdate);
-            audio.removeEventListener('ended', handleEnded);
-            audio.removeEventListener('error', handleError);
-            audio.removeEventListener('waiting', handleWaiting);
-            audio.removeEventListener('playing', handlePlaying);
+            events.forEach(([event, handler]) => audio.removeEventListener(event, handler));
         };
-    }, [src, handleLoadedMetadata, handleTimeUpdate, handleEnded, handleError, handleWaiting, handlePlaying]);
+    }, [src, updateState]);
 
     useEffect(() => {
         const cleanup = setupAudio();
@@ -119,32 +127,42 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
     }, [setupAudio]);
 
     /* ------------------------------- Controls ------------------------------- */
-    const fadeAudio = useCallback((to: number, duration = 300) => {
-        const el = audioRef.current;
-        if (!el) return;
 
-        const from = el.volume;
-        const diff = to - from;
-        const start = performance.now();
-
-        const tick = (now: number) => {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            el.volume = from + diff * progress;
-            if (progress < 1) requestAnimationFrame(tick);
-        };
-
-        requestAnimationFrame(tick);
-    }, []);
-
-    const play = useCallback(() => {
+    const fadeAudio = useCallback((toVol: number, duration = 400, cb?: () => void) => {
         const audio = audioRef.current;
         if (!audio) return;
 
-        audio
-            .play()
-            .then(() => updateState({ playing: true }))
-            .catch((err) => updateState({ error: err.message }));
+        const currentVol = audio.volume;
+        if (duration === 0 || currentVol === toVol) {
+            audio.volume = toVol;
+            cb?.();
+            return;
+        }
+
+        const steps = 50;
+        const delta = (toVol - currentVol) / (duration / steps);
+        let vol = currentVol;
+
+        const interval = setInterval(() => {
+            vol += delta;
+            audio.volume = Math.max(0, Math.min(1, vol));
+
+            const done = (delta > 0 && vol >= toVol) || (delta < 0 && vol <= toVol);
+            if (done) {
+                clearInterval(interval);
+                audio.volume = toVol;
+                cb?.();
+            }
+        }, steps);
+    }, []);
+
+    const play = useCallback(async () => {
+        try {
+            await audioRef.current?.play();
+            updateState({ playing: true });
+        } catch (err) {
+            updateState({ error: err as string });
+        }
     }, [updateState]);
 
     const pause = useCallback(() => {
@@ -153,20 +171,23 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
     }, [updateState]);
 
     const toggleFadePlay = useCallback(
-        (fadeDuration = 400) => {
+        (fadeDuration = 500) => {
             const audio = audioRef.current;
             if (!audio) return;
 
             if (audio.paused) {
-                audio.play().then(() => fadeAudio(audio.volume, fadeDuration));
+                audio.volume = 0;
+                audio.play().then(() => fadeAudio(state.volume, fadeDuration));
                 updateState({ playing: true });
             } else {
-                fadeAudio(0, fadeDuration);
-                audio.pause();
+                fadeAudio(0, fadeDuration, () => {
+                    audio.pause();
+                    audio.volume = state.volume;
+                });
                 updateState({ playing: false });
             }
         },
-        [fadeAudio, updateState]
+        [fadeAudio, updateState, state.volume]
     );
 
     const togglePlay = useCallback(() => {
@@ -208,12 +229,29 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
     );
 
     const toggleMute = useCallback(() => {
-        if (audioRef.current) {
-            const audio = audioRef.current;
+        const audio = audioRef.current;
+        if (audio) {
             audio.muted = !audio.muted;
-            updateState({ volume: audio.muted ? 0 : audio.volume });
+            updateState({ muted: audio.muted });
         }
     }, [updateState]);
+
+    // Attach to global window object for dev tools / external access
+    useEffect(() => {
+        window.audioPlayer = {
+            play,
+            pause,
+            togglePlay,
+            toggleFadePlay,
+            get audioEl(): HTMLAudioElement | null {
+                return audioRef.current;
+            },
+        };
+
+        return () => {
+            delete window.audioPlayer;
+        };
+    }, [play, pause, togglePlay, toggleFadePlay, seek, setVolume, setRate, toggleMute, state]);
 
     return {
         ...state,
