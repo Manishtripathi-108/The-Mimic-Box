@@ -185,6 +185,11 @@ export const EXTERNAL_ROUTES = {
 /*                                   Configs                                  */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * PUBLIC_ROUTES is an array of route paths that are accessible without requiring user authentication.
+    APP_ROUTES.INDEX,
+ * Additionally, it includes paths for sitemap and robots.txt files for SEO purposes.
+ */
 export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.ROOT,
     APP_ROUTES.DEV,

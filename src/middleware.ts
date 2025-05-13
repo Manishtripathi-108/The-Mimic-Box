@@ -5,37 +5,53 @@ import { API_AUTH_PREFIX, AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE
 
 const { auth } = NextAuth(authConfig);
 
-const ENABLE_LOGGING = false;
+const ENABLE_LOGGING = true;
 
 export default auth((req) => {
     const { pathname, search } = req.nextUrl;
     const isAuthenticated = !!req.auth;
-
-    if (ENABLE_LOGGING) {
-        console.log('------------------------------------------------------');
-        console.log(`🔗 Path: ${pathname}`);
-        console.log(`🔐 Authenticated: ${isAuthenticated}`);
-    }
+    const userAgent = req.headers.get('user-agent') || '';
 
     const isApiAuthRoute = pathname.startsWith(API_AUTH_PREFIX);
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
     const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
-    if (isApiAuthRoute) return undefined;
+    // Bot detection — allow bots for SEO (e.g. Googlebot, Discord, Twitter)
+    const isBot = /bot|crawl|spider|facebook|twitter|discord|embed/i.test(userAgent);
+    const isSitemapOrRobots = pathname === '/robots.txt' || pathname.startsWith('/mimic-sitemap');
 
-    const redirectTo = (destination: string) => Response.redirect(new URL(destination, req.nextUrl));
-
-    if (isAuthRoute) {
-        if (isAuthenticated) return redirectTo(DEFAULT_AUTH_REDIRECT);
-        return undefined;
+    if (ENABLE_LOGGING) {
+        console.log('------------------------------------------------------');
+        console.log(`🔗 Path: ${pathname}`);
+        console.log(`🔐 Authenticated: ${isAuthenticated}`);
+        console.log(`🤖 User-Agent: ${userAgent}`);
+        console.log(`🕷️ Bot: ${isBot}`);
     }
 
+    // Always allow bots and sitemap-related paths
+    if (isApiAuthRoute || isBot || isSitemapOrRobots) {
+        return;
+    }
+
+    // Helper to redirect
+    const redirectTo = (destination: string) => {
+        if (ENABLE_LOGGING) console.log(`🔄 Redirecting to: ${destination}`);
+        return Response.redirect(new URL(destination, req.nextUrl));
+    };
+
+    // Auth pages: if already logged in, redirect to dashboard
+    if (isAuthRoute) {
+        return isAuthenticated ? redirectTo(DEFAULT_AUTH_REDIRECT) : undefined;
+    }
+
+    // Protected pages: require auth
     if (!isAuthenticated && !isPublicRoute) {
         const callbackUrl = encodeURIComponent(`${pathname}${search}`);
-        return redirectTo(`${DEFAULT_AUTH_ROUTE}/?callbackUrl=${callbackUrl}`);
+        return redirectTo(`${DEFAULT_AUTH_ROUTE}?callbackUrl=${callbackUrl}`);
     }
 
-    return undefined;
+    // All good — allow request
+    return;
 });
 
 export const config = {
