@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
     const state = searchParams.get('state');
 
     if (!code || !state) {
+        // ToDo: redirect to error page
         return createErrorResponse({ message: 'Missing required parameters', status: 400 });
     }
 
@@ -58,18 +59,19 @@ export async function GET(req: NextRequest) {
     }
 
     const tokens = exchResponse.data as T_SpotifyAccessToken;
-    const [error, userProfile] = await getUserProfile(tokens.access_token);
+    const userProfileRes = await getUserProfile(tokens.access_token);
 
-    if (error || !userProfile) {
+    if (!userProfileRes.success || !userProfileRes.payload) {
         return createErrorResponse({ message: 'Failed to link Spotify account', status: 400 });
     }
 
     const userId = session.user.id;
+    const SpotifyUserProfile = userProfileRes.payload;
     const spotifyData = {
-        providerAccountId: userProfile.id,
-        imageUrl: userProfile.images.find((image) => image.width && image.width < 300)?.url || undefined,
-        bannerUrl: userProfile.images.find((image) => image.width && image.width >= 300)?.url || undefined,
-        displayName: userProfile.display_name,
+        providerAccountId: SpotifyUserProfile.id,
+        imageUrl: SpotifyUserProfile.images.find((image) => image.width && image.width < 300)?.url || undefined,
+        bannerUrl: SpotifyUserProfile.images.find((image) => image.width && image.width >= 300)?.url || undefined,
+        displayName: SpotifyUserProfile.display_name,
         scope: tokens.scope,
         token_type: tokens.token_type,
         access_token: tokens.access_token,

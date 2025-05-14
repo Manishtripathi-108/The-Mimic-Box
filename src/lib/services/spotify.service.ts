@@ -5,7 +5,6 @@ import spotifyConfig from '@/lib/config/spotify.config';
 import {
     T_SpotifyAlbum,
     T_SpotifyArtist,
-    T_SpotifyErrorResponse,
     T_SpotifyPaging,
     T_SpotifyPlaylist,
     T_SpotifyPrivateUser,
@@ -36,19 +35,17 @@ export const fetchSpotifyData = async <T>({ token, ...reqConfig }: AxiosRequestC
 /*                                  User Scope                                */
 /* -------------------------------------------------------------------------- */
 
-export const getUserProfile = async (accessToken: string): Promise<[string | null, T_SpotifyPrivateUser | null]> => {
+export const getUserProfile = async (accessToken: string) => {
     const [error, data] = await safeAwait(
         spotifyConfig.get<T_SpotifyPrivateUser>(EXTERNAL_ROUTES.SPOTIFY.USER.PROFILE, { headers: withAuthHeader(accessToken) })
     );
 
     if (error || !data) {
-        const message = axios.isAxiosError(error)
-            ? ((error.response?.data as T_SpotifyErrorResponse)?.error?.message ?? 'Failed to fetch user profile')
-            : 'Failed to fetch user profile';
-        return [message, null];
+        const message = axios.isAxiosError(error) ? (String(error.response?.data) ?? 'Failed to fetch user profile') : 'Failed to fetch user profile';
+        return createErrorReturn(message, error);
     }
 
-    return [null, data.data];
+    return createSuccessReturn('User profile fetched successfully!', data.data);
 };
 
 export const getUserPlaylists = async (accessToken: string, userId?: string) => {
