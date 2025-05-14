@@ -26,7 +26,7 @@ const MusicMiniPlayer = () => {
         loading,
         loop,
         isShuffled,
-        togglePlay,
+        toggleFadePlay,
         toggleMute,
         toggleLoop,
         toggleShuffle,
@@ -114,7 +114,7 @@ const MusicMiniPlayer = () => {
 
                         <button
                             type="button"
-                            onClick={togglePlay}
+                            onClick={() => toggleFadePlay()}
                             className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5"
                             aria-label={playing ? 'Pause' : 'Play'}>
                             <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} className="size-full" />

@@ -45,7 +45,7 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
             }
 
             // Add new tracks
-            for (const track of action.payload) {
+            for (const track of action.payload.tracks) {
                 trackMap.set(track.id, track);
             }
 
@@ -58,6 +58,7 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
             return {
                 ...state,
                 queue: updatedQueue,
+                playbackContext: action.payload.context || state.playbackContext,
                 playbackOrder: [...state.playbackOrder, ...newOrderEntries],
             };
         }
