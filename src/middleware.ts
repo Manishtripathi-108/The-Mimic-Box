@@ -5,7 +5,7 @@ import { API_AUTH_PREFIX, AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE
 
 const { auth } = NextAuth(authConfig);
 
-const ENABLE_LOGGING = true;
+const ENABLE_LOGGING = false;
 
 export default auth((req) => {
     const { pathname, search } = req.nextUrl;

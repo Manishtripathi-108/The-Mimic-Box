@@ -109,7 +109,7 @@ export type T_AudioPlayerState = {
 
 export type T_AudioPlayerAction =
     | { type: 'SET_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext | null } }
-    | { type: 'ADD_TO_QUEUE'; payload: T_AudioPlayerTrack[] }
+    | { type: 'ADD_TO_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext | null } }
     | { type: 'CLEAR_QUEUE' }
     | { type: 'PLAY_INDEX'; payload: number }
     | { type: 'TOGGLE_SHUFFLE' }

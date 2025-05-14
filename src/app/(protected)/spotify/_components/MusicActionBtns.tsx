@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 
+import toast from 'react-hot-toast';
 import stringSimilarity from 'string-similarity';
 
 import Icon from '@/components/ui/Icon';
@@ -33,7 +34,13 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
 
     const mapSpotifyToSaavn = useCallback(async () => {
         const start = performance.now();
-        const cacheKey = `saavn:${context.type}${context.id}`;
+        const cacheKey = `saavn:${context.type}:${context.id}`;
+        const storedQueue = sessionStorage.getItem(cacheKey);
+
+        if (storedQueue && JSON.parse(storedQueue).length === spotifyTracks.length) {
+            const storedQueueList = JSON.parse(storedQueue) as T_AudioPlayerTrack[];
+            return storedQueueList;
+        }
 
         const saavnResults = await makeParallelApiCalls(
             spotifyTracks.map((track) => {
@@ -41,10 +48,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                 const artistNames = track.artists.map((a) => a.name).join(' ');
                 return {
                     url: '/api/saavn/search/songs',
-                    params: {
-                        query: `${name} ${artistNames}`,
-                        limit: 5,
-                    },
+                    params: { query: `${name} ${artistNames}` },
                 };
             })
         );
@@ -83,19 +87,15 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                 };
 
                 playableQueue.push(newTrack);
-
-                if (i === 0) {
-                    setQueue([newTrack], context, true);
-                }
             }
         });
 
-        localStorage.setItem(cacheKey, JSON.stringify(playableQueue));
+        sessionStorage.setItem(cacheKey, JSON.stringify(playableQueue));
 
         const end = performance.now();
         console.log(`⏱️ Took ${(end - start) / 1000}s`);
         return playableQueue;
-    }, [spotifyTracks, context, setQueue, makeParallelApiCalls]);
+    }, [spotifyTracks, context, makeParallelApiCalls]);
 
     const handlePlay = useCallback(() => {
         if (isCurrentTrack) {
@@ -103,11 +103,13 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
         } else {
             mapSpotifyToSaavn().then((playableQueue) => {
                 if (playableQueue.length > 0) {
-                    addToQueue(playableQueue);
+                    setQueue(playableQueue, context, true);
+                } else {
+                    toast.error('No playable tracks found');
                 }
             });
         }
-    }, [isCurrentTrack, mapSpotifyToSaavn, addToQueue, toggleFadePlay]);
+    }, [isCurrentTrack, mapSpotifyToSaavn, setQueue, toggleFadePlay, context]);
 
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>
