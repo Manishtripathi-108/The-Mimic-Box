@@ -20,7 +20,7 @@ type Props = {
 };
 
 const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
-    const { setQueue, toggleFadePlay, addToQueue, playbackContext, playing } = useAudioPlayerContext();
+    const { setQueue, toggleFadePlay, playbackContext, playing } = useAudioPlayerContext();
     const { isPending, makeParallelApiCalls } = useSafeApiCall<
         null,
         {
