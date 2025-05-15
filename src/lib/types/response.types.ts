@@ -6,6 +6,18 @@ type BaseResponse = {
     status?: number;
 };
 
+export type ErrorCodes =
+    | 'invalid_grant'
+    | 'invalid_client'
+    | 'invalid_request'
+    | 'invalid_scope'
+    | 'unauthorized_client'
+    | 'missing_parameters'
+    | 'invalid_token'
+    | 'access_denied'
+    | 'server_error'
+    | 'temporarily_unavailable';
+
 // Type for success responses
 export type SuccessResponseInput<T = undefined> = BaseResponse & { payload?: T };
 export type SuccessResponseOutput<T = undefined> = {
@@ -16,13 +28,15 @@ export type SuccessResponseOutput<T = undefined> = {
 
 // Type for error responses
 export type ErrorResponseInput<T> = BaseResponse & {
-    error?: Record<string, unknown> | Error;
+    code?: ErrorCodes;
+    error?: unknown;
     extraData?: T;
 };
 export type ErrorResponseOutput<T = undefined> = {
     success: false;
     message: string;
-    error?: Record<string, unknown> | Error | null;
+    code?: ErrorCodes;
+    error?: unknown;
     extraData: T;
 };
 

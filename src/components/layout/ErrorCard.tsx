@@ -4,7 +4,17 @@ import { useEffect } from 'react';
 
 import Icon from '@/components/ui/Icon';
 
-const ErrorCard = ({ message, reset, error }: { message: string; reset?: () => void; error?: Error & { digest?: string } }) => {
+const ErrorCard = ({
+    message,
+    reset,
+    error,
+    children,
+}: {
+    message: string;
+    reset?: () => void;
+    error?: Error & { digest?: string };
+    children?: React.ReactNode;
+}) => {
     useEffect(() => console.error(error), [error]);
 
     return (
@@ -22,11 +32,12 @@ const ErrorCard = ({ message, reset, error }: { message: string; reset?: () => v
                     <p className="text-sm tracking-wide text-gray-500">{message || 'Oh no, something went wrong.'}</p>
                 </div>
 
-                {reset && (
+                {reset && !children && (
                     <button onClick={() => reset()} className="button">
                         Try Again
                     </button>
                 )}
+                {children}
             </div>
         </div>
     );

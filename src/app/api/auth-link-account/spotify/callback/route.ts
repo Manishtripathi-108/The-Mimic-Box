@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { redirect } from 'next/navigation';
+import { NextRequest } from 'next/server';
 
 import axios from 'axios';
 
@@ -6,40 +7,36 @@ import { auth } from '@/auth';
 import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_ROUTE, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
 import { getUserProfile } from '@/lib/services/spotify.service';
+import { ErrorCodes } from '@/lib/types/response.types';
 import { T_SpotifyAccessToken } from '@/lib/types/spotify.types';
-import { createErrorResponse } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 export async function GET(req: NextRequest) {
     const session = await auth();
 
-    if (!session || !session.user?.id) {
-        return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, req.nextUrl));
+    if (!session?.user?.id) {
+        console.error('[Spotify Link] Missing session or user ID');
+        return redirect(DEFAULT_AUTH_ROUTE);
     }
 
-    const searchParams = req.nextUrl.searchParams;
+    const { searchParams } = req.nextUrl;
     const code = searchParams.get('code');
     const state = searchParams.get('state');
 
     if (!code || !state) {
-        // ToDo: redirect to error page
-        return createErrorResponse({ message: 'Missing required parameters', status: 400 });
+        console.error('[Spotify Link] Missing "code" or "state" in query params', { code, state });
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('spotify', 'missing_parameters'));
     }
 
-    const clientId = process.env.AUTH_SPOTIFY_ID;
-    const clientSecret = process.env.AUTH_SPOTIFY_SECRET;
-    const redirectUri = `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LA_SPOTIFY_CALLBACK}`;
+    const authHeader = Buffer.from(`${process.env.AUTH_SPOTIFY_ID}:${process.env.AUTH_SPOTIFY_SECRET}`).toString('base64');
 
-    const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-
-    // Exchange authorization code for access token
-    const [exchError, exchResponse] = await safeAwait(
-        axios.post(
+    const [tokenErr, tokenRes] = await safeAwait(
+        axios.post<T_SpotifyAccessToken>(
             EXTERNAL_ROUTES.SPOTIFY.EXCHANGE_TOKEN,
             new URLSearchParams({
                 grant_type: 'authorization_code',
                 code,
-                redirect_uri: redirectUri,
+                redirect_uri: `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LA_SPOTIFY_CALLBACK}`,
             }),
             {
                 headers: {
@@ -50,28 +47,28 @@ export async function GET(req: NextRequest) {
         )
     );
 
-    if (exchError || !exchResponse || exchResponse.status !== 200) {
-        return createErrorResponse({
-            message: exchResponse?.data?.error === 'invalid_grant' ? 'Invalid authorization code' : 'Failed to authenticate with Spotify',
-            status: 400,
-            error: exchError || new Error(String(exchResponse)),
-        });
+    if (tokenErr || !tokenRes?.data) {
+        const errorCode: ErrorCodes = axios.isAxiosError(tokenErr) ? tokenErr.response?.data?.error || 'invalid_grant' : 'server_error';
+
+        console.error('[Spotify Link] Token exchange failed', tokenErr);
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('spotify', errorCode));
     }
 
-    const tokens = exchResponse.data as T_SpotifyAccessToken;
+    const tokens = tokenRes.data;
     const userProfileRes = await getUserProfile(tokens.access_token);
 
-    if (!userProfileRes.success || !userProfileRes.payload) {
-        return createErrorResponse({ message: 'Failed to link Spotify account', status: 400 });
+    if (!userProfileRes.success) {
+        console.error('[Spotify Link] Failed to fetch user profile', userProfileRes);
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('spotify', userProfileRes.code || 'server_error'));
     }
 
-    const userId = session.user.id;
-    const SpotifyUserProfile = userProfileRes.payload;
-    const spotifyData = {
-        providerAccountId: SpotifyUserProfile.id,
-        imageUrl: SpotifyUserProfile.images.find((image) => image.width && image.width < 300)?.url || undefined,
-        bannerUrl: SpotifyUserProfile.images.find((image) => image.width && image.width >= 300)?.url || undefined,
-        displayName: SpotifyUserProfile.display_name,
+    const { id: providerAccountId, display_name, images } = userProfileRes.payload;
+
+    const accountData = {
+        providerAccountId,
+        displayName: display_name,
+        imageUrl: images.find((img) => img.width && img.width < 300)?.url,
+        bannerUrl: images.find((img) => img.width && img.width >= 300)?.url,
         scope: tokens.scope,
         token_type: tokens.token_type,
         access_token: tokens.access_token,
@@ -79,21 +76,28 @@ export async function GET(req: NextRequest) {
         expires_at: Date.now() + tokens.expires_in * 1000,
     };
 
-    const [dbError] = await safeAwait(
+    const [dbErr] = await safeAwait(
         db.linkedAccount.upsert({
-            where: { userId_provider: { userId, provider: 'spotify' } },
-            update: spotifyData,
+            where: {
+                userId_provider: {
+                    userId: session.user.id,
+                    provider: 'spotify',
+                },
+            },
+            update: accountData,
             create: {
-                userId,
+                userId: session.user.id,
                 provider: 'spotify',
                 type: 'oauth',
-                ...spotifyData,
+                ...accountData,
             },
         })
     );
 
-    if (dbError) {
-        return createErrorResponse({ message: 'Failed to link Spotify account', error: dbError, status: 400 });
+    if (dbErr) {
+        console.error('[Spotify Link] Failed to save linked account to database', dbErr);
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('spotify', 'server_error'));
     }
-    return NextResponse.redirect(new URL(`${APP_ROUTES.REDIRECT}?callbackUrl=${encodeURIComponent(state)}`, req.nextUrl));
+
+    return redirect(`${APP_ROUTES.REDIRECT}?callbackUrl=${encodeURIComponent(state)}`);
 }

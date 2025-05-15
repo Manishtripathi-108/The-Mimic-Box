@@ -1,4 +1,7 @@
+import { LinkedAccountProvider } from '@prisma/client';
+
 import { AnilistSearchCategories } from '@/lib/types/anilist.types';
+import { ErrorCodes } from '@/lib/types/response.types';
 
 /* -------------------------------------------------------------------------- */
 /*                                 App Routes                                 */
@@ -18,6 +21,24 @@ export const APP_ROUTES = {
         RESET_PASSWORD: '/auth/reset-password',
         VERIFY_EMAIL: '/auth/verify-email',
         ERROR: '/auth/error',
+        LINK_ACCOUNT_ERROR: (provider?: LinkedAccountProvider, errorCode?: ErrorCodes, errorDescription?: string): string => {
+            const basePath = '/auth/link-account-error';
+            const urlParams = new URLSearchParams();
+
+            if (errorDescription) {
+                urlParams.set('error_description', errorDescription);
+            }
+
+            if (errorCode) {
+                urlParams.set('error', errorCode);
+            }
+
+            if (provider) {
+                urlParams.set('linkAccountType', provider);
+            }
+
+            return `${basePath}?${urlParams.toString()}`;
+        },
     },
 
     AUDIO: {
@@ -196,6 +217,7 @@ export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.AUTH.VERIFY_EMAIL,
     APP_ROUTES.AUTH.FORGOT_PASSWORD,
     APP_ROUTES.AUTH.RESET_PASSWORD,
+    APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR(),
     APP_ROUTES.GAMES.TIC_TAC_TOE.INDEX,
     APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC,
     APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE,

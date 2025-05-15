@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { redirect } from 'next/navigation';
+import { NextRequest } from 'next/server';
 
 import axios from 'axios';
 
@@ -6,50 +7,52 @@ import { getUserProfile } from '@/actions/anilist.actions';
 import { auth } from '@/auth';
 import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_ROUTE, EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { db } from '@/lib/db';
-import { createAniListError, createErrorResponse } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 export async function GET(req: NextRequest) {
     const session = await auth();
 
-    if (!session || !session.user?.id) {
-        return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, req.nextUrl));
+    if (!session?.user?.id) {
+        console.error('[AniList Link] Missing session or user ID');
+        return redirect(DEFAULT_AUTH_ROUTE);
     }
 
-    const searchParams = req.nextUrl.searchParams;
-    const code = searchParams.get('code');
+    const code = req.nextUrl.searchParams.get('code');
 
     if (!code) {
-        return createErrorResponse({ message: 'Missing required parameters', status: 400 });
+        console.error('[AniList Link] Missing "code" in query params');
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('anilist', 'missing_parameters', 'Authorization code is required.'));
     }
 
-    // Exchange authorization code for access token
     const [exchError, exchResponse] = await safeAwait(
         axios.post(EXTERNAL_ROUTES.ANILIST.EXCHANGE_TOKEN, {
             grant_type: 'authorization_code',
             client_id: process.env.AUTH_ANILIST_ID,
             client_secret: process.env.AUTH_ANILIST_SECRET,
             redirect_uri: `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LA_ANILIST_CALLBACK}`,
-            code: code,
+            code,
         })
     );
 
-    if (exchError) {
-        return createAniListError('Failed to Setup Anilist Account', exchError);
+    if (exchError || !exchResponse?.data) {
+        const errorCode = axios.isAxiosError(exchError) ? exchError.response?.data?.error || 'invalid_grant' : 'server_error';
+
+        console.error('[AniList Link] Token exchange failed', exchError);
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('anilist', errorCode, 'Failed to exchange token.'));
     }
 
-    const tokens = exchResponse?.data;
+    const tokens = exchResponse.data;
     const userProfile = await getUserProfile(tokens.access_token);
 
     if (!userProfile) {
-        return createErrorResponse({ message: 'Failed to Setup Anilist Account', status: 400 });
+        console.error('[AniList Link] Failed to fetch user profile', userProfile);
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('anilist', 'server_error', 'Could not fetch user profile.'));
     }
 
-    // Store tokens in the database
     const userId = session.user.id;
     const anilistData = {
         providerAccountId: userProfile?.Viewer.id?.toString(),
-        imageUrl: userProfile?.Viewer.avatar.large || undefined,
+        imageUrl: userProfile?.Viewer.avatar?.large || undefined,
         bannerUrl: userProfile?.Viewer.bannerImage || undefined,
         displayName: userProfile?.Viewer.name,
         scope: tokens.scope,
@@ -73,8 +76,9 @@ export async function GET(req: NextRequest) {
     );
 
     if (dbError) {
-        return createErrorResponse({ message: 'Failed to Setup Anilist Account', error: dbError, status: 400 });
+        console.error('[AniList Link] Failed to save account info to database', dbError);
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('anilist', 'server_error', 'Failed to save account information.'));
     }
 
-    return NextResponse.redirect(new URL(APP_ROUTES.REDIRECT, req.nextUrl));
+    return redirect(APP_ROUTES.REDIRECT);
 }

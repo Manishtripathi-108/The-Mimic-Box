@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { isAxiosError } from 'axios';
 
-import { ErrorResponseInput, ErrorResponseOutput, SuccessResponseInput, SuccessResponseOutput } from '@/lib/types/response.types';
+import { ErrorCodes, ErrorResponseInput, ErrorResponseOutput, SuccessResponseInput, SuccessResponseOutput } from '@/lib/types/response.types';
 
 // Creates a standardized success response.
 export const createSuccessResponse = <T = undefined>({ message = 'Success', status = 200, payload }: SuccessResponseInput<T>): NextResponse =>
@@ -21,19 +21,21 @@ export const createErrorResponse = <T = undefined>({
     status = 500,
     error,
     extraData,
+    code,
 }: ErrorResponseInput<T>): NextResponse => {
     console.error(message, error);
-    return NextResponse.json<ErrorResponseOutput<T>>({ success: false, message, error, extraData: extraData as T }, { status });
+    return NextResponse.json<ErrorResponseOutput<T>>({ success: false, message, error, extraData: extraData as T, code }, { status });
 };
 
 // Creates a structured error response.
 export const createErrorReturn = <T = undefined>(
     message: string,
-    error?: Record<string, unknown> | Error | null,
-    extraData?: T
+    error?: unknown,
+    extraData?: T,
+    code?: ErrorCodes
 ): ErrorResponseOutput<T> => {
     console.error(message, error);
-    return { success: false, message, error, extraData: extraData as T };
+    return { success: false, message, error, extraData: extraData as T, code };
 };
 
 /* --------------------------------- Anilist -------------------------------- */

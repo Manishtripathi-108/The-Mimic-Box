@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import spotifyConfig from '@/lib/config/spotify.config';
+import { ErrorCodes } from '@/lib/types/response.types';
 import {
     T_SpotifyAlbum,
     T_SpotifyArtist,
@@ -24,11 +25,11 @@ const withAuthHeader = (token: string): AxiosRequestConfig['headers'] => ({
 /*                            Generic Spotify Fetcher                         */
 /* -------------------------------------------------------------------------- */
 
-export const fetchSpotifyData = async <T>({ token, ...reqConfig }: AxiosRequestConfig & { token: string }): Promise<[Error, null] | [null, T]> => {
+export const fetchSpotifyData = async <T>({ token, ...reqConfig }: AxiosRequestConfig & { token: string }): Promise<[unknown, null] | [null, T]> => {
     const headers = { ...reqConfig.headers, ...withAuthHeader(token) };
     const [error, response] = await safeAwait(spotifyConfig<T>({ ...reqConfig, headers }));
 
-    return error || !response ? [error || new Error('No response'), null] : [null, response.data];
+    return error || !response ? [error, null] : [null, response.data];
 };
 
 /* -------------------------------------------------------------------------- */
@@ -40,9 +41,26 @@ export const getUserProfile = async (accessToken: string) => {
         spotifyConfig.get<T_SpotifyPrivateUser>(EXTERNAL_ROUTES.SPOTIFY.USER.PROFILE, { headers: withAuthHeader(accessToken) })
     );
 
-    if (error || !data) {
-        const message = axios.isAxiosError(error) ? (String(error.response?.data) ?? 'Failed to fetch user profile') : 'Failed to fetch user profile';
-        return createErrorReturn(message, error);
+    if (error || !data?.data) {
+        const message = axios.isAxiosError(error) ? error.response?.data?.message || 'Failed to fetch user profile' : 'Failed to fetch user profile';
+        let errorCode: ErrorCodes = 'server_error';
+        if (axios.isAxiosError(error)) {
+            switch (error.response?.status) {
+                case 400:
+                    errorCode = 'invalid_token';
+                    break;
+                case 401:
+                    errorCode = 'invalid_grant';
+                    break;
+                case 403:
+                    errorCode = 'invalid_client';
+                    break;
+                default:
+                    errorCode = 'server_error';
+                    break;
+            }
+        }
+        return createErrorReturn(message, error, undefined, errorCode);
     }
 
     return createSuccessReturn('User profile fetched successfully!', data.data);
