@@ -1,20 +1,24 @@
+import { isAxiosError } from 'axios';
+
+type SafeResult<T> = [error: Record<string, unknown> | Error, data: null] | [error: null, data: T];
+
 /**
  * A robust utility function to wrap a promise and return a tuple [error, data].
- * This avoids repetitive try–catch blocks in your async code.
- *
- * @template T - The type that the promise resolves to.
- * @param {Promise<T>} promise - The promise to handle.
- * @param {() => void} [finallyFunc] - Optional cleanup callback executed in the finally block.
- * @returns {Promise<[unknown, null] | [null, T]>} A tuple containing any error and the data.
  */
-export async function safeAwait<T>(promise: Promise<T>, finallyFunc?: () => void): Promise<[unknown, null] | [null, T]> {
+export async function safeAwait<T>(promise: Promise<T>, finallyFunc?: () => void): Promise<SafeResult<T>> {
     try {
         const data = await promise;
         return [null, data];
-    } catch (error: unknown) {
+    } catch (err: unknown) {
+        let error: Record<string, unknown> | Error = new Error('Something went wrong');
+        if (isAxiosError(err)) {
+            error = err;
+        } else if (err instanceof Error) {
+            error = err;
+        }
         return [error, null];
     } finally {
-        if (finallyFunc && typeof finallyFunc === 'function') {
+        if (finallyFunc) {
             try {
                 finallyFunc();
             } catch (err) {
@@ -26,11 +30,7 @@ export async function safeAwait<T>(promise: Promise<T>, finallyFunc?: () => void
 
 /**
  * A helper function to process multiple promises concurrently using safeAwait.
- *
- * @template T - The type each promise resolves to.
- * @param {Array<Promise<T>>} promises - An array of promises.
- * @returns {Promise<Array<[unknown, null] | [null, T]>>} An array of tuples for each promise.
  */
-export async function safeAwaitAll<T>(promises: Array<Promise<T>>): Promise<Array<[unknown, null] | [null, T]>> {
+export async function safeAwaitAll<T>(promises: Array<Promise<T>>): Promise<Array<SafeResult<T>>> {
     return Promise.all(promises.map((p) => safeAwait(p)));
 }

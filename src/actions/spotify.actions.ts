@@ -27,9 +27,7 @@ export const getSpotifyPlaylistDetails = async (playlistId: string) =>
 export const getSpotifyData = async <T>(url: string) =>
     withSpotifyAuth(async (token) => {
         const [error, res] = await spotifyApi.fetchSpotifyData<T>({ token, url });
-        return error
-            ? createErrorReturn(error.message || 'Failed to fetch Spotify data', error)
-            : createSuccessReturn('Spotify data fetched successfully!', res);
+        return error ? createErrorReturn('Failed to fetch Spotify data', error) : createSuccessReturn('Spotify data fetched successfully!', res);
     });
 
 export const getSpotifyRecentlyPlayedPlaylists = async () =>

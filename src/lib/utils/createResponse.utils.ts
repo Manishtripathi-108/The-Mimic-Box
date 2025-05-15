@@ -30,7 +30,7 @@ export const createErrorResponse = <T = undefined>({
 // Creates a structured error response.
 export const createErrorReturn = <T = undefined>(
     message: string,
-    error?: unknown,
+    error?: Record<string, unknown> | Error | null,
     extraData?: T,
     code?: ErrorCodes
 ): ErrorResponseOutput<T> => {

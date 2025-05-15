@@ -25,7 +25,10 @@ const withAuthHeader = (token: string): AxiosRequestConfig['headers'] => ({
 /*                            Generic Spotify Fetcher                         */
 /* -------------------------------------------------------------------------- */
 
-export const fetchSpotifyData = async <T>({ token, ...reqConfig }: AxiosRequestConfig & { token: string }): Promise<[unknown, null] | [null, T]> => {
+export const fetchSpotifyData = async <T>({
+    token,
+    ...reqConfig
+}: AxiosRequestConfig & { token: string }): Promise<[Record<string, unknown> | Error, null] | [null, T]> => {
     const headers = { ...reqConfig.headers, ...withAuthHeader(token) };
     const [error, response] = await safeAwait(spotifyConfig<T>({ ...reqConfig, headers }));
 
@@ -60,7 +63,7 @@ export const getUserProfile = async (accessToken: string) => {
                     break;
             }
         }
-        return createErrorReturn(message, error, undefined, errorCode);
+        return createErrorReturn(message, axios.isAxiosError(error) ? error.response?.data : (error as Error), undefined, errorCode);
     }
 
     return createSuccessReturn('User profile fetched successfully!', data.data);

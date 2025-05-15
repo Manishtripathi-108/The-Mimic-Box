@@ -29,14 +29,14 @@ export type SuccessResponseOutput<T = undefined> = {
 // Type for error responses
 export type ErrorResponseInput<T> = BaseResponse & {
     code?: ErrorCodes;
-    error?: unknown;
+    error?: Record<string, unknown> | Error;
     extraData?: T;
 };
 export type ErrorResponseOutput<T = undefined> = {
     success: false;
     message: string;
     code?: ErrorCodes;
-    error?: unknown;
+    error?: Record<string, unknown> | Error | null;
     extraData: T;
 };
 

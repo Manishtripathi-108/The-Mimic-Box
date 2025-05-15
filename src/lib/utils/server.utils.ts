@@ -7,7 +7,7 @@ export const fetchAniListData = async <T>(
     token: string | null,
     query: string,
     variables: Record<string, unknown> = {}
-): Promise<[Error | null, T | null]> => {
+): Promise<[Record<string, unknown> | Error | null, T | null]> => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     const [error, response] = await safeAwait(anilistConfig.post<{ data: { data: T } }>('/', { query, variables }, { headers }));
