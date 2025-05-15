@@ -1,3 +1,5 @@
+import toast from 'react-hot-toast';
+
 import { FILE_TYPES_MAP } from '@/constants/client.constants';
 
 /**
@@ -28,20 +30,40 @@ export const getFileType = (fileName: string) => {
 
 /**
  * Downloads a file from a URL or Blob with a custom filename.
+ * If a URL is passed, it fetches the file and forces a download using a Blob.
  */
-export const downloadFile = (file: Blob | string, filename: string): void => {
-    const url = typeof file === 'string' ? file : URL.createObjectURL(file);
+export const downloadFile = async (file: Blob | string, filename: string): Promise<void> => {
+    const toastId = toast.loading('Downloading file...');
+    try {
+        let blob: Blob;
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.style.display = 'none';
+        if (typeof file === 'string') {
+            const response = await fetch(file, { mode: 'cors' });
 
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch file: ${response.statusText}`);
+            }
 
-    if (typeof file !== 'string') {
-        URL.revokeObjectURL(url);
+            blob = await response.blob();
+        } else {
+            blob = file;
+        }
+
+        const blobUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        a.style.display = 'none';
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        toast.success('File downloaded successfully!', { id: toastId });
+
+        URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+        console.error('Download failed:', error);
+        toast.error('Failed to download file.', { id: toastId });
     }
 };

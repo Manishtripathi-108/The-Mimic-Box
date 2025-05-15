@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
+import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
@@ -14,6 +15,8 @@ const MusicMiniPlayer = () => {
         currentTime: 0,
         buffered: null as TimeRanges | null,
     });
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const popoverRef = useRef<HTMLDivElement>(null);
 
     const lastTimeUpdateRef = useRef(0);
     const {
@@ -62,6 +65,22 @@ const MusicMiniPlayer = () => {
         if (!playbackState.buffered || playbackState.buffered.length === 0) return 0;
         return playbackState.buffered.end(playbackState.buffered.length - 1);
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+                setIsPopoverOpen(false);
+            }
+        };
+
+        if (isPopoverOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isPopoverOpen]);
 
     if (!current) return null;
 
@@ -138,13 +157,18 @@ const MusicMiniPlayer = () => {
                             <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
 
-                        <button
-                            type="button"
-                            title="Download"
-                            className="hover:text-text-primary hidden cursor-pointer rounded-full p-1 @md:inline"
-                            aria-label="Download">
-                            <Icon icon="download" className="size-6" />
-                        </button>
+                        <div className="relative hidden @md:inline" ref={popoverRef}>
+                            {isPopoverOpen && <MusicDownloads />}
+
+                            <button
+                                type="button"
+                                title="Download"
+                                onClick={() => setIsPopoverOpen((prev) => !prev)}
+                                className="hover:text-text-primary cursor-pointer rounded-full p-1"
+                                aria-label="Download">
+                                <Icon icon="download" className="size-6" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Progress Bar */}

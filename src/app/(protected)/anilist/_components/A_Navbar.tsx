@@ -28,7 +28,7 @@ const A_Navbar = () => {
                     <div
                         id="search-popover"
                         popover="auto"
-                        className="bg-tertiary text-text-secondary absolute inset-auto m-0 rounded-md shadow-lg [position-area:bottom]">
+                        className="bg-tertiary text-text-secondary absolute inset-auto m-0 overflow-hidden rounded-md shadow-lg [position-area:bottom]">
                         <ul className="divide-y">
                             <li>
                                 <Link href={APP_ROUTES.ANILIST.SEARCH('anime')} className="hover:bg-highlight block px-4 py-2 hover:text-white">

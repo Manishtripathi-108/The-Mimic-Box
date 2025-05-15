@@ -127,9 +127,23 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                 <Icon icon={isPending ? 'loading' : isTrackPlaying ? 'pauseToPlay' : 'playToPause'} className="size-full" />
             </button>
 
-            <button type="button" aria-label="More Options" className="button inline-flex size-9 rounded-full p-2">
+            <button
+                type="button"
+                popoverTarget="moreOptions-popover"
+                aria-label="More Options"
+                className="button inline-flex size-9 rounded-full p-2">
                 <Icon icon="moreDots" className="size-full rotate-90" />
             </button>
+
+            <div
+                id="moreOptions-popover"
+                popover="auto"
+                className="bg-tertiary text-text-secondary absolute inset-auto mt-2 rounded-md border shadow-lg [position-area:bottom]">
+                <ul className="divide-y">
+                    <li>download</li>
+                    <li>do something</li>
+                </ul>
+            </div>
         </div>
     );
 };
