@@ -21,7 +21,7 @@ type Props = {
 
 const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
     const { setQueue, toggleFadePlay, playbackContext, playing } = useAudioPlayerContext();
-    const { isPending, mapTracks } = useMapSpotifyTracksToSaavn({ context, spotifyTracks });
+    const { isPending, mapTracks } = useMapSpotifyTracksToSaavn();
     const isCurrentTrack = playbackContext?.id === context?.id;
     const isTrackPlaying = isCurrentTrack && playing;
 
@@ -29,7 +29,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
         if (isCurrentTrack) {
             toggleFadePlay();
         } else {
-            mapTracks().then((playableQueue) => {
+            mapTracks({ context, spotifyTracks }).then((playableQueue) => {
                 if (playableQueue.length > 0) {
                     setQueue(playableQueue, context, true);
                 } else {
@@ -37,7 +37,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                 }
             });
         }
-    }, [isCurrentTrack, mapTracks, setQueue, toggleFadePlay, context]);
+    }, [isCurrentTrack, mapTracks, setQueue, toggleFadePlay, context, spotifyTracks]);
 
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>
