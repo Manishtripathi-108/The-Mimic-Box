@@ -1,3 +1,5 @@
+import toast from 'react-hot-toast';
+
 import { FormOption } from '@/lib/types/client.types';
 
 export const getMonthName = (monthNumber: number) => {
@@ -15,3 +17,20 @@ export const getPageNumbers = (currentPage: number, totalPages: number, maxVisib
 };
 
 export const getOptionData = (option: FormOption) => (typeof option === 'string' ? { label: option, value: option } : option);
+
+export const shareUrl = async ({ url, title, text, fallback = true }: { url: string; title?: string; text?: string; fallback?: boolean }) => {
+    try {
+        if (navigator.share) {
+            await navigator.share({ title, text, url });
+            return toast.success('Shared successfully');
+        } else if (fallback && navigator.clipboard) {
+            await navigator.clipboard.writeText(url);
+            return toast.success('Copied to clipboard');
+        } else {
+            return toast.error('Sharing is not supported on your device');
+        }
+    } catch (error) {
+        console.error('Error sharing:', error);
+        return toast.error('Error sharing. Please try again.');
+    }
+};

@@ -101,7 +101,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                         <span>{track.popularity}% Popularity</span>
                     </div>
 
-                    <MusicActionBtns className="mt-8 sm:justify-center" spotifyTracks={[track]} context={{ type: 'track', id: track.id }} />
+                    <MusicActionBtns className="mt-8 sm:justify-center" spotifyTracks={[track]} context={{ type: 'track', id: track.id, name: track.name }} />
                 </CardContainer>
             </div>
         </section>

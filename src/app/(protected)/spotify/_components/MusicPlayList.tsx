@@ -73,7 +73,7 @@ const MusicPlaylist = ({ playlist }: Props) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: playlist.id, type: 'playlist' }} spotifyTracks={tracks} className="mt-4" />
+            <MusicActionBtns context={{ id: playlist.id, type: 'playlist', name }} spotifyTracks={tracks} className="mt-4" />
 
             <div className="mt-6 grid w-full gap-2">
                 {tracks.map((track, idx) => (

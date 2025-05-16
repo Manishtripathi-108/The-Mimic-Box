@@ -67,7 +67,7 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: album.id, type: 'album' }} spotifyTracks={queueTracks()} className="mt-4" />
+            <MusicActionBtns context={{ id: album.id, type: 'album', name }} spotifyTracks={queueTracks()} className="mt-4" />
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">

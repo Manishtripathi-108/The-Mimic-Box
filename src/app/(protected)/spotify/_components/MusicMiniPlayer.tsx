@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -61,25 +61,24 @@ const MusicMiniPlayer = () => {
         return () => audio.removeEventListener('timeupdate', updatePlaybackTime);
     }, [audio, updatePlaybackTime]);
 
-    const getBufferedEnd = () => {
+    // Calculate buffered end time
+    const bufferedEnd = useMemo(() => {
         if (!playbackState.buffered || playbackState.buffered.length === 0) return 0;
         return playbackState.buffered.end(playbackState.buffered.length - 1);
-    };
+    }, [playbackState.buffered]);
 
+    // Close popover on outside click
     useEffect(() => {
+        if (!isPopoverOpen) return;
+
         const handleClickOutside = (event: MouseEvent) => {
             if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
                 setIsPopoverOpen(false);
             }
         };
 
-        if (isPopoverOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isPopoverOpen]);
 
     if (!current) return null;
@@ -95,6 +94,7 @@ const MusicMiniPlayer = () => {
                         width={40}
                         height={40}
                         className="size-10 rounded-full border object-cover @md:rounded-xl"
+                        priority
                     />
                     <div className="min-w-0">
                         <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
@@ -158,8 +158,7 @@ const MusicMiniPlayer = () => {
                         </button>
 
                         <div className="relative hidden @md:inline" ref={popoverRef}>
-                            {isPopoverOpen && <MusicDownloads />}
-
+                            {isPopoverOpen && <MusicDownloads downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />}
                             <button
                                 type="button"
                                 title="Download"
@@ -180,7 +179,7 @@ const MusicMiniPlayer = () => {
                             <div
                                 className="absolute top-1/2 left-0 z-10 h-full -translate-y-1/2 rounded-full bg-neutral-500"
                                 style={{
-                                    width: `${(getBufferedEnd() / duration) * 100}%`,
+                                    width: `${(bufferedEnd / duration) * 100}%`,
                                 }}
                             />
                             {/* Slider */}
@@ -224,7 +223,7 @@ const MusicMiniPlayer = () => {
                         </label>
                     </div>
 
-                    {/* Dev Buttons */}
+                    {/* Debug Buttons */}
                     <button
                         type="button"
                         title="Queue"

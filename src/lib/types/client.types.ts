@@ -87,7 +87,7 @@ type T_TrackSourceType = 'album' | 'playlist' | 'track' | 'artist';
 export type T_TrackContext = {
     type: T_TrackSourceType;
     id: string;
-    name?: string;
+    name: string;
 };
 
 export type T_AudioPlayerTrack = {
