@@ -17,7 +17,7 @@ const MusicMediaHeader = ({
 }) => {
     return (
         <header>
-            <h1 className="font-alegreya mb-4 text-center text-2xl font-bold tracking-wide sm:hidden">{title}</h1>
+            <h1 className="font-alegreya mb-4 text-center text-2xl text-text-primary font-bold tracking-wide sm:hidden">{title}</h1>
 
             <section className="text-text-primary flex flex-col gap-6 px-4 sm:flex-row sm:items-end">
                 <div className="bg-secondary shadow-floating-sm relative mx-auto aspect-square w-full max-w-60 shrink-0 rounded-2xl p-2 sm:mx-0">

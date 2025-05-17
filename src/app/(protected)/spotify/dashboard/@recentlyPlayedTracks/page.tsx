@@ -1,9 +1,9 @@
-import { getSpotifyRecentlyPlayedTracks } from '@/actions/spotify.actions';
+import { getSpotifyUserRecentlyPlayedTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 
 const Page = async () => {
-    const res = await getSpotifyRecentlyPlayedTracks(6);
+    const res = await getSpotifyUserRecentlyPlayedTracks(6);
 
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch recently played tracks'} />;
@@ -19,7 +19,11 @@ const Page = async () => {
             ) : (
                 <div className="flex flex-col gap-2">
                     {playHistory.map((item, index) => (
-                        <MusicTrackCard key={item.track.id + index} track={item.track} />
+                        <MusicTrackCard
+                            key={item.track.id + index}
+                            track={item.track}
+                            context={{ type: 'track', id: item.track.id, name: item.track.name }}
+                        />
                     ))}
                 </div>
             )}

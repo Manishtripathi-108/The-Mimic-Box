@@ -21,13 +21,15 @@ export type AudioPlayerState = {
 
 export type T_AudioPlayerContext = {
     getAudioElement: () => HTMLAudioElement | null;
-    current: T_AudioPlayerTrack | null;
+    currentTrack: T_AudioPlayerTrack | null;
     play: () => void;
     pause: () => void;
+    playTrackByIndex: (index: number) => void;
+    playTrackById: (params: { saavnId?: string; spotifyId?: string }) => void;
     togglePlay: () => void;
     toggleFadePlay: (fadeDuration?: number) => void;
-    next: () => void;
-    previous: () => void;
+    playNext: () => void;
+    playPrevious: () => void;
     clearQueue: () => void;
     setQueue: (tracks: T_AudioPlayerTrack[], context?: T_TrackContext | null, autoPlay?: boolean) => void;
     addToQueue: (tracks: T_AudioPlayerTrack[], context?: T_TrackContext | null) => void;
@@ -35,8 +37,8 @@ export type T_AudioPlayerContext = {
     toggleLoop: () => void;
     setVolume: (volume: number) => void;
     toggleMute: () => void;
-    setRate: (rate: number) => void;
-    seek: (time: number) => void;
+    setPlaybackRate: (rate: number) => void;
+    seekTo: (time: number) => void;
 } & T_AudioPlayerState &
     AudioPlayerState;
 
@@ -67,14 +69,14 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         playbackRate: 1,
     });
 
-    const current = useMemo(() => queue[currentTrackIndex] || null, [queue, currentTrackIndex]);
+    const currentTrack = useMemo(() => queue[currentTrackIndex] || null, [queue, currentTrackIndex]);
     const sortedUrls = useMemo(() => {
-        if (!current) return [];
-        return [...current.urls].sort((a, b) => {
+        if (!currentTrack) return [];
+        return [...currentTrack.urls].sort((a, b) => {
             const getKbps = (q: string) => parseInt(q.replace('kbps', ''), 10) || 0;
             return getKbps(b.quality) - getKbps(a.quality);
         });
-    }, [current]);
+    }, [currentTrack]);
 
     const currentIndex = useMemo(() => playbackOrder.indexOf(currentTrackIndex), [playbackOrder, currentTrackIndex]);
     const isLastTrackInQueue = useMemo(() => currentIndex === playbackOrder.length - 1, [currentIndex, playbackOrder]);
@@ -153,7 +155,24 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         [fadeAudio, audioState.volume, updateAudioState]
     );
 
-    const seek = useCallback((time: number) => {
+    const playTrackByIndex = useCallback(
+        (index: number) => {
+            if (index < 0 || index >= queue.length) return;
+            dispatch({ type: 'PLAY_INDEX', payload: index });
+            setTimeout(play, 100);
+        },
+        [queue, play]
+    );
+
+    const playTrackById = useCallback(
+        ({ saavnId, spotifyId }: { saavnId?: string; spotifyId?: string }) => {
+            dispatch({ type: 'PLAY_ID', payload: { saavnId, spotifyId } });
+            setTimeout(play, 100);
+        },
+        [play]
+    );
+
+    const seekTo = useCallback((time: number) => {
         if (audioRef.current) audioRef.current.currentTime = time;
     }, []);
 
@@ -167,7 +186,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         [updateAudioState]
     );
 
-    const setRate = useCallback(
+    const setPlaybackRate = useCallback(
         (rate: number) => {
             if (audioRef.current) {
                 audioRef.current.playbackRate = rate;
@@ -214,9 +233,9 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         dispatch({ type: 'CLEAR_QUEUE' });
     }, [pause]);
 
-    const next = useCallback(() => dispatch({ type: 'NEXT_TRACK' }), []);
+    const playNext = useCallback(() => dispatch({ type: 'NEXT_TRACK' }), []);
 
-    const previous = useCallback(() => {
+    const playPrevious = useCallback(() => {
         const audio = audioRef.current;
         if (!audio) return;
         if (audio.currentTime > 5 || queue.length <= 1) audio.currentTime = 0;
@@ -235,9 +254,9 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         } else {
             toast.error('Failed to play track. Please try downloading it.');
             retryCountRef.current = 0;
-            next();
+            playNext();
         }
-    }, [sortedUrls.length, initAudioSource, play, next]);
+    }, [sortedUrls.length, initAudioSource, play, playNext]);
 
     // Setup audio source + events
     useEffect(() => {
@@ -251,7 +270,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         const onPlaying = () => updateAudioState({ loading: false, playing: true });
         const onWaiting = () => updateAudioState({ loading: true });
         const onEnded = () => {
-            if (!audio.loop) next();
+            if (!audio.loop) playNext();
         };
 
         const events: [keyof HTMLMediaElementEventMap, EventListener][] = [
@@ -270,12 +289,12 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
             audio.load();
             events.forEach(([event, handler]) => audio.removeEventListener(event, handler));
         };
-    }, [initAudioSource, onError, next, updateAudioState, sortedUrls]);
+    }, [initAudioSource, onError, playNext, updateAudioState, sortedUrls]);
 
     useEffect(() => {
         if (audioState.playing) setTimeout(play, 100);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [current]);
+    }, [currentTrack]);
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -293,16 +312,16 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
     // MediaSession API
     useMediaSession(
         {
-            title: current?.title || '',
-            artist: current?.artists || '',
-            album: current?.album || '',
-            covers: current?.covers,
+            title: currentTrack?.title || '',
+            artist: currentTrack?.artists || '',
+            album: currentTrack?.album || '',
+            covers: currentTrack?.covers,
         },
         {
             play,
             pause,
-            next,
-            previous,
+            next: playNext,
+            previous: playPrevious,
             getAudioElement: () => audioRef.current,
         }
     );
@@ -311,24 +330,26 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         <AudioPlayerContext.Provider
             value={{
                 getAudioElement: () => audioRef.current,
-                current,
+                currentTrack,
                 ...playerState,
                 ...audioState,
                 play,
                 pause,
+                playTrackByIndex,
+                playTrackById,
                 togglePlay,
                 toggleFadePlay,
-                next,
-                previous,
+                playNext,
+                playPrevious,
                 clearQueue,
                 setQueue,
                 addToQueue,
                 toggleShuffle,
                 toggleLoop,
                 setVolume,
-                setRate,
+                setPlaybackRate,
                 toggleMute,
-                seek,
+                seekTo,
             }}>
             {children}
         </AudioPlayerContext.Provider>

@@ -22,7 +22,7 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
         case 'SET_QUEUE': {
             const trackMap = new Map();
             for (const track of action.payload.tracks) {
-                trackMap.set(track.id, track);
+                trackMap.set(track.saavnId, track);
             }
             const uniqueTracks = Array.from(trackMap.values());
             const queueLength = uniqueTracks.length;
@@ -41,12 +41,12 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
 
             // Add existing queue tracks first
             for (const track of state.queue) {
-                trackMap.set(track.id, track);
+                trackMap.set(track.saavnId, track);
             }
 
             // Add new tracks
             for (const track of action.payload.tracks) {
-                trackMap.set(track.id, track);
+                trackMap.set(track.saavnId, track);
             }
 
             const updatedQueue = Array.from(trackMap.values());
@@ -74,6 +74,18 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
 
         case 'PLAY_INDEX':
             return { ...state, currentTrackIndex: action.payload };
+
+        case 'PLAY_ID': {
+            const { saavnId, spotifyId } = action.payload;
+            const trackIndex = state.queue.findIndex((track) => track.saavnId === saavnId || track.spotifyId === spotifyId);
+            if (trackIndex !== -1) {
+                return {
+                    ...state,
+                    currentTrackIndex: trackIndex,
+                };
+            }
+            return state;
+        }
 
         case 'TOGGLE_SHUFFLE': {
             const isShuffleEnabled = !state.isShuffled;

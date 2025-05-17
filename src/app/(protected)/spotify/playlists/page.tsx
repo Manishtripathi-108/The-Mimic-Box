@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getSpotifyCurrentUserPlaylists } from '@/actions/spotify.actions';
+import { getSpotifyUserPlaylists } from '@/actions/spotify.actions';
 import MusicCard from '@/app/(protected)/spotify/_components/MusicCard';
 import ErrorCard from '@/components/layout/ErrorCard';
 import { NoDataCard } from '@/components/layout/NoDataCard';
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const Page = async () => {
-    const res = await getSpotifyCurrentUserPlaylists();
+    const res = await getSpotifyUserPlaylists();
 
     if (!res.success || !res.payload) {
         return <ErrorCard message={res.message || 'Failed to fetch playlists'} />;

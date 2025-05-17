@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
+import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
@@ -14,10 +15,12 @@ const MusicMiniPlayer = () => {
         currentTime: 0,
         buffered: null as TimeRanges | null,
     });
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const popoverRef = useRef<HTMLDivElement>(null);
 
     const lastTimeUpdateRef = useRef(0);
     const {
-        current,
+        currentTrack,
         queue,
         duration,
         volume,
@@ -30,10 +33,10 @@ const MusicMiniPlayer = () => {
         toggleMute,
         toggleLoop,
         toggleShuffle,
-        seek,
+        seekTo,
         setVolume,
-        next,
-        previous,
+        playNext,
+        playPrevious,
         getAudioElement,
     } = useAudioPlayerContext();
 
@@ -58,12 +61,27 @@ const MusicMiniPlayer = () => {
         return () => audio.removeEventListener('timeupdate', updatePlaybackTime);
     }, [audio, updatePlaybackTime]);
 
-    const getBufferedEnd = () => {
+    // Calculate buffered end time
+    const bufferedEnd = useMemo(() => {
         if (!playbackState.buffered || playbackState.buffered.length === 0) return 0;
         return playbackState.buffered.end(playbackState.buffered.length - 1);
-    };
+    }, [playbackState.buffered]);
 
-    if (!current) return null;
+    // Close popover on outside click
+    useEffect(() => {
+        if (!isPopoverOpen) return;
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+                setIsPopoverOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isPopoverOpen]);
+
+    if (!currentTrack) return null;
 
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
@@ -71,15 +89,16 @@ const MusicMiniPlayer = () => {
                 {/* Track Info */}
                 <div className="flex min-w-0 flex-2 items-center gap-3">
                     <Image
-                        src={current?.covers?.[0]?.url || IMAGE_FALLBACKS.AUDIO_COVER}
-                        alt={current?.title || 'Album Art'}
+                        src={currentTrack?.covers?.[0]?.url || IMAGE_FALLBACKS.AUDIO_COVER}
+                        alt={currentTrack?.title || 'Album Art'}
                         width={40}
                         height={40}
                         className="size-10 rounded-full border object-cover @md:rounded-xl"
+                        priority
                     />
                     <div className="min-w-0">
-                        <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
-                        <p className="line-clamp-1 text-xs">{current?.artists || 'Unknown Artist'}</p>
+                        <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{currentTrack?.title || 'Unknown Title'}</h3>
+                        <p className="line-clamp-1 text-xs">{currentTrack?.artists || 'Unknown Artist'}</p>
                     </div>
                 </div>
 
@@ -106,7 +125,7 @@ const MusicMiniPlayer = () => {
                         <button
                             type="button"
                             title="Previous Track"
-                            onClick={previous}
+                            onClick={playPrevious}
                             className="hover:text-text-primary cursor-pointer rounded-full p-1"
                             aria-label="Previous Track">
                             <Icon icon="previous" className="size-4" />
@@ -123,7 +142,7 @@ const MusicMiniPlayer = () => {
                         <button
                             type="button"
                             title="Next Track"
-                            onClick={next}
+                            onClick={playNext}
                             className="hover:text-text-primary cursor-pointer rounded-full p-1"
                             aria-label="Next Track">
                             <Icon icon="next" className="size-4" />
@@ -138,13 +157,17 @@ const MusicMiniPlayer = () => {
                             <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
 
-                        <button
-                            type="button"
-                            title="Download"
-                            className="hover:text-text-primary hidden cursor-pointer rounded-full p-1 @md:inline"
-                            aria-label="Download">
-                            <Icon icon="download" className="size-6" />
-                        </button>
+                        <div className="relative hidden @md:inline" ref={popoverRef}>
+                            {isPopoverOpen && <MusicDownloads downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />}
+                            <button
+                                type="button"
+                                title="Download"
+                                onClick={() => setIsPopoverOpen((prev) => !prev)}
+                                className="hover:text-text-primary cursor-pointer rounded-full p-1"
+                                aria-label="Download">
+                                <Icon icon="download" className="size-6" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Progress Bar */}
@@ -156,7 +179,7 @@ const MusicMiniPlayer = () => {
                             <div
                                 className="absolute top-1/2 left-0 z-10 h-full -translate-y-1/2 rounded-full bg-neutral-500"
                                 style={{
-                                    width: `${(getBufferedEnd() / duration) * 100}%`,
+                                    width: `${(bufferedEnd / duration) * 100}%`,
                                 }}
                             />
                             {/* Slider */}
@@ -167,7 +190,7 @@ const MusicMiniPlayer = () => {
                                 max={duration}
                                 step={0.1}
                                 value={playbackState.currentTime}
-                                onChange={(e) => seek(parseFloat(e.target.value))}
+                                onChange={(e) => seekTo(parseFloat(e.target.value))}
                                 className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] relative z-10 h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
                         </div>
@@ -200,7 +223,7 @@ const MusicMiniPlayer = () => {
                         </label>
                     </div>
 
-                    {/* Dev Buttons */}
+                    {/* Debug Buttons */}
                     <button
                         type="button"
                         title="Queue"

@@ -198,7 +198,7 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
         else pause();
     }, [play, pause]);
 
-    const seek = useCallback(
+    const seekTo = useCallback(
         (time: number) => {
             if (audioRef.current) {
                 audioRef.current.currentTime = time;
@@ -218,7 +218,7 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
         [updateState]
     );
 
-    const setRate = useCallback(
+    const setPlaybackRate = useCallback(
         (rate: number) => {
             if (audioRef.current) {
                 audioRef.current.playbackRate = rate;
@@ -242,9 +242,9 @@ const useAudioPlayer = ({ src, preloadNext, onEnd, onError }: UseAudioPlayerOpti
         pause,
         togglePlay,
         toggleFadePlay,
-        seek,
+        seekTo,
         setVolume,
-        setRate,
+        setPlaybackRate,
         toggleMute,
         audioEl: audioRef,
     };

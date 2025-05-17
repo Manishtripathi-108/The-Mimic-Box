@@ -8,10 +8,12 @@ import {
     T_SpotifyArtist,
     T_SpotifyPaging,
     T_SpotifyPlaylist,
+    T_SpotifyPlaylistTrack,
     T_SpotifyPrivateUser,
     T_SpotifyRecentlyPlayed,
     T_SpotifySimplifiedAlbum,
     T_SpotifySimplifiedPlaylist,
+    T_SpotifySimplifiedTrack,
     T_SpotifyTrack,
 } from '@/lib/types/spotify.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
@@ -133,6 +135,19 @@ export const getPlaylistDetails = async (accessToken: string, playlistId: string
         : createSuccessReturn('Playlist details fetched successfully!', response.data);
 };
 
+export const getPlaylistTracks = async (accessToken: string, playlistId: string, limit?: number) => {
+    const [error, response] = await safeAwait(
+        spotifyConfig.get<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(EXTERNAL_ROUTES.SPOTIFY.PLAYLIST_TRACKS(playlistId), {
+            headers: withAuthHeader(accessToken),
+            params: { limit },
+        })
+    );
+
+    return error
+        ? createErrorReturn('Failed to fetch playlist tracks', error)
+        : createSuccessReturn('Playlist tracks fetched successfully!', response.data);
+};
+
 export const getTrackDetails = async (accessToken: string, trackId: string) => {
     const [error, response] = await safeAwait(
         spotifyConfig.get<T_SpotifyTrack>(EXTERNAL_ROUTES.SPOTIFY.TRACKS(trackId), { headers: withAuthHeader(accessToken) })
@@ -161,6 +176,18 @@ export const getAlbumDetails = async (accessToken: string, albumId: string) => {
     return error || !response
         ? createErrorReturn('Failed to fetch album details', error)
         : createSuccessReturn('Album details fetched successfully!', response.data);
+};
+
+export const getAlbumTracks = async (accessToken: string, albumId: string, limit?: number) => {
+    const [error, response] = await safeAwait(
+        spotifyConfig.get<T_SpotifyPaging<T_SpotifySimplifiedTrack>>(EXTERNAL_ROUTES.SPOTIFY.ALBUM_TRACKS(albumId), {
+            headers: withAuthHeader(accessToken),
+            params: { limit },
+        })
+    );
+    return error || !response
+        ? createErrorReturn('Failed to fetch album tracks', error)
+        : createSuccessReturn('Album tracks fetched successfully!', response.data);
 };
 
 export const getArtistDetails = async (accessToken: string, artistId: string) => {
@@ -210,9 +237,11 @@ const spotifyApi = {
     getUserTopTracks,
     getUserTopArtists,
     getPlaylistDetails,
+    getPlaylistTracks,
     getTrackDetails,
     getMultipleTracksDetails,
     getAlbumDetails,
+    getAlbumTracks,
     getArtistDetails,
     getArtistTopTracks,
     getArtistAlbums,

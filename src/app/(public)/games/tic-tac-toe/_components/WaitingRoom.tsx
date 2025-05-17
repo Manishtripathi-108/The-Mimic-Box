@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
+import { shareUrl } from '@/lib/utils/client.utils';
 
 const WaitingRoom = () => {
     const { state, startMatch, leaveRoom } = useTicTacToeContext();
@@ -13,19 +14,11 @@ const WaitingRoom = () => {
 
     // Share room code
     const shareRoom = () => {
-        if (navigator.share) {
-            navigator
-                .share({
-                    title: `Join my Tic Tac Toe game: ${gameRoomName}`,
-                    text: `Use this room Id to join: ${gameRoomId}`,
-                    url: `${APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE}?roomId=${gameRoomId}`,
-                })
-                .catch(() => {
-                    toast('Error sharing room code. Please try again.');
-                });
-        } else {
-            toast('Sharing is not supported on your device. Please copy the code.');
-        }
+        shareUrl({
+            title: `Join my Tic Tac Toe game: ${gameRoomName}`,
+            text: `Use this room Id to join: ${gameRoomId}`,
+            url: `${APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE}?roomId=${gameRoomId}`,
+        });
     };
 
     // Reusable Player Block Component

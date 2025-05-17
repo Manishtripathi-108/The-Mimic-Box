@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import toast from 'react-hot-toast';
 
-import { getSpotifyData } from '@/actions/spotify.actions';
+import { fetchSpotifyDataByUrl } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/spotify/_components/MusicActionBtns';
 import MusicMediaHeader from '@/app/(protected)/spotify/_components/MusicMediaHeader';
 import MusicTrackCard, { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
@@ -24,7 +24,7 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
     const fetchNextTracks = useCallback(async () => {
         if (!nextUrl) return;
 
-        const res = await getSpotifyData<T_SpotifyPaging<T_SpotifySimplifiedTrack>>(nextUrl);
+        const res = await fetchSpotifyDataByUrl<T_SpotifyPaging<T_SpotifySimplifiedTrack>>(nextUrl);
         if (!res.success || !res.payload) {
             toast.error('Failed to fetch more tracks');
             return;
@@ -67,11 +67,15 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: album.id, type: 'album' }} spotifyTracks={queueTracks()} className="mt-4" />
+            <MusicActionBtns context={{ id: album.id, type: 'album', name }} spotifyTracks={queueTracks()} className="mt-4" />
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">
-                {tracks.map((track, idx) => (track && !('show' in track) ? <MusicTrackCard key={`${track.id}-${idx}`} track={track} /> : null))}
+                {tracks.map((track, idx) =>
+                    track && !('show' in track) ? (
+                        <MusicTrackCard key={`${track.id}-${idx}`} track={track} context={{ type: 'album', id: album.id, name: name }} />
+                    ) : null
+                )}
 
                 {/* Loading Indicator */}
                 <div ref={loadingRef} className="grid w-full gap-2">
