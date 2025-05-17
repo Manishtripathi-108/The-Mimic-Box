@@ -91,7 +91,8 @@ export type T_TrackContext = {
 };
 
 export type T_AudioPlayerTrack = {
-    id: string;
+    spotifyId: string;
+    saavnId: string;
     urls: { quality: '12kbps' | '48kbps' | '96kbps' | '160kbps' | '320kbps'; url: string }[];
     title: string;
     album?: string | null;
@@ -112,6 +113,7 @@ export type T_AudioPlayerAction =
     | { type: 'ADD_TO_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext | null } }
     | { type: 'CLEAR_QUEUE' }
     | { type: 'PLAY_INDEX'; payload: number }
+    | { type: 'PLAY_ID'; payload: { saavnId?: string; spotifyId?: string } }
     | { type: 'TOGGLE_SHUFFLE' }
     | { type: 'NEXT_TRACK' }
     | { type: 'PREV_TRACK' };

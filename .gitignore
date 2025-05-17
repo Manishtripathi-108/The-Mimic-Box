@@ -50,5 +50,5 @@ src/generated/prisma-client
 /storage
 
 # sitemap and robots.txt
-sitemap*.xml
+*sitemap*.xml
 robots.txt

@@ -71,7 +71,11 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">
-                {tracks.map((track, idx) => (track && !('show' in track) ? <MusicTrackCard key={`${track.id}-${idx}`} track={track} /> : null))}
+                {tracks.map((track, idx) =>
+                    track && !('show' in track) ? (
+                        <MusicTrackCard key={`${track.id}-${idx}`} track={track} context={{ type: 'album', id: album.id, name: name }} />
+                    ) : null
+                )}
 
                 {/* Loading Indicator */}
                 <div ref={loadingRef} className="grid w-full gap-2">

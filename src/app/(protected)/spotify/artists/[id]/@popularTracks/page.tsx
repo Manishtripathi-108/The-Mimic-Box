@@ -20,7 +20,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             ) : (
                 <div className="flex flex-col gap-2">
                     {tracks.map((item, index) => (
-                        <MusicTrackCard key={item.id + index} track={item} />
+                        <MusicTrackCard key={item.id + index} track={item} context={{ type: 'artist', id: id, name: item.artists[0].name }} />
                     ))}
                 </div>
             )}

@@ -77,7 +77,7 @@ const MusicPlaylist = ({ playlist }: Props) => {
 
             <div className="mt-6 grid w-full gap-2">
                 {tracks.map((track, idx) => (
-                    <MusicTrackCard key={track.id + idx} track={track} />
+                    <MusicTrackCard key={track.id + idx} track={track} context={{ id: playlist.id, type: 'playlist', name }} />
                 ))}
 
                 <div ref={loadingRef} className="grid w-full gap-2">

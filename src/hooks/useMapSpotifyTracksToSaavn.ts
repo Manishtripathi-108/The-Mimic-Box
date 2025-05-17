@@ -68,7 +68,8 @@ const useMapSpotifyTracksToSaavn = () => {
                     usedTrackIds.add(bestMatch.id);
 
                     const audioTrack: T_AudioPlayerTrack = {
-                        id: bestMatch.id,
+                        spotifyId: spotifyTrack.id,
+                        saavnId: bestMatch.id,
                         urls: bestMatch.downloadUrl,
                         title: bestMatch.name,
                         album: bestMatch.album.name,

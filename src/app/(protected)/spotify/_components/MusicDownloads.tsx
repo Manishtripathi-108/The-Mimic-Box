@@ -20,17 +20,17 @@ type Props = {
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const MusicDownloads = ({ className, context, downloadCurrent = false, ...props }: Props) => {
-    const { current, playbackContext, queue } = useAudioPlayerContext();
+    const { currentTrack, playbackContext, queue } = useAudioPlayerContext();
     const { mapTracks } = useMapSpotifyTracksToSaavn();
 
     const handleDownload = async (quality: string) => {
         const toastId = toast.loading('Loading tracks...');
         try {
-            // 1. Download current playing track
-            if (downloadCurrent && current) {
-                const url = current.urls.find((u) => u.quality === quality);
+            // 1. Download currentTrack playing track
+            if (downloadCurrent && currentTrack) {
+                const url = currentTrack.urls.find((u) => u.quality === quality);
                 if (url) {
-                    await downloadFile(url.url, `${current.title} - ${quality}.mp3`);
+                    await downloadFile(url.url, `${currentTrack.title} - ${quality}.mp3`);
                     toast.success('Track downloaded successfully!', { id: toastId });
                     return;
                 }

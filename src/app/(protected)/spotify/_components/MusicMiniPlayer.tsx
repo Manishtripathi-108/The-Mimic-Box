@@ -20,7 +20,7 @@ const MusicMiniPlayer = () => {
 
     const lastTimeUpdateRef = useRef(0);
     const {
-        current,
+        currentTrack,
         queue,
         duration,
         volume,
@@ -33,10 +33,10 @@ const MusicMiniPlayer = () => {
         toggleMute,
         toggleLoop,
         toggleShuffle,
-        seek,
+        seekTo,
         setVolume,
-        next,
-        previous,
+        playNext,
+        playPrevious,
         getAudioElement,
     } = useAudioPlayerContext();
 
@@ -81,7 +81,7 @@ const MusicMiniPlayer = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isPopoverOpen]);
 
-    if (!current) return null;
+    if (!currentTrack) return null;
 
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
@@ -89,16 +89,16 @@ const MusicMiniPlayer = () => {
                 {/* Track Info */}
                 <div className="flex min-w-0 flex-2 items-center gap-3">
                     <Image
-                        src={current?.covers?.[0]?.url || IMAGE_FALLBACKS.AUDIO_COVER}
-                        alt={current?.title || 'Album Art'}
+                        src={currentTrack?.covers?.[0]?.url || IMAGE_FALLBACKS.AUDIO_COVER}
+                        alt={currentTrack?.title || 'Album Art'}
                         width={40}
                         height={40}
                         className="size-10 rounded-full border object-cover @md:rounded-xl"
                         priority
                     />
                     <div className="min-w-0">
-                        <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{current?.title || 'Unknown Title'}</h3>
-                        <p className="line-clamp-1 text-xs">{current?.artists || 'Unknown Artist'}</p>
+                        <h3 className="text-text-primary line-clamp-1 text-base font-semibold">{currentTrack?.title || 'Unknown Title'}</h3>
+                        <p className="line-clamp-1 text-xs">{currentTrack?.artists || 'Unknown Artist'}</p>
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@ const MusicMiniPlayer = () => {
                         <button
                             type="button"
                             title="Previous Track"
-                            onClick={previous}
+                            onClick={playPrevious}
                             className="hover:text-text-primary cursor-pointer rounded-full p-1"
                             aria-label="Previous Track">
                             <Icon icon="previous" className="size-4" />
@@ -142,7 +142,7 @@ const MusicMiniPlayer = () => {
                         <button
                             type="button"
                             title="Next Track"
-                            onClick={next}
+                            onClick={playNext}
                             className="hover:text-text-primary cursor-pointer rounded-full p-1"
                             aria-label="Next Track">
                             <Icon icon="next" className="size-4" />
@@ -190,7 +190,7 @@ const MusicMiniPlayer = () => {
                                 max={duration}
                                 step={0.1}
                                 value={playbackState.currentTime}
-                                onChange={(e) => seek(parseFloat(e.target.value))}
+                                onChange={(e) => seekTo(parseFloat(e.target.value))}
                                 className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] relative z-10 h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                             />
                         </div>

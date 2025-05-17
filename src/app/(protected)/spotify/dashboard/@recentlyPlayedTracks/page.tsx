@@ -19,7 +19,11 @@ const Page = async () => {
             ) : (
                 <div className="flex flex-col gap-2">
                     {playHistory.map((item, index) => (
-                        <MusicTrackCard key={item.track.id + index} track={item.track} />
+                        <MusicTrackCard
+                            key={item.track.id + index}
+                            track={item.track}
+                            context={{ type: 'track', id: item.track.id, name: item.track.name }}
+                        />
                     ))}
                 </div>
             )}

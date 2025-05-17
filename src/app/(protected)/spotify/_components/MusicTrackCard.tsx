@@ -5,17 +5,20 @@ import { memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import MusicTrackPlayBtn from '@/app/(protected)/spotify/_components/MusicTrackPlayBtn';
 import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
+import { T_TrackContext } from '@/lib/types/client.types';
 import { T_SpotifySimplifiedTrack, T_SpotifyTrack } from '@/lib/types/spotify.types';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 type MusicTrackCardProps = {
     track: T_SpotifyTrack | T_SpotifySimplifiedTrack;
+    context: T_TrackContext;
 };
 
-const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
-    const { id, name, duration_ms, explicit, artists } = track;
+const MusicTrackCard = ({ track, context }: MusicTrackCardProps) => {
+    const { id, name, duration_ms, artists } = track;
     const isFullTrack = 'album' in track;
     const albumImage = isFullTrack ? track.album.images?.[0]?.url : undefined;
     const albumName = isFullTrack ? track.album.name : undefined;
@@ -25,12 +28,7 @@ const MusicTrackCard = ({ track }: MusicTrackCardProps) => {
         <div className="from-secondary to-tertiary text-text-secondary shadow-floating-xs @container flex items-center justify-between gap-4 rounded-2xl bg-linear-120 from-15% to-85% p-3 pr-5 transition-transform hover:scale-101">
             {/* Left Section */}
             <div className="flex w-full items-center gap-3">
-                <button
-                    type="button"
-                    className="hover:text-text-primary size-7 shrink-0 cursor-pointer transition-colors"
-                    aria-label={explicit ? 'Play' : 'Pause'}>
-                    <Icon icon={explicit ? 'pauseToPlay' : 'playToPause'} className="size-full" />
-                </button>
+                <MusicTrackPlayBtn id={id} context={context} />
 
                 <div className="flex items-center gap-3">
                     {isFullTrack && albumImage && (
