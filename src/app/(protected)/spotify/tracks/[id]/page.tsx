@@ -55,7 +55,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const track = res.payload;
 
     return (
-        <section className="h-calc-full-height flex items-center justify-center">
+        <section className="flex h-full items-center justify-center">
             <div className="mt-20 w-full max-w-4xl">
                 <CardContainer>
                     <div className="shadow-pressed-xs bg-secondary relative mx-auto -mt-20 w-fit overflow-hidden rounded-2xl border p-1 sm:-mt-32 sm:p-2">
@@ -101,7 +101,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                         <span>{track.popularity}% Popularity</span>
                     </div>
 
-                    <MusicActionBtns className="mt-8 sm:justify-center" spotifyTracks={[track]} context={{ type: 'track', id: track.id, name: track.name }} />
+                    <MusicActionBtns
+                        className="mt-8 sm:justify-center"
+                        spotifyTracks={[track]}
+                        context={{ type: 'track', id: track.id, name: track.name }}
+                    />
                 </CardContainer>
             </div>
         </section>

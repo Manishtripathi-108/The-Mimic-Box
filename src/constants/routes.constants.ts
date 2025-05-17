@@ -44,7 +44,7 @@ export const APP_ROUTES = {
     AUDIO: {
         TAGS_EDITOR: '/audio/tags-editor',
         CONVERTER: '/audio/converter',
-        SEARCH: '/audio/search-lyrics',
+        SEARCH_LYRICS: '/audio/search-lyrics',
     },
 
     ANILIST: {
@@ -118,7 +118,7 @@ const withIds = (base: string, ids?: string | string[]) => {
     return typeof ids === 'string' ? `${base}/${ids}` : `${base}?ids=${ids.join(',')}`;
 };
 
-const AUDIO_BASE = process.env.NODE_ENV === 'development' ? 'http://localhost:4000/api/audio' : 'https://elephoria.onrender.com/api/audio';
+const AUDIO_BASE = process.env.EXTERNAL_AUDIO_BASE_URL;
 
 export const EXTERNAL_ROUTES = {
     ANILIST: {

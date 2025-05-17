@@ -118,7 +118,7 @@ const AudioFileConverter = () => {
     };
 
     const submitAudioConvert = async (values: T_FormValues) => {
-        if (process.env.NODE_ENV === 'production') {
+        if (process.env.EXTERNAL_AUDIO_BASE_URL) {
             makeApiCall({
                 url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
                 isExternalApiCall: true,

@@ -44,7 +44,7 @@ const sidebarMenuItems = [
         children: [
             { name: 'Converter', link: APP_ROUTES.AUDIO.CONVERTER },
             { name: 'Tags Editor', link: APP_ROUTES.AUDIO.TAGS_EDITOR },
-            { name: 'Search Lyrics', link: APP_ROUTES.AUDIO.SEARCH },
+            { name: 'Search Lyrics', link: APP_ROUTES.AUDIO.SEARCH_LYRICS },
         ],
     },
     {
@@ -53,7 +53,7 @@ const sidebarMenuItems = [
         children: [
             { name: 'Dashboard', link: APP_ROUTES.SPOTIFY.DASHBOARD },
             { name: 'Playlists', link: APP_ROUTES.SPOTIFY.PLAYLISTS },
-            { name: 'Search', link: APP_ROUTES.SPOTIFY.SEARCH },
+            // { name: 'Search', link: APP_ROUTES.SPOTIFY.SEARCH },
         ],
     },
 

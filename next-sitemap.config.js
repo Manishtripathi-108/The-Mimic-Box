@@ -18,6 +18,8 @@ module.exports = {
         '/auth/forgot-password',
         '/auth/reset-password',
         '/auth/verify-email',
+        '/auth/change-email',
+        '/auth/link-account-error',
         '/dev',
     ],
 };
