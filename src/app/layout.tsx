@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 import '@/app/globals.css';
 import Header from '@/components/layout/Header';
 import Icon from '@/components/ui/Icon';
+import ProgressBarProvider from '@/contexts/ProgressProvider';
 import { ThemeScript } from '@/hooks/useTheme';
 import '@/lib/iconSetup';
 
@@ -67,21 +68,23 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             <SessionProvider>
                 <body
                     className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable} ${fontAlegreya.variable}`}>
-                    <Header />
-                    {children}
-                    <Toaster
-                        toastOptions={{
-                            success: {
-                                icon: <Icon icon="success" className="size-6 shrink-0 text-green-500" />,
-                            },
-                            error: {
-                                icon: <Icon icon="error" className="size-7 shrink-0 text-red-500" />,
-                            },
-                            loading: {
-                                icon: <Icon icon="loading" className="text-highlight size-5 shrink-0" />,
-                            },
-                        }}
-                    />
+                    <ProgressBarProvider>
+                        <Header />
+                        {children}
+                        <Toaster
+                            toastOptions={{
+                                success: {
+                                    icon: <Icon icon="success" className="size-6 shrink-0 text-green-500" />,
+                                },
+                                error: {
+                                    icon: <Icon icon="error" className="size-7 shrink-0 text-red-500" />,
+                                },
+                                loading: {
+                                    icon: <Icon icon="loading" className="text-highlight size-5 shrink-0" />,
+                                },
+                            }}
+                        />
+                    </ProgressBarProvider>
                 </body>
             </SessionProvider>
         </html>
