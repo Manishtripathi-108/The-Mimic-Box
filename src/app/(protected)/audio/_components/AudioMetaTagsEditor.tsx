@@ -64,7 +64,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
     const submitEditTags = async (values: T_AudioMetaTags) => {
         const { cover, ...metaTags } = values;
 
-        if (process.env.EXTERNAL_AUDIO_BASE_URL) {
+        if (process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL) {
             await makeApiCall({
                 url: EXTERNAL_ROUTES.AUDIO.EDIT_META_TAGS,
                 method: 'post',
