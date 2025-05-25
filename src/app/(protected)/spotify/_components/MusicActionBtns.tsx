@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
-import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
 import { T_TrackContext } from '@/lib/types/client.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';

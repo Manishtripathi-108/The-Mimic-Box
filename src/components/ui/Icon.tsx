@@ -11,7 +11,7 @@ type Props = {
 } & Omit<IconProps, 'icon' | 'className'>;
 
 const Icon = ({ icon, className, ...props }: Props) => {
-    return <Iconify icon={IconSet[icon]} className={cn('size-7', className)} {...props} />;
+    return <Iconify icon={IconSet[icon]} className={cn('size-full', className)} {...props} />;
 };
 
 export default memo(Icon);

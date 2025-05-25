@@ -117,3 +117,14 @@ export type T_AudioPlayerAction =
     | { type: 'TOGGLE_SHUFFLE' }
     | { type: 'NEXT_TRACK' }
     | { type: 'PREV_TRACK' };
+
+type T_DownloadStatus = 'pending' | 'processing' | 'downloading' | 'ready' | 'failed';
+
+export type T_DownloadFile = {
+    id: string;
+    url: string;
+    progress?: number;
+    status: T_DownloadStatus;
+    blobUrl?: string;
+    title: string;
+};

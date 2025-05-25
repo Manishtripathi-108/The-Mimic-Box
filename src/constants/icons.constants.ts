@@ -35,7 +35,7 @@ enum IconSet {
     edit = 'hugeicons:pencil-edit-02',
     editProfile = 'fluent:person-edit-24-filled',
     email = 'line-md:email-alt-filled',
-    error = 'meteocons:code-red-fill',
+    error = 'custom:error',
     executable = 'carbon:executable-program',
     eye = 'line-md:watch-loop',
     eyeClose = 'line-md:watch-off-loop',
@@ -87,6 +87,7 @@ enum IconSet {
     /* ------------------------------------ P ----------------------------------- */
     pause = 'line-md:pause',
     pauseToPlay = 'line-md:play-filled-to-pause-transition',
+    pending = 'solar:clock-circle-linear',
     person = 'line-md:person-filled',
     personAdd = 'line-md:person-add-filled',
     play = 'line-md:play-filled',

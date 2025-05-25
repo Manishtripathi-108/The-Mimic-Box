@@ -4,7 +4,7 @@ import isEqual from 'lodash.isequal';
 import toast from 'react-hot-toast';
 
 import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
-import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
 import { T_TrackContext } from '@/lib/types/client.types';
 import { downloadZip } from '@/lib/utils/client-archiver.utils';

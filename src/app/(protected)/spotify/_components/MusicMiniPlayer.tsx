@@ -7,7 +7,7 @@ import Image from 'next/image';
 import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicMiniPlayer = () => {
