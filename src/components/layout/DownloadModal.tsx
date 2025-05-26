@@ -40,7 +40,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         </div>
 
                         {/* Content */}
-                        <div className="max-h-[60vh] space-y-4 overflow-y-auto px-4 pb-1">
+                        <div className="sm:scrollbar-thin max-h-[60vh] space-y-4 overflow-y-auto px-4 pb-1">
                             {downloads.length === 0 ? (
                                 <p className="text-text-secondary text-center">No active downloads</p>
                             ) : (
@@ -57,8 +57,8 @@ const DownloadModal = ({ className }: { className?: string }) => {
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     transition={{ type: 'spring', stiffness: 300 }}
-                                    className="bg-accent before:bg-accent absolute -top-2.5 -right-2.5 size-4 rounded-full before:absolute before:inset-0 before:animate-ping before:rounded-full">
-                                    <span className="text-text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs">
+                                    className="bg-accent before:bg-accent absolute -top-3.5 -right-3.5 size-5 rounded-full before:absolute before:inset-0 before:animate-ping before:rounded-full">
+                                    <span className="text-text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs select-none">
                                         {downloads.length}
                                     </span>
                                 </motion.div>

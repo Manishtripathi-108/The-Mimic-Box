@@ -73,6 +73,9 @@ const useMapSpotifyTracksToSaavn = () => {
                         urls: bestMatch.downloadUrl,
                         title: bestMatch.name,
                         album: bestMatch.album.name,
+                        year: bestMatch.year,
+                        duration: bestMatch.duration,
+                        language: bestMatch.language,
                         artists: bestMatch.artists.primary.map((a) => a.name).join(', '),
                         covers: bestMatch.image,
                     };

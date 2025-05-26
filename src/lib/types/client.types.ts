@@ -95,9 +95,12 @@ export type T_AudioPlayerTrack = {
     saavnId: string;
     urls: { quality: '12kbps' | '48kbps' | '96kbps' | '160kbps' | '320kbps'; url: string }[];
     title: string;
-    album?: string | null;
-    artists?: string;
-    covers?: { quality: '50x50' | '150x150' | '500x500'; url: string }[];
+    album: string | null;
+    year: string | null;
+    duration: number | null;
+    language?: string;
+    artists: string;
+    covers: { quality: '50x50' | '150x150' | '500x500'; url: string }[];
 };
 
 export type T_AudioPlayerState = {
@@ -123,8 +126,15 @@ type T_DownloadStatus = 'pending' | 'processing' | 'downloading' | 'ready' | 'fa
 export type T_DownloadFile = {
     id: string;
     url: string;
+    title: string;
     progress?: number;
     status: T_DownloadStatus;
     blobUrl?: string;
-    title: string;
+};
+
+export type T_AudioFile = {
+    filename?: string;
+    src: string;
+    cover?: string;
+    metadata: Record<string, string | number>;
 };

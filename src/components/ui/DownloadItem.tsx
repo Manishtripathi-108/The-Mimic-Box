@@ -37,7 +37,7 @@ const DownloadItem = ({ file }: { file: T_DownloadFile }) => {
 
     return (
         <div className="from-secondary to-tertiary shadow-floating-xs flex w-full items-center justify-between gap-4 rounded-xl bg-linear-150 p-3">
-            <div className="flex w-full flex-col gap-1">
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="text-text-primary truncate text-sm">{file.title}</span>
 
                 {file.status === 'downloading' && (
@@ -50,7 +50,7 @@ const DownloadItem = ({ file }: { file: T_DownloadFile }) => {
                 )}
             </div>
 
-            <div className={`flex size-5 items-center ${status.className}`} aria-label={`Status: ${status.label}`} title={status.label}>
+            <div className={`flex size-5 shrink-0 items-center ${status.className}`} aria-label={`Status: ${status.label}`} title={status.label}>
                 <Icon icon={status.icon} className="size-full" />
             </div>
         </div>
