@@ -77,7 +77,8 @@ const AudioMetaExtractor = () => {
     }, [reset, cancelRequest]);
 
     const submitTagsExtraction = async (values: FormValue) => {
-        if (process.env.EXTERNAL_AUDIO_BASE_URL) {
+        console.log('submitTagsExtraction', EXTERNAL_ROUTES.AUDIO.EXTRACT_METADATA);
+        if (process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL) {
             makeApiCall({
                 url: EXTERNAL_ROUTES.AUDIO.EXTRACT_METADATA,
                 method: 'POST',

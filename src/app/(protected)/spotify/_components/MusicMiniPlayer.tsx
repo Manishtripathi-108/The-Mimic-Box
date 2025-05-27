@@ -7,7 +7,7 @@ import Image from 'next/image';
 import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicMiniPlayer = () => {
@@ -136,7 +136,7 @@ const MusicMiniPlayer = () => {
                             onClick={() => toggleFadePlay()}
                             className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5"
                             aria-label={playing ? 'Pause' : 'Play'}>
-                            <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} className="size-full" />
+                            <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} />
                         </button>
 
                         <button

@@ -40,6 +40,10 @@ const nextConfig: NextConfig = {
                 protocol: 'https',
                 hostname: 'c.saavncdn.com',
             },
+            {
+                protocol: 'https',
+                hostname: 'c.sop.saavncdn.com',
+            },
             // anilist Image API
             {
                 protocol: 'https',

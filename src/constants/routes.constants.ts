@@ -118,7 +118,7 @@ const withIds = (base: string, ids?: string | string[]) => {
     return typeof ids === 'string' ? `${base}/${ids}` : `${base}?ids=${ids.join(',')}`;
 };
 
-const AUDIO_BASE = process.env.EXTERNAL_AUDIO_BASE_URL;
+const AUDIO_BASE = process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL;
 
 export const EXTERNAL_ROUTES = {
     ANILIST: {

@@ -33,7 +33,7 @@ export const createDownloadLinks = (encryptedMediaUrl: string) => {
 
     return QUALITIES.map(({ id, bitrate }) => ({
         quality: bitrate,
-        url: decryptedLink.replace('_96', id),
+        url: decryptedLink.replace('_96', id).replace(PROTOCOL_REGEX, 'https://'),
     }));
 };
 

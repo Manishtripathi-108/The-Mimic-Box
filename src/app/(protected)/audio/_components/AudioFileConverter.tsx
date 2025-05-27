@@ -118,7 +118,7 @@ const AudioFileConverter = () => {
     };
 
     const submitAudioConvert = async (values: T_FormValues) => {
-        if (process.env.EXTERNAL_AUDIO_BASE_URL) {
+        if (process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL) {
             makeApiCall({
                 url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
                 isExternalApiCall: true,
@@ -224,7 +224,7 @@ const AudioFileConverter = () => {
                                                     type="button"
                                                     className="sm:button size-5 shrink-0 cursor-pointer rounded-full sm:size-9 sm:p-2"
                                                     onClick={() => openAdvancedSettings(fileSettings[index], `fileSettings.${index}`)}>
-                                                    <Icon icon="settings" className="size-full" />
+                                                    <Icon icon="settings" />
                                                 </button>
                                             </div>
                                         )}

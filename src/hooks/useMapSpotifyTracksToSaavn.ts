@@ -9,88 +9,106 @@ import { T_AudioPlayerTrack, T_TrackContext } from '@/lib/types/client.types';
 import { T_Song } from '@/lib/types/jio-saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
+const CACHE_DURATION_MS = 15 * 24 * 60 * 60 * 1000; // 15 days
+
 const useMapSpotifyTracksToSaavn = () => {
-    const { isPending, makeParallelApiCalls } = useSafeApiCall<
-        null,
-        {
-            total: number;
-            start: number;
-            results: T_Song[];
-        }
-    >();
+    const { isPending, makeParallelApiCalls } = useSafeApiCall<null, { total: number; start: number; results: T_Song[] }>();
 
     const mapTracks = useCallback(
         async ({ context, spotifyTracks }: { context: T_TrackContext; spotifyTracks: T_SpotifySimplifiedTrack[] }) => {
-            const cacheKey = `saavn:${context.type}:${context.id}`;
-            const cachedData = sessionStorage.getItem(cacheKey);
+            const matchedTracks: T_AudioPlayerTrack[] = [];
+            const usedSaavnTrackIds = new Set<string>();
 
-            // Use cached version if already matched
-            if (cachedData && JSON.parse(cachedData).length === spotifyTracks.length) {
-                const cachedTracks = JSON.parse(cachedData) as T_AudioPlayerTrack[];
-                return cachedTracks;
+            const cacheKey = `saavn:${context.type}:${context.id}`;
+            const cachedDataRaw = localStorage.getItem(cacheKey);
+            let remainingSpotifyTracks = spotifyTracks;
+
+            // Check cached value with expiry
+            if (cachedDataRaw) {
+                try {
+                    const { data: cached, timestamp } = JSON.parse(cachedDataRaw);
+                    if (Date.now() - timestamp < CACHE_DURATION_MS) {
+                        const cachedSpotifyIds = new Set(cached.map((t: T_AudioPlayerTrack) => t.spotifyId));
+                        matchedTracks.push(...cached);
+
+                        remainingSpotifyTracks = spotifyTracks.filter((t) => !cachedSpotifyIds.has(t.id));
+                        if (remainingSpotifyTracks.length === 0) return cached;
+                    } else {
+                        localStorage.removeItem(cacheKey); // Invalidate old cache
+                    }
+                } catch (err) {
+                    console.warn('Invalid cache, ignoring.', err);
+                    localStorage.removeItem(cacheKey);
+                }
             }
 
-            // Fetch matching Saavn songs for each Spotify track
-            const saavnResponses = await makeParallelApiCalls(
-                spotifyTracks.map((spotifyTrack) => {
-                    const trackName = spotifyTrack.name;
-                    const artistNames = spotifyTrack.artists.map((artist) => artist.name).join(' ');
-                    return {
-                        url: '/api/saavn/search/songs',
-                        params: { query: `${trackName} ${artistNames}` },
-                    };
-                })
-            );
+            if (remainingSpotifyTracks.length === 0) return matchedTracks;
 
-            const matchedTracks: T_AudioPlayerTrack[] = [];
-            const usedTrackIds = new Set<string>();
+            const searchQueries = remainingSpotifyTracks.map((track) => ({
+                url: '/api/saavn/search/songs',
+                params: { query: `${track.name} ${track.artists.map((a) => a.name).join(' ')}` },
+            }));
 
-            spotifyTracks.forEach((spotifyTrack, index) => {
-                const saavnSearchResult = saavnResponses[index];
-                if (!saavnSearchResult?.results?.length) return;
+            const saavnResponses = await makeParallelApiCalls(searchQueries);
+
+            remainingSpotifyTracks.forEach((spotifyTrack, index) => {
+                const saavnResult = saavnResponses[index];
+                if (!saavnResult?.results?.length) return;
 
                 const spotifyTitle = spotifyTrack.name.trim().toLowerCase();
-                const spotifyArtistNames = spotifyTrack.artists.map((a) => a.name.toLowerCase());
+                const spotifyArtists = spotifyTrack.artists.map((a) => a.name.toLowerCase());
 
-                const bestMatch = saavnSearchResult.results.find((saavnTrack) => {
+                let bestMatch: T_Song | null = null;
+                let bestScore = 0;
+
+                for (const saavnTrack of saavnResult.results) {
                     const saavnTitle = saavnTrack.name.trim().toLowerCase();
-                    const similarityScore = stringSimilarity.compareTwoStrings(spotifyTitle, saavnTitle);
+                    const titleScore = stringSimilarity.compareTwoStrings(spotifyTitle, saavnTitle);
+                    if (titleScore < 0.6) continue;
 
-                    if (similarityScore < 0.6) return false;
+                    const saavnArtists = saavnTrack.artists.primary.map((a) => a.name.toLowerCase());
+                    const artistMatched = saavnArtists.some((a) => spotifyArtists.includes(a));
 
-                    const saavnArtistNames = saavnTrack.artists.primary.map((a) => a.name.toLowerCase());
-                    const hasMatchingArtist = saavnArtistNames.some((artist) => spotifyArtistNames.includes(artist));
+                    if (!artistMatched) continue;
 
-                    return hasMatchingArtist;
-                });
+                    if (titleScore > bestScore) {
+                        bestMatch = saavnTrack;
+                        bestScore = titleScore;
+                    }
+                }
 
-                if (bestMatch && !usedTrackIds.has(bestMatch.id)) {
-                    usedTrackIds.add(bestMatch.id);
-
-                    const audioTrack: T_AudioPlayerTrack = {
+                if (bestMatch && !usedSaavnTrackIds.has(bestMatch.id)) {
+                    usedSaavnTrackIds.add(bestMatch.id);
+                    matchedTracks.push({
                         spotifyId: spotifyTrack.id,
                         saavnId: bestMatch.id,
-                        urls: bestMatch.downloadUrl,
                         title: bestMatch.name,
                         album: bestMatch.album.name,
+                        year: bestMatch.year,
+                        duration: bestMatch.duration,
+                        language: bestMatch.language,
                         artists: bestMatch.artists.primary.map((a) => a.name).join(', '),
+                        urls: bestMatch.downloadUrl,
                         covers: bestMatch.image,
-                    };
-
-                    matchedTracks.push(audioTrack);
+                    });
                 }
             });
 
-            sessionStorage.setItem(cacheKey, JSON.stringify(matchedTracks));
+            // Cache updated result with timestamp
+            localStorage.setItem(
+                cacheKey,
+                JSON.stringify({
+                    data: matchedTracks,
+                    timestamp: Date.now(),
+                })
+            );
+
             return matchedTracks;
         },
         [makeParallelApiCalls]
     );
 
-    return {
-        isPending,
-        mapTracks,
-    };
+    return { isPending, mapTracks };
 };
 
 export default useMapSpotifyTracksToSaavn;

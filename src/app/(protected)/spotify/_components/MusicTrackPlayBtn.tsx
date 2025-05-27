@@ -5,7 +5,7 @@ import { memo } from 'react';
 import isEqual from 'lodash.isequal';
 
 import Icon from '@/components/ui/Icon';
-import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 // import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
 import { T_TrackContext } from '@/lib/types/client.types';
 
@@ -51,7 +51,7 @@ const MusicTrackBtn = ({ id, context }: { id: string; context: T_TrackContext })
             onClick={handlePlayPause}
             className="hover:text-text-primary size-7 shrink-0 cursor-pointer transition-colors"
             aria-label={getPlayerState() ? 'Play' : 'Pause'}>
-            <Icon icon={getPlayerState() ? 'pauseToPlay' : 'playToPause'} className="size-full" />
+            <Icon icon={getPlayerState() ? 'pauseToPlay' : 'playToPause'} />
         </button>
     );
 };

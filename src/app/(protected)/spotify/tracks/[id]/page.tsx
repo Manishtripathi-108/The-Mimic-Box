@@ -56,7 +56,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     return (
         <section className="flex h-full items-center justify-center">
-            <div className="mt-20 w-full max-w-4xl">
+            <div className="mt-30 w-full max-w-4xl">
                 <CardContainer>
                     <div className="shadow-pressed-xs bg-secondary relative mx-auto -mt-20 w-fit overflow-hidden rounded-2xl border p-1 sm:-mt-32 sm:p-2">
                         <Image

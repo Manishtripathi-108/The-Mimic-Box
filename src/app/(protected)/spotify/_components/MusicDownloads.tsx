@@ -4,12 +4,11 @@ import isEqual from 'lodash.isequal';
 import toast from 'react-hot-toast';
 
 import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
-import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import { useAudioDownload } from '@/contexts/AudioDownload.context';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
-import { T_TrackContext } from '@/lib/types/client.types';
-import { downloadZip } from '@/lib/utils/client-archiver.utils';
+import { T_AudioPlayerTrack, T_TrackContext } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';
-import { downloadFile } from '@/lib/utils/file.utils';
 
 const QUALITIES = ['12kbps', '48kbps', '96kbps', '160kbps', '320kbps'];
 
@@ -22,66 +21,39 @@ type Props = {
 const MusicDownloads = ({ className, context, downloadCurrent = false, ...props }: Props) => {
     const { currentTrack, playbackContext, queue } = useAudioPlayerContext();
     const { mapTracks } = useMapSpotifyTracksToSaavn();
+    const { downloadTracks } = useAudioDownload();
 
-    const handleDownload = async (quality: string) => {
-        const toastId = toast.loading('Loading tracks...');
+    const getTracksToDownload = async (): Promise<T_AudioPlayerTrack[]> => {
+        if (playbackContext && isEqual(playbackContext, context)) {
+            return queue;
+        }
+
+        if (context) {
+            const res = await getSpotifyEntityTracks(context.id, context.type);
+            if (!res.success) throw new Error('Failed to fetch Spotify tracks');
+
+            return await mapTracks({ context, spotifyTracks: res.payload });
+        }
+
+        throw new Error('No tracks available to download');
+    };
+
+    const handleDownloadTracks = async (quality: string) => {
+        const toastId = toast.loading('starting download. Please wait...');
         try {
-            // 1. Download currentTrack playing track
             if (downloadCurrent && currentTrack) {
-                const url = currentTrack.urls.find((u) => u.quality === quality);
-                if (url) {
-                    await downloadFile(url.url, `${currentTrack.title} - ${quality}.mp3`);
-                    toast.success('Track downloaded successfully!', { id: toastId });
-                    return;
-                }
+                downloadTracks([currentTrack], quality);
+                toast.success('Download started', { id: toastId });
+                return;
             }
 
-            // 2. Download from queue if context matches
-            if (playbackContext && isEqual(playbackContext, context)) {
-                const files = queue
-                    .map((track) => {
-                        const url = track.urls.find((u) => u.quality === quality);
-                        return url ? { url: url.url, filename: `${track.title} - ${quality}.mp3` } : null;
-                    })
-                    .filter(Boolean) as { url: string; filename: string }[];
+            const tracks = await getTracksToDownload();
+            if (!tracks.length) throw new Error('No valid tracks found for selected quality.');
 
-                if (files.length > 0) {
-                    await downloadZip(files, `${playbackContext.name} Queue - ${quality}.zip`);
-                    toast.success('Queue downloaded successfully!', { id: toastId });
-                    return;
-                }
-            }
-
-            // 3. Download mapped Saavn tracks for the provided context
-            if (context) {
-                const res = await getSpotifyEntityTracks(context.id, context.type);
-                if (!res.success) {
-                    toast.error('Failed to fetch Spotify tracks', { id: toastId });
-                    console.error('Failed to fetch Spotify tracks', res.error);
-                    return;
-                }
-
-                const saavnTracks = await mapTracks({ context, spotifyTracks: res.payload });
-
-                const files = saavnTracks
-                    .map((track) => {
-                        const url = track.urls.find((u) => u.quality === quality);
-                        return url ? { url: url.url, filename: `${track.title} - ${quality}.mp3` } : null;
-                    })
-                    .filter(Boolean) as { url: string; filename: string }[];
-
-                if (files.length > 0) {
-                    await downloadZip(files, `${context.name} - ${quality}.zip`);
-                    toast.success('Saavn tracks downloaded successfully!', { id: toastId });
-                    return;
-                } else {
-                    toast.error('No Saavn tracks available at selected quality.', { id: toastId });
-                    console.error('No Saavn tracks available at selected quality.');
-                }
-            }
+            downloadTracks(tracks, quality);
+            toast.success('Download started', { id: toastId });
         } catch (err) {
-            toast.error('Error while downloading music', { id: toastId });
-            console.error('Error while downloading music:', err);
+            toast.error((err as Error).message || 'Error while downloading tracks', { id: toastId });
         }
     };
 
@@ -97,7 +69,7 @@ const MusicDownloads = ({ className, context, downloadCurrent = false, ...props 
                         <button
                             type="button"
                             className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 hover:text-white"
-                            onClick={() => handleDownload(quality)}>
+                            onClick={() => handleDownloadTracks(quality)}>
                             {quality}
                         </button>
                     </li>

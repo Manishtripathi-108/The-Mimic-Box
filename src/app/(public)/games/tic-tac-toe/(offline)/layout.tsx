@@ -50,7 +50,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     title="Clear Board"
                     className="button size-10 rounded-xl p-2"
                     aria-label="Clear Board">
-                    <Icon icon="broom" className="size-full" />
+                    <Icon icon="broom" />
                 </button>
             </section>
 

@@ -29,13 +29,14 @@ enum IconSet {
     document = 'solar:document-text-linear',
     down = 'formkit:down',
     download = 'line-md:download-loop',
+    downloading = 'line-md:downloading-loop',
     draw = 'fa-solid:handshake',
 
     /* ------------------------------------ E ----------------------------------- */
     edit = 'hugeicons:pencil-edit-02',
     editProfile = 'fluent:person-edit-24-filled',
     email = 'line-md:email-alt-filled',
-    error = 'meteocons:code-red-fill',
+    error = 'custom:error',
     executable = 'carbon:executable-program',
     eye = 'line-md:watch-loop',
     eyeClose = 'line-md:watch-off-loop',
@@ -87,6 +88,7 @@ enum IconSet {
     /* ------------------------------------ P ----------------------------------- */
     pause = 'line-md:pause',
     pauseToPlay = 'line-md:play-filled-to-pause-transition',
+    pending = 'solar:clock-circle-linear',
     person = 'line-md:person-filled',
     personAdd = 'line-md:person-add-filled',
     play = 'line-md:play-filled',
@@ -95,6 +97,7 @@ enum IconSet {
     plus = 'line-md:plus',
     presentation = 'hugeicons:presentation-bar-chart-02',
     previous = 'solar:skip-previous-bold',
+    processing = 'line-md:cog-loop',
 
     /* ------------------------------------ Q ----------------------------------- */
     quitFullscreen = 'solar:quit-full-screen-bold',
@@ -127,6 +130,7 @@ enum IconSet {
     up = 'formkit:up',
     unlink = 'octicon:unlink-16',
     upload = 'line-md:cloud-alt-upload-filled-loop',
+    uploading = 'line-md:uploading-loop',
 
     /* ------------------------------------ V ----------------------------------- */
     video = 'tabler:video-filled',

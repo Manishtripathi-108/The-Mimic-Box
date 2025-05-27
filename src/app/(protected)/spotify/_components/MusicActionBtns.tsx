@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
-import { useAudioPlayerContext } from '@/contexts/audioPlayer.context';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
 import { T_TrackContext } from '@/lib/types/client.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
@@ -46,7 +46,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                 aria-label="Share"
                 onClick={() => shareUrl({ url: window.location.href })}
                 className="button inline-flex size-9 rounded-full p-2">
-                <Icon icon="share" className="size-full" />
+                <Icon icon="share" />
             </button>
 
             <button
@@ -56,7 +56,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                 title={isTrackPlaying ? 'Pause' : 'Play'}
                 className="button button-highlight inline-flex size-14 rounded-full p-2"
                 disabled={isPending}>
-                <Icon icon={isPending ? 'loading' : isTrackPlaying ? 'pauseToPlay' : 'playToPause'} className="size-full" />
+                <Icon icon={isPending ? 'loading' : isTrackPlaying ? 'pauseToPlay' : 'playToPause'} />
             </button>
 
             <button

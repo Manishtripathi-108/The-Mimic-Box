@@ -77,7 +77,7 @@ const MusicTrackCard = ({ track, context }: MusicTrackCardProps) => {
 
             {/* Mobile More Button */}
             <button type="button" className="hover:text-text-primary size-8 cursor-pointer transition-colors @md:hidden">
-                <Icon icon="moreDots" className="size-full" />
+                <Icon icon="moreDots" />
             </button>
         </div>
     );

@@ -58,7 +58,7 @@ const A_MediaCard = ({
                         onClick={() => onEdit(media)}
                         className="button absolute top-2 right-2 z-10 size-7 rounded-full p-1"
                         aria-label="Edit">
-                        <Icon icon="edit" className="size-full" />
+                        <Icon icon="edit" />
                     </button>
                 )}
 
@@ -85,7 +85,7 @@ const A_MediaCard = ({
                                 onClick={() => onEdit(media)}
                                 className="button size-7 shrink-0 rounded-full p-1"
                                 aria-label="Edit">
-                                <Icon icon="edit" className="size-full" />
+                                <Icon icon="edit" />
                             </button>
                         )}
                     </header>
