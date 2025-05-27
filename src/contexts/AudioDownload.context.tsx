@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
 import axios from 'axios';
 import JSZip from 'jszip';
@@ -12,18 +12,19 @@ import { downloadFile } from '@/lib/utils/file.utils';
 
 type DownloadContextType = {
     downloads: T_DownloadFile[];
+    total: number;
+    completed: number;
     addDownload: (file: Omit<T_DownloadFile, 'status'>) => void;
-    downloadTracks: (tracks: T_AudioPlayerTrack[], quality: string) => Promise<void>;
     updateDownload: (id: string, updates: Partial<T_DownloadFile>) => void;
+    cancelDownload: (id: string) => void;
+    downloadTracks: (tracks: T_AudioPlayerTrack[], quality: string) => Promise<void>;
 };
 
 const DownloadContext = createContext<DownloadContextType | null>(null);
 
 export const useAudioDownload = () => {
     const context = useContext(DownloadContext);
-    if (!context) {
-        throw new Error('useAudioDownload must be used within a AudioDownloadProvider');
-    }
+    if (!context) throw new Error('useAudioDownload must be used within a AudioDownloadProvider');
     return context;
 };
 
@@ -45,10 +46,13 @@ const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: string): T_
     };
 };
 
-const batchSize = 5;
-
 export const AudioDownloadProvider = ({ children }: { children: React.ReactNode }) => {
     const [downloads, setDownloads] = useState<T_DownloadFile[]>([]);
+    const [total, setTotal] = useState(0);
+    const [completed, setCompleted] = useState(0);
+
+    const abortControllers = useRef<Record<string, AbortController>>({});
+
     const { isLoaded, load, writeFile, exec, readFile, deleteFile } = useFFmpeg();
 
     const addDownload = (file: Omit<T_DownloadFile, 'status'>) => {
@@ -59,88 +63,107 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         setDownloads((prev) => prev.map((file) => (file.id === id ? { ...file, ...updates } : file)));
     };
 
+    const cancelDownload = (id: string) => {
+        abortControllers.current[id]?.abort();
+        updateDownload(id, { status: 'cancelled' });
+    };
+
+    const processTrack = async (file: T_AudioFile, index: number, zip: JSZip) => {
+        const inputName = `input_${index}.mp4`;
+        const outputName = `${file.filename || `track_${index}`}.m4a`;
+        const coverName = file.cover ? `cover_${index}.jpg` : null;
+
+        const controller = new AbortController();
+        abortControllers.current[file.src] = controller;
+
+        try {
+            const response = await axios.get(file.src, {
+                responseType: 'blob',
+                signal: controller.signal,
+                onDownloadProgress: ({ progress }) => {
+                    updateDownload(file.src, { status: 'downloading', progress: (progress || 0) * 100 });
+                },
+            });
+
+            await writeFile(inputName, response.data);
+            if (coverName && file.cover) await writeFile(coverName, file.cover);
+
+            updateDownload(file.src, { status: 'processing', progress: 0 });
+
+            const args = ['-i', inputName];
+
+            if (coverName) {
+                args.push('-i', coverName, '-map', '0:a', '-map', '1', '-disposition:v', 'attached_pic', '-metadata:s:v', 'comment=Cover (front)');
+            }
+
+            args.push(...Object.entries(file.metadata).flatMap(([k, v]) => ['-metadata', `${k}=${v}`]), '-codec', 'copy', outputName);
+
+            await exec(args);
+            const output = await readFile(outputName);
+
+            zip.file(outputName, output);
+            updateDownload(file.src, { status: 'ready', progress: 100 });
+            setCompleted((prev) => prev + 1);
+
+            // Cleanup
+            await deleteFile(inputName);
+            if (coverName) await deleteFile(coverName);
+            await deleteFile(outputName);
+        } catch (err: unknown) {
+            if (axios.isCancel(err)) {
+                updateDownload(file.src, { status: 'cancelled' });
+            } else {
+                updateDownload(file.src, { status: 'failed' });
+                console.error(`Error processing ${file.src}`, err);
+            }
+        } finally {
+            delete abortControllers.current[file.src];
+        }
+    };
+
     const downloadTracks = async (tracks: T_AudioPlayerTrack[], quality: string) => {
         if (!isLoaded) await load();
 
-        const audioFiles = tracks.map((track) => buildAudioFileFromTrack(track, quality)).filter(Boolean) as T_AudioFile[];
+        const audioFiles = tracks.map((t) => buildAudioFileFromTrack(t, quality)).filter(Boolean) as T_AudioFile[];
         if (!audioFiles.length) {
             toast.error('No valid tracks found for selected quality.');
             return;
         }
 
-        const downloads: T_DownloadFile[] = audioFiles.map((file) => ({
-            id: file.src,
-            title: file.filename || 'Unknown Track',
-            url: file.src,
+        const files: T_DownloadFile[] = audioFiles.map((f) => ({
+            id: f.src,
+            title: f.filename || 'Unknown Track',
+            url: f.src,
             status: 'pending',
         }));
 
-        setDownloads((prev) => [...prev, ...downloads]);
+        setDownloads((prev) => [...prev, ...files]);
+        setTotal(audioFiles.length);
+        setCompleted(0);
 
         const zip = new JSZip();
-        for (let i = 0; i < audioFiles.length; i += batchSize) {
-            const batch = audioFiles.slice(i, i + batchSize);
-            for (let j = 0; j < batch.length; j++) {
-                const file = batch[j];
-                const idx = i + j;
-                const inputName = `input_${idx}.mp4`;
-                const outputName = `${file.filename || `output_${idx}`}.m4a`;
-                const coverName = file.cover ? `cover_${idx}.jpg` : null;
 
-                updateDownload(file.src, { status: 'downloading', progress: 0 });
+        await Promise.allSettled(audioFiles.map((file, i) => processTrack(file, i, zip)));
 
-                const response = await axios.get(file.src, {
-                    responseType: 'blob',
-                    onDownloadProgress: ({ progress }) => {
-                        updateDownload(file.src, { status: 'downloading', progress: (progress || 0) * 100 });
-                    },
-                });
-
-                await writeFile(inputName, response.data);
-                updateDownload(file.src, { status: 'processing', progress: 0 });
-
-                const args = ['-i', inputName];
-
-                if (coverName && file.cover) {
-                    await writeFile(coverName, file.cover);
-                    args.push(
-                        '-i',
-                        coverName,
-                        '-map',
-                        '0:a',
-                        '-map',
-                        '1',
-                        '-disposition:v',
-                        'attached_pic',
-                        '-metadata:s:v',
-                        'comment=Cover (front)'
-                    );
-                }
-
-                args.push(...Object.entries(file.metadata).flatMap(([k, v]) => ['-metadata', `${k}=${v}`]), '-codec', 'copy', outputName);
-                await exec(args);
-
-                const output = await readFile(outputName);
-                zip.file(outputName, output);
-
-                await deleteFile(inputName);
-                if (coverName) await deleteFile(coverName);
-                await deleteFile(outputName);
-                updateDownload(file.src, { status: 'ready', progress: 100 });
-            }
-        }
-        const zipId = new Date().getTime().toString();
-
+        const zipId = Date.now().toString();
         const zipFilename = `Tracks - ${zipId}.zip`;
 
-        setDownloads([{ id: zipId, title: zipFilename, url: '', status: 'processing' }]);
+        setDownloads((prev) => [...prev, { id: zipId, title: zipFilename, url: '', status: 'processing' }]);
 
-        const zipBlob = await zip.generateAsync({ type: 'blob' });
-
-        updateDownload(zipId, { status: 'ready', url: URL.createObjectURL(zipBlob), progress: 100 });
-
-        downloadFile(zipBlob, zipFilename);
+        try {
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            const zipUrl = URL.createObjectURL(zipBlob);
+            updateDownload(zipId, { url: zipUrl, status: 'ready', progress: 100 });
+            downloadFile(zipBlob, zipFilename);
+        } catch {
+            updateDownload(zipId, { status: 'failed' });
+            toast.error('Failed to generate zip.');
+        }
     };
 
-    return <DownloadContext.Provider value={{ downloads, addDownload, downloadTracks, updateDownload }}>{children}</DownloadContext.Provider>;
+    return (
+        <DownloadContext.Provider value={{ downloads, total, completed, addDownload, updateDownload, cancelDownload, downloadTracks }}>
+            {children}
+        </DownloadContext.Provider>
+    );
 };

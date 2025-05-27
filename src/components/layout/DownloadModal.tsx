@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -10,15 +10,28 @@ import { useAudioDownload } from '@/contexts/AudioDownload.context';
 import cn from '@/lib/utils/cn';
 
 const DownloadModal = ({ className }: { className?: string }) => {
-    const { downloads } = useAudioDownload();
+    const { downloads, total, completed, cancelDownload } = useAudioDownload();
     const [open, setOpen] = useState(false);
-    if (!downloads.length) return null;
 
+    // Optional: Close on Escape
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setOpen(false);
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    if (!downloads.length) return null;
     return (
         <div
-            className={cn('fixed top-25 right-10 z-50 max-w-sm', className, {
-                'w-full': open,
-            })}>
+            className={cn('fixed z-50', className, {
+                'inset-0 h-dvh sm:inset-auto sm:top-24 sm:right-10 sm:h-[60vh] sm:w-full sm:max-w-sm': open,
+                'top-24 right-10': !open,
+            })}
+            aria-modal="true"
+            role="dialog"
+            aria-labelledby="download-progress-title">
             <AnimatePresence>
                 {open ? (
                     <motion.div
@@ -26,31 +39,43 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-secondary overflow-hidden rounded-xl pb-4">
+                        className="bg-secondary flex h-full flex-col overflow-hidden sm:rounded-xl">
                         {/* Header */}
-                        <div className="shadow-raised-xs mb-4 flex items-center justify-between p-4">
+                        <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
                             <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Download Progress</h2>
                             <button
                                 className="button size-7 shrink-0 rounded-full p-1"
-                                title="close"
-                                aria-label="Close"
+                                title="Close modal"
+                                aria-label="Close modal"
                                 onClick={() => setOpen(false)}>
                                 <Icon icon="close" />
                             </button>
                         </div>
 
+                        {/* Progress Summary */}
+                        <div className="text-text-secondary flex items-center justify-between gap-4 px-4 py-2 text-sm">
+                            <span>Completed: {completed}</span>
+                            <span>Total: {total}</span>
+                        </div>
+
                         {/* Content */}
-                        <div className="sm:scrollbar-thin max-h-[60vh] space-y-4 overflow-y-auto px-4 pb-1">
+                        <div className="sm:scrollbar-thin max-h-full flex-1 space-y-2 overflow-y-auto px-4 pt-2 pb-4">
                             {downloads.length === 0 ? (
-                                <p className="text-text-secondary text-center">No active downloads</p>
+                                <div className="text-text-secondary py-6 text-center">No active downloads.</div>
                             ) : (
-                                downloads.map((file) => <DownloadItem key={file.id} file={file} />)
+                                downloads.map((file) => <DownloadItem key={file.id} file={file} onCancel={() => cancelDownload(file.id)} />)
                             )}
                         </div>
                     </motion.div>
                 ) : (
                     <div className="button size-10 rounded-full p-2">
-                        <button type="button" onClick={() => setOpen(true)} className="relative size-full cursor-pointer">
+                        <button
+                            title="Open Downloads"
+                            aria-haspopup="dialog"
+                            type="button"
+                            onClick={() => setOpen(true)}
+                            className="relative size-full cursor-pointer"
+                            aria-label="Open Downloads">
                             <Icon icon="download" />
                             {downloads.length > 0 && (
                                 <motion.div
@@ -58,7 +83,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                                     animate={{ scale: 1 }}
                                     transition={{ type: 'spring', stiffness: 300 }}
                                     className="bg-accent before:bg-accent absolute -top-3.5 -right-3.5 size-5 rounded-full before:absolute before:inset-0 before:animate-ping before:rounded-full">
-                                    <span className="text-text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs select-none">
+                                    <span className="text-text-primary absolute inset-0 flex items-center justify-center text-xs font-bold">
                                         {downloads.length}
                                     </span>
                                 </motion.div>

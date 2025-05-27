@@ -121,7 +121,7 @@ export type T_AudioPlayerAction =
     | { type: 'NEXT_TRACK' }
     | { type: 'PREV_TRACK' };
 
-type T_DownloadStatus = 'pending' | 'processing' | 'downloading' | 'ready' | 'failed';
+type T_DownloadStatus = 'pending' | 'processing' | 'downloading' | 'ready' | 'failed' | 'cancelled';
 
 export type T_DownloadFile = {
     id: string;
