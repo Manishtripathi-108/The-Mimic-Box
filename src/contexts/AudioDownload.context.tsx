@@ -66,16 +66,10 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
     const cancelDownload = (id: string) => {
         abortControllers.current[id]?.abort();
-        setTimeout(() => {
-            updateDownload(id, { status: 'cancelled' });
-        }, 100);
     };
 
     const cancelAllDownloads = () => {
         Object.values(abortControllers.current).forEach((controller) => controller.abort());
-        setTimeout(() => {
-            setDownloads((prev) => prev.map((file) => ({ ...file, status: 'cancelled' })));
-        }, 100);
     };
 
     const processTrack = async (file: T_AudioFile, index: number, zip: JSZip) => {
@@ -121,7 +115,9 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             await deleteFile(outputName);
         } catch (err: unknown) {
             if (axios.isCancel(err)) {
-                updateDownload(file.src, { status: 'cancelled' });
+                setTimeout(() => {
+                    updateDownload(file.src, { status: 'cancelled' });
+                }, 100);
             } else {
                 updateDownload(file.src, { status: 'failed' });
                 console.error(`Error processing ${file.src}`, err);
@@ -155,12 +151,12 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
         await Promise.allSettled(audioFiles.map((file, i) => processTrack(file, i, zip)));
 
-        if (!zip.length) return;
+        if (!Object.keys(zip.files).length) return;
 
         const zipId = Date.now().toString();
         const zipFilename = `Tracks - ${zipId}.zip`;
 
-        setDownloads((prev) => [...prev, { id: zipId, title: zipFilename, url: '', status: 'processing' }]);
+        setDownloads([{ id: zipId, title: zipFilename, url: '', status: 'processing' }]);
 
         try {
             const zipBlob = await zip.generateAsync({ type: 'blob' });

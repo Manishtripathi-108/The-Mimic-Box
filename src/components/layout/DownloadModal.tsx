@@ -55,7 +55,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         {/* Progress Summary */}
                         <div className="text-text-secondary flex items-center justify-between gap-4 px-4 py-2 text-sm">
                             <span>
-                                Completed: {completed}\{total}
+                                Completed: {completed}/{total}
                             </span>
                             <button className="button button-danger px-2 py-1" onClick={cancelAllDownloads}>
                                 Cancel All
