@@ -25,7 +25,7 @@ const HorizontalScrollSection = ({
                         title="Show All"
                         aria-label="Show All"
                         className="text-text-secondary hover:text-text-primary size-7 rotate-90 transition-colors">
-                        <Icon icon="moreDots" className="size-full" />
+                        <Icon icon="moreDots" />
                     </Link>
                 )}
             </div>

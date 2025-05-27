@@ -136,7 +136,7 @@ const MusicMiniPlayer = () => {
                             onClick={() => toggleFadePlay()}
                             className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5"
                             aria-label={playing ? 'Pause' : 'Play'}>
-                            <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} className="size-full" />
+                            <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} />
                         </button>
 
                         <button

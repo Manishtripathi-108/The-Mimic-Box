@@ -72,7 +72,7 @@ const A_Toolbar = ({
                     title="Filter"
                     onClick={() => openModal('modal-anilist-filters')}
                     className="button text-highlight ml-4 size-8 rounded-xl p-2">
-                    <Icon icon="filter" className="size-full" />
+                    <Icon icon="filter" />
                 </button>
             </div>
         </div>

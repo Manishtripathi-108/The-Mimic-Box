@@ -41,7 +41,7 @@ const ProfileDropdown = () => {
     if (status === 'loading')
         return (
             <div className="button text-highlight size-9 cursor-wait rounded-full p-1.5">
-                <Icon icon="loading" className="size-full" />
+                <Icon icon="loading" />
             </div>
         );
 

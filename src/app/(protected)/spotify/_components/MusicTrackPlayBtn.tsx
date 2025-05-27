@@ -51,7 +51,7 @@ const MusicTrackBtn = ({ id, context }: { id: string; context: T_TrackContext })
             onClick={handlePlayPause}
             className="hover:text-text-primary size-7 shrink-0 cursor-pointer transition-colors"
             aria-label={getPlayerState() ? 'Play' : 'Pause'}>
-            <Icon icon={getPlayerState() ? 'pauseToPlay' : 'playToPause'} className="size-full" />
+            <Icon icon={getPlayerState() ? 'pauseToPlay' : 'playToPause'} />
         </button>
     );
 };

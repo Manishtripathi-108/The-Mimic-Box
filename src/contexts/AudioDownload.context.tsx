@@ -65,6 +65,9 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
     const cancelDownload = (id: string) => {
         abortControllers.current[id]?.abort();
+        setTimeout(() => {
+            updateDownload(id, { status: 'cancelled' });
+        }, 100);
     };
 
     const processTrack = async (file: T_AudioFile, index: number, zip: JSZip) => {

@@ -29,6 +29,7 @@ enum IconSet {
     document = 'solar:document-text-linear',
     down = 'formkit:down',
     download = 'line-md:download-loop',
+    downloading = 'line-md:downloading-loop',
     draw = 'fa-solid:handshake',
 
     /* ------------------------------------ E ----------------------------------- */
@@ -96,6 +97,7 @@ enum IconSet {
     plus = 'line-md:plus',
     presentation = 'hugeicons:presentation-bar-chart-02',
     previous = 'solar:skip-previous-bold',
+    processing = 'line-md:cog-loop',
 
     /* ------------------------------------ Q ----------------------------------- */
     quitFullscreen = 'solar:quit-full-screen-bold',
@@ -128,6 +130,7 @@ enum IconSet {
     up = 'formkit:up',
     unlink = 'octicon:unlink-16',
     upload = 'line-md:cloud-alt-upload-filled-loop',
+    uploading = 'line-md:uploading-loop',
 
     /* ------------------------------------ V ----------------------------------- */
     video = 'tabler:video-filled',

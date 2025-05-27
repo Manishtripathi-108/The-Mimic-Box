@@ -12,13 +12,13 @@ const DownloadItem = ({ file, onCancel }: { file: T_DownloadFile; onCancel: () =
             label: 'Pending',
         },
         processing: {
-            icon: 'loading',
-            className: 'text-blue-500',
+            icon: 'processing',
+            className: 'text-highlight',
             label: 'Processing',
         },
         downloading: {
-            icon: 'loading',
-            className: 'text-green-500',
+            icon: 'downloading',
+            className: 'text-accent',
             label: 'Downloading',
         },
         ready: {
@@ -39,38 +39,43 @@ const DownloadItem = ({ file, onCancel }: { file: T_DownloadFile; onCancel: () =
     };
 
     const status = statusMap[file.status];
-
     const isCancelable = ['pending', 'processing', 'downloading'].includes(file.status);
 
     return (
-        <div className="from-secondary to-tertiary shadow-floating-xs flex w-full items-center justify-between gap-4 rounded-xl bg-linear-150 p-3">
-            <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <span className="text-text-primary truncate text-sm">{file.title}</span>
+        <div className="from-secondary to-tertiary shadow-floating-xs relative w-full rounded-xl bg-linear-150 p-3">
+            <div className="flex items-center justify-between">
+                {/* Title and Progress */}
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                        <span className="text-text-primary truncate text-sm font-medium">{file.title}</span>
 
-                {file.status === 'downloading' && (
-                    <div className="shadow-pressed-xs relative h-1 w-full rounded-full">
                         <div
-                            className="bg-highlight absolute top-0 left-0 h-full rounded-full transition-all duration-300 ease-in-out"
-                            style={{ width: `${file.progress || 0}%` }}
-                        />
+                            className={`ml-2 flex size-5 shrink-0 items-center justify-center ${status.className}`}
+                            aria-label={`Status: ${status.label}`}
+                            title={status.label}>
+                            <Icon icon={status.icon} />
+                        </div>
                     </div>
-                )}
-            </div>
 
-            <div className="flex items-center gap-2">
-                <div
-                    className={`flex size-5 shrink-0 items-center justify-center ${status.className}`}
-                    aria-label={`Status: ${status.label}`}
-                    title={status.label}>
-                    <Icon icon={status.icon} className="size-full" />
+                    {/* Progress Bar */}
+                    {file.status === 'downloading' && (
+                        <div className="shadow-pressed-xs relative mt-2 h-1 w-full overflow-hidden rounded-full">
+                            <div
+                                className="bg-accent absolute top-0 left-0 h-full rounded-full transition-all duration-300 ease-in-out"
+                                style={{ width: `${file.progress || 0}%` }}
+                            />
+                        </div>
+                    )}
                 </div>
 
+                {/* Cancel Button */}
                 {isCancelable && (
                     <button
-                        onClick={() => onCancel()}
-                        className="rounded px-1 py-0.5 text-xs text-red-500 transition hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+                        onClick={onCancel}
+                        title={`Cancel download of ${file.title}`}
+                        className="ml-2 size-5 shrink-0 cursor-pointer rounded-full text-red-500 hover:text-red-600"
                         aria-label={`Cancel download of ${file.title}`}>
-                        Cancel
+                        <Icon icon="close" />
                     </button>
                 )}
             </div>
