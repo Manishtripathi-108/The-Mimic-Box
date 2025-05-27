@@ -65,7 +65,6 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
     const cancelDownload = (id: string) => {
         abortControllers.current[id]?.abort();
-        updateDownload(id, { status: 'cancelled' });
     };
 
     const processTrack = async (file: T_AudioFile, index: number, zip: JSZip) => {
@@ -122,8 +121,6 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
     };
 
     const downloadTracks = async (tracks: T_AudioPlayerTrack[], quality: string) => {
-        if (!isLoaded) await load();
-
         const audioFiles = tracks.map((t) => buildAudioFileFromTrack(t, quality)).filter(Boolean) as T_AudioFile[];
         if (!audioFiles.length) {
             toast.error('No valid tracks found for selected quality.');
@@ -140,6 +137,8 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         setDownloads((prev) => [...prev, ...files]);
         setTotal(audioFiles.length);
         setCompleted(0);
+
+        if (!isLoaded) await load();
 
         const zip = new JSZip();
 
