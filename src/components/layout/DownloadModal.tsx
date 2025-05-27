@@ -10,10 +10,10 @@ import { useAudioDownload } from '@/contexts/AudioDownload.context';
 import cn from '@/lib/utils/cn';
 
 const DownloadModal = ({ className }: { className?: string }) => {
-    const { downloads, total, completed, cancelDownload } = useAudioDownload();
+    const { downloads, total, completed, cancelDownload, cancelAllDownloads } = useAudioDownload();
     const [open, setOpen] = useState(false);
 
-    // Optional: Close on Escape
+    // Close on Escape
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') setOpen(false);
@@ -54,8 +54,12 @@ const DownloadModal = ({ className }: { className?: string }) => {
 
                         {/* Progress Summary */}
                         <div className="text-text-secondary flex items-center justify-between gap-4 px-4 py-2 text-sm">
-                            <span>Completed: {completed}</span>
-                            <span>Total: {total}</span>
+                            <span>
+                                Completed: {completed}\{total}
+                            </span>
+                            <button className="button button-danger px-2 py-1" onClick={cancelAllDownloads}>
+                                Cancel All
+                            </button>
                         </div>
 
                         {/* Content */}

@@ -17,6 +17,7 @@ type DownloadContextType = {
     addDownload: (file: Omit<T_DownloadFile, 'status'>) => void;
     updateDownload: (id: string, updates: Partial<T_DownloadFile>) => void;
     cancelDownload: (id: string) => void;
+    cancelAllDownloads: () => void;
     downloadTracks: (tracks: T_AudioPlayerTrack[], quality: string) => Promise<void>;
 };
 
@@ -67,6 +68,13 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         abortControllers.current[id]?.abort();
         setTimeout(() => {
             updateDownload(id, { status: 'cancelled' });
+        }, 100);
+    };
+
+    const cancelAllDownloads = () => {
+        Object.values(abortControllers.current).forEach((controller) => controller.abort());
+        setTimeout(() => {
+            setDownloads((prev) => prev.map((file) => ({ ...file, status: 'cancelled' })));
         }, 100);
     };
 
@@ -147,6 +155,8 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
         await Promise.allSettled(audioFiles.map((file, i) => processTrack(file, i, zip)));
 
+        if (!zip.length) return;
+
         const zipId = Date.now().toString();
         const zipFilename = `Tracks - ${zipId}.zip`;
 
@@ -164,7 +174,8 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
     };
 
     return (
-        <DownloadContext.Provider value={{ downloads, total, completed, addDownload, updateDownload, cancelDownload, downloadTracks }}>
+        <DownloadContext.Provider
+            value={{ downloads, total, completed, addDownload, updateDownload, cancelDownload, cancelAllDownloads, downloadTracks }}>
             {children}
         </DownloadContext.Provider>
     );
