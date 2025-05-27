@@ -2,8 +2,8 @@ import MusicMiniPlayer from '@/app/(protected)/spotify/_components/MusicMiniPlay
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
 import DownloadModal from '@/components/layout/DownloadModal';
+import { AudioDownloadProvider } from '@/contexts/AudioDownload.context';
 import { AudioPlayerProvider } from '@/contexts/AudioPlayer.context';
-import { DownloadProvider } from '@/contexts/Download.context';
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
     const session = await auth();
@@ -20,11 +20,11 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="min-h-calc-full-height flex w-full p-2 sm:p-6">
             <AudioPlayerProvider>
-                <DownloadProvider>
+                <AudioDownloadProvider>
                     <DownloadModal />
                     <main className="w-full pb-16">{children}</main>
                     <MusicMiniPlayer />
-                </DownloadProvider>
+                </AudioDownloadProvider>
             </AudioPlayerProvider>
         </div>
     );

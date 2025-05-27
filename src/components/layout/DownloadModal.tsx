@@ -6,11 +6,11 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import DownloadItem from '@/components/ui/DownloadItem';
 import Icon from '@/components/ui/Icon';
-import { useDownload } from '@/contexts/Download.context';
+import { useAudioDownload } from '@/contexts/AudioDownload.context';
 import cn from '@/lib/utils/cn';
 
 const DownloadModal = ({ className }: { className?: string }) => {
-    const { downloads } = useDownload();
+    const { downloads } = useAudioDownload();
     const [open, setOpen] = useState(false);
     if (!downloads.length) return null;
 

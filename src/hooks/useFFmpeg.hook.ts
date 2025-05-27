@@ -6,58 +6,63 @@ import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
 
 export const useFFmpeg = () => {
-    const ffmpegRef = useRef(new FFmpeg());
+    const ffmpegRef = useRef<FFmpeg | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [log, setLog] = useState<string[]>([]);
 
     const load = async () => {
+        if (!ffmpegRef.current) {
+            ffmpegRef.current = new FFmpeg();
+        }
+
         const ffmpeg = ffmpegRef.current;
+
         if (ffmpeg.loaded) {
             setIsLoaded(true);
             return;
         }
 
-        ffmpeg.on('log', ({ message }) => {
-            setLog((prev) => [...prev, message]);
-            console.log('[ffmpeg]', message);
-        });
+        // ffmpeg.on('log', ({ message }) => {
+        //     setLog((prev) => [...prev, message]);
+        //     console.log('[ffmpeg]', message);
+        // });
 
-        ffmpeg.on('progress', ({ progress }) => {
-            setProgress(progress * 100);
-        });
+        // ffmpeg.on('progress', ({ progress }) => {
+        //     console.log('[ffmpeg] Progress:', progress * 100);
+        // });
 
         await ffmpeg.load({
             coreURL: '/download/ffmpeg-core.js',
             wasmURL: '/download/ffmpeg-core.wasm',
         });
+
         setIsLoaded(true);
     };
 
+    const ensureLoaded = () => {
+        if (!ffmpegRef.current || !ffmpegRef.current.loaded) {
+            throw new Error('FFmpeg is not loaded');
+        }
+        return ffmpegRef.current;
+    };
+
     const exec = async (args: string[]) => {
-        if (!ffmpegRef.current.loaded) throw new Error('FFmpeg is not loaded');
-        await ffmpegRef.current.exec(args);
+        const ffmpeg = ensureLoaded();
+        await ffmpeg.exec(args);
     };
 
     const writeFile = async (name: string, data: string | File | Blob) => {
-        if (!ffmpegRef.current.loaded) throw new Error('FFmpeg is not loaded');
-        await ffmpegRef.current.writeFile(name, await fetchFile(data));
+        const ffmpeg = ensureLoaded();
+        await ffmpeg.writeFile(name, await fetchFile(data));
     };
 
     const readFile = async (name: string) => {
-        if (!ffmpegRef.current.loaded) throw new Error('FFmpeg is not loaded');
-        const file = await ffmpegRef.current.readFile(name);
-        return file;
+        const ffmpeg = ensureLoaded();
+        return await ffmpeg.readFile(name);
     };
 
     const deleteFile = async (name: string) => {
-        if (!ffmpegRef.current.loaded) throw new Error('FFmpeg is not loaded');
-        await ffmpegRef.current.deleteFile(name);
-    };
-
-    const reset = () => {
-        setProgress(0);
-        setLog([]);
+        const ffmpeg = ensureLoaded();
+        await ffmpeg.deleteFile(name);
     };
 
     return {
@@ -67,9 +72,6 @@ export const useFFmpeg = () => {
         writeFile,
         readFile,
         deleteFile,
-        progress,
-        log,
-        reset,
         ffmpeg: ffmpegRef.current,
     };
 };
