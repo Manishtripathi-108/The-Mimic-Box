@@ -10,7 +10,7 @@ import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { T_TrackContext } from '@/lib/types/client.types';
 
 const MusicTrackBtn = ({ id, context }: { id: string; context: T_TrackContext }) => {
-    const { playbackContext, currentTrack, playing, pause, play, playTrackById } = useAudioPlayerContext();
+    const { playbackContext, currentTrack, playing, toggleFadePlay, playTrackById } = useAudioPlayerContext();
     // const { isPending, mapTracks } = useMapSpotifyTracksToSaavn();
     const isSameContext = isEqual(playbackContext, context);
     const isCurrentTrack = currentTrack && currentTrack.spotifyId === id;
@@ -22,11 +22,7 @@ const MusicTrackBtn = ({ id, context }: { id: string; context: T_TrackContext })
 
     const handlePlayPause = () => {
         if (isCurrentTrack) {
-            if (playing) {
-                pause();
-            } else {
-                play();
-            }
+            toggleFadePlay();
         } else {
             if (isSameContext) {
                 playTrackById({ spotifyId: id });

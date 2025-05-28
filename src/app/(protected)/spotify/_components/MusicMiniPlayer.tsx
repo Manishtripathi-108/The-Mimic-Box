@@ -1,14 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
-import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
+
+const MusicDownloadPopover = lazy(() => import('@/app/(protected)/spotify/_components/MusicDownloadPopover'));
+const MusicQueue = lazy(() => import('@/app/(protected)/spotify/_components/MusicQueue'));
 
 const MusicMiniPlayer = () => {
     const [playbackState, setPlaybackState] = useState({
@@ -16,12 +18,11 @@ const MusicMiniPlayer = () => {
         buffered: null as TimeRanges | null,
     });
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-    const popoverRef = useRef<HTMLDivElement>(null);
+    const [isQueueOpen, setIsQueueOpen] = useState(false);
 
     const lastTimeUpdateRef = useRef(0);
     const {
         currentTrack,
-        queue,
         duration,
         volume,
         muted,
@@ -69,17 +70,22 @@ const MusicMiniPlayer = () => {
 
     // Close popover on outside click
     useEffect(() => {
-        if (!isPopoverOpen) return;
+        if (!isPopoverOpen && !isQueueOpen) return;
 
         const handleClickOutside = (event: MouseEvent) => {
-            if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+            const popoverContainer = document.getElementById('download-popover-container');
+            if (popoverContainer && !popoverContainer.contains(event.target as Node)) {
                 setIsPopoverOpen(false);
+            }
+            const queueContainer = document.getElementById('queue-popover-container');
+            if (queueContainer && !queueContainer.contains(event.target as Node)) {
+                setIsQueueOpen(false);
             }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isPopoverOpen]);
+    }, [isPopoverOpen, isQueueOpen]);
 
     if (!currentTrack) return null;
 
@@ -157,8 +163,12 @@ const MusicMiniPlayer = () => {
                             <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
 
-                        <div className="relative hidden @md:inline" ref={popoverRef}>
-                            {isPopoverOpen && <MusicDownloads downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />}
+                        <div className="relative hidden @md:inline" id="download-popover-container">
+                            {isPopoverOpen && (
+                                <Suspense fallback={<Icon icon="loading" className="text-accent absolute inset-0 size-7" />}>
+                                    <MusicDownloadPopover downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />
+                                </Suspense>
+                            )}
                             <button
                                 type="button"
                                 title="Download"
@@ -223,14 +233,21 @@ const MusicMiniPlayer = () => {
                         </label>
                     </div>
 
-                    {/* Debug Buttons */}
-                    <button
-                        type="button"
-                        title="Queue"
-                        onClick={() => console.log(queue)}
-                        className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
-                        <Icon icon="musicQueue" className="size-5" />
-                    </button>
+                    <div className="relative" id="queue-popover-container">
+                        <button
+                            type="button"
+                            title="Queue"
+                            onClick={() => setIsQueueOpen((prev) => !prev)}
+                            className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
+                            <Icon icon="musicQueue" className="size-5" />
+                        </button>
+
+                        {isQueueOpen && (
+                            <Suspense fallback={<Icon icon="loading" className="text-accent absolute inset-0 size-7" />}>
+                                <MusicQueue className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right" />
+                            </Suspense>
+                        )}
+                    </div>
 
                     <button
                         type="button"

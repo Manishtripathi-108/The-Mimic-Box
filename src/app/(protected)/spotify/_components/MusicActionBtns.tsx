@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 
 import toast from 'react-hot-toast';
 
-import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
+import MusicDownloadPopover from '@/app/(protected)/spotify/_components/MusicDownloadPopover';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
@@ -82,7 +82,7 @@ const MusicActionBtns = ({ className, context, spotifyTracks }: Props) => {
                     </li>
                 </ul>
             </div>
-            <MusicDownloads context={context} popover="auto" className="mr-1 [position-area:left_span-top]" />
+            <MusicDownloadPopover context={context} popover="auto" className="mr-1 [position-area:left_span-top]" />
         </div>
     );
 };

@@ -18,7 +18,7 @@ type Props = {
     downloadCurrent?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-const MusicDownloads = ({ className, context, downloadCurrent = false, ...props }: Props) => {
+const MusicDownloadPopover = ({ className, context, downloadCurrent = false, ...props }: Props) => {
     const { currentTrack, playbackContext, queue } = useAudioPlayerContext();
     const { mapTracks } = useMapSpotifyTracksToSaavn();
     const { downloadTracks } = useAudioDownload();
@@ -79,4 +79,4 @@ const MusicDownloads = ({ className, context, downloadCurrent = false, ...props 
     );
 };
 
-export default MusicDownloads;
+export default MusicDownloadPopover;
