@@ -57,7 +57,7 @@ export const createArtistBasePayload = (artist: T_ArtistBaseAPIResponse): T_Arti
 
 export const createSongPayload = (song: T_SongAPIResponse): T_Song => ({
     id: song.id,
-    name: song.title,
+    name: song.title.replace(/&amp;/g, '&').replace(/&quot;/g, '"'),
     type: song.type,
     year: song.year || null,
     releaseDate: song.more_info?.release_date || null,
@@ -73,7 +73,7 @@ export const createSongPayload = (song: T_SongAPIResponse): T_Song => ({
     copyright: song.more_info?.copyright_text || null,
     album: {
         id: song.more_info?.album_id || null,
-        name: song.more_info?.album || null,
+        name: song.more_info?.album.replace(/&amp;/g, '&').replace(/&quot;/g, '"') || null,
         url: song.more_info?.album_url || null,
     },
     artists: {

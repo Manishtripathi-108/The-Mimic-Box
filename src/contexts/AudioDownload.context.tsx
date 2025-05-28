@@ -40,10 +40,10 @@ const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: string): T_
         cover: track.covers?.find((c) => c.quality === '500x500')?.url,
         metadata: {
             title: track.title,
-            artist: track.artists || 'Unknown Artist',
-            album: track.album || 'Unknown Album',
-            year: track.year || 'Unknown Year',
-            language: track.language || 'Unknown Language',
+            artist: track.artists,
+            album: track.album || ' ',
+            date: track.year || ' ',
+            language: track.language || ' ',
         },
     };
 };
