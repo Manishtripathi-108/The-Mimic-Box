@@ -15,7 +15,7 @@ const useMapSpotifyTracksToSaavn = () => {
     const { isPending, makeParallelApiCalls } = useSafeApiCall<null, { total: number; start: number; results: T_Song[] }>();
 
     const mapTracks = useCallback(
-        async ({ context, spotifyTracks }: { context: T_TrackContext; spotifyTracks: T_SpotifySimplifiedTrack[] }) => {
+        async ({ context, spotifyTracks }: { context: T_TrackContext; spotifyTracks: T_SpotifySimplifiedTrack[] }): Promise<T_AudioPlayerTrack[]> => {
             const matchedTracks: T_AudioPlayerTrack[] = [];
             const usedSaavnTrackIds = new Set<string>();
 
