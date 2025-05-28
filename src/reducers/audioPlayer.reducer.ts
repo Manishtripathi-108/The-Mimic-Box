@@ -1,3 +1,5 @@
+'use client';
+
 import { T_AudioPlayerAction, T_AudioPlayerState } from '@/lib/types/client.types';
 
 export const audioPlayerInitialState: T_AudioPlayerState = {

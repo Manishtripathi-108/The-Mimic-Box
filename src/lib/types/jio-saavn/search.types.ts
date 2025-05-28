@@ -80,7 +80,7 @@ export type T_SearchResponse = {
             language: string;
         }
     >;
-    artists: T_SearchSection<T_ArtistBase & { position: number }>;
+    artists: T_SearchSection<T_NormalizedEntityBase>;
     playlists: T_SearchSection<
         T_NormalizedEntityBase & {
             url: string;

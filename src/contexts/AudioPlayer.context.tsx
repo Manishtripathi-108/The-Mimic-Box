@@ -186,15 +186,9 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         [updateAudioState]
     );
 
-    const setPlaybackRate = useCallback(
-        (rate: number) => {
-            if (audioRef.current) {
-                audioRef.current.playbackRate = rate;
-                updateAudioState({ playbackRate: rate });
-            }
-        },
-        [updateAudioState]
-    );
+    const setPlaybackRate = useCallback((rate: number) => {
+        if (audioRef.current) audioRef.current.playbackRate = rate;
+    }, []);
 
     const toggleMute = useCallback(() => {
         const audio = audioRef.current;
@@ -269,6 +263,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         const onLoadedMetadata = () => updateAudioState({ duration: audio.duration, loading: false });
         const onPlaying = () => updateAudioState({ loading: false, playing: true });
         const onWaiting = () => updateAudioState({ loading: true });
+        const onRateChange = () => updateAudioState({ playbackRate: audio.playbackRate });
         const onEnded = () => {
             if (!audio.loop) playNext();
         };
@@ -276,6 +271,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         const events: [keyof HTMLMediaElementEventMap, EventListener][] = [
             ['loadedmetadata', onLoadedMetadata],
             ['playing', onPlaying],
+            ['ratechange', onRateChange],
             ['waiting', onWaiting],
             ['error', onError],
             ['ended', onEnded],
@@ -293,6 +289,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
 
     useEffect(() => {
         if (audioState.playing) setTimeout(play, 100);
+        if (audioRef.current) audioRef.current.playbackRate = audioState.playbackRate;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentTrack]);
 

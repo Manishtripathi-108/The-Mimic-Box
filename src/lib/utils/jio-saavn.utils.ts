@@ -180,7 +180,6 @@ export const createSearchPayload = (search: T_SearchAPIResponse): T_SearchRespon
             image: createImageLinks(artist?.image),
             type: artist?.type,
             description: artist?.description,
-            position: artist?.position,
         })),
         position: search?.artists?.position,
     },

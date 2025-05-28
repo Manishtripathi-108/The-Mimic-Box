@@ -34,6 +34,8 @@ const MusicMiniPlayer = () => {
         toggleMute,
         toggleLoop,
         toggleShuffle,
+        playbackRate,
+        setPlaybackRate,
         seekTo,
         setVolume,
         playNext,
@@ -210,7 +212,7 @@ const MusicMiniPlayer = () => {
                 </div>
 
                 {/* Volume & Actions */}
-                <div className="hidden shrink-0 items-center gap-2 @xl:flex">
+                <div className="hidden shrink-0 items-center @xl:flex">
                     <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
                         <button
                             type="button"
@@ -249,13 +251,23 @@ const MusicMiniPlayer = () => {
                         )}
                     </div>
 
-                    <button
-                        type="button"
-                        title="Fullscreen"
-                        // onClick={() => setQueue(/** test queue */)}
-                        className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
-                        <Icon icon="fullscreen" className="size-4" />
-                    </button>
+                    <label htmlFor="playBackRate" className="sr-only">
+                        Select playback rate
+                    </label>
+                    <select
+                        name="playBackRate"
+                        id="playBackRate"
+                        value={playbackRate}
+                        onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+                        className="text-text-secondary *:bg-secondary hover:bg-primary cursor-pointer appearance-none rounded-full px-2 py-1 text-center text-sm">
+                        <option value="0.5">0.5x</option>
+                        <option value="0.75">0.75x</option>
+                        <option value="1">1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                        <option value="3">3x</option>
+                    </select>
 
                     <button
                         type="button"

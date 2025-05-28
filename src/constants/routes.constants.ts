@@ -72,7 +72,10 @@ export const APP_ROUTES = {
 
     SPOTIFY: {
         DASHBOARD: '/spotify/dashboard',
-        SEARCH: '/spotify/search',
+        SEARCH: (query: string = ''): string => {
+            const trimmedQuery = query.trim();
+            return `/spotify/search?q=${encodeURIComponent(trimmedQuery)}`;
+        },
         PLAYLISTS: '/spotify/playlists',
         PLAYLIST: (id: string) => `/spotify/playlists/${id}`,
         ALBUMS: (id: string) => `/spotify/albums/${id}`,
