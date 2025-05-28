@@ -10,7 +10,7 @@ import { useAudioDownload } from '@/contexts/AudioDownload.context';
 import cn from '@/lib/utils/cn';
 
 const DownloadModal = ({ className }: { className?: string }) => {
-    const { downloads, total, completed, cancelDownload, cancelAllDownloads } = useAudioDownload();
+    const { downloads, total, completed, cancelDownload, cancelAllDownloads, clearDownloads } = useAudioDownload();
     const [open, setOpen] = useState(false);
 
     // Close on Escape
@@ -57,6 +57,9 @@ const DownloadModal = ({ className }: { className?: string }) => {
                             <span>
                                 Completed: {completed}/{total}
                             </span>
+                            <button className="button px-2 py-1" onClick={clearDownloads}>
+                                Clear
+                            </button>
                             <button className="button button-danger px-2 py-1" onClick={cancelAllDownloads}>
                                 Cancel All
                             </button>
