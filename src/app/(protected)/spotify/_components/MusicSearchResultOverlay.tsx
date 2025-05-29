@@ -18,8 +18,8 @@ const MusicSearchResultOverlay: React.FC<{ results: T_SearchResponse | null }> =
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 16 }}
-                    style={{ maxWidth: `${nonEmptySections.length * 270}px` }}
-                    className="bg-secondary absolute top-full left-1/2 z-50 w-full -translate-x-1/2 overflow-hidden rounded-2xl shadow-xl">
+                    style={{ maxWidth: `${nonEmptySections.length * 280}px` }}
+                    className="bg-secondary absolute top-full left-1/2 z-50 mt-2 w-full -translate-x-1/2 overflow-hidden rounded-2xl shadow-xl">
                     <div className="sm:scrollbar-thin flex max-h-[50vh] w-full flex-wrap gap-6 overflow-y-auto p-6 text-sm">
                         {nonEmptySections.map(([key, section]) => (
                             <div key={key} style={{ order: section.position }} className="flex min-w-[240px] flex-1 flex-col">

@@ -52,7 +52,7 @@ const MusicSearch = () => {
     return (
         <div className="relative w-full">
             <form onSubmit={handleSubmit} className="mx-auto w-full max-w-md">
-                <div className="form-field-wrapper bg-secondary hidden max-w-86 sm:flex">
+                <div className="form-field-wrapper bg-secondary">
                     <input type="text" onChange={handleChange} placeholder="Search music..." className="form-field bg-inherit" />
                     <button type="submit" role="button" aria-label="Search" className="form-icon cursor-pointer">
                         <Icon icon="search" />
