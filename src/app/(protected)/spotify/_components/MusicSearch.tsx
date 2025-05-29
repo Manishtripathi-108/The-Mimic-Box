@@ -60,7 +60,7 @@ const MusicSearch = () => {
                 </div>
             </form>
 
-            <Suspense fallback={<Icon icon="search" className="text-accent absolute top-full z-50 size-20" />}>
+            <Suspense fallback={<Icon icon="loading" className="text-accent absolute top-full z-50 size-20" />}>
                 <MusicSearchResultOverlay results={results} />
             </Suspense>
         </div>

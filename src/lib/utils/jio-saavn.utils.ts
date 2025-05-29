@@ -1,5 +1,6 @@
 import crypto from 'node-forge';
 
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/jio-saavn/albums.types';
 import { T_Artist, T_ArtistAPIResponse, T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/jio-saavn/artists.type';
 import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/jio-saavn/playlist.types';
@@ -38,7 +39,12 @@ export const createDownloadLinks = (encryptedMediaUrl: string) => {
 };
 
 export const createImageLinks = (link: string) => {
-    if (!link) return [];
+    if (!link || link.includes('default')) {
+        return IMAGE_SIZES.map((size) => ({
+            quality: size,
+            url: IMAGE_FALLBACKS.AUDIO_COVER,
+        }));
+    }
 
     return IMAGE_SIZES.map((quality) => ({
         quality,
