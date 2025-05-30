@@ -25,9 +25,9 @@ const MusicQueue = ({ className }: { className?: string }) => {
             <ul className="sm:scrollbar-thin max-h-full flex-1 space-y-2 overflow-y-auto p-4">
                 {queue.map((track) => (
                     <li
-                        key={track.spotifyId}
+                        key={track.id}
                         className="from-secondary to-tertiary text-text-secondary shadow-floating-xs flex items-center rounded-xl bg-linear-120 p-1 transition-transform hover:scale-101">
-                        <MusicTrackPlayBtn id={track.spotifyId} context={playbackContext!} />
+                        <MusicTrackPlayBtn id={track.id} context={playbackContext!} />
 
                         <div className="flex items-center gap-3 overflow-hidden">
                             <Image

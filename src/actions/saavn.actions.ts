@@ -3,7 +3,7 @@
 import { z } from 'zod';
 
 import saavnApi from '@/lib/services/saavn.service';
-import { createErrorReturn } from '@/lib/utils/createResponse.utils';
+import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 
 const validatePaginationOptions = z.object({
     page: z.number().min(0, 'Page must be non-negative').optional().default(0),
@@ -272,4 +272,39 @@ export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & P
         ...pagination.data,
         link: params.link,
     });
+};
+
+/**
+ * Fetches tracks or songs from Saavn based on the entity type and ID.
+ *
+ * @example
+ * // Fetch tracks from an album
+ * const result = await saavnGetEntityTracks('album123', 'album');
+ */
+export const saavnGetEntityTracks = async (id: string, type: 'album' | 'playlist' | 'artist' | 'track') => {
+    switch (type) {
+        case 'album':
+            const album = await saavnApi.getAlbumById(id);
+
+            if (!album.success || !album.payload.songs) return createErrorReturn(album.message || 'Failed to fetch album');
+
+            return createSuccessReturn('Album tracks fetched successfully', album.payload.songs);
+        case 'playlist':
+            const playlist = await saavnApi.getPlaylistById({ id, page: 0, limit: 1000 });
+            if (!playlist.success || !playlist.payload.songs) return createErrorReturn(playlist.message || 'Failed to fetch playlist');
+
+            return createSuccessReturn('Playlist tracks fetched successfully', playlist.payload.songs);
+        case 'artist':
+            const artist = await saavnApi.getArtistSongs({ id, page: 0, sortBy: 'popularity', sortOrder: 'desc' });
+            if (!artist.success || !artist.payload.songs) return createErrorReturn(artist.message || 'Failed to fetch artist songs');
+
+            return createSuccessReturn('Artist songs fetched successfully', artist.payload.songs);
+        case 'track':
+            const track = await saavnApi.getSongByIds(id);
+            if (!track.success || !track.payload || track.payload.length === 0) return createErrorReturn(track.message || 'Failed to fetch track');
+
+            return createSuccessReturn('Track fetched successfully', track.payload);
+        default:
+            return createErrorReturn('Invalid type provided');
+    }
 };

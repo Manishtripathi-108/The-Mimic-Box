@@ -2,29 +2,17 @@
 
 import { useCallback } from 'react';
 
-import toast from 'react-hot-toast';
-
 import MusicDownloadPopover from '@/app/(protected)/spotify/_components/MusicDownloadPopover';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
-import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
-import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
-import { T_Song } from '@/lib/types/saavn/song.types';
-import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
+import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
+import { T_AudioSourceContext } from '@/lib/types/client.types';
 import { shareUrl } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
-type Props = {
-    className?: string;
-    context: T_AudioSourceContext;
-    spotifyTracks?: T_SpotifySimplifiedTrack[];
-    saavnTracks?: T_Song[];
-    playTracks?: T_AudioPlayerTrack[];
-};
-
-const MusicActionBtns = ({ className, context, spotifyTracks, saavnTracks }: Props) => {
+const MusicActionBtns = ({ className, context }: { className?: string; context: T_AudioSourceContext }) => {
     const { setQueue, toggleFadePlay, playbackContext, playing } = useAudioPlayerContext();
-    const { isPending, mapTracks } = useMapSpotifyTracksToSaavn();
+    const { isPending, getPlayableTracks } = useAudioSourceTrackMapper();
     const isCurrentTrack = playbackContext?.id === context?.id;
     const isTrackPlaying = isCurrentTrack && playing;
 
@@ -32,32 +20,22 @@ const MusicActionBtns = ({ className, context, spotifyTracks, saavnTracks }: Pro
         if (isCurrentTrack) {
             toggleFadePlay();
         } else {
-            if (spotifyTracks) {
-                mapTracks({ context, spotifyTracks }).then((playableQueue) => {
-                    if (playableQueue.length > 0) {
-                        setQueue(playableQueue, context, true);
-                    } else {
-                        toast.error('No playable tracks found');
+            if (isPending) return;
+
+            getPlayableTracks(context)
+                .then((tracks) => {
+                    if (!tracks.length) {
+                        throw new Error('No valid tracks found for selected context');
                     }
+                    setQueue(tracks, context);
+                    setTimeout(() => toggleFadePlay(), 100);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    shareUrl({ url: window.location.href });
                 });
-            } else if (saavnTracks) {
-                const saavnPlayableTracks: T_AudioPlayerTrack[] = saavnTracks.map((track) => {
-                    return {
-                        saavnId: track.id,
-                        title: track.name,
-                        album: track.album.name,
-                        year: track.year,
-                        duration: track.duration,
-                        language: track.language,
-                        artists: track.artists.primary.map((a) => a.name).join(', '),
-                        urls: track.downloadUrl,
-                        covers: track.image,
-                    };
-                });
-                setQueue(saavnPlayableTracks, context, true);
-            }
         }
-    }, [isCurrentTrack, mapTracks, setQueue, toggleFadePlay, context, spotifyTracks, saavnTracks]);
+    }, [isCurrentTrack, toggleFadePlay, isPending, getPlayableTracks, setQueue, context]);
 
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>
@@ -102,7 +80,8 @@ const MusicActionBtns = ({ className, context, spotifyTracks, saavnTracks }: Pro
                     </li>
                 </ul>
             </div>
-            {spotifyTracks && <MusicDownloadPopover context={context} popover="auto" className="mr-1 [position-area:left_span-top]" />}
+
+            <MusicDownloadPopover context={context} popover="auto" className="mr-1 [position-area:left_span-top]" />
         </div>
     );
 };

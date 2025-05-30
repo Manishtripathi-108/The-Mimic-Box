@@ -82,20 +82,14 @@ export type T_UploadState = {
     formattedEstimated: string;
 } & AxiosProgressEvent;
 
-type T_TrackSourceType = 'album' | 'playlist' | 'track' | 'artist';
-type T_AudioEntityType = 'album' | 'playlist' | 'track' | 'artist';
-export type T_AudioSource = 'spotify' | 'saavn' | 'youtube';
 export type T_AudioEntityLink = {
     id: string;
     name: string;
     link: string;
 };
 
-export type T_TrackContext = {
-    type: T_TrackSourceType;
-    id: string;
-    name: string;
-};
+type T_AudioEntityType = 'album' | 'playlist' | 'track' | 'artist';
+export type T_AudioSource = 'spotify' | 'saavn' | 'youtube';
 
 export type T_AudioSourceContext = {
     source: T_AudioSource;
@@ -104,8 +98,7 @@ export type T_AudioSourceContext = {
 };
 
 export type T_AudioPlayerTrack = {
-    spotifyId?: string;
-    saavnId: string;
+    id: string;
     urls: { quality: '12kbps' | '48kbps' | '96kbps' | '160kbps' | '320kbps'; url: string }[];
     title: string;
     album: string | null;
@@ -117,7 +110,7 @@ export type T_AudioPlayerTrack = {
 };
 
 export type T_AudioPlayerState = {
-    playbackContext: T_TrackContext | null;
+    playbackContext: T_AudioSourceContext | null;
     currentTrackIndex: number;
     playbackOrder: number[];
     queue: T_AudioPlayerTrack[];
@@ -125,11 +118,11 @@ export type T_AudioPlayerState = {
 };
 
 export type T_AudioPlayerAction =
-    | { type: 'SET_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext | null } }
-    | { type: 'ADD_TO_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_TrackContext | null } }
+    | { type: 'SET_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_AudioSourceContext | null } }
+    | { type: 'ADD_TO_QUEUE'; payload: { tracks: T_AudioPlayerTrack[]; context: T_AudioSourceContext | null } }
     | { type: 'CLEAR_QUEUE' }
     | { type: 'PLAY_INDEX'; payload: number }
-    | { type: 'PLAY_ID'; payload: { saavnId?: string; spotifyId?: string } }
+    | { type: 'PLAY_ID'; payload: string }
     | { type: 'TOGGLE_SHUFFLE' }
     | { type: 'NEXT_TRACK' }
     | { type: 'PREV_TRACK' };

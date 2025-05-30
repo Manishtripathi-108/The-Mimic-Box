@@ -24,7 +24,7 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
         case 'SET_QUEUE': {
             const trackMap = new Map();
             for (const track of action.payload.tracks) {
-                trackMap.set(track.saavnId, track);
+                trackMap.set(track.id, track);
             }
             const uniqueTracks = Array.from(trackMap.values());
             const queueLength = uniqueTracks.length;
@@ -43,12 +43,12 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
 
             // Add existing queue tracks first
             for (const track of state.queue) {
-                trackMap.set(track.saavnId, track);
+                trackMap.set(track.id, track);
             }
 
             // Add new tracks
             for (const track of action.payload.tracks) {
-                trackMap.set(track.saavnId, track);
+                trackMap.set(track.id, track);
             }
 
             const updatedQueue = Array.from(trackMap.values());
@@ -78,8 +78,7 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
             return { ...state, currentTrackIndex: action.payload };
 
         case 'PLAY_ID': {
-            const { saavnId, spotifyId } = action.payload;
-            const trackIndex = state.queue.findIndex((track) => track.saavnId === saavnId || track.spotifyId === spotifyId);
+            const trackIndex = state.queue.findIndex((track) => track.id === action.payload);
             if (trackIndex !== -1) {
                 return {
                     ...state,

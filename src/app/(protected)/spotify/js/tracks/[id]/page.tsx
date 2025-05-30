@@ -73,19 +73,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             album={album}
             description={description}
             context={{ id: track.id, type: 'track', source: 'saavn' }}
-            playTracks={[
-                {
-                    saavnId: track.id,
-                    title: track.name,
-                    album: track.album.name,
-                    year: track.year,
-                    duration: track.duration,
-                    language: track.language,
-                    artists: track.artists.primary.map((a) => a.name).join(', '),
-                    urls: track.downloadUrl,
-                    covers: track.image,
-                },
-            ]}
         />
     );
 };

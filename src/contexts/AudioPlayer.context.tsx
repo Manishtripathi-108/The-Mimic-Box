@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer,
 import toast from 'react-hot-toast';
 
 import useMediaSession from '@/hooks/useMediaSession.hook.';
-import { T_AudioPlayerState, T_AudioPlayerTrack, T_TrackContext } from '@/lib/types/client.types';
+import { T_AudioPlayerState, T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { audioPlayerInitialState, audioPlayerReducer } from '@/reducers/audioPlayer.reducer';
 
 // Types
@@ -25,14 +25,14 @@ type T_AudioPlayerContext = {
     play: () => void;
     pause: () => void;
     playTrackByIndex: (index: number) => void;
-    playTrackById: (params: { saavnId?: string; spotifyId?: string }) => void;
+    playTrackById: (id: string) => void;
     togglePlay: () => void;
     toggleFadePlay: (fadeDuration?: number) => void;
     playNext: () => void;
     playPrevious: () => void;
     clearQueue: () => void;
-    setQueue: (tracks: T_AudioPlayerTrack[], context?: T_TrackContext | null, autoPlay?: boolean) => void;
-    addToQueue: (tracks: T_AudioPlayerTrack[], context?: T_TrackContext | null) => void;
+    setQueue: (tracks: T_AudioPlayerTrack[], context?: T_AudioSourceContext | null, autoPlay?: boolean) => void;
+    addToQueue: (tracks: T_AudioPlayerTrack[], context?: T_AudioSourceContext | null) => void;
     toggleShuffle: () => void;
     toggleLoop: () => void;
     setVolume: (volume: number) => void;
@@ -124,19 +124,19 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         return true;
     }, [sortedUrls]);
 
-    const play = useCallback(() => audioRef.current?.play(), []);
+    const play: T_AudioPlayerContext['play'] = useCallback(() => audioRef.current?.play(), []);
 
-    const pause = useCallback(() => {
+    const pause: T_AudioPlayerContext['pause'] = useCallback(() => {
         audioRef.current?.pause();
         updateAudioState({ playing: false });
     }, [updateAudioState]);
 
-    const togglePlay = useCallback(() => {
+    const togglePlay: T_AudioPlayerContext['togglePlay'] = useCallback(() => {
         if (audioRef.current?.paused) play();
         else pause();
     }, [play, pause]);
 
-    const toggleFadePlay = useCallback(
+    const toggleFadePlay: T_AudioPlayerContext['toggleFadePlay'] = useCallback(
         (fadeDuration = 500) => {
             const audio = audioRef.current;
             if (!audio) return;
@@ -155,8 +155,8 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         [fadeAudio, audioState.volume, updateAudioState]
     );
 
-    const playTrackByIndex = useCallback(
-        (index: number) => {
+    const playTrackByIndex: T_AudioPlayerContext['playTrackByIndex'] = useCallback(
+        (index) => {
             if (index < 0 || index >= queue.length) return;
             dispatch({ type: 'PLAY_INDEX', payload: index });
             setTimeout(play, 100);
@@ -164,20 +164,20 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         [queue, play]
     );
 
-    const playTrackById = useCallback(
-        ({ saavnId, spotifyId }: { saavnId?: string; spotifyId?: string }) => {
-            dispatch({ type: 'PLAY_ID', payload: { saavnId, spotifyId } });
+    const playTrackById: T_AudioPlayerContext['playTrackById'] = useCallback(
+        (id) => {
+            dispatch({ type: 'PLAY_ID', payload: id });
             setTimeout(play, 100);
         },
         [play]
     );
 
-    const seekTo = useCallback((time: number) => {
+    const seekTo: T_AudioPlayerContext['seekTo'] = useCallback((time) => {
         if (audioRef.current) audioRef.current.currentTime = time;
     }, []);
 
-    const setVolume = useCallback(
-        (volume: number) => {
+    const setVolume: T_AudioPlayerContext['setVolume'] = useCallback(
+        (volume) => {
             if (audioRef.current) {
                 audioRef.current.volume = volume;
                 updateAudioState({ volume });
@@ -186,11 +186,11 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         [updateAudioState]
     );
 
-    const setPlaybackRate = useCallback((rate: number) => {
+    const setPlaybackRate: T_AudioPlayerContext['setPlaybackRate'] = useCallback((rate) => {
         if (audioRef.current) audioRef.current.playbackRate = rate;
     }, []);
 
-    const toggleMute = useCallback(() => {
+    const toggleMute: T_AudioPlayerContext['toggleMute'] = useCallback(() => {
         const audio = audioRef.current;
         if (audio) {
             audio.muted = !audio.muted;
@@ -198,7 +198,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         }
     }, [updateAudioState]);
 
-    const toggleLoop = useCallback(() => {
+    const toggleLoop: T_AudioPlayerContext['toggleLoop'] = useCallback(() => {
         const audio = audioRef.current;
         if (audio) {
             audio.loop = !audio.loop;
@@ -206,8 +206,8 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         }
     }, [updateAudioState]);
 
-    const setQueue = useCallback(
-        (tracks: T_AudioPlayerTrack[], context: T_TrackContext | null = null, autoPlay = false) => {
+    const setQueue: T_AudioPlayerContext['setQueue'] = useCallback(
+        (tracks, context = null, autoPlay = false) => {
             console.log('Setting queue:', tracks);
 
             dispatch({ type: 'SET_QUEUE', payload: { tracks, context } });
@@ -216,7 +216,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         [play]
     );
 
-    const addToQueue = useCallback((tracks: T_AudioPlayerTrack[], context: T_TrackContext | null = null) => {
+    const addToQueue: T_AudioPlayerContext['addToQueue'] = useCallback((tracks, context = null) => {
         console.log('Adding to queue:', tracks);
 
         dispatch({ type: 'ADD_TO_QUEUE', payload: { tracks, context } });
@@ -227,16 +227,16 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         dispatch({ type: 'CLEAR_QUEUE' });
     }, [pause]);
 
-    const playNext = useCallback(() => dispatch({ type: 'NEXT_TRACK' }), []);
+    const playNext: T_AudioPlayerContext['playNext'] = useCallback(() => dispatch({ type: 'NEXT_TRACK' }), []);
 
-    const playPrevious = useCallback(() => {
+    const playPrevious: T_AudioPlayerContext['playPrevious'] = useCallback(() => {
         const audio = audioRef.current;
         if (!audio) return;
         if (audio.currentTime > 5 || queue.length <= 1) audio.currentTime = 0;
         else dispatch({ type: 'PREV_TRACK' });
     }, [queue]);
 
-    const toggleShuffle = useCallback(() => dispatch({ type: 'TOGGLE_SHUFFLE' }), []);
+    const toggleShuffle: T_AudioPlayerContext['toggleShuffle'] = useCallback(() => dispatch({ type: 'TOGGLE_SHUFFLE' }), []);
 
     const onError = useCallback(() => {
         retryCountRef.current += 1;

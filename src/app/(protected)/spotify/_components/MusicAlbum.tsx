@@ -55,8 +55,6 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
         };
     }, [fetchNextTracks, nextUrl]);
 
-    const queueTracks = useCallback(() => tracks.filter((track) => track && !('show' in track)), [tracks]);
-
     return (
         <>
             <MusicMediaHeader title={name} coverImage={images?.[0]?.url} metadata={`${initialTracks.total} songs`}>
@@ -68,7 +66,7 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: album.id, type: 'album', source: 'spotify' }} spotifyTracks={queueTracks()} className="mt-4" />
+            <MusicActionBtns context={{ id: album.id, type: 'album', source: 'spotify' }} className="mt-4" />
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">

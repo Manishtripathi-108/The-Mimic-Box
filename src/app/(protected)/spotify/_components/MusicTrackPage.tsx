@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import MusicActionBtns from '@/app/(protected)/spotify/_components/MusicActionBtns';
 import CardContainer from '@/components/ui/CardContainer';
-import { T_AudioEntityLink, T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
+import { T_AudioEntityLink, T_AudioSourceContext } from '@/lib/types/client.types';
 
 type props = {
     imageUrl: string;
@@ -12,10 +12,9 @@ type props = {
     album: T_AudioEntityLink;
     description: string[];
     context: T_AudioSourceContext;
-    playTracks?: T_AudioPlayerTrack[];
 };
 
-const MusicTrackPage = ({ imageUrl, title, artists, album, description, context, playTracks }: props) => {
+const MusicTrackPage = ({ imageUrl, title, artists, album, description, context }: props) => {
     return (
         <section className="flex h-full items-center justify-center">
             <div className="mt-30 w-full max-w-4xl">
@@ -64,7 +63,7 @@ const MusicTrackPage = ({ imageUrl, title, artists, album, description, context,
                         </div>
                     )}
 
-                    <MusicActionBtns className="mt-8 sm:justify-center" playTracks={playTracks} context={context} />
+                    <MusicActionBtns className="mt-8 sm:justify-center" context={context} />
                 </CardContainer>
             </div>
         </section>
