@@ -72,12 +72,21 @@ export const APP_ROUTES = {
 
     SPOTIFY: {
         DASHBOARD: '/spotify/dashboard',
-        SEARCH: '/spotify/search',
+        SEARCH: (query: string = ''): string => {
+            const trimmedQuery = query.trim();
+            return `/spotify/search?q=${encodeURIComponent(trimmedQuery)}`;
+        },
         PLAYLISTS: '/spotify/playlists',
         PLAYLIST: (id: string) => `/spotify/playlists/${id}`,
         ALBUMS: (id: string) => `/spotify/albums/${id}`,
         TRACKS: (id: string) => `/spotify/tracks/${id}`,
         ARTISTS: (id: string) => `/spotify/artists/${id}`,
+        JS: {
+            TRACKS: (id: string) => `/spotify/js/tracks/${id}`,
+            ARTISTS: (id: string) => `/spotify/js/artists/${id}`,
+            ALBUMS: (id: string) => `/spotify/js/albums/${id}`,
+            PLAYLISTS: (id: string) => `/spotify/js/playlists/${id}`,
+        },
     },
 
     USER: {
@@ -128,7 +137,7 @@ export const EXTERNAL_ROUTES = {
         GRAPHQL: 'https://graphql.anilist.co',
     },
 
-    JIO_SAAVN: {
+    SAAVN: {
         BASE: 'https://www.jiosaavn.com/api.php',
         SEARCH: {
             ALL: 'autocomplete.get',

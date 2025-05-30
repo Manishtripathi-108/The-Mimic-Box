@@ -10,7 +10,7 @@ import { useAudioDownload } from '@/contexts/AudioDownload.context';
 import cn from '@/lib/utils/cn';
 
 const DownloadModal = ({ className }: { className?: string }) => {
-    const { downloads, total, completed, cancelDownload, cancelAllDownloads } = useAudioDownload();
+    const { downloads, total, completed, cancelDownload, cancelAllDownloads, clearDownloads } = useAudioDownload();
     const [open, setOpen] = useState(false);
 
     // Close on Escape
@@ -26,7 +26,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
     return (
         <div
             className={cn('fixed z-50', className, {
-                'inset-0 h-dvh sm:inset-auto sm:top-24 sm:right-10 sm:h-[60vh] sm:w-full sm:max-w-sm': open,
+                'inset-0 h-dvh sm:inset-auto sm:top-24 sm:right-10 sm:max-h-[60vh] sm:w-full sm:max-w-sm': open,
                 'top-24 right-10': !open,
             })}
             aria-modal="true"
@@ -39,7 +39,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-secondary flex h-full flex-col overflow-hidden sm:rounded-xl">
+                        className="bg-secondary flex h-full flex-col overflow-hidden shadow-lg sm:rounded-2xl">
                         {/* Header */}
                         <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
                             <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Download Progress</h2>
@@ -57,6 +57,9 @@ const DownloadModal = ({ className }: { className?: string }) => {
                             <span>
                                 Completed: {completed}/{total}
                             </span>
+                            <button className="button px-2 py-1" onClick={clearDownloads}>
+                                Clear
+                            </button>
                             <button className="button button-danger px-2 py-1" onClick={cancelAllDownloads}>
                                 Cancel All
                             </button>

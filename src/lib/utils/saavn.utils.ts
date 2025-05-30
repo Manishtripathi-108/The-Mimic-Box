@@ -1,10 +1,11 @@
 import crypto from 'node-forge';
 
-import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/jio-saavn/albums.types';
-import { T_Artist, T_ArtistAPIResponse, T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/jio-saavn/artists.type';
-import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/jio-saavn/playlist.types';
-import { T_SearchAPIResponse, T_SearchPlaylist, T_SearchPlaylistAPIResponse, T_SearchResponse } from '@/lib/types/jio-saavn/search.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
+import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/saavn/albums.types';
+import { T_Artist, T_ArtistAPIResponse, T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
+import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/saavn/playlist.types';
+import { T_SearchAPIResponse, T_SearchPlaylist, T_SearchPlaylistAPIResponse, T_SearchResponse } from '@/lib/types/saavn/search.types';
+import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
 
 const QUALITIES = [
     { id: '_12', bitrate: '12kbps' },
@@ -38,7 +39,12 @@ export const createDownloadLinks = (encryptedMediaUrl: string) => {
 };
 
 export const createImageLinks = (link: string) => {
-    if (!link) return [];
+    if (!link || link.includes('default')) {
+        return IMAGE_SIZES.map((size) => ({
+            quality: size,
+            url: IMAGE_FALLBACKS.AUDIO_COVER,
+        }));
+    }
 
     return IMAGE_SIZES.map((quality) => ({
         quality,
@@ -57,7 +63,7 @@ export const createArtistBasePayload = (artist: T_ArtistBaseAPIResponse): T_Arti
 
 export const createSongPayload = (song: T_SongAPIResponse): T_Song => ({
     id: song.id,
-    name: song.title,
+    name: song.title.replace(/&amp;/g, '&').replace(/&quot;/g, '"'),
     type: song.type,
     year: song.year || null,
     releaseDate: song.more_info?.release_date || null,
@@ -73,7 +79,7 @@ export const createSongPayload = (song: T_SongAPIResponse): T_Song => ({
     copyright: song.more_info?.copyright_text || null,
     album: {
         id: song.more_info?.album_id || null,
-        name: song.more_info?.album || null,
+        name: song.more_info?.album?.replace(/&amp;/g, '&').replace(/&quot;/g, '"') || null,
         url: song.more_info?.album_url || null,
     },
     artists: {
@@ -180,7 +186,6 @@ export const createSearchPayload = (search: T_SearchAPIResponse): T_SearchRespon
             image: createImageLinks(artist?.image),
             type: artist?.type,
             description: artist?.description,
-            position: artist?.position,
         })),
         position: search?.artists?.position,
     },
@@ -252,7 +257,7 @@ export const createAlbumPayload = (album: T_AlbumAPIResponse): T_Album => ({
         all: album.more_info?.artistMap?.artists?.map(createArtistBasePayload),
     },
     image: createImageLinks(album.image),
-    songs: album.list?.map(createSongPayload) || null,
+    songs: (album.list && album.list?.map(createSongPayload)) || null,
 });
 
 export const createPlaylistPayload = (playlist: T_PlaylistAPIResponse): T_Playlist => ({
@@ -266,7 +271,7 @@ export const createPlaylistPayload = (playlist: T_PlaylistAPIResponse): T_Playli
     explicitContent: playlist.explicit_content === '1',
     url: playlist.perma_url,
     songCount: playlist.list_count ? Number(playlist.list_count) : null,
-    artists: playlist.more_info.artists?.map(createArtistBasePayload) || null,
+    artists: playlist.more_info?.artists?.map(createArtistBasePayload) || null,
     image: createImageLinks(playlist.image),
     songs: (playlist.list && playlist.list?.map(createSongPayload)) || null,
 });

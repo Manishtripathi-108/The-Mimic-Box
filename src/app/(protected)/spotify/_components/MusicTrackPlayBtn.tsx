@@ -1,48 +1,44 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 
 import isEqual from 'lodash.isequal';
+import toast from 'react-hot-toast';
 
+import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
-// import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
-import { T_TrackContext } from '@/lib/types/client.types';
+import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
+import { T_AudioSourceContext } from '@/lib/types/client.types';
 
-const MusicTrackBtn = ({ id, context }: { id: string; context: T_TrackContext }) => {
-    const { playbackContext, currentTrack, playing, pause, play, playTrackById } = useAudioPlayerContext();
-    // const { isPending, mapTracks } = useMapSpotifyTracksToSaavn();
-    const isSameContext = isEqual(playbackContext, context);
-    const isCurrentTrack = currentTrack && currentTrack.spotifyId === id;
+const MusicTrackBtn = ({ id, context }: { id: string; context: T_AudioSourceContext }) => {
+    const { playbackContext, currentTrack, playing, toggleFadePlay, playTrackById, setQueue } = useAudioPlayerContext();
+    const { isPending, getPlayableTracks } = useAudioSourceTrackMapper();
 
-    const getPlayerState = () => {
-        if (isSameContext && isCurrentTrack && playing) return true;
-        return false;
+    const isSameContext = useMemo(() => isEqual(playbackContext, context), [playbackContext, context]);
+    const isCurrentTrack = useMemo(() => currentTrack?.id === id, [currentTrack, id]);
+    const isPlaying = isSameContext && isCurrentTrack && playing;
+
+    const loadAndPlayTrack = async () => {
+        const toastId = toast.loading('Loading tracks, please wait...');
+        const res = await getSpotifyEntityTracks(context.id, context.type);
+        if (!res.success) return toast.error('Failed to fetch Spotify tracks', { id: toastId });
+
+        const tracks = await getPlayableTracks(context);
+        if (!tracks.length) {
+            return toast.error('No valid tracks found for selected context', { id: toastId });
+        }
+
+        setQueue(tracks, context);
+        setTimeout(() => playTrackById(id), 100);
+        toast.success('Tracks loaded and playing', { id: toastId });
     };
 
-    const handlePlayPause = () => {
-        if (isCurrentTrack) {
-            if (playing) {
-                pause();
-            } else {
-                play();
-            }
-        } else {
-            if (isSameContext) {
-                playTrackById({ spotifyId: id });
-            } else {
-                // TODO: Implement track mapping and queue setting
-                // if (isPending) return;
-                // mapTracks().then((tracks) => {
-                //     if (tracks) {
-                //         setQueue(tracks, context, true);
-                //         playTrackById({ spotifyId: id });
-                //     } else {
-                //         console.error('Failed to map tracks');
-                //     }
-                // });
-            }
-        }
+    const handlePlayPause = async () => {
+        if (isCurrentTrack) return toggleFadePlay();
+        if (isSameContext) return playTrackById(id);
+        if (isPending) return;
+        await loadAndPlayTrack();
     };
 
     return (
@@ -50,8 +46,8 @@ const MusicTrackBtn = ({ id, context }: { id: string; context: T_TrackContext })
             type="button"
             onClick={handlePlayPause}
             className="hover:text-text-primary size-7 shrink-0 cursor-pointer transition-colors"
-            aria-label={getPlayerState() ? 'Play' : 'Pause'}>
-            <Icon icon={getPlayerState() ? 'pauseToPlay' : 'playToPause'} />
+            aria-label={isPlaying ? 'Pause' : 'Play'}>
+            <Icon icon={isPlaying ? 'pauseToPlay' : 'playToPause'} />
         </button>
     );
 };

@@ -9,7 +9,9 @@ import toast from 'react-hot-toast';
 import { fetchSpotifyDataByUrl } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/spotify/_components/MusicActionBtns';
 import MusicMediaHeader from '@/app/(protected)/spotify/_components/MusicMediaHeader';
-import MusicTrackCard, { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
+import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
+import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/skeletons/MusicTrackCardSkeleton';
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/lib/types/spotify.types';
 
 type Props = {
@@ -73,11 +75,29 @@ const MusicPlaylist = ({ playlist }: Props) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: playlist.id, type: 'playlist', name }} spotifyTracks={tracks} className="mt-4" />
+            <MusicActionBtns context={{ id: playlist.id, type: 'playlist', source: 'spotify' }} className="mt-4" />
 
             <div className="mt-6 grid w-full gap-2">
                 {tracks.map((track, idx) => (
-                    <MusicTrackCard key={track.id + idx} track={track} context={{ id: playlist.id, type: 'playlist', name }} />
+                    <MusicTrackCard
+                        key={track.id + idx}
+                        id={track.id}
+                        title={track.name}
+                        link={APP_ROUTES.SPOTIFY.TRACKS(track.id)}
+                        duration_ms={track.duration_ms}
+                        imageUrl={track.album.images[0]?.url}
+                        artists={track.artists.map((artist) => ({
+                            id: artist.id,
+                            name: artist.name,
+                            link: APP_ROUTES.SPOTIFY.ARTISTS(artist.id),
+                        }))}
+                        album={{
+                            id: track.album.id,
+                            name: track.album.name,
+                            link: APP_ROUTES.SPOTIFY.ALBUMS(track.album.id),
+                        }}
+                        context={{ id: playlist.id, type: 'playlist', source: 'spotify' }}
+                    />
                 ))}
 
                 <div ref={loadingRef} className="grid w-full gap-2">

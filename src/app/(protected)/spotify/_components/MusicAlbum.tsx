@@ -9,7 +9,8 @@ import toast from 'react-hot-toast';
 import { fetchSpotifyDataByUrl } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/spotify/_components/MusicActionBtns';
 import MusicMediaHeader from '@/app/(protected)/spotify/_components/MusicMediaHeader';
-import MusicTrackCard, { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
+import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
+import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/skeletons/MusicTrackCardSkeleton';
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
@@ -54,8 +55,6 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
         };
     }, [fetchNextTracks, nextUrl]);
 
-    const queueTracks = useCallback(() => tracks.filter((track) => track && !('show' in track)), [tracks]);
-
     return (
         <>
             <MusicMediaHeader title={name} coverImage={images?.[0]?.url} metadata={`${initialTracks.total} songs`}>
@@ -67,13 +66,25 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: album.id, type: 'album', name }} spotifyTracks={queueTracks()} className="mt-4" />
+            <MusicActionBtns context={{ id: album.id, type: 'album', source: 'spotify' }} className="mt-4" />
 
             {/* Songs List */}
             <div className="mt-6 grid w-full gap-2">
-                {tracks.map((track, idx) =>
-                    track && !('show' in track) ? (
-                        <MusicTrackCard key={`${track.id}-${idx}`} track={track} context={{ type: 'album', id: album.id, name: name }} />
+                {tracks.map((t, idx) =>
+                    t && !('show' in t) ? (
+                        <MusicTrackCard
+                            key={`${t.id}-${idx}`}
+                            id={t.id}
+                            title={t.name}
+                            link={APP_ROUTES.SPOTIFY.TRACKS(t.id)}
+                            duration_ms={t.duration_ms}
+                            artists={t.artists.map((artist) => ({
+                                id: artist.id,
+                                name: artist.name,
+                                link: APP_ROUTES.SPOTIFY.ARTISTS(artist.id),
+                            }))}
+                            context={{ type: 'album', id: album.id, source: 'spotify' }}
+                        />
                     ) : null
                 )}
 

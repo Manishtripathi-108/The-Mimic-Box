@@ -1,4 +1,5 @@
 import MusicMiniPlayer from '@/app/(protected)/spotify/_components/MusicMiniPlayer';
+import MusicSearch from '@/app/(protected)/spotify/_components/MusicSearch';
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
 import DownloadModal from '@/components/layout/DownloadModal';
@@ -18,11 +19,12 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <div className="min-h-calc-full-height flex w-full p-2 sm:p-6">
+        <div className="min-h-calc-full-height flex w-full flex-col p-2 sm:p-6">
             <AudioPlayerProvider>
                 <AudioDownloadProvider>
                     <DownloadModal />
-                    <main className="w-full pb-16">{children}</main>
+                    <MusicSearch />
+                    <main className="mt-4 w-full pb-16">{children}</main>
                     <MusicMiniPlayer />
                 </AudioDownloadProvider>
             </AudioPlayerProvider>

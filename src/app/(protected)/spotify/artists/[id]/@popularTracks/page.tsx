@@ -1,6 +1,7 @@
 import { getSpotifyArtistTopTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import { APP_ROUTES } from '@/constants/routes.constants';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
@@ -19,8 +20,26 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 <p>No tracks found.</p>
             ) : (
                 <div className="flex flex-col gap-2">
-                    {tracks.map((item, index) => (
-                        <MusicTrackCard key={item.id + index} track={item} context={{ type: 'artist', id: id, name: item.artists[0].name }} />
+                    {tracks.map((t, index) => (
+                        <MusicTrackCard
+                            key={t.id + index}
+                            id={t.id}
+                            title={t.name}
+                            link={APP_ROUTES.SPOTIFY.TRACKS(t.id)}
+                            duration_ms={t.duration_ms}
+                            imageUrl={t.album.images[0]?.url}
+                            artists={t.artists.map((artist) => ({
+                                id: artist.id,
+                                name: artist.name,
+                                link: APP_ROUTES.SPOTIFY.ARTISTS(artist.id),
+                            }))}
+                            album={{
+                                id: t.album.id,
+                                name: t.album.name,
+                                link: APP_ROUTES.SPOTIFY.ALBUMS(t.album.id),
+                            }}
+                            context={{ type: 'artist', id: id, source: 'spotify' }}
+                        />
                     ))}
                 </div>
             )}

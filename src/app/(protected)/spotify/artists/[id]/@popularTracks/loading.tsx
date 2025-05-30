@@ -1,4 +1,4 @@
-import { MusicTrackCardSkeleton } from '@/app/(protected)/spotify/_components/MusicTrackCard';
+import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/skeletons/MusicTrackCardSkeleton';
 
 const Loading = () => {
     const skeletonArray = Array.from({ length: 5 });

@@ -1,5 +1,9 @@
 import type { NextConfig } from 'next';
 
+
+
+
+
 const nextConfig: NextConfig = {
     experimental: {
         serverActions: {
@@ -43,6 +47,10 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'https',
                 hostname: 'c.sop.saavncdn.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.jiosaavn.com',
             },
             // anilist Image API
             {

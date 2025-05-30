@@ -1,6 +1,7 @@
 import { getSpotifyUserRecentlyPlayedTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/spotify/_components/MusicTrackCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import { APP_ROUTES } from '@/constants/routes.constants';
 
 const Page = async () => {
     const res = await getSpotifyUserRecentlyPlayedTracks(6);
@@ -18,13 +19,30 @@ const Page = async () => {
                 <p>No recently played tracks found.</p>
             ) : (
                 <div className="flex flex-col gap-2">
-                    {playHistory.map((item, index) => (
-                        <MusicTrackCard
-                            key={item.track.id + index}
-                            track={item.track}
-                            context={{ type: 'track', id: item.track.id, name: item.track.name }}
-                        />
-                    ))}
+                    {playHistory.map((item, index) => {
+                        const track = item.track;
+                        return (
+                            <MusicTrackCard
+                                key={track.id + index}
+                                id={track.id}
+                                title={track.name}
+                                link={APP_ROUTES.SPOTIFY.TRACKS(track.id)}
+                                duration_ms={track.duration_ms}
+                                imageUrl={track.album.images[0]?.url}
+                                artists={track.artists.map((artist) => ({
+                                    id: artist.id,
+                                    name: artist.name,
+                                    link: APP_ROUTES.SPOTIFY.ARTISTS(artist.id),
+                                }))}
+                                album={{
+                                    id: track.album.id,
+                                    name: track.album.name,
+                                    link: APP_ROUTES.SPOTIFY.ALBUMS(track.album.id),
+                                }}
+                                context={{ type: 'track', id: track.id, source: 'spotify' }}
+                            />
+                        );
+                    })}
                 </div>
             )}
         </section>

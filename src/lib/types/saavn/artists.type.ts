@@ -1,6 +1,6 @@
-import { T_Album, T_AlbumAPIResponse } from '@/lib/types/jio-saavn/albums.types';
-import { T_ImageLink } from '@/lib/types/jio-saavn/global.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
+import { T_Album, T_AlbumAPIResponse } from '@/lib/types/saavn/albums.types';
+import { T_ImageLink } from '@/lib/types/saavn/global.types';
+import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
 
 type T_SocialLinks = {
     dob: string | null;

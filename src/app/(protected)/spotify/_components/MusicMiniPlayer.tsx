@@ -1,14 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
-import MusicDownloads from '@/app/(protected)/spotify/_components/MusicDownloads';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
+
+const MusicDownloadPopover = lazy(() => import('@/app/(protected)/spotify/_components/MusicDownloadPopover'));
+const MusicQueue = lazy(() => import('@/app/(protected)/spotify/_components/MusicQueue'));
 
 const MusicMiniPlayer = () => {
     const [playbackState, setPlaybackState] = useState({
@@ -16,12 +18,11 @@ const MusicMiniPlayer = () => {
         buffered: null as TimeRanges | null,
     });
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-    const popoverRef = useRef<HTMLDivElement>(null);
+    const [isQueueOpen, setIsQueueOpen] = useState(false);
 
     const lastTimeUpdateRef = useRef(0);
     const {
         currentTrack,
-        queue,
         duration,
         volume,
         muted,
@@ -33,6 +34,8 @@ const MusicMiniPlayer = () => {
         toggleMute,
         toggleLoop,
         toggleShuffle,
+        playbackRate,
+        setPlaybackRate,
         seekTo,
         setVolume,
         playNext,
@@ -69,17 +72,22 @@ const MusicMiniPlayer = () => {
 
     // Close popover on outside click
     useEffect(() => {
-        if (!isPopoverOpen) return;
+        if (!isPopoverOpen && !isQueueOpen) return;
 
         const handleClickOutside = (event: MouseEvent) => {
-            if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+            const popoverContainer = document.getElementById('download-popover-container');
+            if (popoverContainer && !popoverContainer.contains(event.target as Node)) {
                 setIsPopoverOpen(false);
+            }
+            const queueContainer = document.getElementById('queue-popover-container');
+            if (queueContainer && !queueContainer.contains(event.target as Node)) {
+                setIsQueueOpen(false);
             }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isPopoverOpen]);
+    }, [isPopoverOpen, isQueueOpen]);
 
     if (!currentTrack) return null;
 
@@ -157,8 +165,12 @@ const MusicMiniPlayer = () => {
                             <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
 
-                        <div className="relative hidden @md:inline" ref={popoverRef}>
-                            {isPopoverOpen && <MusicDownloads downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />}
+                        <div className="relative hidden @md:inline" id="download-popover-container">
+                            {isPopoverOpen && (
+                                <Suspense fallback={<Icon icon="loading" className="text-accent absolute inset-0 size-7" />}>
+                                    <MusicDownloadPopover downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />
+                                </Suspense>
+                            )}
                             <button
                                 type="button"
                                 title="Download"
@@ -200,7 +212,7 @@ const MusicMiniPlayer = () => {
                 </div>
 
                 {/* Volume & Actions */}
-                <div className="hidden shrink-0 items-center gap-2 @xl:flex">
+                <div className="hidden shrink-0 items-center @xl:flex">
                     <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
                         <button
                             type="button"
@@ -223,22 +235,39 @@ const MusicMiniPlayer = () => {
                         </label>
                     </div>
 
-                    {/* Debug Buttons */}
-                    <button
-                        type="button"
-                        title="Queue"
-                        onClick={() => console.log(queue)}
-                        className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
-                        <Icon icon="musicQueue" className="size-5" />
-                    </button>
+                    <div className="relative" id="queue-popover-container">
+                        <button
+                            type="button"
+                            title="Queue"
+                            onClick={() => setIsQueueOpen((prev) => !prev)}
+                            className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
+                            <Icon icon="musicQueue" className="size-5" />
+                        </button>
 
-                    <button
-                        type="button"
-                        title="Fullscreen"
-                        // onClick={() => setQueue(/** test queue */)}
-                        className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
-                        <Icon icon="fullscreen" className="size-4" />
-                    </button>
+                        {isQueueOpen && (
+                            <Suspense fallback={<Icon icon="loading" className="text-accent absolute inset-0 size-7" />}>
+                                <MusicQueue className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right" />
+                            </Suspense>
+                        )}
+                    </div>
+
+                    <label htmlFor="playBackRate" className="sr-only">
+                        Select playback rate
+                    </label>
+                    <select
+                        name="playBackRate"
+                        id="playBackRate"
+                        value={playbackRate}
+                        onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+                        className="text-text-secondary *:bg-secondary hover:bg-primary cursor-pointer appearance-none rounded-full px-2 py-1 text-center text-sm">
+                        <option value="0.5">0.5x</option>
+                        <option value="0.75">0.75x</option>
+                        <option value="1">1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                        <option value="3">3x</option>
+                    </select>
 
                     <button
                         type="button"
