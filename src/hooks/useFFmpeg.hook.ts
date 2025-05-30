@@ -33,6 +33,7 @@ export const useFFmpeg = () => {
         await ffmpeg.load({
             coreURL: '/download/ffmpeg-core.js',
             wasmURL: '/download/ffmpeg-core.wasm',
+            workerURL: '/download/ffmpeg-worker.js',
         });
 
         setIsLoaded(true);
