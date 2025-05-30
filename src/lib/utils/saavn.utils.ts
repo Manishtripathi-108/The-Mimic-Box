@@ -1,11 +1,11 @@
 import crypto from 'node-forge';
 
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/jio-saavn/albums.types';
-import { T_Artist, T_ArtistAPIResponse, T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/jio-saavn/artists.type';
-import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/jio-saavn/playlist.types';
-import { T_SearchAPIResponse, T_SearchPlaylist, T_SearchPlaylistAPIResponse, T_SearchResponse } from '@/lib/types/jio-saavn/search.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
+import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/saavn/albums.types';
+import { T_Artist, T_ArtistAPIResponse, T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
+import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/saavn/playlist.types';
+import { T_SearchAPIResponse, T_SearchPlaylist, T_SearchPlaylistAPIResponse, T_SearchResponse } from '@/lib/types/saavn/search.types';
+import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
 
 const QUALITIES = [
     { id: '_12', bitrate: '12kbps' },

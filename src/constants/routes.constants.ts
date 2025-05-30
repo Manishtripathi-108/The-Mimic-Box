@@ -137,7 +137,7 @@ export const EXTERNAL_ROUTES = {
         GRAPHQL: 'https://graphql.anilist.co',
     },
 
-    JIO_SAAVN: {
+    SAAVN: {
         BASE: 'https://www.jiosaavn.com/api.php',
         SEARCH: {
             ALL: 'autocomplete.get',

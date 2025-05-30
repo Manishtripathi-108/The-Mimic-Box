@@ -1,5 +1,5 @@
-import { T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/jio-saavn/artists.type';
-import { T_DownloadLink, T_EntityBase, T_ImageLink } from '@/lib/types/jio-saavn/global.types';
+import { T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
+import { T_DownloadLink, T_EntityBase, T_ImageLink } from '@/lib/types/saavn/global.types';
 
 export type T_SongAPIResponse = T_EntityBase & {
     header_desc: string;

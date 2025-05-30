@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { T_SearchResponse } from '@/lib/types/jio-saavn/search.types';
+import { T_SearchResponse } from '@/lib/types/saavn/search.types';
 
 const createLink = (id: string, type: string) => {
     switch (type) {

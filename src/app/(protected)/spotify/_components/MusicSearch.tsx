@@ -10,7 +10,7 @@ import { saavnGlobalSearch } from '@/actions/saavn.actions';
 import MusicSearchResultOverlay from '@/app/(protected)/spotify/_components/MusicSearchResultOverlay';
 import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { T_SearchResponse } from '@/lib/types/jio-saavn/search.types';
+import { T_SearchResponse } from '@/lib/types/saavn/search.types';
 
 const MusicSearch = () => {
     const [search, setSearch] = useState('');

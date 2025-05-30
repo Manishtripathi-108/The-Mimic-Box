@@ -1,6 +1,6 @@
-import { T_ArtistBase } from '@/lib/types/jio-saavn/artists.type';
-import { T_EntityBase, T_ImageLink, T_NormalizedEntityBase, T_SearchAPIResponseSection, T_SearchSection } from '@/lib/types/jio-saavn/global.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/jio-saavn/song.types';
+import { T_ArtistBase } from '@/lib/types/saavn/artists.type';
+import { T_EntityBase, T_ImageLink, T_NormalizedEntityBase, T_SearchAPIResponseSection, T_SearchSection } from '@/lib/types/saavn/global.types';
+import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
 
 type T_AlbumRaw = T_EntityBase & {
     more_info: {

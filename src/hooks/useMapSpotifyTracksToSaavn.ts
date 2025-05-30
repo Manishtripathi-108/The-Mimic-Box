@@ -6,7 +6,7 @@ import stringSimilarity from 'string-similarity';
 
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_TrackContext } from '@/lib/types/client.types';
-import { T_Song } from '@/lib/types/jio-saavn/song.types';
+import { T_Song } from '@/lib/types/saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
 const CACHE_DURATION_MS = 15 * 24 * 60 * 60 * 1000; // 15 days

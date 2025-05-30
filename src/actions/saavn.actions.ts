@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-import jioSaavnApi from '@/lib/services/saavn.service';
+import saavnApi from '@/lib/services/saavn.service';
 import { createErrorReturn } from '@/lib/utils/createResponse.utils';
 
 const validatePaginationOptions = z.object({
@@ -24,58 +24,58 @@ type SortOptions = z.input<typeof validateSortOptions>;
 type SearchOptions = z.input<typeof validateSearchOptions>;
 
 /**
- * Perform a global search on JioSaavn.
+ * Perform a global search on saavn.
  * @param query The search term.
  * @example
  * const result = await saavnGlobalSearch('Arijit Singh');
  */
 export const saavnGlobalSearch = async (query: string) => {
     if (!query) return createErrorReturn('Query is required');
-    return await jioSaavnApi.searchAll(query);
+    return await saavnApi.searchAll(query);
 };
 
 /**
- * Search for songs on JioSaavn.
+ * Search for songs on saavn.
  * @example
  * const result = await saavnSearchSongs({ query: 'Tum Hi Ho', page: 1, limit: 10 });
  */
 export const saavnSearchSongs = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
     if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
-    return await jioSaavnApi.searchSongs(validate.data);
+    return await saavnApi.searchSongs(validate.data);
 };
 
 /**
- * Search for albums on JioSaavn.
+ * Search for albums on saavn.
  * @example
  * const result = await saavnSearchAlbums({ query: 'Kabir Singh', page: 0, limit: 5 });
  */
 export const saavnSearchAlbums = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
     if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
-    return await jioSaavnApi.searchAlbums(validate.data);
+    return await saavnApi.searchAlbums(validate.data);
 };
 
 /**
- * Search for playlists on JioSaavn.
+ * Search for playlists on saavn.
  * @example
  * const result = await saavnSearchPlaylists({ query: 'Workout', page: 0, limit: 10 });
  */
 export const saavnSearchPlaylists = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
     if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
-    return await jioSaavnApi.searchPlaylists(validate.data);
+    return await saavnApi.searchPlaylists(validate.data);
 };
 
 /**
- * Search for artists on JioSaavn.
+ * Search for artists on saavn.
  * @example
  * const result = await saavnSearchArtists({ query: 'A.R. Rahman', page: 1, limit: 20 });
  */
 export const saavnSearchArtists = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
     if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
-    return await jioSaavnApi.searchArtists(validate.data);
+    return await saavnApi.searchArtists(validate.data);
 };
 
 /* -------------------------------------------------------------------------- */
@@ -89,17 +89,17 @@ export const saavnSearchArtists = async (options: SearchOptions) => {
  */
 export const saavnGetSongDetails = async (ids: string) => {
     if (!ids) return createErrorReturn('IDs are required');
-    return await jioSaavnApi.getSongByIds(ids);
+    return await saavnApi.getSongByIds(ids);
 };
 
 /**
- * Get song details from a JioSaavn link.
+ * Get song details from a saavn link.
  * @example
- * const result = await saavnGetSongDetailsByLink('https://www.jiosaavn.com/song/abc123');
+ * const result = await saavnGetSongDetailsByLink('https://www.saavn.com/song/abc123');
  */
 export const saavnGetSongDetailsByLink = async (link: string) => {
     if (!link) return createErrorReturn('Link is required');
-    return await jioSaavnApi.getSongByLink(link);
+    return await saavnApi.getSongByLink(link);
 };
 
 /**
@@ -109,7 +109,7 @@ export const saavnGetSongDetailsByLink = async (link: string) => {
  */
 export const saavnGetSongSuggestions = async (id: string, limit = 10) => {
     if (!id) return createErrorReturn('ID is required');
-    return await jioSaavnApi.getSongSuggestions({ id, limit });
+    return await saavnApi.getSongSuggestions({ id, limit });
 };
 
 /* -------------------------------------------------------------------------- */
@@ -123,17 +123,17 @@ export const saavnGetSongSuggestions = async (id: string, limit = 10) => {
  */
 export const saavnGetAlbumDetails = async (id: string) => {
     if (!id) return createErrorReturn('ID is required');
-    return await jioSaavnApi.getAlbumById(id);
+    return await saavnApi.getAlbumById(id);
 };
 
 /**
- * Get album details from a JioSaavn link.
+ * Get album details from a saavn link.
  * @example
- * const result = await saavnGetAlbumDetailsByLink('https://www.jiosaavn.com/album/xyz');
+ * const result = await saavnGetAlbumDetailsByLink('https://www.saavn.com/album/xyz');
  */
 export const saavnGetAlbumDetailsByLink = async (link: string) => {
     if (!link) return createErrorReturn('Link is required');
-    return await jioSaavnApi.getAlbumByLink(link);
+    return await saavnApi.getAlbumByLink(link);
 };
 
 /* -------------------------------------------------------------------------- */
@@ -157,7 +157,7 @@ export const saavnGetArtistDetails = async (params: { id: string; songCount: num
     if (params.songCount < 0) return createErrorReturn('Song count must be a non-negative number');
     if (params.albumCount < 0) return createErrorReturn('Album count must be a non-negative number');
 
-    return await jioSaavnApi.getArtistById({
+    return await saavnApi.getArtistById({
         ...pagination.data,
         ...sort.data,
         id: params.id,
@@ -169,7 +169,7 @@ export const saavnGetArtistDetails = async (params: { id: string; songCount: num
 /**
  * Get artist details from a link with pagination and sorting.
  * @example
- * const result = await saavnGetArtistDetailsByLink({ link: 'https://www.jiosaavn.com/artist/xyz', page: 0, songCount: 10, albumCount: 5, sortBy: 'latest', sortOrder: 'desc' });
+ * const result = await saavnGetArtistDetailsByLink({ link: 'https://www.saavn.com/artist/xyz', page: 0, songCount: 10, albumCount: 5, sortBy: 'latest', sortOrder: 'desc' });
  */
 export const saavnGetArtistDetailsByLink = async (
     params: { link: string; songCount: number; albumCount: number } & PaginationOptions & SortOptions
@@ -185,7 +185,7 @@ export const saavnGetArtistDetailsByLink = async (
     if (params.songCount < 0) return createErrorReturn('Song count must be a non-negative number');
     if (params.albumCount < 0) return createErrorReturn('Album count must be a non-negative number');
 
-    return await jioSaavnApi.getArtistByLink({
+    return await saavnApi.getArtistByLink({
         ...pagination.data,
         ...sort.data,
         link: params.link,
@@ -207,7 +207,7 @@ export const saavnGetArtistSongs = async (params: { id: string } & PaginationOpt
     if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
     if (!sort.success) return createErrorReturn(sort.error.format()._errors[0]);
 
-    return await jioSaavnApi.getArtistSongs({
+    return await saavnApi.getArtistSongs({
         ...pagination.data,
         id: params.id,
         sortBy: sort.data.sortBy,
@@ -228,7 +228,7 @@ export const saavnGetArtistAlbums = async (params: { id: string } & PaginationOp
     if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
     if (!sort.success) return createErrorReturn(sort.error.format()._errors[0]);
 
-    return await jioSaavnApi.getArtistAlbums({
+    return await saavnApi.getArtistAlbums({
         ...pagination.data,
         id: params.id,
         sortBy: sort.data.sortBy,
@@ -251,7 +251,7 @@ export const saavnGetPlaylistDetails = async (params: { id: string } & Paginatio
 
     if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
 
-    return await jioSaavnApi.getPlaylistById({
+    return await saavnApi.getPlaylistById({
         ...pagination.data,
         id: params.id,
     });
@@ -260,7 +260,7 @@ export const saavnGetPlaylistDetails = async (params: { id: string } & Paginatio
 /**
  * Get playlist details from a link.
  * @example
- * const result = await saavnGetPlaylistDetailsByLink({ link: 'https://www.jiosaavn.com/playlist/xyz', page: 0, limit: 10 });
+ * const result = await saavnGetPlaylistDetailsByLink({ link: 'https://www.saavn.com/playlist/xyz', page: 0, limit: 10 });
  */
 export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & PaginationOptions) => {
     if (!params.link) return createErrorReturn('Link is required');
@@ -268,7 +268,7 @@ export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & P
 
     if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
 
-    return await jioSaavnApi.getPlaylistByLink({
+    return await saavnApi.getPlaylistByLink({
         ...pagination.data,
         link: params.link,
     });

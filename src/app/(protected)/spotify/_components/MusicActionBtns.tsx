@@ -9,7 +9,7 @@ import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useMapSpotifyTracksToSaavn from '@/hooks/useMapSpotifyTracksToSaavn';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
-import { T_Song } from '@/lib/types/jio-saavn/song.types';
+import { T_Song } from '@/lib/types/saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 import { shareUrl } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
