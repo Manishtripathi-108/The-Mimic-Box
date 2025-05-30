@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-import jioSaavnApi from '@/lib/services/jio-saavn.service';
+import jioSaavnApi from '@/lib/services/saavn.service';
 import { createErrorReturn } from '@/lib/utils/createResponse.utils';
 
 const validatePaginationOptions = z.object({

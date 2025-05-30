@@ -9,7 +9,7 @@ import { T_AudioPlayerState, T_AudioPlayerTrack, T_TrackContext } from '@/lib/ty
 import { audioPlayerInitialState, audioPlayerReducer } from '@/reducers/audioPlayer.reducer';
 
 // Types
-export type AudioPlayerState = {
+type AudioPlayerState = {
     playing: boolean;
     loading: boolean;
     duration: number;
@@ -19,7 +19,7 @@ export type AudioPlayerState = {
     playbackRate: number;
 };
 
-export type T_AudioPlayerContext = {
+type T_AudioPlayerContext = {
     getAudioElement: () => HTMLAudioElement | null;
     currentTrack: T_AudioPlayerTrack | null;
     play: () => void;

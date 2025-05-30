@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-import jioSaavnApi from '@/lib/services/jio-saavn.service';
+import jioSaavnApi from '@/lib/services/saavn.service';
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils/createResponse.utils';
 
 export async function GET(req: NextRequest) {

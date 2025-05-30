@@ -3,17 +3,44 @@
 import React from 'react';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
+import { APP_ROUTES } from '@/constants/routes.constants';
 import { T_SearchResponse } from '@/lib/types/jio-saavn/search.types';
 
-const MusicSearchResultOverlay: React.FC<{ results: T_SearchResponse | null }> = ({ results }) => {
+const createLink = (id: string, type: string) => {
+    switch (type) {
+        case 'song':
+            return APP_ROUTES.SPOTIFY.JS.TRACKS(id);
+        case 'album':
+            return APP_ROUTES.SPOTIFY.JS.ALBUMS(id);
+        case 'playlist':
+            return APP_ROUTES.SPOTIFY.JS.PLAYLISTS(id);
+        case 'artist':
+            return APP_ROUTES.SPOTIFY.JS.ARTISTS(id);
+        default:
+            return APP_ROUTES.SPOTIFY.JS.TRACKS(id);
+    }
+};
+
+type Props = {
+    results: T_SearchResponse | null;
+    isOpen: boolean;
+    onClose: () => void;
+};
+
+const MusicSearchResultOverlay: React.FC<Props> = ({ results, isOpen, onClose }) => {
     const nonEmptySections = results ? Object.entries(results).filter(([, section]) => section.results.length > 0) : [];
+
+    const handleLinkClick = () => {
+        onClose();
+    };
 
     return (
         <AnimatePresence>
-            {nonEmptySections.length > 0 && (
+            {isOpen && nonEmptySections.length > 0 && (
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -28,10 +55,11 @@ const MusicSearchResultOverlay: React.FC<{ results: T_SearchResponse | null }> =
                                 </h3>
 
                                 {section.results.map((item, i) => (
-                                    <div
+                                    <Link
+                                        href={createLink(item.id, item.type)}
                                         key={i}
-                                        className="group hover:bg-primary flex cursor-pointer items-center gap-3 rounded-lg p-2 transition"
-                                        tabIndex={0}>
+                                        onClick={handleLinkClick}
+                                        className="group hover:bg-primary flex cursor-pointer items-center gap-3 rounded-lg p-2 transition">
                                         <div className="relative size-10 shrink-0 overflow-hidden rounded-md">
                                             <Image width={40} height={40} src={item.image[0]?.url} alt={item.title} className="object-cover" />
                                         </div>
@@ -40,7 +68,7 @@ const MusicSearchResultOverlay: React.FC<{ results: T_SearchResponse | null }> =
                                             <p className="text-text-primary truncate font-medium">{item.title}</p>
                                             <p className="text-text-secondary truncate text-xs">{item.description}</p>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         ))}

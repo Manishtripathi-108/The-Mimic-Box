@@ -79,7 +79,7 @@ export const createSongPayload = (song: T_SongAPIResponse): T_Song => ({
     copyright: song.more_info?.copyright_text || null,
     album: {
         id: song.more_info?.album_id || null,
-        name: song.more_info?.album.replace(/&amp;/g, '&').replace(/&quot;/g, '"') || null,
+        name: song.more_info?.album?.replace(/&amp;/g, '&').replace(/&quot;/g, '"') || null,
         url: song.more_info?.album_url || null,
     },
     artists: {
@@ -257,7 +257,7 @@ export const createAlbumPayload = (album: T_AlbumAPIResponse): T_Album => ({
         all: album.more_info?.artistMap?.artists?.map(createArtistBasePayload),
     },
     image: createImageLinks(album.image),
-    songs: album.list?.map(createSongPayload) || null,
+    songs: (album.list && album.list?.map(createSongPayload)) || null,
 });
 
 export const createPlaylistPayload = (playlist: T_PlaylistAPIResponse): T_Playlist => ({
@@ -271,7 +271,7 @@ export const createPlaylistPayload = (playlist: T_PlaylistAPIResponse): T_Playli
     explicitContent: playlist.explicit_content === '1',
     url: playlist.perma_url,
     songCount: playlist.list_count ? Number(playlist.list_count) : null,
-    artists: playlist.more_info.artists?.map(createArtistBasePayload) || null,
+    artists: playlist.more_info?.artists?.map(createArtistBasePayload) || null,
     image: createImageLinks(playlist.image),
     songs: (playlist.list && playlist.list?.map(createSongPayload)) || null,
 });

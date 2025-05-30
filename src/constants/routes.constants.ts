@@ -81,6 +81,12 @@ export const APP_ROUTES = {
         ALBUMS: (id: string) => `/spotify/albums/${id}`,
         TRACKS: (id: string) => `/spotify/tracks/${id}`,
         ARTISTS: (id: string) => `/spotify/artists/${id}`,
+        JS: {
+            TRACKS: (id: string) => `/spotify/js/tracks/${id}`,
+            ARTISTS: (id: string) => `/spotify/js/artists/${id}`,
+            ALBUMS: (id: string) => `/spotify/js/albums/${id}`,
+            PLAYLISTS: (id: string) => `/spotify/js/playlists/${id}`,
+        },
     },
 
     USER: {

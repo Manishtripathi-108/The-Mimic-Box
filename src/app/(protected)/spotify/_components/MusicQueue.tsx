@@ -35,7 +35,7 @@ const MusicQueue = ({ className }: { className?: string }) => {
                                 alt={track.title}
                                 width={40}
                                 height={40}
-                                className="h-10 w-10 shrink-0 rounded-xl object-cover"
+                                className="size-9 shrink-0 rounded-md object-cover"
                             />
 
                             <div className="min-w-0">

@@ -83,6 +83,13 @@ export type T_UploadState = {
 } & AxiosProgressEvent;
 
 type T_TrackSourceType = 'album' | 'playlist' | 'track' | 'artist';
+type T_AudioEntityType = 'album' | 'playlist' | 'track' | 'artist';
+export type T_AudioSource = 'spotify' | 'saavn' | 'youtube';
+export type T_AudioEntityLink = {
+    id: string;
+    name: string;
+    link: string;
+};
 
 export type T_TrackContext = {
     type: T_TrackSourceType;
@@ -90,8 +97,14 @@ export type T_TrackContext = {
     name: string;
 };
 
+export type T_AudioSourceContext = {
+    source: T_AudioSource;
+    type: T_AudioEntityType;
+    id: string;
+};
+
 export type T_AudioPlayerTrack = {
-    spotifyId: string;
+    spotifyId?: string;
     saavnId: string;
     urls: { quality: '12kbps' | '48kbps' | '96kbps' | '160kbps' | '320kbps'; url: string }[];
     title: string;
