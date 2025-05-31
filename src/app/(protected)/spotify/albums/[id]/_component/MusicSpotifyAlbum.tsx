@@ -14,7 +14,7 @@ import MusicTrackCardSkeleton from '@/app/(protected)/spotify/_components/skelet
 import { APP_ROUTES } from '@/constants/routes.constants';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
-const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
+const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
     const { name, images, tracks: initialTracks, artists } = album;
 
     const [tracks, setTracks] = useState(initialTracks.items);
@@ -105,4 +105,4 @@ const MusicAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
     );
 };
 
-export default MusicAlbum;
+export default MusicSpotifyAlbum;

@@ -10,11 +10,11 @@ import { saavnGlobalSearch } from '@/actions/saavn.actions';
 import MusicSearchResultOverlay from '@/app/(protected)/spotify/_components/MusicSearchResultOverlay';
 import Icon from '@/components/ui/Icon';
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { T_SearchResponse } from '@/lib/types/saavn/search.types';
+import { T_SaavnSearchResponse } from '@/lib/types/saavn/search.types';
 
 const MusicSearch = () => {
     const [search, setSearch] = useState('');
-    const [results, setResults] = useState<T_SearchResponse | null>(null);
+    const [results, setResults] = useState<T_SaavnSearchResponse | null>(null);
     const [isOverlayOpen, setIsOverlayOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const router = useRouter();

@@ -55,29 +55,29 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             <MusicActionBtns context={{ id: playlist.id, type: 'playlist', source: 'saavn' }} className="mt-4" />
 
             <div className="mt-6 grid w-full gap-2">
-                {playlist.songs.map((track, idx) => (
+                {playlist.songs.map((t, idx) => (
                     <MusicTrackCard
-                        key={track.id + idx}
-                        id={track.id}
-                        title={track.name}
-                        link={APP_ROUTES.SPOTIFY.JS.TRACKS(track.id)}
-                        duration_ms={(track.duration || 0) * 1000}
-                        imageUrl={track.image?.[2]?.url}
-                        artists={track.artists.primary.map((artist) => ({
+                        key={`${t.id} + ${idx}`}
+                        id={t.id}
+                        title={t.name}
+                        link={APP_ROUTES.SPOTIFY.JS.TRACKS(t.id)}
+                        duration_ms={(t.duration || 0) * 1000}
+                        imageUrl={t.image?.[2]?.url}
+                        artists={t.artists.primary.map((artist) => ({
                             id: artist.id,
                             name: artist.name,
                             link: APP_ROUTES.SPOTIFY.JS.ARTISTS(artist.id),
                         }))}
                         album={
-                            id in track.album
+                            id in t.album
                                 ? {
-                                      id: track.album.id!,
-                                      name: track.album.name!,
-                                      link: APP_ROUTES.SPOTIFY.JS.ALBUMS(track.album.id!),
+                                      id: t.album.id!,
+                                      name: t.album.name!,
+                                      link: APP_ROUTES.SPOTIFY.JS.ALBUMS(t.album.id!),
                                   }
                                 : undefined
                         }
-                        context={{ id: playlist.id, type: 'playlist', source: 'spotify' }}
+                        context={{ id: playlist.id, type: 'playlist', source: 'saavn' }}
                     />
                 ))}
             </div>

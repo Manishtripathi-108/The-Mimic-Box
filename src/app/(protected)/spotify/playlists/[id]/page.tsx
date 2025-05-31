@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import { getSpotifyPlaylistDetails } from '@/actions/spotify.actions';
-import MusicPlaylist from '@/app/(protected)/spotify/_components/MusicPlayList';
+import MusicSpotifyPlaylist from '@/app/(protected)/spotify/playlists/[id]/_component/MusicSpotifyPlayList';
 import ErrorCard from '@/components/layout/ErrorCard';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
@@ -44,7 +44,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         return <ErrorCard message={res.message || 'Failed to fetch playlist'} />;
     }
 
-    return <MusicPlaylist playlist={res.payload} />;
+    return <MusicSpotifyPlaylist playlist={res.payload} />;
 };
 
 export default Page;

@@ -86,7 +86,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                                 name: artist.name,
                                 link: APP_ROUTES.SPOTIFY.JS.ARTISTS(artist.id),
                             }))}
-                            context={{ type: 'album', id: album.id, source: 'spotify' }}
+                            context={{ type: 'album', id: album.id, source: 'saavn' }}
                         />
                     ) : null
                 )}

@@ -11,7 +11,7 @@ import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
 import { T_AudioSourceContext } from '@/lib/types/client.types';
 
-const MusicTrackBtn = ({ id, context }: { id: string; context: T_AudioSourceContext }) => {
+const MusicTrackPlayBtn = ({ id, context }: { id: string; context: T_AudioSourceContext }) => {
     const { playbackContext, currentTrack, playing, toggleFadePlay, playTrackById, setQueue } = useAudioPlayerContext();
     const { isPending, getPlayableTracks } = useAudioSourceTrackMapper();
 
@@ -52,4 +52,4 @@ const MusicTrackBtn = ({ id, context }: { id: string; context: T_AudioSourceCont
     );
 };
 
-export default memo(MusicTrackBtn);
+export default memo(MusicTrackPlayBtn);

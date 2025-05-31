@@ -79,7 +79,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                     <div className="flex flex-col gap-2">
                         {artist.topSongs.map((t, index) => (
                             <MusicTrackCard
-                                key={t.id + index}
+                                key={`${t.id} + ${index}`}
                                 id={t.id}
                                 title={t.name}
                                 link={APP_ROUTES.SPOTIFY.JS.TRACKS(t.id)}
@@ -99,7 +99,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                                           }
                                         : undefined
                                 }
-                                context={{ type: 'artist', id: id, source: 'spotify' }}
+                                context={{ type: 'artist', id: id, source: 'saavn' }}
                             />
                         ))}
                     </div>

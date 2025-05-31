@@ -112,6 +112,16 @@ export const saavnGetSongSuggestions = async (id: string, limit = 10) => {
     return await saavnApi.getSongSuggestions({ id, limit });
 };
 
+/**
+ * Get lyrics of a song.
+ * @example
+ * const result = await saavnGetSongLyrics('abc123');
+ */
+export const saavnGetSongLyrics = async (id: string) => {
+    if (!id) return createErrorReturn('ID is required');
+    return await saavnApi.getSongLyrics(id);
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                    Album                                   */
 /* -------------------------------------------------------------------------- */

@@ -1,7 +1,7 @@
-import { T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
-import { T_DownloadLink, T_EntityBase, T_ImageLink } from '@/lib/types/saavn/global.types';
+import { T_SaavnArtistBase, T_SaavnArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
+import { T_SaavnDownloadLink, T_SaavnEntityBase, T_SaavnImageLink } from '@/lib/types/saavn/global.types';
 
-export type T_SongAPIResponse = T_EntityBase & {
+export type T_SaavnSongAPIResponse = T_SaavnEntityBase & {
     header_desc: string;
     play_count: string;
     list_count: string;
@@ -41,14 +41,14 @@ export type T_SongAPIResponse = T_EntityBase & {
             reason: string;
         };
         artistMap: {
-            primary_artists: T_ArtistBaseAPIResponse[];
-            featured_artists: T_ArtistBaseAPIResponse[];
-            artists: T_ArtistBaseAPIResponse[];
+            primary_artists: T_SaavnArtistBaseAPIResponse[];
+            featured_artists: T_SaavnArtistBaseAPIResponse[];
+            artists: T_SaavnArtistBaseAPIResponse[];
         };
     };
 };
 
-export type T_Song = {
+export type T_SaavnSong = {
     id: string;
     name: string;
     type: string;
@@ -64,22 +64,22 @@ export type T_Song = {
     explicitContent: boolean;
     playCount: number | null;
     copyright: string | null;
-    image: T_ImageLink[];
-    downloadUrl: T_DownloadLink[];
+    image: T_SaavnImageLink[];
+    downloadUrl: T_SaavnDownloadLink[];
     album: {
         id: string | null;
         name: string | null;
         url: string | null;
     };
     artists: {
-        primary: T_ArtistBase[];
-        featured: T_ArtistBase[];
-        all: T_ArtistBase[];
+        primary: T_SaavnArtistBase[];
+        featured: T_SaavnArtistBase[];
+        all: T_SaavnArtistBase[];
     };
 };
 
-type T_SongStationAPIResponse = Record<string, { song: T_SongAPIResponse }>;
+type T_SaavnSongStationAPIResponse = Record<string, { song: T_SaavnSongAPIResponse }>;
 
-export type T_SongSuggestionAPIResponse = {
+export type T_SaavnSongSuggestionAPIResponse = {
     stationid: string;
-} & T_SongStationAPIResponse;
+} & T_SaavnSongStationAPIResponse;

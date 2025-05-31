@@ -1,8 +1,14 @@
-import { T_ArtistBase } from '@/lib/types/saavn/artists.type';
-import { T_EntityBase, T_ImageLink, T_NormalizedEntityBase, T_SearchAPIResponseSection, T_SearchSection } from '@/lib/types/saavn/global.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
+import { T_SaavnArtistBase } from '@/lib/types/saavn/artists.type';
+import {
+    T_SaavnEntityBase,
+    T_SaavnImageLink,
+    T_SaavnNormalizedEntityBase,
+    T_SaavnSearchAPIResponseSection,
+    T_SaavnSearchSection,
+} from '@/lib/types/saavn/global.types';
+import { T_SaavnSong, T_SaavnSongAPIResponse } from '@/lib/types/saavn/song.types';
 
-type T_AlbumRaw = T_EntityBase & {
+type T_SaavnAlbumRaw = T_SaavnEntityBase & {
     more_info: {
         music: string;
         ctr: number;
@@ -13,7 +19,7 @@ type T_AlbumRaw = T_EntityBase & {
     };
 };
 
-type T_SongRaw = T_EntityBase & {
+type T_SaavnSongRaw = T_SaavnEntityBase & {
     more_info: {
         album: string;
         ctr: number;
@@ -28,7 +34,7 @@ type T_SongRaw = T_EntityBase & {
     };
 };
 
-type T_PlaylistRaw = T_EntityBase & {
+type T_SaavnPlaylistRaw = T_SaavnEntityBase & {
     more_info: {
         firstname: string;
         artist_name: string[];
@@ -43,7 +49,7 @@ type T_PlaylistRaw = T_EntityBase & {
     };
 };
 
-type T_ArtistRaw = Omit<T_EntityBase, 'explicit_content' | 'perma_url'> & {
+type T_SaavnArtistRaw = Omit<T_SaavnEntityBase, 'explicit_content' | 'perma_url'> & {
     extra: string;
     name: string;
     isRadioPresent: boolean;
@@ -52,18 +58,18 @@ type T_ArtistRaw = Omit<T_EntityBase, 'explicit_content' | 'perma_url'> & {
     position: number;
 };
 
-export type T_SearchAPIResponse = {
-    albums: T_SearchAPIResponseSection<T_AlbumRaw>;
-    songs: T_SearchAPIResponseSection<T_SongRaw>;
-    playlists: T_SearchAPIResponseSection<T_PlaylistRaw>;
-    artists: T_SearchAPIResponseSection<T_ArtistRaw>;
-    topquery: T_SearchAPIResponseSection<T_SongRaw>;
+export type T_SaavnSearchAPIResponse = {
+    albums: T_SaavnSearchAPIResponseSection<T_SaavnAlbumRaw>;
+    songs: T_SaavnSearchAPIResponseSection<T_SaavnSongRaw>;
+    playlists: T_SaavnSearchAPIResponseSection<T_SaavnPlaylistRaw>;
+    artists: T_SaavnSearchAPIResponseSection<T_SaavnArtistRaw>;
+    topquery: T_SaavnSearchAPIResponseSection<T_SaavnSongRaw>;
 };
 
 /* --------------------- Search API Normalized Response --------------------- */
-export type T_SearchResponse = {
-    albums: T_SearchSection<
-        T_NormalizedEntityBase & {
+export type T_SaavnSearchResponse = {
+    albums: T_SaavnSearchSection<
+        T_SaavnNormalizedEntityBase & {
             artist: string;
             url: string;
             year: string;
@@ -71,8 +77,8 @@ export type T_SearchResponse = {
             songIds: string;
         }
     >;
-    songs: T_SearchSection<
-        T_NormalizedEntityBase & {
+    songs: T_SaavnSearchSection<
+        T_SaavnNormalizedEntityBase & {
             album: string;
             url: string;
             primaryArtists: string;
@@ -80,15 +86,15 @@ export type T_SearchResponse = {
             language: string;
         }
     >;
-    artists: T_SearchSection<T_NormalizedEntityBase>;
-    playlists: T_SearchSection<
-        T_NormalizedEntityBase & {
+    artists: T_SaavnSearchSection<T_SaavnNormalizedEntityBase>;
+    playlists: T_SaavnSearchSection<
+        T_SaavnNormalizedEntityBase & {
             url: string;
             language: string;
         }
     >;
-    topQuery: T_SearchSection<
-        T_NormalizedEntityBase & {
+    topQuery: T_SaavnSearchSection<
+        T_SaavnNormalizedEntityBase & {
             album: string;
             url: string;
             primaryArtists: string;
@@ -98,12 +104,12 @@ export type T_SearchResponse = {
     >;
 };
 
-export type T_SearchPlaylistAPIResponse = {
+export type T_SaavnSearchPlaylistAPIResponse = {
     total: number;
     start: number;
     results: Array<
-        T_PlaylistRaw & {
-            more_info: T_PlaylistRaw['more_info'] & {
+        T_SaavnPlaylistRaw & {
+            more_info: T_SaavnPlaylistRaw['more_info'] & {
                 uid: string;
                 song_count: string;
             };
@@ -112,14 +118,14 @@ export type T_SearchPlaylistAPIResponse = {
     >;
 };
 
-export type T_SearchPlaylist = {
+export type T_SaavnSearchPlaylist = {
     total: number;
     start: number;
     results: {
         id: string;
         name: string;
         type: string;
-        image: T_ImageLink[];
+        image: T_SaavnImageLink[];
         url: string;
         songCount: number | null;
         language: string;
@@ -127,7 +133,7 @@ export type T_SearchPlaylist = {
     }[];
 };
 
-export type T_SearchArtistAPIResponse = {
+export type T_SaavnSearchArtistAPIResponse = {
     total: number;
     start: number;
     results: {
@@ -145,20 +151,20 @@ export type T_SearchArtistAPIResponse = {
     }[];
 };
 
-export type T_SearchArtist = {
+export type T_SaavnSearchArtist = {
     total: number;
     start: number;
-    results: T_ArtistBase[];
+    results: T_SaavnArtistBase[];
 };
 
-export type T_SearchSongAPIResponse = {
+export type T_SaavnSearchSongAPIResponse = {
     total: number;
     start: number;
-    results: T_SongAPIResponse[];
+    results: T_SaavnSongAPIResponse[];
 };
 
-export type T_SearchSong = {
+export type T_SaavnSearchSong = {
     total: number;
     start: number;
-    results: T_Song[];
+    results: T_SaavnSong[];
 };
