@@ -5,7 +5,6 @@ import { memo, useMemo } from 'react';
 import isEqual from 'lodash.isequal';
 import toast from 'react-hot-toast';
 
-import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
@@ -21,9 +20,6 @@ const MusicTrackPlayBtn = ({ id, context }: { id: string; context: T_AudioSource
 
     const loadAndPlayTrack = async () => {
         const toastId = toast.loading('Loading tracks, please wait...');
-        const res = await getSpotifyEntityTracks(context.id, context.type);
-        if (!res.success) return toast.error('Failed to fetch Spotify tracks', { id: toastId });
-
         const tracks = await getPlayableTracks(context);
         if (!tracks.length) {
             return toast.error('No valid tracks found for selected context', { id: toastId });
