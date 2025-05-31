@@ -57,7 +57,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             <div className="mt-6 grid w-full gap-2">
                 {playlist.songs.map((t, idx) => (
                     <MusicTrackCard
-                        key={`${t.id} + ${idx}`}
+                        key={`${t.id}-${idx}`}
                         id={t.id}
                         title={t.name}
                         link={APP_ROUTES.SPOTIFY.JS.TRACKS(t.id)}

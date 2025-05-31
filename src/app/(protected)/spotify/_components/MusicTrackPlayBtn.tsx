@@ -19,15 +19,15 @@ const MusicTrackPlayBtn = ({ id, context }: { id: string; context: T_AudioSource
     const isPlaying = isSameContext && isCurrentTrack && playing;
 
     const loadAndPlayTrack = async () => {
-        const toastId = toast.loading('Loading tracks, please wait...');
+        const id = toast.loading('Loading tracks, please wait...');
         const tracks = await getPlayableTracks(context);
         if (!tracks.length) {
-            return toast.error('No valid tracks found for selected context', { id: toastId });
+            return toast.error('No valid tracks found for selected context', { id });
         }
 
         setQueue(tracks, context);
         setTimeout(() => playTrackById(id), 100);
-        toast.success('Tracks loaded and playing', { id: toastId });
+        toast.success('Tracks loaded and playing', { id });
     };
 
     const handlePlayPause = async () => {

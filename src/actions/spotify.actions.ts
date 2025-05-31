@@ -109,14 +109,14 @@ export const getSpotifyEntityTracks = async (id: string, type: 'album' | 'playli
         switch (type) {
             case 'album': {
                 const res = await spotifyApi.getAlbumTracks(token, id);
-                if (!res.success) throw new Error('Failed to fetch album tracks: ' + res.error);
+                if (!res.success) throw new Error('Failed to fetch album tracks: ');
                 tracks = await fetchAllSpotifyPaginatedItems(token, res.payload);
                 break;
             }
 
             case 'playlist': {
                 const res = await spotifyApi.getPlaylistTracks(token, id);
-                if (!res.success) throw new Error('Failed to fetch playlist tracks: ' + res.error);
+                if (!res.success) throw new Error('Failed to fetch playlist tracks: ');
                 const paginated = await fetchAllSpotifyPaginatedItems(token, res.payload);
 
                 tracks = paginated.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null);
@@ -125,14 +125,14 @@ export const getSpotifyEntityTracks = async (id: string, type: 'album' | 'playli
 
             case 'track': {
                 const res = await spotifyApi.getTrackDetails(token, id);
-                if (!res.success) throw new Error('Failed to fetch track details: ' + res.error);
+                if (!res.success) throw new Error('Failed to fetch track details: ');
                 tracks = [res.payload];
                 break;
             }
 
             case 'artist': {
                 const res = await spotifyApi.getArtistTopTracks(token, id);
-                if (!res.success) throw new Error('Failed to fetch artist top tracks: ' + res.error);
+                if (!res.success) throw new Error('Failed to fetch artist top tracks: ');
                 tracks = res.payload;
                 break;
             }

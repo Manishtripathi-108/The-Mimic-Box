@@ -23,7 +23,7 @@ const Page = async () => {
                         const track = item.track;
                         return (
                             <MusicTrackCard
-                                key={`${track.id} + ${index}`}
+                                key={`${track.id}-${index}`}
                                 id={track.id}
                                 title={track.name}
                                 link={APP_ROUTES.SPOTIFY.TRACKS(track.id)}

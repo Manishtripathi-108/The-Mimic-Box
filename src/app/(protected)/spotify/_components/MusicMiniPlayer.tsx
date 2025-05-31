@@ -243,6 +243,7 @@ const MusicMiniPlayer = () => {
                         </button>
                         <input
                             type="range"
+                            aria-label="Volume Control"
                             min={0}
                             max={1}
                             step={0.01}

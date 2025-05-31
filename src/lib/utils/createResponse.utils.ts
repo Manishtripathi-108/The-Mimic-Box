@@ -34,7 +34,7 @@ export const createErrorReturn = <T = undefined>(
     extraData?: T,
     code?: ErrorCodes
 ): ErrorResponseOutput<T> => {
-    // console.error(message, error);
+    console.error(message, error);
     return { success: false, message, error, extraData: extraData as T, code };
 };
 

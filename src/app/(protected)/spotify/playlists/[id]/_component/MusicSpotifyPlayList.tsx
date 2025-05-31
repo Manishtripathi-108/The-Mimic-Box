@@ -80,7 +80,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
             <div className="mt-6 grid w-full gap-2">
                 {tracks.map((t, idx) => (
                     <MusicTrackCard
-                        key={`${t.id} + ${idx}`}
+                        key={`${t.id}-${idx}`}
                         id={t.id}
                         title={t.name}
                         link={APP_ROUTES.SPOTIFY.TRACKS(t.id)}
