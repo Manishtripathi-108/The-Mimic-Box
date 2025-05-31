@@ -60,7 +60,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <html lang="en" suppressHydrationWarning className="scroll-smooth">
             <head>
-                {/* <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" /> */}
+                {/* <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" async /> */}
                 <meta name="google-site-verification" content="D12BQGTOqvlZdSNhlyOAbpAjZNHzdS7LPaJCn8ucgpg" />
                 <meta name="apple-mobile-web-app-title" content="Mimic Box" />
                 <ThemeScript />

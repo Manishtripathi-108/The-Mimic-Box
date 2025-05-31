@@ -1,7 +1,8 @@
 'use client';
 
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
 import Icon from '@/components/ui/Icon';
@@ -9,8 +10,9 @@ import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
-const MusicDownloadPopover = lazy(() => import('@/app/(protected)/spotify/_components/MusicDownloadPopover'));
-const MusicQueue = lazy(() => import('@/app/(protected)/spotify/_components/MusicQueue'));
+const MusicDownloadPopover = dynamic(() => import('@/app/(protected)/spotify/_components/MusicDownloadPopover'), { ssr: false });
+const MusicQueue = dynamic(() => import('@/app/(protected)/spotify/_components/MusicQueue'), { ssr: false });
+const MusicLyricsCard = dynamic(() => import('@/app/(protected)/spotify/_components/MusicLyricsCard'), { ssr: false });
 
 const MusicMiniPlayer = () => {
     const [playbackState, setPlaybackState] = useState({
@@ -19,6 +21,7 @@ const MusicMiniPlayer = () => {
     });
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const [isQueueOpen, setIsQueueOpen] = useState(false);
+    const [isLyricsOpen, setIsLyricsOpen] = useState(false);
 
     const lastTimeUpdateRef = useRef(0);
     const {
@@ -72,7 +75,7 @@ const MusicMiniPlayer = () => {
 
     // Close popover on outside click
     useEffect(() => {
-        if (!isPopoverOpen && !isQueueOpen) return;
+        if (!isPopoverOpen && !isQueueOpen && !isLyricsOpen) return;
 
         const handleClickOutside = (event: MouseEvent) => {
             const popoverContainer = document.getElementById('download-popover-container');
@@ -83,11 +86,15 @@ const MusicMiniPlayer = () => {
             if (queueContainer && !queueContainer.contains(event.target as Node)) {
                 setIsQueueOpen(false);
             }
+            const lyricsContainer = document.getElementById('lyrics-popover-container');
+            if (lyricsContainer && !lyricsContainer.contains(event.target as Node)) {
+                setIsLyricsOpen(false);
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isPopoverOpen, isQueueOpen]);
+    }, [isPopoverOpen, isQueueOpen, isLyricsOpen]);
 
     if (!currentTrack) return null;
 
@@ -113,13 +120,28 @@ const MusicMiniPlayer = () => {
                 {/* Playback Controls */}
                 <div className="@8xl:flex-8 flex flex-1 flex-col items-center gap-1 @md:flex-2 @xl:flex-4">
                     <div className="flex items-center justify-center gap-4">
-                        <button
-                            type="button"
-                            title="Lyrics"
-                            className="hover:text-text-primary hidden cursor-pointer rounded-full p-1 @md:inline"
-                            aria-label="Open Lyrics">
-                            <Icon icon="lyrics" className="size-5" />
-                        </button>
+                        <div className="relative hidden @md:flex" id="lyrics-popover-container">
+                            <button
+                                type="button"
+                                title="Lyrics"
+                                onClick={() => setIsLyricsOpen((prev) => !prev)}
+                                className="hover:text-text-primary cursor-pointer rounded-full p-1"
+                                aria-label="Open Lyrics">
+                                <Icon icon="lyrics" className="size-5" />
+                            </button>
+
+                            {isLyricsOpen && (
+                                <MusicLyricsCard
+                                    track={currentTrack.title}
+                                    artist={currentTrack.artists}
+                                    album={currentTrack.album || 'Unknown Album'}
+                                    duration={duration}
+                                    currentDuration={playbackState.currentTime}
+                                    onClose={() => setIsLyricsOpen(false)}
+                                    className="right-1/2 bottom-full z-60 mb-6 max-h-[60vh] w-sm translate-x-1/2"
+                                />
+                            )}
+                        </div>
 
                         <button
                             type="button"
@@ -165,19 +187,15 @@ const MusicMiniPlayer = () => {
                             <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
 
-                        <div className="relative hidden @md:inline" id="download-popover-container">
-                            {isPopoverOpen && (
-                                <Suspense fallback={<Icon icon="loading" className="text-accent absolute inset-0 size-7" />}>
-                                    <MusicDownloadPopover downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />
-                                </Suspense>
-                            )}
+                        <div className="relative hidden items-center @md:flex" id="download-popover-container">
+                            {isPopoverOpen && <MusicDownloadPopover downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />}
                             <button
                                 type="button"
                                 title="Download"
                                 onClick={() => setIsPopoverOpen((prev) => !prev)}
                                 className="hover:text-text-primary cursor-pointer rounded-full p-1"
                                 aria-label="Download">
-                                <Icon icon="download" className="size-6" />
+                                <Icon icon="download" className="size-5" />
                             </button>
                         </div>
                     </div>
@@ -211,64 +229,52 @@ const MusicMiniPlayer = () => {
                     </div>
                 </div>
 
-                {/* Volume & Actions */}
-                <div className="hidden shrink-0 items-center @xl:flex">
-                    <div className="mr-2 hidden w-28 items-center gap-1 @5xl:flex">
+                {/* Side Controls */}
+                <div className="hidden shrink-0 items-center gap-2 @xl:flex">
+                    {/* Volume */}
+                    <div className="group hidden w-24 items-center gap-1 @5xl:flex">
                         <button
                             type="button"
-                            title={muted ? 'Unmute' : 'Mute'}
+                            title={muted || volume === 0 ? 'Unmute' : 'Mute'}
                             onClick={toggleMute}
-                            className="hover:text-text-primary shrink-0 cursor-pointer rounded-full p-1">
-                            <Icon icon={muted ? 'volumeOff' : 'volumeLoud'} className="size-5 shrink-0" />
+                            className="hover:text-text-primary shrink-0 cursor-pointer rounded-full p-1"
+                            aria-label="Toggle Mute">
+                            <Icon icon={muted || volume === 0 ? 'volumeOff' : 'volumeLoud'} className="size-5" />
                         </button>
-                        <label className="group flex w-full items-center">
-                            <input
-                                type="range"
-                                aria-label="Volume"
-                                min={0}
-                                max={1}
-                                step={0.01}
-                                value={volume}
-                                onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
-                            />
-                        </label>
+                        <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={muted ? 0 : volume}
+                            onChange={(e) => setVolume(parseFloat(e.target.value))}
+                            className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full bg-neutral-700 transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
+                        />
                     </div>
 
+                    {/* Queue */}
                     <div className="relative" id="queue-popover-container">
                         <button
                             type="button"
-                            title="Queue"
+                            title="Open Queue"
+                            aria-label="Open Queue"
                             onClick={() => setIsQueueOpen((prev) => !prev)}
                             className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
                             <Icon icon="musicQueue" className="size-5" />
                         </button>
 
-                        {isQueueOpen && (
-                            <Suspense fallback={<Icon icon="loading" className="text-accent absolute inset-0 size-7" />}>
-                                <MusicQueue className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right" />
-                            </Suspense>
-                        )}
+                        {isQueueOpen && <MusicQueue className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right" />}
                     </div>
 
-                    <label htmlFor="playBackRate" className="sr-only">
-                        Select playback rate
-                    </label>
-                    <select
-                        name="playBackRate"
-                        id="playBackRate"
-                        value={playbackRate}
-                        onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
-                        className="text-text-secondary *:bg-secondary hover:bg-primary cursor-pointer appearance-none rounded-full px-2 py-1 text-center text-sm">
-                        <option value="0.5">0.5x</option>
-                        <option value="0.75">0.75x</option>
-                        <option value="1">1x</option>
-                        <option value="1.25">1.25x</option>
-                        <option value="1.5">1.5x</option>
-                        <option value="2">2x</option>
-                        <option value="3">3x</option>
-                    </select>
-
+                    {/* Playback Rate */}
+                    <button
+                        type="button"
+                        title="Change Playback Speed"
+                        onClick={() => setPlaybackRate(playbackRate >= 2 ? 0.25 : playbackRate + 0.25)}
+                        className="hover:text-text-primary cursor-pointer rounded-full p-1 text-xs font-semibold"
+                        aria-label="Playback Rate">
+                        {playbackRate.toFixed(2)}x
+                    </button>
                     <button
                         type="button"
                         title="Add to Queue"

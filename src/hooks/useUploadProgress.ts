@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { AxiosProgressEvent } from 'axios';
 
@@ -36,7 +36,7 @@ const UPLOAD_PROGRESS: T_UploadState = {
 function useUploadProgress() {
     const [uploadState, setUploadState] = useState<T_UploadState>(UPLOAD_PROGRESS);
 
-    const onUploadProgress = (event: AxiosProgressEvent) => {
+    const onUploadProgress = useCallback((event: AxiosProgressEvent) => {
         if (!event.lengthComputable || !event.total) return;
 
         const progress = event.progress ?? event.loaded / event.total;
@@ -53,9 +53,9 @@ function useUploadProgress() {
             formattedRate: rate > 0 ? `${formatFileSize(rate)}/s` : '0 B/s',
             formattedEstimated: estimated > 0 ? formatDurationInReadableFormat(estimated * 1000) : '0s',
         }));
-    };
+    }, []);
 
-    const resetUploadProgress = () => setUploadState(UPLOAD_PROGRESS);
+    const resetUploadProgress = useCallback(() => setUploadState(UPLOAD_PROGRESS), []);
 
     return { uploadState, resetUploadProgress, onUploadProgress };
 }

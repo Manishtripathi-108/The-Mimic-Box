@@ -22,7 +22,7 @@ const MusicQueue = ({ className }: { className?: string }) => {
                     Clear queue
                 </button>
             </div>
-            <ul className="sm:scrollbar-thin max-h-full flex-1 space-y-2 overflow-y-auto p-4">
+            <ul className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
                 {queue.map((track) => (
                     <li
                         key={track.id}
