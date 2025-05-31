@@ -8,6 +8,7 @@ const saavnConfig = axios.create({
     headers: {
         'Content-Type': 'application/json',
         'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],
+        cookie: `gdpr_acceptance=true; DL=english`,
     },
 });
 

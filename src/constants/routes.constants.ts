@@ -101,22 +101,28 @@ export const APP_ROUTES = {
 /*                                API Routes Enum                             */
 /* -------------------------------------------------------------------------- */
 
-export enum API_ROUTES {
+export const API_ROUTES = {
     /* ---------------------------- Auth Link Account --------------------------- */
-    AUTH_LA_ROOT = '/api/auth-link-account',
+    AUTH_LA_ROOT: '/api/auth-link-account',
 
     /* ------------------------- Spotify Authentication ------------------------- */
-    AUTH_LA_SPOTIFY_ROOT = '/api/auth-link-account/spotify',
-    AUTH_LA_SPOTIFY_CALLBACK = '/api/auth-link-account/spotify/callback',
+    AUTH_LA_SPOTIFY_ROOT: '/api/auth-link-account/spotify',
+    AUTH_LA_SPOTIFY_CALLBACK: '/api/auth-link-account/spotify/callback',
 
     /* ------------------------- AniList Authentication ------------------------- */
-    AUTH_LA_ANILIST_ROOT = '/api/auth-link-account/anilist',
-    AUTH_LA_ANILIST_CALLBACK = '/api/auth-link-account/anilist/callback',
+    AUTH_LA_ANILIST_ROOT: '/api/auth-link-account/anilist',
+    AUTH_LA_ANILIST_CALLBACK: '/api/auth-link-account/anilist/callback',
 
     /* ----------------------- MyAnimeList Authentication ----------------------- */
-    AUTH_LA_MYANIMELIST_ROOT = '/api/auth-link-account/myanimelist',
-    AUTH_LA_MYANIMELIST_CALLBACK = '/api/auth-link-account/myanimelist/callback',
-}
+    AUTH_LA_MYANIMELIST_ROOT: '/api/auth-link-account/myanimelist',
+    AUTH_LA_MYANIMELIST_CALLBACK: '/api/auth-link-account/myanimelist/callback',
+
+    LYRICS: {
+        SEARCH: '/api/lyrics/search',
+        GET: '/api/lyrics/get',
+        ID: (id: string) => `/api/lyrics/get/${id}`,
+    },
+} as const;
 
 /* -------------------------------------------------------------------------- */
 /*                                External Routes                             */
@@ -204,6 +210,7 @@ export const EXTERNAL_ROUTES = {
         EXTRACT_METADATA: `${AUDIO_BASE}/extract-metadata`,
         EDIT_META_TAGS: `${AUDIO_BASE}/edit-metadata`,
     },
+
     LRCLIB: {
         BASE: 'https://lrclib.net',
         GET: 'https://lrclib.net/api/get',

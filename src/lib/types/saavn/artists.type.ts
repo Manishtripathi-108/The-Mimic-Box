@@ -1,21 +1,21 @@
-import { T_Album, T_AlbumAPIResponse } from '@/lib/types/saavn/albums.types';
-import { T_ImageLink } from '@/lib/types/saavn/global.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
+import { T_SaavnAlbum, T_SaavnAlbumAPIResponse } from '@/lib/types/saavn/albums.types';
+import { T_SaavnImageLink } from '@/lib/types/saavn/global.types';
+import { T_SaavnSong, T_SaavnSongAPIResponse } from '@/lib/types/saavn/song.types';
 
-type T_SocialLinks = {
+type T_SaavnSocialLinks = {
     dob: string | null;
     fb: string | null;
     twitter: string | null;
     wiki: string | null;
 };
 
-type T_BioBlock = {
+type T_SaavnBioBlock = {
     text: string | null;
     title: string | null;
     sequence: number | null;
 };
 
-type T_ArtistURLs = {
+type T_SaavnArtistURLs = {
     albums: string;
     bio: string;
     comments: string;
@@ -23,7 +23,7 @@ type T_ArtistURLs = {
     overview: string;
 };
 
-type T_ArtistPlaylistApiResponse = T_ArtistBaseAPIResponse & {
+type T_SaavnArtistPlaylistApiResponse = T_SaavnArtistBaseAPIResponse & {
     title: string;
     subtitle: string;
     explicit_content: string;
@@ -45,8 +45,8 @@ type T_ArtistPlaylistApiResponse = T_ArtistBaseAPIResponse & {
     };
 };
 
-type T_SimilarArtistApiResponse = Omit<T_ArtistBaseAPIResponse, 'role'> &
-    T_SocialLinks & {
+type T_SaavnSimilarArtistApiResponse = Omit<T_SaavnArtistBaseAPIResponse, 'role'> &
+    T_SaavnSocialLinks & {
         languages: string | null;
         isRadioPresent: boolean;
         dominantType: string;
@@ -55,8 +55,8 @@ type T_SimilarArtistApiResponse = Omit<T_ArtistBaseAPIResponse, 'role'> &
         similar: string | null;
     };
 
-type T_SimilarArtist = Omit<T_ArtistBase, 'role'> &
-    T_SocialLinks & {
+type T_SaavnSimilarArtist = Omit<T_SaavnArtistBase, 'role'> &
+    T_SaavnSocialLinks & {
         languages: Record<string, string> | null;
         isRadioPresent: boolean;
         dominantType: string;
@@ -65,64 +65,64 @@ type T_SimilarArtist = Omit<T_ArtistBase, 'role'> &
         similarArtists: { id: string; name: string }[] | null;
     };
 
-export type T_ArtistBase = {
+export type T_SaavnArtistBase = {
     id: string;
     name: string;
     role?: string;
     type: string;
-    image: T_ImageLink[];
+    image: T_SaavnImageLink[];
     url?: string;
 };
 
-export type T_ArtistBaseAPIResponse = Omit<T_ArtistBase, 'image' | 'url'> & {
+export type T_SaavnArtistBaseAPIResponse = Omit<T_SaavnArtistBase, 'image' | 'url'> & {
     image: string;
     perma_url: string;
 };
 
-export type T_ArtistAPIResponse = T_ArtistBaseAPIResponse &
-    T_SocialLinks & {
+export type T_SaavnArtistAPIResponse = T_SaavnArtistBaseAPIResponse &
+    T_SaavnSocialLinks & {
         artistId: string;
         subtitle: string;
         follower_count: string;
         isVerified: boolean;
         dominantLanguage: string;
         dominantType: string;
-        topSongs: T_SongAPIResponse[];
-        topAlbums: T_AlbumAPIResponse[];
-        singles: T_SongAPIResponse[];
-        dedicated_artist_playlist: T_ArtistPlaylistApiResponse[];
-        featured_artist_playlist: T_ArtistPlaylistApiResponse[];
-        similarArtists: T_SimilarArtistApiResponse[];
+        topSongs: T_SaavnSongAPIResponse[];
+        topAlbums: T_SaavnAlbumAPIResponse[];
+        singles: T_SaavnSongAPIResponse[];
+        dedicated_artist_playlist: T_SaavnArtistPlaylistApiResponse[];
+        featured_artist_playlist: T_SaavnArtistPlaylistApiResponse[];
+        similarArtists: T_SaavnSimilarArtistApiResponse[];
         isRadioPresent: boolean;
         bio: string;
-        urls: T_ArtistURLs;
+        urls: T_SaavnArtistURLs;
         availableLanguages: string[];
         fan_count: string;
         topEpisodes: string[];
         is_followed: boolean;
     };
 
-export type T_Artist = T_SocialLinks & {
+export type T_SaavnArtist = T_SaavnSocialLinks & {
     id: string;
     name: string;
     url: string;
     type: string;
-    image: T_ImageLink[];
+    image: T_SaavnImageLink[];
     followerCount: number | null;
     fanCount: string | null;
     isVerified: boolean | null;
     dominantLanguage: string | null;
     dominantType: string | null;
-    bio: T_BioBlock[] | null;
+    bio: T_SaavnBioBlock[] | null;
     availableLanguages: string[];
     isRadioPresent: boolean | null;
-    topSongs: T_Song[] | null;
-    topAlbums: T_Album[] | null;
-    singles: T_Song[] | null;
-    similarArtists: T_SimilarArtist[] | null;
+    topSongs: T_SaavnSong[] | null;
+    topAlbums: T_SaavnAlbum[] | null;
+    singles: T_SaavnSong[] | null;
+    similarArtists: T_SaavnSimilarArtist[] | null;
 };
 
-export type T_ArtistSongAPIResponse = {
+export type T_SaavnArtistSongAPIResponse = {
     artistId: string;
     name: string;
     subtitle: string;
@@ -133,17 +133,17 @@ export type T_ArtistSongAPIResponse = {
     dominantLanguage: string;
     dominantType: string;
     topSongs: {
-        songs: T_SongAPIResponse[];
+        songs: T_SaavnSongAPIResponse[];
         total: number;
     };
 };
 
-export type T_ArtistSong = {
+export type T_SaavnArtistSong = {
     total: number;
-    songs: T_Song[];
+    songs: T_SaavnSong[];
 };
 
-export type T_ArtistAlbumAPIResponse = {
+export type T_SaavnArtistAlbumAPIResponse = {
     artistId: string;
     name: string;
     subtitle: string;
@@ -154,12 +154,12 @@ export type T_ArtistAlbumAPIResponse = {
     dominantLanguage: string;
     dominantType: string;
     topAlbums: {
-        albums: T_AlbumAPIResponse[];
+        albums: T_SaavnAlbumAPIResponse[];
         total: number;
     };
 };
 
-export type T_ArtistAlbum = {
+export type T_SaavnArtistAlbum = {
     total: number;
-    albums: T_Album[];
+    albums: T_SaavnAlbum[];
 };

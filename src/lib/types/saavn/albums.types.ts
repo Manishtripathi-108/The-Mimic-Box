@@ -1,8 +1,8 @@
-import { T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
-import { T_EntityBase, T_ImageLink } from '@/lib/types/saavn/global.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
+import { T_SaavnArtistBase, T_SaavnArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
+import { T_SaavnEntityBase, T_SaavnImageLink } from '@/lib/types/saavn/global.types';
+import { T_SaavnSong, T_SaavnSongAPIResponse } from '@/lib/types/saavn/song.types';
 
-export type T_SearchAlbumAPIResponse = {
+export type T_SaavnSearchAlbumAPIResponse = {
     total: number;
     start: number;
     results: {
@@ -19,22 +19,22 @@ export type T_SearchAlbumAPIResponse = {
         explicit_content: string;
         list_count: string;
         list_type: string;
-        list: T_Song[];
+        list: T_SaavnSong[];
         more_info: {
             query: string;
             text: string;
             music: string;
             song_count: string;
             artistMap: {
-                primary_artists: T_ArtistBaseAPIResponse[];
-                featured_artists: T_ArtistBaseAPIResponse[];
-                artists: T_ArtistBaseAPIResponse[];
+                primary_artists: T_SaavnArtistBaseAPIResponse[];
+                featured_artists: T_SaavnArtistBaseAPIResponse[];
+                artists: T_SaavnArtistBaseAPIResponse[];
             };
         };
     }[];
 };
 
-export type T_SearchAlbum = {
+export type T_SaavnSearchAlbum = {
     total: number;
     start: number;
     results: {
@@ -47,25 +47,25 @@ export type T_SearchAlbum = {
         language: string;
         explicitContent: boolean;
         artists: {
-            primary: T_ArtistBase[];
-            featured: T_ArtistBase[];
-            all: T_ArtistBase[];
+            primary: T_SaavnArtistBase[];
+            featured: T_SaavnArtistBase[];
+            all: T_SaavnArtistBase[];
         };
         url: string;
-        image: T_ImageLink[];
+        image: T_SaavnImageLink[];
     }[];
 };
 
-export type T_AlbumAPIResponse = T_EntityBase & {
+export type T_SaavnAlbumAPIResponse = T_SaavnEntityBase & {
     header_desc: string;
     play_count: string;
     list_count: string;
     list_type: string;
     year: string;
     language: string;
-    list: T_SongAPIResponse[];
+    list: T_SaavnSongAPIResponse[];
     more_info: {
-        artistMap: T_SongAPIResponse['more_info']['artistMap'];
+        artistMap: T_SaavnSongAPIResponse['more_info']['artistMap'];
         song_count: string;
         copyright_text: string;
         is_dolby_content: boolean;
@@ -73,7 +73,7 @@ export type T_AlbumAPIResponse = T_EntityBase & {
     };
 };
 
-export type T_Album = {
+export type T_SaavnAlbum = {
     id: string;
     name: string;
     description: string;
@@ -82,9 +82,9 @@ export type T_Album = {
     playCount: number | null;
     language: string;
     explicitContent: boolean;
-    artists: T_Song['artists'];
+    artists: T_SaavnSong['artists'];
     songCount: number | null;
     url: string;
-    image: T_ImageLink[];
-    songs: T_Song[] | null;
+    image: T_SaavnImageLink[];
+    songs: T_SaavnSong[] | null;
 };

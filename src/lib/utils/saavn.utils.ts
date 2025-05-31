@@ -1,11 +1,16 @@
 import crypto from 'node-forge';
 
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/saavn/albums.types';
-import { T_Artist, T_ArtistAPIResponse, T_ArtistBase, T_ArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
-import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/saavn/playlist.types';
-import { T_SearchAPIResponse, T_SearchPlaylist, T_SearchPlaylistAPIResponse, T_SearchResponse } from '@/lib/types/saavn/search.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
+import { T_SaavnAlbum, T_SaavnAlbumAPIResponse, T_SaavnSearchAlbum, T_SaavnSearchAlbumAPIResponse } from '@/lib/types/saavn/albums.types';
+import { T_SaavnArtist, T_SaavnArtistAPIResponse, T_SaavnArtistBase, T_SaavnArtistBaseAPIResponse } from '@/lib/types/saavn/artists.type';
+import { T_SaavnPlaylist, T_SaavnPlaylistAPIResponse } from '@/lib/types/saavn/playlist.types';
+import {
+    T_SaavnSearchAPIResponse,
+    T_SaavnSearchPlaylist,
+    T_SaavnSearchPlaylistAPIResponse,
+    T_SaavnSearchResponse,
+} from '@/lib/types/saavn/search.types';
+import { T_SaavnSong, T_SaavnSongAPIResponse } from '@/lib/types/saavn/song.types';
 
 const QUALITIES = [
     { id: '_12', bitrate: '12kbps' },
@@ -52,7 +57,7 @@ export const createImageLinks = (link: string) => {
     }));
 };
 
-export const createArtistBasePayload = (artist: T_ArtistBaseAPIResponse): T_ArtistBase => ({
+export const createArtistBasePayload = (artist: T_SaavnArtistBaseAPIResponse): T_SaavnArtistBase => ({
     id: artist.id,
     name: artist.name,
     role: artist.role,
@@ -61,7 +66,7 @@ export const createArtistBasePayload = (artist: T_ArtistBaseAPIResponse): T_Arti
     url: artist.perma_url,
 });
 
-export const createSongPayload = (song: T_SongAPIResponse): T_Song => ({
+export const createSongPayload = (song: T_SaavnSongAPIResponse): T_SaavnSong => ({
     id: song.id,
     name: song.title.replace(/&amp;/g, '&').replace(/&quot;/g, '"'),
     type: song.type,
@@ -91,7 +96,7 @@ export const createSongPayload = (song: T_SongAPIResponse): T_Song => ({
     downloadUrl: createDownloadLinks(song.more_info?.encrypted_media_url),
 });
 
-export const createArtistPayload = (artist: T_ArtistAPIResponse): T_Artist => ({
+export const createArtistPayload = (artist: T_SaavnArtistAPIResponse): T_SaavnArtist => ({
     id: artist.artistId || artist.id,
     name: artist.name,
     url: artist.urls?.overview || artist.perma_url,
@@ -132,7 +137,7 @@ export const createArtistPayload = (artist: T_ArtistAPIResponse): T_Artist => ({
         })) || null,
 });
 
-export const createSearchPayload = (search: T_SearchAPIResponse): T_SearchResponse => ({
+export const createSearchPayload = (search: T_SaavnSearchAPIResponse): T_SaavnSearchResponse => ({
     topQuery: {
         results: search?.topquery?.data.map((item) => ({
             id: item?.id,
@@ -203,7 +208,7 @@ export const createSearchPayload = (search: T_SearchAPIResponse): T_SearchRespon
     },
 });
 
-export const createSearchPlaylistPayload = (playlist: T_SearchPlaylistAPIResponse): T_SearchPlaylist => ({
+export const createSearchPlaylistPayload = (playlist: T_SaavnSearchPlaylistAPIResponse): T_SaavnSearchPlaylist => ({
     total: Number(playlist.total),
     start: Number(playlist.start),
     results: playlist.results.map((item) => ({
@@ -218,7 +223,7 @@ export const createSearchPlaylistPayload = (playlist: T_SearchPlaylistAPIRespons
     })),
 });
 
-export const createSearchAlbumPayload = (album: T_SearchAlbumAPIResponse): T_SearchAlbum => ({
+export const createSearchAlbumPayload = (album: T_SaavnSearchAlbumAPIResponse): T_SaavnSearchAlbum => ({
     total: Number(album.total),
     start: Number(album.start),
     results: album.results.map((item) => ({
@@ -240,7 +245,7 @@ export const createSearchAlbumPayload = (album: T_SearchAlbumAPIResponse): T_Sea
     })),
 });
 
-export const createAlbumPayload = (album: T_AlbumAPIResponse): T_Album => ({
+export const createAlbumPayload = (album: T_SaavnAlbumAPIResponse): T_SaavnAlbum => ({
     id: album.id,
     name: album.title,
     description: album.header_desc,
@@ -260,7 +265,7 @@ export const createAlbumPayload = (album: T_AlbumAPIResponse): T_Album => ({
     songs: (album.list && album.list?.map(createSongPayload)) || null,
 });
 
-export const createPlaylistPayload = (playlist: T_PlaylistAPIResponse): T_Playlist => ({
+export const createPlaylistPayload = (playlist: T_SaavnPlaylistAPIResponse): T_SaavnPlaylist => ({
     id: playlist.id,
     name: playlist.title,
     description: playlist.header_desc,

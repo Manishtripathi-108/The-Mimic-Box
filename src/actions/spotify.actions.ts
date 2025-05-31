@@ -109,41 +109,40 @@ export const getSpotifyEntityTracks = async (id: string, type: 'album' | 'playli
         switch (type) {
             case 'album': {
                 const res = await spotifyApi.getAlbumTracks(token, id);
-                if (!res.success) return createErrorReturn('Failed to fetch album tracks', res.error);
+                if (!res.success) throw new Error('Failed to fetch album tracks: ' + res.error);
                 tracks = await fetchAllSpotifyPaginatedItems(token, res.payload);
                 break;
             }
 
             case 'playlist': {
                 const res = await spotifyApi.getPlaylistTracks(token, id);
-                if (!res.success) return createErrorReturn('Failed to fetch playlist tracks', res.error);
+                if (!res.success) throw new Error('Failed to fetch playlist tracks: ' + res.error);
                 const paginated = await fetchAllSpotifyPaginatedItems(token, res.payload);
 
                 tracks = paginated.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null);
-
                 break;
             }
 
             case 'track': {
                 const res = await spotifyApi.getTrackDetails(token, id);
-                if (!res.success) return createErrorReturn('Failed to fetch track details', res.error);
+                if (!res.success) throw new Error('Failed to fetch track details: ' + res.error);
                 tracks = [res.payload];
                 break;
             }
 
             case 'artist': {
                 const res = await spotifyApi.getArtistTopTracks(token, id);
-                if (!res.success) return createErrorReturn('Failed to fetch artist top tracks', res.error);
+                if (!res.success) throw new Error('Failed to fetch artist top tracks: ' + res.error);
                 tracks = res.payload;
                 break;
             }
 
             default:
-                return createErrorReturn('Invalid entity type');
+                throw new Error('Invalid type provided for fetching tracks');
         }
 
         if (!tracks.length) {
-            return createErrorReturn('No tracks found for the given entity');
+            throw new Error('No valid tracks found for selected entity');
         }
 
         return createSuccessReturn('Tracks fetched successfully!', tracks);

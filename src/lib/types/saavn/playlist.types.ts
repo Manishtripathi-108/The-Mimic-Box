@@ -1,8 +1,8 @@
-import { T_ArtistBase } from '@/lib/types/saavn/artists.type';
-import { T_ImageLink } from '@/lib/types/saavn/global.types';
-import { T_Song, T_SongAPIResponse } from '@/lib/types/saavn/song.types';
+import { T_SaavnArtistBase } from '@/lib/types/saavn/artists.type';
+import { T_SaavnImageLink } from '@/lib/types/saavn/global.types';
+import { T_SaavnSong, T_SaavnSongAPIResponse } from '@/lib/types/saavn/song.types';
 
-export type T_PlaylistAPIResponse = {
+export type T_SaavnPlaylistAPIResponse = {
     id: string;
     title: string;
     subtitle: string;
@@ -15,7 +15,7 @@ export type T_PlaylistAPIResponse = {
     play_count: string;
     list_count: string;
     list_type: string;
-    list: T_SongAPIResponse[];
+    list: T_SaavnSongAPIResponse[];
     description: string;
     header_desc: string;
     more_info: {
@@ -48,7 +48,7 @@ export type T_PlaylistAPIResponse = {
     };
 };
 
-export type T_Playlist = {
+export type T_SaavnPlaylist = {
     id: string;
     name: string;
     description: string | null;
@@ -59,7 +59,7 @@ export type T_Playlist = {
     explicitContent: boolean;
     songCount: number | null;
     url: string;
-    image: T_ImageLink[];
-    songs: T_Song[] | null;
-    artists: T_ArtistBase[] | null;
+    image: T_SaavnImageLink[];
+    songs: T_SaavnSong[] | null;
+    artists: T_SaavnArtistBase[] | null;
 };

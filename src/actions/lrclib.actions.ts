@@ -2,10 +2,10 @@
 
 import axios from 'axios';
 
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
-import { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import lrclib from '@/lib/services/lrclib.service';
+import { T_LyricsQuery } from '@/lib/types/common.types';
+import { createErrorReturn } from '@/lib/utils/createResponse.utils';
 
 export async function getLyrics(params: T_LyricsQuery) {
     try {
@@ -16,35 +16,23 @@ export async function getLyrics(params: T_LyricsQuery) {
 
         // 1. Fetch by ID
         if (id) {
-            const { data } = await axios.get<T_LyricsRecord>(`${EXTERNAL_ROUTES.LRCLIB.GET}/${id}`);
-            return createSuccessReturn('Lyrics fetched successfully!', data);
+            return lrclib.getLyricsById(id);
         }
 
         // 2. Direct GET using track, artist, album, and duration
         if (trackName && artistName && albumName && duration) {
-            const { data } = await axios.get<T_LyricsRecord>(EXTERNAL_ROUTES.LRCLIB.GET, {
-                params: {
-                    track_name: trackName,
-                    artist_name: artistName,
-                    album_name: albumName,
-                    duration: duration,
-                },
-            });
-            return createSuccessReturn('Lyrics fetched successfully!', data);
+            return lrclib.getLyricsByMetadata(trackName, artistName, albumName, duration);
         }
 
         // 3. Search by query or track name
         if (q || trackName) {
-            const { data } = await axios.get<T_LyricsRecord[]>(EXTERNAL_ROUTES.LRCLIB.SEARCH, {
-                params: {
-                    q,
-                    track_name: trackName,
-                    artist_name: artistName,
-                    album_name: albumName,
-                    duration: duration,
-                },
+            return lrclib.searchLyrics({
+                q: q,
+                trackName: trackName,
+                artistName: artistName,
+                albumName: albumName,
+                duration: duration,
             });
-            return createSuccessReturn('Lyrics fetched successfully!', data);
         }
 
         return createErrorReturn('No valid parameters provided for lyrics lookup.');

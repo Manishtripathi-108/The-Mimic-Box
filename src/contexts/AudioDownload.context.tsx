@@ -6,8 +6,10 @@ import axios from 'axios';
 import JSZip from 'jszip';
 import toast from 'react-hot-toast';
 
+import { API_ROUTES } from '@/constants/routes.constants';
 import { useFFmpeg } from '@/hooks/useFFmpeg.hook';
 import { T_AudioFile, T_AudioPlayerTrack, T_DownloadFile } from '@/lib/types/client.types';
+import { SuccessResponseOutput } from '@/lib/types/response.types';
 import { downloadFile } from '@/lib/utils/file.utils';
 
 type DownloadContextType = {
@@ -44,8 +46,30 @@ const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: string): T_
             album: track.album || ' ',
             date: track.year || ' ',
             language: track.language || ' ',
+            duration: track.duration || ' ',
         },
     };
+};
+
+const getLyrics = async (track: T_AudioFile) => {
+    try {
+        const res = await axios.get<SuccessResponseOutput<string>>(API_ROUTES.LYRICS.GET, {
+            params: {
+                track: track.metadata.title,
+                artist: track.metadata.artist,
+                album: track.metadata.album,
+                duration: track.metadata.duration,
+                lyricsOnly: 'true',
+            },
+        });
+        if (!res.data.success || !res.data.payload) {
+            throw new Error('Failed to fetch lyrics');
+        }
+
+        return String(res.data.payload);
+    } catch {
+        return null;
+    }
 };
 
 export const AudioDownloadProvider = ({ children }: { children: React.ReactNode }) => {
@@ -96,15 +120,23 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
                 },
             });
 
+            updateDownload(file.src, { status: 'processing', progress: 0 });
+
+            const lyrics = await getLyrics(file);
+            console.log(lyrics);
+
             await writeFile(input, response.data);
             if (cover) await writeFile(cover, file.cover!);
-
-            updateDownload(file.src, { status: 'processing', progress: 0 });
 
             const args = ['-i', input];
             if (cover) {
                 args.push('-i', cover, '-map', '0:a', '-map', '1', '-disposition:v', 'attached_pic', '-metadata:s:v', 'comment=Cover (front)');
             }
+
+            if (lyrics) {
+                args.push('-metadata', `lyrics=${lyrics}`);
+            }
+
             args.push(...Object.entries(file.metadata).flatMap(([k, v]) => ['-metadata', `${k}=${v}`]), '-codec', 'copy', output);
 
             await exec(args);

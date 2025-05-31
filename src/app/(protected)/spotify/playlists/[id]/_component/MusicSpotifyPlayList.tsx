@@ -18,7 +18,7 @@ type Props = {
     playlist: T_SpotifyPlaylist;
 };
 
-const MusicPlaylist = ({ playlist }: Props) => {
+const MusicSpotifyPlaylist = ({ playlist }: Props) => {
     const { name, description, images, owner, tracks: initialTracks } = playlist;
 
     const [playlistTracks, setPlaylistTracks] = useState(initialTracks.items);
@@ -78,23 +78,23 @@ const MusicPlaylist = ({ playlist }: Props) => {
             <MusicActionBtns context={{ id: playlist.id, type: 'playlist', source: 'spotify' }} className="mt-4" />
 
             <div className="mt-6 grid w-full gap-2">
-                {tracks.map((track, idx) => (
+                {tracks.map((t, idx) => (
                     <MusicTrackCard
-                        key={track.id + idx}
-                        id={track.id}
-                        title={track.name}
-                        link={APP_ROUTES.SPOTIFY.TRACKS(track.id)}
-                        duration_ms={track.duration_ms}
-                        imageUrl={track.album.images[0]?.url}
-                        artists={track.artists.map((artist) => ({
+                        key={`${t.id} + ${idx}`}
+                        id={t.id}
+                        title={t.name}
+                        link={APP_ROUTES.SPOTIFY.TRACKS(t.id)}
+                        duration_ms={t.duration_ms}
+                        imageUrl={t.album.images[0]?.url}
+                        artists={t.artists.map((artist) => ({
                             id: artist.id,
                             name: artist.name,
                             link: APP_ROUTES.SPOTIFY.ARTISTS(artist.id),
                         }))}
                         album={{
-                            id: track.album.id,
-                            name: track.album.name,
-                            link: APP_ROUTES.SPOTIFY.ALBUMS(track.album.id),
+                            id: t.album.id,
+                            name: t.album.name,
+                            link: APP_ROUTES.SPOTIFY.ALBUMS(t.album.id),
                         }}
                         context={{ id: playlist.id, type: 'playlist', source: 'spotify' }}
                     />
@@ -108,4 +108,4 @@ const MusicPlaylist = ({ playlist }: Props) => {
     );
 };
 
-export default MusicPlaylist;
+export default MusicSpotifyPlaylist;

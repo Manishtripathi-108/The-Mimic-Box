@@ -8,13 +8,13 @@ import { saavnGetEntityTracks } from '@/actions/saavn.actions';
 import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
-import { T_Song } from '@/lib/types/saavn/song.types';
+import { T_SaavnSong } from '@/lib/types/saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
 const CACHE_DURATION_MS = 15 * 24 * 60 * 60 * 1000; // 15 days
 
 const useAudioSourceTrackMapper = () => {
-    const { makeParallelApiCalls } = useSafeApiCall<null, { total: number; start: number; results: T_Song[] }>();
+    const { makeParallelApiCalls } = useSafeApiCall<null, { total: number; start: number; results: T_SaavnSong[] }>();
     const [isPending, setIsPending] = useState(false);
 
     const buildCacheKey = (context: T_AudioSourceContext) => `${context.source}:${context.type}:${context.id}`;
@@ -44,11 +44,11 @@ const useAudioSourceTrackMapper = () => {
         );
     };
 
-    const matchSaavnTrack = (spotifyTrack: T_SpotifySimplifiedTrack, saavnResults: T_Song[]): T_Song | null => {
+    const matchSaavnTrack = (spotifyTrack: T_SpotifySimplifiedTrack, saavnResults: T_SaavnSong[]): T_SaavnSong | null => {
         const spotifyTitle = spotifyTrack.name.trim().toLowerCase();
         const spotifyArtists = spotifyTrack.artists.map((a) => a.name.toLowerCase());
 
-        let bestMatch: T_Song | null = null;
+        let bestMatch: T_SaavnSong | null = null;
         let bestScore = 0;
 
         for (const saavnTrack of saavnResults) {
@@ -137,6 +137,7 @@ const useAudioSourceTrackMapper = () => {
     const getPlayableTracks = useCallback(
         async (context: T_AudioSourceContext) => {
             setIsPending(true);
+            console.log(`Fetching tracks for context: ${JSON.stringify(context)}`);
 
             if (context.source === 'saavn') {
                 const res = await saavnGetEntityTracks(context.id, context.type);

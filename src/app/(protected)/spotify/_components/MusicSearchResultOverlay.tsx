@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { APP_ROUTES } from '@/constants/routes.constants';
-import { T_SearchResponse } from '@/lib/types/saavn/search.types';
+import { T_SaavnSearchResponse } from '@/lib/types/saavn/search.types';
 
 const createLink = (id: string, type: string) => {
     switch (type) {
@@ -26,7 +26,7 @@ const createLink = (id: string, type: string) => {
 };
 
 type Props = {
-    results: T_SearchResponse | null;
+    results: T_SaavnSearchResponse | null;
     isOpen: boolean;
     onClose: () => void;
 };

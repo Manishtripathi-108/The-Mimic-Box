@@ -1,17 +1,24 @@
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import saavnConfig from '@/lib/config/saavn.config';
-import { T_Album, T_AlbumAPIResponse, T_SearchAlbum, T_SearchAlbumAPIResponse } from '@/lib/types/saavn/albums.types';
-import { T_Artist, T_ArtistAPIResponse, T_ArtistAlbumAPIResponse, T_ArtistBase, T_ArtistSongAPIResponse } from '@/lib/types/saavn/artists.type';
-import { T_Playlist, T_PlaylistAPIResponse } from '@/lib/types/saavn/playlist.types';
+import { T_SaavnAlbum, T_SaavnAlbumAPIResponse, T_SaavnSearchAlbum, T_SaavnSearchAlbumAPIResponse } from '@/lib/types/saavn/albums.types';
 import {
-    T_SearchAPIResponse,
-    T_SearchArtistAPIResponse,
-    T_SearchPlaylist,
-    T_SearchPlaylistAPIResponse,
-    T_SearchResponse,
-    T_SearchSongAPIResponse,
+    T_SaavnArtist,
+    T_SaavnArtistAPIResponse,
+    T_SaavnArtistAlbumAPIResponse,
+    T_SaavnArtistBase,
+    T_SaavnArtistSongAPIResponse,
+} from '@/lib/types/saavn/artists.type';
+import { T_SaavnLyrics } from '@/lib/types/saavn/global.types';
+import { T_SaavnPlaylist, T_SaavnPlaylistAPIResponse } from '@/lib/types/saavn/playlist.types';
+import {
+    T_SaavnSearchAPIResponse,
+    T_SaavnSearchArtistAPIResponse,
+    T_SaavnSearchPlaylist,
+    T_SaavnSearchPlaylistAPIResponse,
+    T_SaavnSearchResponse,
+    T_SaavnSearchSongAPIResponse,
 } from '@/lib/types/saavn/search.types';
-import { T_Song, T_SongAPIResponse, T_SongSuggestionAPIResponse } from '@/lib/types/saavn/song.types';
+import { T_SaavnSong, T_SaavnSongAPIResponse, T_SaavnSongSuggestionAPIResponse } from '@/lib/types/saavn/song.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import {
     createAlbumPayload,
@@ -54,7 +61,7 @@ const apiHandler = async <T, R>(
 /*                                   Search                                   */
 /* -------------------------------------------------------------------------- */
 export const searchAll = async (query: string) =>
-    apiHandler<T_SearchAPIResponse, T_SearchResponse>(
+    apiHandler<T_SaavnSearchAPIResponse, T_SaavnSearchResponse>(
         EXTERNAL_ROUTES.SAAVN.SEARCH.ALL,
         { query },
         createSearchPayload,
@@ -63,7 +70,7 @@ export const searchAll = async (query: string) =>
     );
 
 export const searchSongs = async ({ query, page, limit }: T_SearchParams) =>
-    apiHandler<T_SearchSongAPIResponse, { total: number; start: number; results: T_Song[] }>(
+    apiHandler<T_SaavnSearchSongAPIResponse, { total: number; start: number; results: T_SaavnSong[] }>(
         EXTERNAL_ROUTES.SAAVN.SEARCH.SONGS,
         { q: query, p: page, n: limit },
         (data) => ({
@@ -76,7 +83,7 @@ export const searchSongs = async ({ query, page, limit }: T_SearchParams) =>
     );
 
 export const searchAlbums = async ({ query, page, limit }: T_SearchParams) =>
-    apiHandler<T_SearchAlbumAPIResponse, T_SearchAlbum>(
+    apiHandler<T_SaavnSearchAlbumAPIResponse, T_SaavnSearchAlbum>(
         EXTERNAL_ROUTES.SAAVN.SEARCH.ALBUMS,
         { q: query, p: page, n: limit },
         createSearchAlbumPayload,
@@ -85,7 +92,7 @@ export const searchAlbums = async ({ query, page, limit }: T_SearchParams) =>
     );
 
 export const searchArtists = async ({ query, page, limit }: T_SearchParams) =>
-    apiHandler<T_SearchArtistAPIResponse, { total: number; start: number; results: T_ArtistBase[] }>(
+    apiHandler<T_SaavnSearchArtistAPIResponse, { total: number; start: number; results: T_SaavnArtistBase[] }>(
         EXTERNAL_ROUTES.SAAVN.SEARCH.ARTISTS,
         { q: query, p: page, n: limit },
         (data) => ({
@@ -98,7 +105,7 @@ export const searchArtists = async ({ query, page, limit }: T_SearchParams) =>
     );
 
 export const searchPlaylists = async ({ query, page, limit }: T_SearchParams) =>
-    apiHandler<T_SearchPlaylistAPIResponse, T_SearchPlaylist>(
+    apiHandler<T_SaavnSearchPlaylistAPIResponse, T_SaavnSearchPlaylist>(
         EXTERNAL_ROUTES.SAAVN.SEARCH.PLAYLISTS,
         { q: query, p: page, n: limit },
         createSearchPlaylistPayload,
@@ -111,7 +118,7 @@ export const searchPlaylists = async ({ query, page, limit }: T_SearchParams) =>
 /* -------------------------------------------------------------------------- */
 export const getSongByIds = async (ids: string) => {
     const [error, response] = await safeAwait(
-        saavnConfig.get<{ songs: T_SongAPIResponse[] }>('/', { params: { pids: ids, __call: EXTERNAL_ROUTES.SAAVN.SONG.ID } })
+        saavnConfig.get<{ songs: T_SaavnSongAPIResponse[] }>('/', { params: { pids: ids, __call: EXTERNAL_ROUTES.SAAVN.SONG.ID } })
     );
 
     if (error || !response) return createErrorReturn('Failed to fetch song', error);
@@ -131,7 +138,7 @@ export const getSongByLink = async (link: string) => {
     if (!token) return createErrorReturn('Invalid song link');
 
     const [error, response] = await safeAwait(
-        saavnConfig.get<{ songs: T_SongAPIResponse[] }>('/', { params: { token, type: 'song', __call: EXTERNAL_ROUTES.SAAVN.SONG.LINK } })
+        saavnConfig.get<{ songs: T_SaavnSongAPIResponse[] }>('/', { params: { token, type: 'song', __call: EXTERNAL_ROUTES.SAAVN.SONG.LINK } })
     );
 
     if (error || !response) return createErrorReturn('Failed to fetch song', error);
@@ -172,7 +179,7 @@ export const getSongSuggestions = async ({ id, limit }: { id: string; limit: num
     }
 
     const [error, response] = await safeAwait(
-        saavnConfig.get<T_SongSuggestionAPIResponse>(EXTERNAL_ROUTES.SAAVN.SONG.SUGGESTIONS, {
+        saavnConfig.get<T_SaavnSongSuggestionAPIResponse>(EXTERNAL_ROUTES.SAAVN.SONG.SUGGESTIONS, {
             params: {
                 stationid: stationsRes.payload,
                 k: limit,
@@ -199,11 +206,25 @@ export const getSongSuggestions = async ({ id, limit }: { id: string; limit: num
     return createSuccessReturn('Song suggestions fetched successfully!', suggestions);
 };
 
+export const getSongLyrics = async (id: string) => {
+    const [error, response] = await safeAwait(
+        saavnConfig.get<T_SaavnLyrics>(EXTERNAL_ROUTES.SAAVN.SONG.LYRICS, {
+            params: { id, __call: EXTERNAL_ROUTES.SAAVN.SONG.LYRICS },
+        })
+    );
+
+    const hasError = typeof response?.data === 'object' && response?.data !== null && 'error' in response.data;
+
+    return error || !response || hasError || !response.data.lyrics
+        ? createErrorReturn('Failed to fetch song lyrics', error)
+        : createSuccessReturn('Song lyrics fetched successfully!', response.data.lyrics);
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                    Album                                   */
 /* -------------------------------------------------------------------------- */
 export const getAlbumById = async (id: string) =>
-    apiHandler<T_AlbumAPIResponse, T_Album>(
+    apiHandler<T_SaavnAlbumAPIResponse, T_SaavnAlbum>(
         EXTERNAL_ROUTES.SAAVN.ALBUM.DETAILS,
         { albumid: id },
         createAlbumPayload,
@@ -218,7 +239,7 @@ export const getAlbumByLink = async (link: string) => {
         return createErrorReturn('Invalid album link');
     }
 
-    return apiHandler<T_AlbumAPIResponse, T_Album>(
+    return apiHandler<T_SaavnAlbumAPIResponse, T_SaavnAlbum>(
         EXTERNAL_ROUTES.SAAVN.ALBUM.LINK,
         { token, type: 'album' },
         createAlbumPayload,
@@ -245,7 +266,7 @@ export const getArtistById = async ({
     sortBy: string;
     sortOrder: string;
 }) =>
-    apiHandler<T_ArtistAPIResponse, T_Artist>(
+    apiHandler<T_SaavnArtistAPIResponse, T_SaavnArtist>(
         EXTERNAL_ROUTES.SAAVN.ARTIST.DETAILS,
         { artistId: id, page, n_song: songCount, n_album: albumCount, sort_order: sortOrder, category: sortBy },
         createArtistPayload,
@@ -274,7 +295,7 @@ export const getArtistByLink = async ({
         return createErrorReturn('Invalid artist link');
     }
 
-    return apiHandler<T_ArtistAPIResponse, T_Artist>(
+    return apiHandler<T_SaavnArtistAPIResponse, T_SaavnArtist>(
         EXTERNAL_ROUTES.SAAVN.ARTIST.LINK,
         { token, page, type: 'artist', n_song: songCount, n_album: albumCount, sort_order: sortOrder, category: sortBy },
         createArtistPayload,
@@ -284,7 +305,7 @@ export const getArtistByLink = async ({
 };
 
 export const getArtistSongs = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) =>
-    apiHandler<T_ArtistSongAPIResponse, { total: number; songs: T_Song[] }>(
+    apiHandler<T_SaavnArtistSongAPIResponse, { total: number; songs: T_SaavnSong[] }>(
         EXTERNAL_ROUTES.SAAVN.ARTIST.SONGS,
         { id, page, sort_order: sortOrder, category: sortBy },
         (data) => ({
@@ -296,7 +317,7 @@ export const getArtistSongs = async ({ id, page, sortBy, sortOrder }: { id: stri
     );
 
 export const getArtistAlbums = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) =>
-    apiHandler<T_ArtistAlbumAPIResponse, { total: number; albums: T_Album[] }>(
+    apiHandler<T_SaavnArtistAlbumAPIResponse, { total: number; albums: T_SaavnAlbum[] }>(
         EXTERNAL_ROUTES.SAAVN.ARTIST.ALBUMS,
         { id, page, sort_order: sortOrder, category: sortBy },
         (data) => ({
@@ -311,7 +332,7 @@ export const getArtistAlbums = async ({ id, page, sortBy, sortOrder }: { id: str
 /*                                  Playlist                                  */
 /* -------------------------------------------------------------------------- */
 export const getPlaylistById = async ({ id, limit, page }: { id: string; page: number; limit: number }) =>
-    apiHandler<T_PlaylistAPIResponse, T_Playlist & { songCount: number | null; songs: T_Song[] }>(
+    apiHandler<T_SaavnPlaylistAPIResponse, T_SaavnPlaylist & { songCount: number | null; songs: T_SaavnSong[] }>(
         EXTERNAL_ROUTES.SAAVN.PLAYLIST.DETAILS,
         { listid: id, p: page, n: limit },
         (data) => {
@@ -333,7 +354,7 @@ export const getPlaylistByLink = async ({ link, limit, page }: { link: string; p
         return createErrorReturn('Invalid playlist link');
     }
 
-    return apiHandler<T_PlaylistAPIResponse, T_Playlist & { songCount: number | null; songs: T_Song[] }>(
+    return apiHandler<T_SaavnPlaylistAPIResponse, T_SaavnPlaylist & { songCount: number | null; songs: T_SaavnSong[] }>(
         EXTERNAL_ROUTES.SAAVN.PLAYLIST.LINK,
         { token, type: 'playlist', p: page, n: limit },
         (data) => {
@@ -360,6 +381,7 @@ const saavnApi = {
     getSongByLink,
     getSongStation,
     getSongSuggestions,
+    getSongLyrics,
 
     getAlbumById,
     getAlbumByLink,
