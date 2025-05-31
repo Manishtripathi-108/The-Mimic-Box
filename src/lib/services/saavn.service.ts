@@ -307,7 +307,7 @@ export const getArtistByLink = async ({
 export const getArtistSongs = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) =>
     apiHandler<T_SaavnArtistSongAPIResponse, { total: number; songs: T_SaavnSong[] }>(
         EXTERNAL_ROUTES.SAAVN.ARTIST.SONGS,
-        { id, page, sort_order: sortOrder, category: sortBy },
+        { artistId: id, page, sort_order: sortOrder, category: sortBy },
         (data) => ({
             total: data.topSongs.total,
             songs: data.topSongs.songs.map((song) => createSongPayload(song)),
@@ -319,7 +319,7 @@ export const getArtistSongs = async ({ id, page, sortBy, sortOrder }: { id: stri
 export const getArtistAlbums = async ({ id, page, sortBy, sortOrder }: { id: string; page: number; sortBy: string; sortOrder: string }) =>
     apiHandler<T_SaavnArtistAlbumAPIResponse, { total: number; albums: T_SaavnAlbum[] }>(
         EXTERNAL_ROUTES.SAAVN.ARTIST.ALBUMS,
-        { id, page, sort_order: sortOrder, category: sortBy },
+        { artistId: id, page, sort_order: sortOrder, category: sortBy },
         (data) => ({
             total: data.topAlbums.total,
             albums: data.topAlbums.albums.map((album) => createAlbumPayload(album)),

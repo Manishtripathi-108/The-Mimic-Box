@@ -103,20 +103,24 @@ export const getSpotifyEntityTracks = async (id: string, type: 'album' | 'playli
         return createErrorReturn('Spotify access token not found');
     }
 
+    if (!id || !type) {
+        return createErrorReturn('Invalid parameters provided for fetching tracks');
+    }
+
     try {
         let tracks: T_SpotifySimplifiedTrack[] = [];
 
         switch (type) {
             case 'album': {
                 const res = await spotifyApi.getAlbumTracks(token, id);
-                if (!res.success) throw new Error('Failed to fetch album tracks: ');
+                if (!res.success) throw new Error(res.message);
                 tracks = await fetchAllSpotifyPaginatedItems(token, res.payload);
                 break;
             }
 
             case 'playlist': {
                 const res = await spotifyApi.getPlaylistTracks(token, id);
-                if (!res.success) throw new Error('Failed to fetch playlist tracks: ');
+                if (!res.success) throw new Error(res.message);
                 const paginated = await fetchAllSpotifyPaginatedItems(token, res.payload);
 
                 tracks = paginated.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null);
@@ -125,14 +129,14 @@ export const getSpotifyEntityTracks = async (id: string, type: 'album' | 'playli
 
             case 'track': {
                 const res = await spotifyApi.getTrackDetails(token, id);
-                if (!res.success) throw new Error('Failed to fetch track details: ');
+                if (!res.success) throw new Error(res.message);
                 tracks = [res.payload];
                 break;
             }
 
             case 'artist': {
                 const res = await spotifyApi.getArtistTopTracks(token, id);
-                if (!res.success) throw new Error('Failed to fetch artist top tracks: ');
+                if (!res.success) throw new Error(res.message);
                 tracks = res.payload;
                 break;
             }
@@ -147,6 +151,7 @@ export const getSpotifyEntityTracks = async (id: string, type: 'album' | 'playli
 
         return createSuccessReturn('Tracks fetched successfully!', tracks);
     } catch (err) {
-        return createErrorReturn('Unexpected error fetching tracks from entity', { error: err });
+        const message = err instanceof Error ? err.message : 'Unexpected error fetching tracks from entity';
+        return createErrorReturn(message, { error: err });
     }
 };

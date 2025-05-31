@@ -292,29 +292,43 @@ export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & P
  * const result = await saavnGetEntityTracks('album123', 'album');
  */
 export const saavnGetEntityTracks = async (id: string, type: 'album' | 'playlist' | 'artist' | 'track') => {
-    switch (type) {
-        case 'album':
-            const album = await saavnApi.getAlbumById(id);
+    if (!id || !type) return createErrorReturn('ID and type are required');
 
-            if (!album.success || !album.payload.songs) return createErrorReturn(album.message || 'Failed to fetch album');
+    console.log(`Fetching tracks from ${type} with ID: ${id}`);
 
-            return createSuccessReturn('Album tracks fetched successfully', album.payload.songs);
-        case 'playlist':
-            const playlist = await saavnApi.getPlaylistById({ id, page: 0, limit: 1000 });
-            if (!playlist.success || !playlist.payload.songs) return createErrorReturn(playlist.message || 'Failed to fetch playlist');
-
-            return createSuccessReturn('Playlist tracks fetched successfully', playlist.payload.songs);
-        case 'artist':
-            const artist = await saavnApi.getArtistSongs({ id, page: 0, sortBy: 'popularity', sortOrder: 'desc' });
-            if (!artist.success || !artist.payload.songs) return createErrorReturn(artist.message || 'Failed to fetch artist songs');
-
-            return createSuccessReturn('Artist songs fetched successfully', artist.payload.songs);
-        case 'track':
-            const track = await saavnApi.getSongByIds(id);
-            if (!track.success || !track.payload || track.payload.length === 0) return createErrorReturn(track.message || 'Failed to fetch track');
-
-            return createSuccessReturn('Track fetched successfully', track.payload);
-        default:
-            return createErrorReturn('Invalid type provided');
+    try {
+        let result;
+        switch (type) {
+            case 'album': {
+                const res = await saavnApi.getAlbumById(id);
+                if (!res.success || !res.payload.songs) throw new Error(res.message || 'Failed to fetch album tracks');
+                result = createSuccessReturn('Album tracks fetched successfully', res.payload.songs);
+                break;
+            }
+            case 'playlist': {
+                const res = await saavnApi.getPlaylistById({ id, page: 0, limit: 1000 });
+                if (!res.success || !res.payload.songs) throw new Error(res.message || 'Failed to fetch playlist tracks');
+                result = createSuccessReturn('Playlist tracks fetched successfully', res.payload.songs);
+                break;
+            }
+            case 'artist': {
+                const res = await saavnApi.getArtistSongs({ id, page: 0, sortBy: 'popularity', sortOrder: 'desc' });
+                if (!res.success || !res.payload.songs) throw new Error(res.message || 'Failed to fetch artist songs');
+                result = createSuccessReturn('Artist songs fetched successfully', res.payload.songs);
+                break;
+            }
+            case 'track': {
+                const res = await saavnApi.getSongByIds(id);
+                if (!res.success || !res.payload || res.payload.length === 0) throw new Error(res.message || 'Failed to fetch track');
+                result = createSuccessReturn('Track fetched successfully', res.payload);
+                break;
+            }
+            default:
+                return createErrorReturn('Invalid type provided');
+        }
+        return result;
+    } catch (err) {
+        const message = err instanceof Error ? err.message : 'An unexpected error occurred';
+        return createErrorReturn(message);
     }
 };
