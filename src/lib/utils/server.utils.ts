@@ -20,7 +20,6 @@ export const extractRecentPlaylists = (items: T_SpotifyPlayHistory[]) => {
 
     for (const item of items) {
         const context = item.context;
-        console.log('Context:', context);
 
         if (context?.type === 'playlist' && context.uri) {
             const uriParts = context.uri.split(':');

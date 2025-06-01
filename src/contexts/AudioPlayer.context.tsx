@@ -217,8 +217,6 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
     );
 
     const addToQueue: T_AudioPlayerContext['addToQueue'] = useCallback((tracks, context = null) => {
-        console.log('Adding to queue:', tracks);
-
         dispatch({ type: 'ADD_TO_QUEUE', payload: { tracks, context } });
     }, []);
 

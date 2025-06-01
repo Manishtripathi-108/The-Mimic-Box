@@ -294,8 +294,6 @@ export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & P
 export const saavnGetEntityTracks = async (id: string, type: 'album' | 'playlist' | 'artist' | 'track') => {
     if (!id || !type) return createErrorReturn('ID and type are required');
 
-    console.log(`Fetching tracks from ${type} with ID: ${id}`);
-
     try {
         let result;
         switch (type) {

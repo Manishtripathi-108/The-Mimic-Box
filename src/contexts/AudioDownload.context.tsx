@@ -22,7 +22,7 @@ type DownloadContextType = {
     updateDownload: (id: string, updates: Partial<T_DownloadFile>) => void;
     cancelDownload: (id: string) => void;
     cancelAllDownloads: () => void;
-    downloadTracks: (tracks: T_AudioPlayerTrack[], quality: string) => Promise<void>;
+    downloadTracks: (tracks: T_AudioPlayerTrack[], quality: string, zipName?: string) => Promise<void>;
     clearDownloads: () => void;
 };
 
@@ -208,7 +208,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         }
     };
 
-    const downloadTracks: DownloadContextType['downloadTracks'] = async (tracks, quality) => {
+    const downloadTracks: DownloadContextType['downloadTracks'] = async (tracks, quality, zipName = 'Tracks') => {
         const files = tracks.map((t) => buildAudioFileFromTrack(t, quality)).filter(Boolean) as T_AudioFile[];
         const newFiles = files.filter((f) => !downloads.find((d) => d.id === f.src));
         if (!newFiles.length) {
@@ -229,7 +229,6 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         if (!Object.keys(zip.files).length) return;
 
         const zipId = `${Date.now()}`;
-        const zipName = `Tracks - ${zipId}.zip`;
 
         addDownload({ id: zipId, title: zipName, url: '' });
         updateDownload(zipId, { status: 'processing' });
