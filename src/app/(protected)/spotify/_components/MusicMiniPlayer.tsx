@@ -1,32 +1,26 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
+import MusicDurationSlider from '@/app/(protected)/spotify/_components/MusicDurationSlider';
 import Icon from '@/components/ui/Icon';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
-import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicDownloadPopover = dynamic(() => import('@/app/(protected)/spotify/_components/MusicDownloadPopover'), { ssr: false });
 const MusicQueue = dynamic(() => import('@/app/(protected)/spotify/_components/MusicQueue'), { ssr: false });
 const MusicLyricsCard = dynamic(() => import('@/app/(protected)/spotify/_components/MusicLyricsCard'), { ssr: false });
 
 const MusicMiniPlayer = () => {
-    const [playbackState, setPlaybackState] = useState({
-        currentTime: 0,
-        buffered: null as TimeRanges | null,
-    });
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const [isQueueOpen, setIsQueueOpen] = useState(false);
     const [isLyricsOpen, setIsLyricsOpen] = useState(false);
 
-    const lastTimeUpdateRef = useRef(0);
     const {
         currentTrack,
-        duration,
         volume,
         muted,
         playing,
@@ -39,39 +33,10 @@ const MusicMiniPlayer = () => {
         toggleShuffle,
         playbackRate,
         setPlaybackRate,
-        seekTo,
         setVolume,
         playNext,
         playPrevious,
-        getAudioElement,
     } = useAudioPlayerContext();
-
-    const audio = getAudioElement();
-
-    const updatePlaybackTime = useCallback(() => {
-        if (!audio) return;
-        const now = performance.now();
-        if (now - lastTimeUpdateRef.current < 500) return;
-
-        lastTimeUpdateRef.current = now;
-        setPlaybackState({
-            currentTime: audio.currentTime,
-            buffered: audio.buffered,
-        });
-    }, [audio]);
-
-    useEffect(() => {
-        if (!audio) return;
-
-        audio.addEventListener('timeupdate', updatePlaybackTime);
-        return () => audio.removeEventListener('timeupdate', updatePlaybackTime);
-    }, [audio, updatePlaybackTime]);
-
-    // Calculate buffered end time
-    const bufferedEnd = useMemo(() => {
-        if (!playbackState.buffered || playbackState.buffered.length === 0) return 0;
-        return playbackState.buffered.end(playbackState.buffered.length - 1);
-    }, [playbackState.buffered]);
 
     // Close popover on outside click
     useEffect(() => {
@@ -132,11 +97,6 @@ const MusicMiniPlayer = () => {
 
                             {isLyricsOpen && (
                                 <MusicLyricsCard
-                                    track={currentTrack.title}
-                                    artist={currentTrack.artists}
-                                    album={currentTrack.album || 'Unknown Album'}
-                                    duration={duration}
-                                    currentDuration={playbackState.currentTime}
                                     onClose={() => setIsLyricsOpen(false)}
                                     className="right-1/2 bottom-full z-60 mb-6 max-h-[60vh] w-sm translate-x-1/2"
                                 />
@@ -201,32 +161,7 @@ const MusicMiniPlayer = () => {
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="hidden w-full max-w-md items-center gap-3 text-xs @md:flex">
-                        <span>{formatTimeDuration(playbackState.currentTime * 1000, 'minutes')}</span>
-
-                        <div className="group relative flex w-full items-center overflow-hidden rounded-full bg-neutral-700">
-                            {/* Buffered */}
-                            <div
-                                className="absolute top-1/2 left-0 z-10 h-full -translate-y-1/2 rounded-full bg-neutral-500"
-                                style={{
-                                    width: `${(bufferedEnd / duration) * 100}%`,
-                                }}
-                            />
-                            {/* Slider */}
-                            <input
-                                type="range"
-                                aria-label="Song Progress"
-                                min={0}
-                                max={duration}
-                                step={0.1}
-                                value={playbackState.currentTime}
-                                onChange={(e) => seekTo(parseFloat(e.target.value))}
-                                className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] relative z-10 h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
-                            />
-                        </div>
-
-                        <span>{formatTimeDuration(duration * 1000, 'minutes')}</span>
-                    </div>
+                    <MusicDurationSlider className="hidden w-full max-w-md items-center gap-3 text-xs @md:flex" />
                 </div>
 
                 {/* Side Controls */}
@@ -289,4 +224,4 @@ const MusicMiniPlayer = () => {
     );
 };
 
-export default MusicMiniPlayer;
+export default memo(MusicMiniPlayer);

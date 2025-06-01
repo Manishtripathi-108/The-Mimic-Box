@@ -1,18 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import Icon from '@/components/ui/Icon';
 import { API_ROUTES } from '@/constants/routes.constants';
+import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import cn from '@/lib/utils/cn';
 
 type Props = {
-    track: string;
-    artist: string;
-    album: string;
-    duration: number;
-    currentDuration: number;
     className?: string;
     onClose: () => void;
 };
@@ -26,59 +22,78 @@ const parseLyrics = (lyricsText: string): LyricLine[] => {
     const regex = /\[(\d{2}):(\d{2})\.(\d{2})\]\s?(.*)/g;
     const lines: LyricLine[] = [];
     let match;
+
     while ((match = regex.exec(lyricsText)) !== null) {
         const [, min, sec, ms, text] = match;
         const time = parseInt(min) * 60 + parseInt(sec) + parseInt(ms) / 100;
         lines.push({ time, text });
     }
+
     return lines;
 };
 
-const MusicLyricsCard = ({ track, artist, album, duration, currentDuration, className, onClose }: Props) => {
+const MusicLyricsCard = ({ className, onClose }: Props) => {
+    const { currentTrack, getAudioElement } = useAudioPlayerContext();
     const { isPending, makeApiCall, data } = useSafeApiCall<null, string>();
+
     const lyricsContainerRef = useRef<HTMLDivElement>(null);
     const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const activeIndexRef = useRef<number | null>(null);
 
-    const getLyrics = useCallback(() => {
-        if (!track || !artist || !album || !duration) return;
+    const audio = getAudioElement();
+
+    const fetchLyrics = useCallback(() => {
+        if (!currentTrack) return;
+
         makeApiCall({
             url: API_ROUTES.LYRICS.GET,
             params: {
-                track,
-                artist,
-                album,
-                duration,
+                track: currentTrack.title,
+                artist: currentTrack.artists,
+                album: currentTrack.album,
+                duration: currentTrack.duration,
                 lyricsOnly: true,
             },
         });
-    }, [track, artist, album, duration, makeApiCall]);
+    }, [currentTrack, makeApiCall]);
 
-    useEffect(() => {
-        getLyrics();
-    }, [getLyrics]);
+    const parsedLyrics = useMemo(() => (data ? parseLyrics(data) : []), [data]);
+    const isSynced = parsedLyrics.length > 0;
 
-    const parsedLyrics = useMemo(() => {
-        if (!data) return [];
-        return parseLyrics(data);
-    }, [data]);
+    const updateLyricsHighlight = useCallback(() => {
+        if (!audio || !isSynced) return;
 
-    const isSynced = useMemo(() => parsedLyrics.length > 0, [parsedLyrics]);
+        const currentTime = audio.currentTime;
+        let newIndex = parsedLyrics.findIndex((line, i) => i === parsedLyrics.length - 1 || currentTime < parsedLyrics[i + 1].time);
 
-    const activeIndex = useMemo(() => {
-        if (!isSynced) return 0;
-        for (let i = parsedLyrics.length - 1; i >= 0; i--) {
-            if (currentDuration >= parsedLyrics[i].time) {
-                return i;
+        if (newIndex === -1) newIndex = parsedLyrics.length - 1;
+
+        if (activeIndexRef.current !== newIndex) {
+            // Clear previous highlight
+            if (activeIndexRef.current !== null) {
+                const prevEl = lineRefs.current[activeIndexRef.current];
+                prevEl?.classList.remove('text-highlight', 'text-lg', 'font-semibold');
             }
+
+            // Add highlight to current
+            const currentEl = lineRefs.current[newIndex];
+            currentEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            currentEl?.classList.add('text-highlight', 'text-lg', 'font-semibold');
+
+            activeIndexRef.current = newIndex;
         }
-        return 0;
-    }, [currentDuration, parsedLyrics, isSynced]);
+    }, [audio, isSynced, parsedLyrics]);
 
     useEffect(() => {
-        if (!isSynced) return;
-        const currentLine = lineRefs.current[activeIndex];
-        currentLine?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, [activeIndex, isSynced]);
+        fetchLyrics();
+    }, [fetchLyrics]);
+
+    useEffect(() => {
+        if (!audio || !isSynced) return;
+
+        audio.addEventListener('timeupdate', updateLyricsHighlight);
+        return () => audio.removeEventListener('timeupdate', updateLyricsHighlight);
+    }, [audio, updateLyricsHighlight, isSynced]);
 
     return (
         <div
@@ -91,7 +106,7 @@ const MusicLyricsCard = ({ track, artist, album, duration, currentDuration, clas
                 </button>
             </div>
 
-            <div className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
+            <div className="sm:scrollbar-thin text-text-secondary h-full flex-1 space-y-2 overflow-y-auto p-4 text-sm">
                 {isPending ? (
                     <Icon icon="loading" className="text-highlight mx-auto size-20 shrink-0" />
                 ) : data ? (
@@ -102,22 +117,19 @@ const MusicLyricsCard = ({ track, artist, album, duration, currentDuration, clas
                                 ref={(el) => {
                                     lineRefs.current[index] = el;
                                 }}
-                                className={cn(
-                                    'text-center transition-all duration-300 ease-in-out',
-                                    index === activeIndex ? 'text-highlight text-lg font-semibold' : 'text-text-secondary'
-                                )}>
+                                className="text-center transition-all duration-300 ease-in-out">
                                 {line.text}
                             </div>
                         ))
                     ) : (
-                        <div className="text-text-secondary text-center whitespace-pre-wrap">{data}</div>
+                        <div className="text-center whitespace-pre-wrap">{data}</div>
                     )
                 ) : (
-                    <div className="text-text-secondary text-center">No lyrics found.</div>
+                    <div className="text-center">No lyrics found.</div>
                 )}
             </div>
         </div>
     );
 };
 
-export default MusicLyricsCard;
+export default memo(MusicLyricsCard);

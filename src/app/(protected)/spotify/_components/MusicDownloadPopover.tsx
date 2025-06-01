@@ -1,5 +1,7 @@
 'use client';
 
+import { memo } from 'react';
+
 import isEqual from 'lodash.isequal';
 import toast from 'react-hot-toast';
 
@@ -72,4 +74,4 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, ...
     );
 };
 
-export default MusicDownloadPopover;
+export default memo(MusicDownloadPopover);
