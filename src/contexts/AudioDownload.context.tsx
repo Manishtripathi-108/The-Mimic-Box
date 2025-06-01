@@ -106,7 +106,6 @@ const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
         }
 
         if (bestMatch) {
-            console.log('🪵 > AudioDownload.context.tsx:108 > searchMetadata > bestMatch:', bestMatch);
             return {
                 ...file,
                 metadata: {
@@ -119,7 +118,7 @@ const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
             throw new Error('No suitable metadata found');
         }
     } catch (err) {
-        console.warn('🪵 > AudioDownload.context.tsx:121 > searchMetadata > err:', err);
+        console.warn('🪵 > searchMetadata > err:', err);
         return file;
     }
 };
