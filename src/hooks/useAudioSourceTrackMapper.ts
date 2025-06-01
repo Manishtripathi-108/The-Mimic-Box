@@ -137,9 +137,10 @@ const useAudioSourceTrackMapper = () => {
     const getPlayableTracks = useCallback(
         async (context: T_AudioSourceContext) => {
             setIsPending(true);
-            console.log(`Fetching tracks for context: ${JSON.stringify(context)}`);
 
             if (context.source === 'saavn') {
+                console.log(`Fetching tracks for Saavn entity: ${context.id} (${context.type})`);
+
                 const res = await saavnGetEntityTracks(context.id, context.type);
                 setIsPending(false);
 

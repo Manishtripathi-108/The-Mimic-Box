@@ -22,7 +22,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 <div className="flex flex-col gap-2">
                     {tracks.map((t, index) => (
                         <MusicTrackCard
-                            key={`${t.id} + ${index}`}
+                            key={`${t.id}-${index}`}
                             id={t.id}
                             title={t.name}
                             link={APP_ROUTES.SPOTIFY.TRACKS(t.id)}

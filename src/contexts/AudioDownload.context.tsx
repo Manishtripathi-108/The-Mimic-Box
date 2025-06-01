@@ -5,10 +5,12 @@ import { createContext, useContext, useRef, useState } from 'react';
 import axios from 'axios';
 import JSZip from 'jszip';
 import toast from 'react-hot-toast';
+import stringSimilarity from 'string-similarity';
 
 import { API_ROUTES } from '@/constants/routes.constants';
 import { useFFmpeg } from '@/hooks/useFFmpeg.hook';
 import { T_AudioFile, T_AudioPlayerTrack, T_DownloadFile } from '@/lib/types/client.types';
+import { T_ITunesMusicTrack } from '@/lib/types/iTunes/track.types';
 import { SuccessResponseOutput } from '@/lib/types/response.types';
 import { downloadFile } from '@/lib/utils/file.utils';
 
@@ -72,6 +74,56 @@ const getLyrics = async (track: T_AudioFile) => {
     }
 };
 
+const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
+    try {
+        const res = await axios.get<SuccessResponseOutput<T_ITunesMusicTrack[]>>(API_ROUTES.ITUNES.SEARCH.TRACKS, {
+            params: {
+                track: file.metadata.title,
+                artist: file.metadata.artist,
+                album: file.metadata.album,
+            },
+        });
+
+        if (!res.data.success) {
+            throw new Error('Failed to fetch metadata');
+        }
+
+        let bestMatch: T_ITunesMusicTrack | null = null;
+        let bestScore = 0;
+
+        for (const track of res.data.payload) {
+            const titleScore = stringSimilarity.compareTwoStrings(track.title.toLowerCase(), file.metadata.title.toString().toLowerCase());
+            const artistScore = stringSimilarity.compareTwoStrings(track.artist.toLowerCase(), file.metadata.artist.toString().toLowerCase());
+            const albumScore = stringSimilarity.compareTwoStrings(track.album.toLowerCase(), file.metadata.album.toString().toLowerCase());
+
+            if (titleScore < 0.6) continue;
+            const score = titleScore * 0.5 + artistScore * 0.3 + albumScore * 0.2;
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMatch = track;
+            }
+        }
+
+        if (bestMatch) {
+            console.log('🪵 > AudioDownload.context.tsx:108 > searchMetadata > bestMatch:', bestMatch);
+            return {
+                ...file,
+                metadata: {
+                    ...file.metadata,
+                    genre: bestMatch.genre,
+                    track: bestMatch.track,
+                },
+            };
+        } else {
+            throw new Error('No suitable metadata found');
+        }
+    } catch (err) {
+        console.warn('🪵 > AudioDownload.context.tsx:121 > searchMetadata > err:', err);
+        return file;
+    }
+};
+
 export const AudioDownloadProvider = ({ children }: { children: React.ReactNode }) => {
     const [downloads, setDownloads] = useState<T_DownloadFile[]>([]);
     const [total, setTotal] = useState(0);
@@ -123,7 +175,8 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             updateDownload(file.src, { status: 'processing', progress: 0 });
 
             const lyrics = await getLyrics(file);
-            console.log(lyrics);
+
+            const metadataFile = await searchMetadata(file);
 
             await writeFile(input, response.data);
             if (cover) await writeFile(cover, file.cover!);
@@ -137,7 +190,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
                 args.push('-metadata', `lyrics=${lyrics}`);
             }
 
-            args.push(...Object.entries(file.metadata).flatMap(([k, v]) => ['-metadata', `${k}=${v}`]), '-codec', 'copy', output);
+            args.push(...Object.entries(metadataFile.metadata).flatMap(([k, v]) => ['-metadata', `${k}=${v}`]), '-codec', 'copy', output);
 
             await exec(args);
             const outFile = await readFile(output);
