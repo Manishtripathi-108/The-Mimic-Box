@@ -25,6 +25,6 @@ saavnConfig.interceptors.request.use((config) => {
     return config;
 });
 
-console.log('saavn API configured!');
+console.log('Saavn API configured!');
 
 export default saavnConfig;

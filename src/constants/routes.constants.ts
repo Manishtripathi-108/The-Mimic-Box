@@ -122,6 +122,19 @@ export const API_ROUTES = {
         GET: '/api/lyrics/get',
         ID: (id: string) => `/api/lyrics/get/${id}`,
     },
+
+    ITUNES: {
+        SEARCH: {
+            TRACKS: '/api/itunes/search/tracks',
+            ALBUMS: '/api/itunes/search/albums',
+            ARTISTS: '/api/itunes/search/artists',
+        },
+        LOOKUP: {
+            TRACKS: '/api/itunes/lookup/tracks',
+            ALBUMS: '/api/itunes/lookup/albums',
+            ARTISTS: '/api/itunes/lookup/artists',
+        },
+    },
 } as const;
 
 /* -------------------------------------------------------------------------- */
@@ -215,6 +228,12 @@ export const EXTERNAL_ROUTES = {
         BASE: 'https://lrclib.net',
         GET: 'https://lrclib.net/api/get',
         SEARCH: 'https://lrclib.net/api/search',
+    },
+
+    ITUNES: {
+        BASE: 'https://itunes.apple.com',
+        SEARCH: '/search',
+        LOOKUP: '/lookup',
     },
 } as const;
 
