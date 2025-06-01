@@ -70,22 +70,22 @@ export const APP_ROUTES = {
 
     IMPORT_ANIME_MANGA: '/import/anime-manga',
 
-    SPOTIFY: {
-        DASHBOARD: '/spotify/dashboard',
+    MUSIC: {
+        DASHBOARD: '/music/dashboard',
         SEARCH: (query: string = ''): string => {
             const trimmedQuery = query.trim();
-            return `/spotify/search?q=${encodeURIComponent(trimmedQuery)}`;
+            return `/music/search?q=${encodeURIComponent(trimmedQuery)}`;
         },
-        PLAYLISTS: '/spotify/playlists',
-        PLAYLIST: (id: string) => `/spotify/playlists/${id}`,
-        ALBUMS: (id: string) => `/spotify/albums/${id}`,
-        TRACKS: (id: string) => `/spotify/tracks/${id}`,
-        ARTISTS: (id: string) => `/spotify/artists/${id}`,
+        PLAYLISTS: '/music/playlists',
+        PLAYLIST: (id: string) => `/music/playlists/${id}`,
+        ALBUMS: (id: string) => `/music/albums/${id}`,
+        TRACKS: (id: string) => `/music/tracks/${id}`,
+        ARTISTS: (id: string) => `/music/artists/${id}`,
         JS: {
-            TRACKS: (id: string) => `/spotify/js/tracks/${id}`,
-            ARTISTS: (id: string) => `/spotify/js/artists/${id}`,
-            ALBUMS: (id: string) => `/spotify/js/albums/${id}`,
-            PLAYLISTS: (id: string) => `/spotify/js/playlists/${id}`,
+            TRACKS: (id: string) => `/music/js/tracks/${id}`,
+            ARTISTS: (id: string) => `/music/js/artists/${id}`,
+            ALBUMS: (id: string) => `/music/js/albums/${id}`,
+            PLAYLISTS: (id: string) => `/music/js/playlists/${id}`,
         },
     },
 

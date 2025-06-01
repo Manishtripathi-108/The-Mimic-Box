@@ -20,10 +20,10 @@ const features = [
         ],
     },
     {
-        category: 'Spotify',
+        category: 'Music',
         items: [
-            { name: 'Dashboard', href: APP_ROUTES.SPOTIFY.DASHBOARD },
-            { name: 'Playlists', href: APP_ROUTES.SPOTIFY.PLAYLISTS },
+            { name: 'Dashboard', href: APP_ROUTES.MUSIC.DASHBOARD },
+            { name: 'Playlists', href: APP_ROUTES.MUSIC.PLAYLISTS },
         ],
     },
     {
