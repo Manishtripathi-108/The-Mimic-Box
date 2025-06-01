@@ -21,7 +21,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
     const { name, artists, album, image } = res.payload[0];
     const artistNames = artists?.primary.map((a) => a.name).filter(Boolean) || ['Unknown'];
     const albumName = album?.name || 'Unknown Album';
-    const coverImage = image?.[2]?.url || '';
+    const coverImage = image?.[2]?.url;
 
     return {
         title: `${name} by ${artistNames[0]}`,
@@ -29,6 +29,12 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
         keywords: ['Music', 'Track', 'Music', 'Mimic', 'Metadata', name, albumName, ...artistNames],
         openGraph: {
             images: [{ url: coverImage }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${name} by ${artistNames[0]}`,
+            description: `Listen to "${name}" by ${artistNames.join(', ')} from the album "${albumName}".`,
+            images: [coverImage],
         },
     };
 };
@@ -60,7 +66,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     return (
         <MusicTrackPage
-            imageUrl={track.image?.[2]?.url || ''}
+            imageUrl={track.image?.[2]?.url}
             title={track.name}
             artists={artists}
             album={album}

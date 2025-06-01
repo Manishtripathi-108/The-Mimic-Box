@@ -26,7 +26,13 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
         description: playlist.description,
         keywords: ['Music', 'Playlist', 'Music', 'Mimic', 'Metadata', playlist.name],
         openGraph: {
-            images: [{ url: playlist.image[2].url}],
+            images: [{ url: playlist.image[2].url }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: playlist.name,
+            description: `View details of the playlist "${playlist.name}".`,
+            images: [playlist.image[2].url],
         },
     };
 };

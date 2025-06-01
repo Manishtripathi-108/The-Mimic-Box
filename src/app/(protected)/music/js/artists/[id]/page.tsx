@@ -26,7 +26,13 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
         description: `Explore artist profile for ${artist.name} — with ${artist.followerCount} followers.`,
         keywords: ['Music', 'Artist', 'Music', 'Mimic', 'Metadata', artist.name],
         openGraph: {
-            images: [{ url: artist.image[2]?.url || '' }],
+            images: [{ url: artist.image[2]?.url }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: artist.name,
+            description: `Explore artist profile for ${artist.name} — with ${artist.followerCount} followers.`,
+            images: [artist.image[2]?.url],
         },
     };
 };
@@ -43,7 +49,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const artist = res.payload;
 
     return (
-        <>
+        <div className="flex flex-col gap-6">
             <MusicMediaHeader title={artist.name} coverImage={artist.image[2]?.url} metadata={`Followers: ${artist.followerCount}`} />
 
             <section className="text-text-secondary">
@@ -56,7 +62,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                             <MusicCard
                                 key={album.id}
                                 title={album.name}
-                                thumbnailUrl={album.image[2]?.url || ''}
+                                thumbnailUrl={album.image[2]?.url}
                                 href={APP_ROUTES.MUSIC.JS.ALBUMS(album.id)}
                             />
                         ))}
@@ -109,7 +115,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                             <MusicCard
                                 key={album.id}
                                 title={album.name}
-                                thumbnailUrl={album.image[2]?.url || ''}
+                                thumbnailUrl={album.image[2]?.url}
                                 href={APP_ROUTES.MUSIC.JS.ALBUMS(album.id)}
                             />
                         ))}
@@ -127,14 +133,14 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                             <MusicCard
                                 key={similarArtist.id}
                                 title={similarArtist.name}
-                                thumbnailUrl={similarArtist.image[2]?.url || ''}
+                                thumbnailUrl={similarArtist.image[2]?.url}
                                 href={APP_ROUTES.MUSIC.JS.ARTISTS(similarArtist.id)}
                             />
                         ))}
                     </div>
                 )}
             </section>
-        </>
+        </div>
     );
 };
 

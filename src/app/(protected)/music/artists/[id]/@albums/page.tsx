@@ -21,12 +21,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             ) : (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                     {albums.map((album) => (
-                        <MusicCard
-                            key={album.id}
-                            title={album.name}
-                            thumbnailUrl={album.images?.[0]?.url || ''}
-                            href={APP_ROUTES.MUSIC.ALBUMS(album.id)}
-                        />
+                        <MusicCard key={album.id} title={album.name} thumbnailUrl={album.images?.[0]?.url} href={APP_ROUTES.MUSIC.ALBUMS(album.id)} />
                     ))}
                 </div>
             )}

@@ -25,7 +25,13 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
         description: `View details of the album "${album.name}" by ${artistNames.join(', ')}.`,
         keywords: ['Music', 'Album', 'Music', 'Mimic', 'Metadata', album.name, ...artistNames],
         openGraph: {
-            images: [{ url: album.images?.[0]?.url || '' }],
+            images: [{ url: album.images?.[0]?.url }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: album.name,
+            description: `View details of the album "${album.name}" by ${artistNames.join(', ')}.`,
+            images: [album.images?.[0]?.url],
         },
     };
 };

@@ -23,7 +23,13 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
         description: `Explore artist profile for ${artist.name} — with ${artist.followers?.total?.toLocaleString()} followers and a popularity score of ${artist.popularity}%.`,
         keywords: ['Music', 'Artist', 'Music', 'Mimic', 'Metadata', artist.name, ...(artist.genres || [])],
         openGraph: {
-            images: [{ url: artist.images?.[0]?.url || '' }],
+            images: [{ url: artist.images?.[0]?.url }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: artist.name,
+            description: `Explore artist profile for ${artist.name} — with ${artist.followers?.total?.toLocaleString()} followers and a popularity score of ${artist.popularity}%.`,
+            images: [artist.images?.[0]?.url],
         },
     };
 };
