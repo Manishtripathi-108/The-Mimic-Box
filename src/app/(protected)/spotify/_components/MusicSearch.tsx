@@ -50,6 +50,8 @@ const MusicSearch = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Todo: make search page and uncomment this 😘
+        return;
         if (!search.trim()) return;
         setIsOverlayOpen(false);
         router.push(APP_ROUTES.SPOTIFY.SEARCH(search));

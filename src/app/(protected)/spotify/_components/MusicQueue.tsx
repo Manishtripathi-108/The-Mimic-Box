@@ -1,5 +1,7 @@
 'use client';
 
+import { memo } from 'react';
+
 import Image from 'next/image';
 
 import MusicTrackPlayBtn from '@/app/(protected)/spotify/_components/MusicTrackPlayBtn';
@@ -55,4 +57,4 @@ const MusicQueue = ({ className }: { className?: string }) => {
     );
 };
 
-export default MusicQueue;
+export default memo(MusicQueue);

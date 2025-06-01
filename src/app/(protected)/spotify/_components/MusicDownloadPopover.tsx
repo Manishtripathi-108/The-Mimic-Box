@@ -1,5 +1,7 @@
 'use client';
 
+import { memo } from 'react';
+
 import isEqual from 'lodash.isequal';
 import toast from 'react-hot-toast';
 
@@ -34,7 +36,7 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, ...
         const toastId = toast.loading('starting download. Please wait...');
         try {
             if (downloadCurrent && currentTrack) {
-                downloadTracks([currentTrack], quality);
+                downloadTracks([currentTrack], quality, currentTrack.title);
                 toast.success('Download started', { id: toastId });
                 return;
             }
@@ -42,7 +44,7 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, ...
             const tracks = await getTracksToDownload();
             if (!tracks.length) throw new Error('No valid tracks found for selected quality.');
 
-            downloadTracks(tracks, quality);
+            downloadTracks(tracks, quality, `${context?.type}-${new Date().getTime()}-${quality}`);
             toast.success('Download started', { id: toastId });
         } catch (err) {
             toast.error((err as Error).message || 'Error while downloading tracks', { id: toastId });
@@ -72,4 +74,4 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, ...
     );
 };
 
-export default MusicDownloadPopover;
+export default memo(MusicDownloadPopover);

@@ -82,10 +82,8 @@ export const fetchSpotifyDataByUrl = async <T>(url: string) =>
 export const fetchAllSpotifyPaginatedItems = async <T>(token: string, initialPage: T_SpotifyPaging<T>): Promise<T[]> => {
     const items: T[] = [...initialPage.items];
     let nextUrl: string | null = initialPage.next;
-    let i = 0;
-    while (nextUrl) {
-        console.log(`Fetching next page: ${nextUrl}`, i++);
 
+    while (nextUrl) {
         const [error, response] = await spotifyApi.fetchSpotifyData<T_SpotifyPaging<T>>({ token, url: nextUrl });
         if (error) break;
         items.push(...response.items);
