@@ -22,4 +22,14 @@ module.exports = {
         '/auth/link-account-error',
         '/dev',
     ],
+    robotsTxtOptions: {
+        includeNonIndexSitemaps: true,
+        policies: [
+            {
+                userAgent: '*',
+                allow: '/',
+                disallow: ['/api'],
+            },
+        ],
+    },
 };

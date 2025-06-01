@@ -7,6 +7,10 @@ const { auth } = NextAuth(authConfig);
 
 const ENABLE_LOGGING = false;
 
+// Comprehensive bot/crawler regex
+const BOT_REGEX =
+    /bot|crawl|slurp|spider|facebook|twitter|discord|embed|whatsapp|messenger|telegram|google|bing|yandex|baidu|pinterest|reddit|linkedin|preview|vkShare|skype|outbrain|quora|duckduckbot|applebot|ia_archiver/i;
+
 export default auth((req) => {
     const { pathname, search } = req.nextUrl;
     const isAuthenticated = !!req.auth;
@@ -16,8 +20,8 @@ export default auth((req) => {
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
     const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
-    // Bot detection — allow bots for SEO (e.g. Googlebot, Discord, Twitter)
-    const isBot = /bot|crawl|spider|facebook|twitter|discord|embed/i.test(userAgent);
+    // bot detection — allow bots for SEO/social previews
+    const isBot = BOT_REGEX.test(userAgent);
     const isSitemapOrRobots = pathname === '/robots.txt' || pathname.startsWith('/mimic-sitemap');
 
     if (ENABLE_LOGGING) {
