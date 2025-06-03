@@ -13,7 +13,26 @@ import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import IconSet from '@/constants/icons.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
-const sidebarMenuItems = [
+type T_Sidebar = {
+    title: string;
+    icon: keyof typeof IconSet;
+    children?: PropChild[];
+    badge?: number;
+    link?: string;
+};
+
+type PropChild = {
+    name: string;
+    link?: string;
+    children?: ChildChild[];
+};
+
+type ChildChild = {
+    name: string;
+    link: string;
+};
+
+const sidebarMenuItems: T_Sidebar[] = [
     {
         title: 'AniList',
         icon: 'anilist',
@@ -49,11 +68,10 @@ const sidebarMenuItems = [
     },
     {
         title: 'Music',
-        icon: 'music',
+        icon: 'spotify',
         children: [
             { name: 'Dashboard', link: APP_ROUTES.MUSIC.DASHBOARD },
             { name: 'Playlists', link: APP_ROUTES.MUSIC.PLAYLISTS },
-            // { name: 'Search', link: APP_ROUTES.MUSIC.SEARCH },
         ],
     },
 
