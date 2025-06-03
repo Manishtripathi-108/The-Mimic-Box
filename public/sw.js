@@ -1,4 +1,4 @@
-const CACHE_NAME = 'my-pwa-cache-v1.1.1';
+const CACHE_NAME = 'my-pwa-cache-v1.1.2';
 
 // Only cache essential static assets
 const FILES_TO_CACHE = ['/manifest.webmanifest', '/download/ffmpeg-core.js', '/download/ffmpeg-core.wasm', '/download/ffmpeg-core.worker.js'];
@@ -36,7 +36,14 @@ self.addEventListener('fetch', (event) => {
     }
 
     // 2. Bypass caching for dynamic/streaming/data routes
-    if (url.pathname === '/' || url.pathname.endsWith('.rsc') || url.pathname.startsWith('/_next/data/') || url.pathname.startsWith('/api/')) {
+    if (
+        url.pathname === '/' ||
+        url.searchParams.has('_rsc') ||
+        url.pathname.endsWith('.rsc') ||
+        url.pathname.startsWith('/_next/data/') ||
+        url.pathname.startsWith('/_next/image') ||
+        url.pathname.startsWith('/api/')
+    ) {
         return; // Let browser handle it directly
     }
 
