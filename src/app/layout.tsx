@@ -6,7 +6,6 @@ import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
 
 import '@/app/globals.css';
-import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 import Header from '@/components/layout/Header';
 import Icon from '@/components/ui/Icon';
 import ProgressBarProvider from '@/contexts/ProgressProvider';
@@ -69,7 +68,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             <SessionProvider>
                 <body
                     className={`bg-primary scrollbar-thin font-karla transition-colors duration-300 ${fontKarla.variable} ${fontAladin.variable} ${fontAlegreya.variable}`}>
-                    <ServiceWorkerRegister />
                     <ProgressBarProvider>
                         <Header />
                         {children}

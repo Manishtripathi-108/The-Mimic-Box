@@ -111,7 +111,8 @@ enum IconSet {
 
     /* ------------------------------------ S ----------------------------------- */
     script = 'proicons:script',
-    shuffle = 'solar:shuffle-linear',
+    shuffle = 'fluent:arrow-shuffle-32-regular',
+    shuffleOff = 'fluent:arrow-shuffle-off-32-regular',
     search = 'line-md:search',
     settings = 'solar:settings-bold',
     settingsOutlined = 'solar:settings-outline',

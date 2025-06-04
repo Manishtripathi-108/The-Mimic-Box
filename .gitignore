@@ -52,3 +52,7 @@ src/generated/prisma-client
 # sitemap and robots.txt
 *sitemap*.xml
 robots.txt
+
+# Serwist
+public/sw*
+public/swe-worker*
