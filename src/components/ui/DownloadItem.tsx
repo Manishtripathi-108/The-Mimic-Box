@@ -66,6 +66,13 @@ const DownloadItem = ({ file, onCancel }: { file: T_DownloadFile; onCancel: () =
                             />
                         </div>
                     )}
+
+                    {/* error msg  */}
+                    {file.error && (
+                        <div className="mt-1 text-xs text-red-500" title={`Error: ${file.error}`}>
+                            {file.error}
+                        </div>
+                    )}
                 </div>
 
                 {/* Cancel Button */}

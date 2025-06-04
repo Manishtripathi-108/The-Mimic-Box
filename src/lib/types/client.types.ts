@@ -134,6 +134,7 @@ export type T_DownloadFile = {
     url: string;
     title: string;
     progress?: number;
+    error?: string;
     status: T_DownloadStatus;
     blobUrl?: string;
 };

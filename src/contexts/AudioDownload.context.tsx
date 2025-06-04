@@ -154,18 +154,18 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         setDownloads((prev) => prev.filter((f) => !['ready', 'failed', 'cancelled'].includes(f.status)));
     };
 
-    const processTrack = async (index: number, file: T_AudioFile, zip: JSZip) => {
-        const input = `input_${index}.mp4`;
-        const output = `${file.filename || `track_${index}`}.m4a`;
-        const cover = file.cover ? `cover_${index}.jpg` : null;
+    const processTrack = async (index: number, file: T_AudioFile, zipArchive: JSZip) => {
+        const inputFileName = `input_${index}.mp4`;
+        const outputFileName = `${file.filename || `track_${index}`}.m4a`;
+        const coverFileName = file.cover ? `cover_${index}.jpg` : null;
 
-        const controller = new AbortController();
-        abortControllers.current[file.src] = controller;
+        const abortController = new AbortController();
+        abortControllers.current[file.src] = abortController;
 
         try {
-            const response = await axios.get(file.src, {
+            const downloadResponse = await axios.get(file.src, {
                 responseType: 'blob',
-                signal: controller.signal,
+                signal: abortController.signal,
                 onDownloadProgress: ({ progress }) => {
                     updateDownload(file.src, { status: 'downloading', progress: (progress || 0) * 100 });
                 },
@@ -174,36 +174,57 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             updateDownload(file.src, { status: 'processing', progress: 0 });
 
             const lyrics = await getLyrics(file);
+            const fileMetadata = await searchMetadata(file);
 
-            const metadataFile = await searchMetadata(file);
+            await writeFile(inputFileName, downloadResponse.data);
+            if (coverFileName) await writeFile(coverFileName, file.cover!);
 
-            await writeFile(input, response.data);
-            if (cover) await writeFile(cover, file.cover!);
-
-            const args = ['-i', input];
-            if (cover) {
-                args.push('-i', cover, '-map', '0:a', '-map', '1', '-disposition:v', 'attached_pic', '-metadata:s:v', 'comment=Cover (front)');
+            const ffmpegArgs = ['-i', inputFileName];
+            if (coverFileName) {
+                ffmpegArgs.push(
+                    '-i',
+                    coverFileName,
+                    '-map',
+                    '0:a',
+                    '-map',
+                    '1',
+                    '-disposition:v',
+                    'attached_pic',
+                    '-metadata:s:v',
+                    'comment=Cover (front)'
+                );
             }
 
             if (lyrics) {
-                args.push('-metadata', `lyrics=${lyrics}`);
+                ffmpegArgs.push('-metadata', `lyrics=${lyrics}`);
             }
 
-            args.push(...Object.entries(metadataFile.metadata).flatMap(([k, v]) => ['-metadata', `${k}=${v}`]), '-codec', 'copy', output);
+            ffmpegArgs.push(
+                ...Object.entries(fileMetadata.metadata).flatMap(([key, value]) => ['-metadata', `${key}=${value}`]),
+                '-codec',
+                'copy',
+                outputFileName
+            );
 
-            await exec(args);
-            const outFile = await readFile(output);
-            zip.file(output, outFile);
+            await exec(ffmpegArgs);
+            const outputFile = await readFile(outputFileName);
+            zipArchive.file(outputFileName, outputFile);
 
             updateDownload(file.src, { status: 'ready', progress: 100 });
             setCompleted((prev) => prev + 1);
-        } catch (err: unknown) {
-            updateDownload(file.src, {
-                status: axios.isCancel(err) ? 'cancelled' : 'failed',
-            });
-            if (!axios.isCancel(err)) console.error(`Error processing ${file.src}`, err);
+        } catch (error) {
+            setTimeout(() => {
+                updateDownload(file.src, {
+                    status: axios.isCancel(error) ? 'cancelled' : 'failed',
+                });
+            }, 100);
+
+            console.error(`Error processing ${file.src}`, error);
+
+            const errorMessage = axios.isAxiosError(error) ? error.message : error instanceof Error ? error.message : 'Unknown error occurred';
+            setDownloads((prev) => prev.map((download) => (download.id === file.src ? { ...download, error: errorMessage } : download)));
         } finally {
-            await Promise.all([deleteFile(input), cover ? deleteFile(cover) : Promise.resolve(), deleteFile(output)]);
+            await Promise.all([deleteFile(inputFileName), coverFileName ? deleteFile(coverFileName) : Promise.resolve(), deleteFile(outputFileName)]);
             delete abortControllers.current[file.src];
         }
     };
