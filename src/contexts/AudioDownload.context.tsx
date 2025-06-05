@@ -12,7 +12,7 @@ import { useFFmpeg } from '@/hooks/useFFmpeg.hook';
 import { T_AudioFile, T_AudioPlayerTrack, T_DownloadFile } from '@/lib/types/client.types';
 import { T_ITunesMusicTrack } from '@/lib/types/iTunes/track.types';
 import { SuccessResponseOutput } from '@/lib/types/response.types';
-import { downloadFile } from '@/lib/utils/file.utils';
+import { downloadFile, sanitizeFilename } from '@/lib/utils/file.utils';
 
 type DownloadContextType = {
     downloads: T_DownloadFile[];
@@ -64,11 +64,7 @@ const getLyrics = async (track: T_AudioFile) => {
                 lyricsOnly: 'true',
             },
         });
-        if (!res.data.success || !res.data.payload) {
-            throw new Error('Failed to fetch lyrics');
-        }
-
-        return String(res.data.payload);
+        return res.data.success ? String(res.data.payload) : null;
     } catch {
         return null;
     }
@@ -84,9 +80,7 @@ const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
             },
         });
 
-        if (!res.data.success) {
-            throw new Error('Failed to fetch metadata');
-        }
+        if (!res.data.success) throw new Error('Failed to fetch metadata');
 
         let bestMatch: T_ITunesMusicTrack | null = null;
         let bestScore = 0;
@@ -105,18 +99,16 @@ const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
             }
         }
 
-        if (bestMatch) {
-            return {
-                ...file,
-                metadata: {
-                    ...file.metadata,
-                    genre: bestMatch.genre,
-                    track: bestMatch.track,
-                },
-            };
-        } else {
-            throw new Error('No suitable metadata found');
-        }
+        return bestMatch
+            ? {
+                  ...file,
+                  metadata: {
+                      ...file.metadata,
+                      genre: bestMatch.genre,
+                      track: bestMatch.track,
+                  },
+              }
+            : file;
     } catch (err) {
         console.warn('🪵 > searchMetadata > err:', err);
         return file;
@@ -127,9 +119,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
     const [downloads, setDownloads] = useState<T_DownloadFile[]>([]);
     const [total, setTotal] = useState(0);
     const [completed, setCompleted] = useState(0);
-
     const abortControllers = useRef<Record<string, AbortController>>({});
-
     const { isLoaded, load, writeFile, exec, readFile, deleteFile } = useFFmpeg();
 
     const addDownload: DownloadContextType['addDownload'] = (file) => {
@@ -156,14 +146,14 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
     const processTrack = async (index: number, file: T_AudioFile, zipArchive: JSZip) => {
         const inputFileName = `input_${index}.mp4`;
-        const outputFileName = `${file.filename || `track_${index}`}.m4a`;
+        const outputFileName = `${sanitizeFilename(file.filename || `track_${index}`)}.m4a`;
         const coverFileName = file.cover ? `cover_${index}.jpg` : null;
 
         const abortController = new AbortController();
         abortControllers.current[file.src] = abortController;
 
         try {
-            const downloadResponse = await axios.get(file.src, {
+            const response = await axios.get(file.src, {
                 responseType: 'blob',
                 signal: abortController.signal,
                 onDownloadProgress: ({ progress }) => {
@@ -174,9 +164,9 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             updateDownload(file.src, { status: 'processing', progress: 0 });
 
             const lyrics = await getLyrics(file);
-            const fileMetadata = await searchMetadata(file);
+            const metadata = await searchMetadata(file);
 
-            await writeFile(inputFileName, downloadResponse.data);
+            await writeFile(inputFileName, response.data);
             if (coverFileName) await writeFile(coverFileName, file.cover!);
 
             const ffmpegArgs = ['-i', inputFileName];
@@ -195,20 +185,13 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
                 );
             }
 
-            if (lyrics) {
-                ffmpegArgs.push('-metadata', `lyrics=${lyrics}`);
-            }
+            if (lyrics) ffmpegArgs.push('-metadata', `lyrics=${lyrics}`);
 
-            ffmpegArgs.push(
-                ...Object.entries(fileMetadata.metadata).flatMap(([key, value]) => ['-metadata', `${key}=${value}`]),
-                '-codec',
-                'copy',
-                outputFileName
-            );
+            ffmpegArgs.push(...Object.entries(metadata.metadata).flatMap(([k, v]) => ['-metadata', `${k}=${v}`]), '-codec', 'copy', outputFileName);
 
             await exec(ffmpegArgs);
-            const outputFile = await readFile(outputFileName);
-            zipArchive.file(outputFileName, outputFile);
+            const finalFile = await readFile(outputFileName);
+            zipArchive.file(outputFileName, finalFile);
 
             updateDownload(file.src, { status: 'ready', progress: 100 });
             setCompleted((prev) => prev + 1);
@@ -219,10 +202,9 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
                 });
             }, 100);
 
-            console.error(`Error processing ${file.src}`, error);
-
             const errorMessage = axios.isAxiosError(error) ? error.message : error instanceof Error ? error.message : 'Unknown error occurred';
-            setDownloads((prev) => prev.map((download) => (download.id === file.src ? { ...download, error: errorMessage } : download)));
+            setDownloads((prev) => prev.map((d) => (d.id === file.src ? { ...d, error: errorMessage } : d)));
+            console.error(`Error processing ${file.src}`, error);
         } finally {
             await Promise.all([deleteFile(inputFileName), coverFileName ? deleteFile(coverFileName) : Promise.resolve(), deleteFile(outputFileName)]);
             delete abortControllers.current[file.src];
@@ -250,12 +232,18 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         if (!Object.keys(zip.files).length) return;
 
         const zipId = `${Date.now()}`;
-
         addDownload({ id: zipId, title: zipName, url: '' });
         updateDownload(zipId, { status: 'processing' });
 
         try {
-            const blob = await zip.generateAsync({ type: 'blob' });
+            const blob = await zip.generateAsync({
+                type: 'blob',
+                compression: 'DEFLATE',
+                compressionOptions: { level: 6 },
+                streamFiles: true,
+                encodeFileName: sanitizeFilename,
+            });
+
             const zipUrl = URL.createObjectURL(blob);
             updateDownload(zipId, { url: zipUrl, status: 'ready', progress: 100 });
             downloadFile(blob, zipName);

@@ -1,4 +1,4 @@
-import toast from 'react-hot-toast';
+import { v4 as uuidV4 } from 'uuid';
 
 import { FILE_TYPES_MAP } from '@/constants/client.constants';
 
@@ -29,11 +29,29 @@ export const getFileType = (fileName: string) => {
 };
 
 /**
+ * Sanitizes a filename by removing invalid characters and optionally adding a UUID.
+ * If the filename exceeds 100 characters, it truncates it to 100 characters.
+ *
+ * @example
+ * sanitizeFilename('example file name.txt'); // 'example file name.txt'
+ * sanitizeFilename('example file name.txt', true); // '123e4567-e89b-12d3-a456-426614174000-example file name.txt'
+ */
+export const sanitizeFilename = (fileName: string, addUuid = false): string => {
+    const normalized = fileName.normalize('NFC');
+    const sanitized = normalized
+        .replace(/[/\\?%*:|"<>]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    if (addUuid) return `${uuidV4()}-${sanitized}`;
+    else return sanitized.length > 100 ? sanitized.slice(0, 100) : sanitized;
+};
+
+/**
  * Downloads a file from a URL or Blob with a custom filename.
  * If a URL is passed, it fetches the file and forces a download using a Blob.
  */
 export const downloadFile = async (file: Blob | string, filename: string): Promise<void> => {
-    const toastId = toast.loading('Downloading file...');
     try {
         let blob: Blob;
 
@@ -59,11 +77,9 @@ export const downloadFile = async (file: Blob | string, filename: string): Promi
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        toast.success('File downloaded successfully!', { id: toastId });
 
         URL.revokeObjectURL(blobUrl);
     } catch (error) {
         console.error('Download failed:', error);
-        toast.error('Failed to download file.', { id: toastId });
     }
 };

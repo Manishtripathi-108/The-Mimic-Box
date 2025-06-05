@@ -1,7 +1,8 @@
 import { existsSync, unlinkSync } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
-import { v4 as uuidV4 } from 'uuid';
+
+import { sanitizeFilename } from '@/lib/utils/file.utils';
 
 /**
  * Base directory of the project. Used to construct absolute paths.
@@ -13,7 +14,7 @@ const BASE_DIR = process.cwd();
  *
  * @example
  * buildPath('uploads', 'audio.mp3');
- * // Returns: /your/project/path/storage/uploads/audio.mp3
+ * Returns: /your/project/path/storage/uploads/audio.mp3
  */
 export const buildPath = (...segments: string[]): string => {
     return path.resolve(BASE_DIR, 'storage', ...segments);
@@ -24,7 +25,7 @@ export const buildPath = (...segments: string[]): string => {
  *
  * @example
  * getUploadPath('images', 'photo.png');
- * // Returns: /your/project/path/storage/uploads/images/photo.png
+ * Returns: /your/project/path/storage/uploads/images/photo.png
  */
 export const getUploadPath = (...subFolders: string[]): string => {
     return buildPath('uploads', ...subFolders);
@@ -35,7 +36,7 @@ export const getUploadPath = (...subFolders: string[]): string => {
  *
  * @example
  * getTempPath('tempfile.txt');
- * // Returns: /your/project/path/storage/temp/tempfile.txt
+ * Returns: /your/project/path/storage/temp/tempfile.txt
  */
 export const getTempPath = (...subFolders: string[]): string => {
     return buildPath('temp', ...subFolders);
@@ -90,24 +91,15 @@ export const cleanupFilesAfterDelay = (filePaths: string[], delayMinutes = 15): 
 };
 
 /**
- * Generates a safe, unique file name by prepending a UUID and replacing unsafe characters.
- * @example
- * sanitizeFileName('My File (1).mp3');
- * // Returns: 'uuid-my_file_1.mp3'
+ * Saves an uploaded file to a specified destination folder.
+ * The file is sanitized, and if it's temporary, it will be deleted after a specified delay.
+ *
+ * @param file - The file to save.
+ * @param destinationFolder - The folder where the file should be saved.
+ * @param isTemporary - Whether the file is temporary (default: false).
+ * @param deleteAfterMint - Time in minutes after which the file should be deleted (default: 15).
+ * @returns An object containing the sanitized file name and full path of the saved file.
  */
-export const sanitizeFileName = (fileName: string): string => {
-    const name = path.basename(fileName);
-    return (
-        uuidV4() +
-        '-' +
-        name
-            .toLowerCase()
-            .replace(/[^a-z0-9.-]/g, '_') // Replace unsafe characters
-            .replace(/_+/g, '_')
-    ); // Normalize underscores
-};
-
-//Saves an uploaded file to disk.
 export const saveUploadedFile = async ({
     file,
     destinationFolder,
@@ -123,7 +115,7 @@ export const saveUploadedFile = async ({
     fullPath: string;
 }> => {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const sanitizedFileName = sanitizeFileName(file.name);
+    const sanitizedFileName = sanitizeFilename(file.name, true);
 
     const segments = destinationFolder.split('/');
     const targetDir = buildPath(isTemporary ? 'temp' : '', ...segments);
