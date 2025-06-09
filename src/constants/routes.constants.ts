@@ -130,8 +130,9 @@ export const API_ROUTES = {
             ARTISTS: '/api/itunes/search/artists',
         },
         LOOKUP: {
-            TRACKS: '/api/itunes/lookup/tracks',
-            ALBUMS: '/api/itunes/lookup/albums',
+            TRACKS: (id: string) => `/api/itunes/lookup/tracks/${id}`,
+            ALBUMS: (id: string) => `/api/itunes/lookup/albums/${id}`,
+            ALBUM_TRACKS: (id: string) => `${API_ROUTES.ITUNES.LOOKUP.ALBUMS(id)}/tracks`,
             ARTISTS: '/api/itunes/lookup/artists',
         },
     },

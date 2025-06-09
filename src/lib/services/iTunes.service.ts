@@ -1,59 +1,83 @@
+import { AxiosRequestConfig } from 'axios';
+
 import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import iTunesConfig from '@/lib/config/iTunes.config';
-import { T_ITunesPayload } from '@/lib/types/iTunes/global.types';
-import { T_ITunesMusicTrackApiRes } from '@/lib/types/iTunes/track.types';
+import { T_ITunesAlbumCollectionResponse, T_ITunesPayload, T_ITunesTrackResponse } from '@/lib/types/iTunes/api.types';
+import { ITunesMusicAlbumTracks, T_ITunesAlbum, T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
-import { createITunesTrack } from '@/lib/utils/iTunes.utils';
+import { createITunesTrack, createItunesAlbum } from '@/lib/utils/iTunes.utils';
+import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
-export const searchTrackDetails = async ({ track, artist, album, limit = 5 }: { track: string; artist?: string; album?: string; limit?: number }) => {
-    const queryParts = [track, artist, album].filter(Boolean).join(' ');
+/** Helper to fetch and validate data from iTunes */
+const fetchITunesData = async <T, R>(
+    url: string,
+    params: AxiosRequestConfig['params'],
+    notFoundMessage: string,
+    transform: (data: T[]) => R | false
+) => {
+    const [err, res] = await safeAwait(iTunesConfig.get<T_ITunesPayload<T>>(url, { params }));
 
-    try {
-        const res = await iTunesConfig.get<T_ITunesPayload<T_ITunesMusicTrackApiRes>>(EXTERNAL_ROUTES.ITUNES.SEARCH, {
-            params: {
-                term: queryParts,
-                entity: 'song',
-                limit: limit,
-            },
-        });
+    if (err || !res) return createErrorReturn('Failed to fetch data');
 
-        if (!res.data.results.length) {
-            return createErrorReturn('No tracks found for the given query');
+    const { results } = res.data;
+
+    if (!results.length) return createErrorReturn(notFoundMessage);
+
+    const transformedData = transform(results);
+    if (!transformedData) return createErrorReturn(notFoundMessage);
+
+    return createSuccessReturn('Data fetched successfully', transformedData);
+};
+
+/** Search for iTunes tracks by query */
+export const searchTracks = async ({ track, artist, album, limit = 5 }: { track: string; artist?: string; album?: string; limit?: number }) => {
+    const term = [track, artist, album].filter(Boolean).join(' ');
+
+    return fetchITunesData<T_ITunesTrackResponse, T_ITunesTrack[]>(
+        EXTERNAL_ROUTES.ITUNES.SEARCH,
+        { term, entity: 'song', limit },
+        'No tracks found for the given query',
+        (data) => data.map(createITunesTrack)
+    );
+};
+
+/** Get iTunes albums by ID */
+export const getAlbumsById = async (id: number | string, limit = 5) => {
+    return fetchITunesData<T_ITunesAlbumCollectionResponse, T_ITunesAlbum[]>(
+        EXTERNAL_ROUTES.ITUNES.LOOKUP,
+        { id, entity: 'album', limit },
+        'No collection found for the given ID',
+        (data) => data.map(createItunesAlbum)
+    );
+};
+
+/** Get album and its tracks by ID */
+export const getAlbumTracksById = async (id: number | string, limit = 5) => {
+    return fetchITunesData<T_ITunesAlbumCollectionResponse | T_ITunesTrackResponse, ITunesMusicAlbumTracks>(
+        EXTERNAL_ROUTES.ITUNES.LOOKUP,
+        { id, entity: 'song', limit },
+        'No album or tracks found for the given ID',
+        (data) => {
+            const rawAlbum = data.find((item) => item.wrapperType === 'collection');
+            const rawTracks = data.filter((item) => item.wrapperType === 'track');
+
+            if (!rawAlbum || !rawTracks.length) return false;
+
+            const album = createItunesAlbum(rawAlbum);
+            const songs = rawTracks.map(createITunesTrack);
+
+            return {
+                ...album,
+                songs,
+            };
         }
-
-        return createSuccessReturn('Track details fetched successfully', createITunesTrack(res.data.results));
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        return createErrorReturn(errorMessage);
-    }
+    );
 };
 
-// export const getAlbumDetailsId = async (id: number | string, limit = 5) => {
-//     try {
-//         const res = await iTunesConfig.get<T_ITunesPayload<T_ITunesMusicTrackApiRes>>(EXTERNAL_ROUTES.ITUNES.LOOKUP, {
-//             params: {
-//                 id: id,
-//                 entity: 'album',
-//                 limit: limit,
-//             },
-//         });
-
-//         console.log('🚀 ~ getAlbumDetailsId ~ res:', res.data);
-
-//         if (res.data.resultCount === 0) {
-//             return createErrorReturn('No collection found for the given ID');
-//         }
-
-//         return createSuccessReturn('Collection details fetched successfully', createITunesTrack(res.data.results));
-//     } catch (error) {
-//         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-//         return createErrorReturn(errorMessage);
-//     }
-// };
-
-const iTunesApi = {
-    searchTrackDetails,
-    // getAlbumDetailsId,
+const iTunesService = {
+    searchTracks,
+    getAlbumsById,
+    getAlbumTracksById,
 };
 
-export default iTunesApi;
+export default iTunesService;

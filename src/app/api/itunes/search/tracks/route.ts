@@ -13,10 +13,10 @@ export async function GET(req: NextRequest) {
         return createErrorResponse({ message: 'Missing required parameters', status: 400 });
     }
 
-    const res = await iTunesApi.searchTrackDetails({ track, artist, album, limit: parseInt(limit, 10) });
+    const res = await iTunesApi.searchTracks({ track, artist, album, limit: parseInt(limit, 10) });
     if (!res.success || !res.payload) {
         return createErrorResponse({ message: !res.success ? res.message : 'Failed to fetch results', status: 500 });
     }
 
-    return createSuccessResponse({ message: 'Success', payload: res.payload });
+    return createSuccessResponse({ message: 'Successfully fetched tracks!', payload: res.payload });
 }

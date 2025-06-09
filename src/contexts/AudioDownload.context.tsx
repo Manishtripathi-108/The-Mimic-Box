@@ -10,7 +10,7 @@ import stringSimilarity from 'string-similarity';
 import { API_ROUTES } from '@/constants/routes.constants';
 import { useFFmpeg } from '@/hooks/useFFmpeg.hook';
 import { T_AudioFile, T_AudioPlayerTrack, T_DownloadFile } from '@/lib/types/client.types';
-import { T_ITunesMusicTrack } from '@/lib/types/iTunes/track.types';
+import { T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { SuccessResponseOutput } from '@/lib/types/response.types';
 import { downloadFile, sanitizeFilename } from '@/lib/utils/file.utils';
 
@@ -72,7 +72,7 @@ const getLyrics = async (track: T_AudioFile) => {
 
 const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
     try {
-        const res = await axios.get<SuccessResponseOutput<T_ITunesMusicTrack[]>>(API_ROUTES.ITUNES.SEARCH.TRACKS, {
+        const res = await axios.get<SuccessResponseOutput<T_ITunesTrack[]>>(API_ROUTES.ITUNES.SEARCH.TRACKS, {
             params: {
                 track: file.metadata.title,
                 artist: file.metadata.artist,
@@ -82,7 +82,7 @@ const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
 
         if (!res.data.success) throw new Error('Failed to fetch metadata');
 
-        let bestMatch: T_ITunesMusicTrack | null = null;
+        let bestMatch: T_ITunesTrack | null = null;
         let bestScore = 0;
 
         for (const track of res.data.payload) {
