@@ -17,9 +17,10 @@ type Props = {
     className?: string;
     context?: T_AudioSourceContext;
     downloadCurrent?: boolean;
+    onClose?: () => void;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-const MusicDownloadPopover = ({ className, context, downloadCurrent = false, ...props }: Props) => {
+const MusicDownloadPopover = ({ className, context, downloadCurrent = false, onClose, ...props }: Props) => {
     const { currentTrack, playbackContext, queue } = useAudioPlayerContext();
     const { getPlayableTracks, isPending } = useAudioSourceTrackMapper();
     const { downloadTracks } = useAudioDownload();
@@ -33,6 +34,7 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, ...
     };
 
     const handleDownloadTracks = async (quality: string) => {
+        onClose?.();
         const toastId = toast.loading('starting download. Please wait...');
         try {
             if (downloadCurrent && currentTrack) {

@@ -13,11 +13,11 @@ import cn from '@/lib/utils/cn';
 const MusicActionBtns = ({ className, context }: { className?: string; context: T_AudioSourceContext }) => {
     const { setQueue, toggleFadePlay, playbackContext, playing } = useAudioPlayerContext();
     const { isPending, getPlayableTracks } = useAudioSourceTrackMapper();
-    const isCurrentTrack = playbackContext?.id === context?.id;
-    const isTrackPlaying = isCurrentTrack && playing;
+    const isCurrentContext = playbackContext?.id === context?.id;
+    const isContextPlaying = isCurrentContext && playing;
 
     const handlePlay = useCallback(() => {
-        if (isCurrentTrack) {
+        if (isCurrentContext) {
             toggleFadePlay();
         } else {
             if (isPending) return;
@@ -35,7 +35,7 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
                     shareUrl({ url: window.location.href });
                 });
         }
-    }, [isCurrentTrack, toggleFadePlay, isPending, getPlayableTracks, setQueue, context]);
+    }, [isCurrentContext, toggleFadePlay, isPending, getPlayableTracks, setQueue, context]);
 
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>
@@ -50,11 +50,11 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
             <button
                 type="button"
                 onClick={handlePlay}
-                aria-label={isTrackPlaying ? 'Pause' : 'Play'}
-                title={isTrackPlaying ? 'Pause' : 'Play'}
+                aria-label={isContextPlaying ? 'Pause' : 'Play'}
+                title={isContextPlaying ? 'Pause' : 'Play'}
                 className="button button-highlight inline-flex size-14 rounded-full p-2"
                 disabled={isPending}>
-                <Icon icon={isPending ? 'loading' : isTrackPlaying ? 'pauseToPlay' : 'playToPause'} />
+                <Icon icon={isPending ? 'loading' : isContextPlaying ? 'pauseToPlay' : 'playToPause'} />
             </button>
 
             <button
@@ -81,7 +81,12 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
                 </ul>
             </div>
 
-            <MusicDownloadPopover context={context} popover="auto" className="mr-1 [position-area:left_span-top]" />
+            <MusicDownloadPopover
+                onClose={() => document.getElementById('download-popover')?.hidePopover()}
+                context={context}
+                popover="auto"
+                className="mr-1 [position-area:left_span-top]"
+            />
         </div>
     );
 };

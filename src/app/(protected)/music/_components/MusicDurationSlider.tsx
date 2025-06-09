@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useCallback, useEffect, useRef } from 'react';
 
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
@@ -11,11 +13,12 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
     const bufferedEndRef = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLInputElement>(null);
     const currentFormattedTimeRef = useRef<HTMLSpanElement>(null);
+    const isSeekingRef = useRef(false);
 
     const updatePlaybackTime = useCallback(() => {
-        if (!audio) return;
+        if (!audio || isSeekingRef.current) return;
 
-        // Update slider
+        // Update slider position
         if (sliderRef.current) {
             sliderRef.current.value = audio.currentTime.toString();
         }
@@ -40,6 +43,8 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
 
     if (!audio) return null;
 
+    const duration = isNaN(audio.duration) ? 0 : audio.duration;
+
     return (
         <div className={cn(className)}>
             <span ref={currentFormattedTimeRef} className="tabular-nums">
@@ -47,7 +52,7 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
             </span>
 
             <div className="group relative flex w-full items-center overflow-hidden rounded-full bg-neutral-700">
-                {/* Buffered */}
+                {/* Buffered bar */}
                 <div ref={bufferedEndRef} className="absolute top-1/2 left-0 z-10 h-full -translate-y-1/2 rounded-full bg-neutral-500" />
 
                 {/* Slider */}
@@ -58,13 +63,34 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
                     min={0}
                     step={0.1}
                     defaultValue={0}
-                    max={audio.duration || 0}
-                    onChange={(e) => seekTo(parseFloat(e.target.value))}
+                    max={duration}
+                    onChange={(e) => {
+                        if (currentFormattedTimeRef.current) {
+                            const value = parseFloat(e.target.value);
+                            currentFormattedTimeRef.current.textContent = formatTimeDuration(value * 1000, 'minutes');
+                        }
+                    }}
+                    onPointerDown={() => {
+                        isSeekingRef.current = true;
+                    }}
+                    onPointerUp={(e) => {
+                        isSeekingRef.current = false;
+                        seekTo(parseFloat((e.target as HTMLInputElement).value));
+                    }}
+                    onKeyDown={() => {
+                        isSeekingRef.current = true;
+                    }}
+                    onKeyUp={() => {
+                        isSeekingRef.current = false;
+                        if (sliderRef.current) {
+                            seekTo(parseFloat(sliderRef.current.value));
+                        }
+                    }}
                     className="[&::-moz-range-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] [&::-webkit-slider-thumb]:shadow-[calc(-100vw)_0_0_100vw_theme(colors.highlight)] relative z-10 h-1 w-full cursor-pointer appearance-none overflow-hidden rounded-full transition-all duration-100 group-hover:h-2 focus:h-2 [&::-moz-range-thumb]:size-0 [&::-webkit-slider-thumb]:size-0 [&::-webkit-slider-thumb]:appearance-none"
                 />
             </div>
 
-            <span className="tabular-nums">{formatTimeDuration(audio.duration * 1000, 'minutes')}</span>
+            <span className="tabular-nums">{formatTimeDuration(duration * 1000, 'minutes')}</span>
         </div>
     );
 };

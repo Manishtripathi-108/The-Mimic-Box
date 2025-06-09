@@ -65,7 +65,7 @@ const MusicMiniPlayer = () => {
 
     return (
         <footer className="@container fixed bottom-2 left-1/2 z-50 w-full -translate-x-1/2">
-            <section className="from-secondary to-tertiary shadow-floating-sm text-text-secondary flex w-full flex-wrap items-center justify-between gap-2 rounded-full bg-linear-150 from-15% to-85% px-3 py-2 @md:px-4">
+            <section className="from-secondary to-tertiary shadow-floating-sm text-text-secondary flex w-full flex-wrap items-center justify-between gap-2 rounded-full bg-linear-150 from-15% to-85% p-2 @md:px-4">
                 {/* Track Info */}
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                     <Image
@@ -85,7 +85,7 @@ const MusicMiniPlayer = () => {
                 </div>
 
                 {/* Playback Controls */}
-                <div className="flex flex-2 flex-col items-center gap-1">
+                <div className="mr-2 flex flex-col items-center gap-1 @xl:mr-auto @xl:flex-2">
                     <div className="flex items-center justify-center gap-4">
                         <div className="relative hidden @md:flex" id="lyrics-popover-container">
                             <button
@@ -109,7 +109,7 @@ const MusicMiniPlayer = () => {
                             type="button"
                             title="Shuffle"
                             onClick={toggleShuffle}
-                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${isShuffled ? 'text-highlight' : 'hover:text-text-primary'}`}
+                            className={`hidden cursor-pointer rounded-full p-1 @md:inline ${isShuffled ? 'text-highlight' : 'hover:text-text-primary'}`}
                             aria-label="Toggle Shuffle">
                             <Icon icon={isShuffled ? 'shuffle' : 'shuffleOff'} className="size-5" />
                         </button>
@@ -144,13 +144,19 @@ const MusicMiniPlayer = () => {
                             type="button"
                             title={loop ? 'Loop One' : 'Loop'}
                             onClick={toggleLoop}
-                            className={`hidden cursor-pointer rounded-full p-1 @sm:inline ${loop ? 'text-highlight' : 'hover:text-text-primary'}`}
+                            className={`hidden cursor-pointer rounded-full p-1 @md:inline ${loop ? 'text-highlight' : 'hover:text-text-primary'}`}
                             aria-label="Toggle Loop Mode">
                             <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
                         </button>
 
                         <div className="relative hidden items-center @md:flex" id="download-popover-container">
-                            {isPopoverOpen && <MusicDownloadPopover downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />}
+                            {isPopoverOpen && (
+                                <MusicDownloadPopover
+                                    onClose={() => setIsPopoverOpen(false)}
+                                    downloadCurrent
+                                    className="right-1/2 bottom-full z-60 mb-4"
+                                />
+                            )}
                             <button
                                 type="button"
                                 title="Download"
@@ -167,7 +173,7 @@ const MusicMiniPlayer = () => {
                 </div>
 
                 {/* Side Controls */}
-                <div className="hidden shrink-0 items-center justify-end gap-2 @xl:flex @5xl:flex-1">
+                <div className="hidden shrink-0 items-center justify-end gap-2 @2xl:flex @5xl:flex-1">
                     {/* Volume */}
                     <div className="group hidden w-24 items-center gap-1 @5xl:flex">
                         <button

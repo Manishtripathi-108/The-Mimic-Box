@@ -60,6 +60,7 @@
     --animate-zoom-out: zoom-out 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.27) forwards;
     --animate-waves: waves 5s linear infinite;
     --animate-tape: tape 5s linear infinite;
+    --animate-marquee: marquee 8s linear infinite;
 
     @keyframes slide-left-return {
         0% {
@@ -218,6 +219,15 @@
         }
         100% {
             transform: rotate(-360deg) scale(0.4);
+        }
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(-100%);
         }
     }
 }
