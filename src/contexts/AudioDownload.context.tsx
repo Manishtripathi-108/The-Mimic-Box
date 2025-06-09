@@ -88,7 +88,7 @@ const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
         for (const track of res.data.payload) {
             const titleScore = stringSimilarity.compareTwoStrings(track.title.toLowerCase(), file.metadata.title.toString().toLowerCase());
             const artistScore = stringSimilarity.compareTwoStrings(track.artist.toLowerCase(), file.metadata.artist.toString().toLowerCase());
-            const albumScore = stringSimilarity.compareTwoStrings(track.album.toLowerCase(), file.metadata.album.toString().toLowerCase());
+            const albumScore = stringSimilarity.compareTwoStrings((track.album ?? '').toLowerCase(), file.metadata.album.toString().toLowerCase());
 
             if (titleScore < 0.6) continue;
             const score = titleScore * 0.5 + artistScore * 0.3 + albumScore * 0.2;
@@ -106,6 +106,8 @@ const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
                       ...file.metadata,
                       genre: bestMatch.genre,
                       track: bestMatch.track,
+                      album_artist: bestMatch.albumArtistName || file.metadata.artist,
+                      disc: bestMatch.disc,
                   },
               }
             : file;
