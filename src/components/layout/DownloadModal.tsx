@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -103,4 +103,4 @@ const DownloadModal = ({ className }: { className?: string }) => {
     );
 };
 
-export default DownloadModal;
+export default memo(DownloadModal);
