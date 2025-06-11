@@ -104,7 +104,10 @@ const useAudioSourceTrackMapper = () => {
                 },
             }));
 
+            const start = performance.now();
             const responses = await makeParallelApiCalls(queries);
+            const end = performance.now();
+            console.log(`[useAudioSourceTrackMapper] Saavn API calls took ${((end - start) / 1000).toFixed(2)} seconds`);
 
             remainingTracks.forEach((spotifyTrack, i) => {
                 const saavnResults = responses[i]?.results;
