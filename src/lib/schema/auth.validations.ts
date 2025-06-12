@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-const emailField = z.string().email({ message: 'Please enter a valid email address.' });
+const emailField = z
+    .string()
+    .email({ message: 'Please enter a valid email address.' })
+    .transform((email) => email.toLowerCase());
 
 const passwordField = z
     .string()

@@ -5,7 +5,10 @@ import { formatFileSize } from '@/lib/utils/file.utils';
 
 export const profileSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Invalid email address'),
+    email: z
+        .string()
+        .email('Invalid email address')
+        .transform((email) => email.toLowerCase()),
     image: z
         .instanceof(File, { message: 'Invalid file' })
         .refine((file) => ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'].includes(file.type), {

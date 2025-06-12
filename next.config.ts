@@ -42,9 +42,18 @@ const nextConfig: NextConfig = {
             { protocol: 'https', hostname: 'res.cloudinary.com' },
         ],
     },
+    webpack(config) {
+        config.experiments = {
+            ...config.experiments,
+            asyncWebAssembly: true,
+        };
+        config.module.rules.push({
+            test: /\.wasm$/,
+            type: 'javascript/auto',
+        });
+        return config;
+    },
 };
 
 // Export with Serwist PWA support
-export default withSerwist({
-    ...nextConfig,
-});
+export default withSerwist(nextConfig);
