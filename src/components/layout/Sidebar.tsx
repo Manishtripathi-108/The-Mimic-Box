@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 
 import Icon from '@/components/ui/Icon';
+import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import IconSet from '@/constants/icons.constants';
 import { APP_ROUTES } from '@/constants/routes.constants';
@@ -40,7 +41,7 @@ const sidebarMenuItems: T_Sidebar[] = [
             { name: 'Anime', link: APP_ROUTES.ANILIST.USER.ANIME },
             { name: 'Manga', link: APP_ROUTES.ANILIST.USER.MANGA },
             { name: 'Favourites', link: APP_ROUTES.ANILIST.USER.FAVOURITES },
-            { name: 'Import/Export', link: APP_ROUTES.IMPORT_ANIME_MANGA },
+            // { name: 'Import/Export', link: APP_ROUTES.IMPORT_ANIME_MANGA },
         ],
     },
     {
@@ -54,7 +55,7 @@ const sidebarMenuItems: T_Sidebar[] = [
                     { name: 'Ultimate', link: APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE },
                 ],
             },
-            { name: 'Ludo', link: '/games/ludo' },
+            // { name: 'Ludo', link: '/games/ludo' },
         ],
     },
     {
@@ -76,8 +77,8 @@ const sidebarMenuItems: T_Sidebar[] = [
     },
 
     {
-        title: 'Profile',
-        badge: 14,
+        title: 'Dev',
+        // badge: 14,
         icon: 'person',
         link: APP_ROUTES.DEV,
     },
@@ -227,10 +228,10 @@ const Sidebar = () => {
                     <span>Settings</span>
                 </Link>
 
-                <Link href="#" className="flex items-center gap-2 rounded-lg p-2.5 text-red-500 transition hover:bg-red-700">
+                <LogoutButton className="hover:bg-secondary flex w-full cursor-pointer items-center gap-2 rounded-lg p-2.5 text-red-500 transition">
                     <Icon icon="logout" className="size-5" />
                     <span>Log Out</span>
-                </Link>
+                </LogoutButton>
             </nav>
         </dialog>
     );
