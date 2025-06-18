@@ -36,6 +36,7 @@ export type T_DuplicateTrack = {
     album: string;
     cover: string;
     duplicates: {
+        reason: 'same-id' | 'same-name-artist';
         id: string;
         title: string;
         artist: string;

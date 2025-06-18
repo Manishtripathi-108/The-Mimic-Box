@@ -62,7 +62,7 @@ export const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> =>
             const artistScore = stringSimilarity.compareTwoStrings(track.artist.toLowerCase(), file.metadata.artist.toString().toLowerCase());
             const albumScore = stringSimilarity.compareTwoStrings((track.album ?? '').toLowerCase(), file.metadata.album.toString().toLowerCase());
 
-            if (titleScore < 0.6) continue;
+            if (titleScore < 0.7) continue;
             const score = titleScore * 0.5 + artistScore * 0.3 + albumScore * 0.2;
 
             if (score > bestScore) {

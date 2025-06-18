@@ -27,6 +27,7 @@ export default function DuplicateTrackRemover({ duplicates, source }: { duplicat
 
     // Handle manual toggle of "Select All"
     const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log('🪵 > DuplicateTrackRemover.tsx:19 > DuplicateTrackRemover > source:', source);
         const checked = e.target.checked;
         setValue('selectAll', checked);
         setValue('trackId', checked ? allTrackIds : []);
@@ -94,6 +95,7 @@ export default function DuplicateTrackRemover({ duplicates, source }: { duplicat
                                         <div className="text-text-secondary text-xs">{track.artist}</div>
                                         <div className="text-text-secondary text-xs">{track.album}</div>
                                     </div>
+                                    <span className="text-xs text-red-500">{track.reason === 'same-id' ? 'Same ID' : 'Same Title'}</span>
                                 </label>
                             ))}
                         </div>
