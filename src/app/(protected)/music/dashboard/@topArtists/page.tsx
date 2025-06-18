@@ -1,7 +1,7 @@
 import { getSpotifyUserTopArtists } from '@/actions/spotify.actions';
-import MusicCard from '@/app/(protected)/music/_components/MusicCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
+import LinkCard from '@/components/ui/LinkCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const Page = async () => {
@@ -13,7 +13,7 @@ const Page = async () => {
     return (
         <HorizontalScrollSection title="Top Artists">
             {res.payload.items.map((item) => (
-                <MusicCard key={item.id} title={item.name} thumbnailUrl={item.images[0].url} href={APP_ROUTES.MUSIC.ARTISTS(item.id)} />
+                <LinkCard key={item.id} icon='play' title={item.name} thumbnailUrl={item.images[0].url} href={APP_ROUTES.MUSIC.ARTISTS(item.id)} />
             ))}
         </HorizontalScrollSection>
     );

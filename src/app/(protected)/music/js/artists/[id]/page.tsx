@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
 import { saavnGetArtistDetails } from '@/actions/saavn.actions';
-import MusicCard from '@/app/(protected)/music/_components/MusicCard';
 import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHeader';
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import ErrorCard from '@/components/layout/ErrorCard';
+import LinkCard from '@/components/ui/LinkCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
@@ -59,7 +59,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 ) : (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                         {artist.topAlbums.map((album) => (
-                            <MusicCard
+                            <LinkCard icon='play'
                                 key={album.id}
                                 title={album.name}
                                 thumbnailUrl={album.image[2]?.url}
@@ -112,7 +112,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 ) : (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                         {artist.singles.map((album) => (
-                            <MusicCard
+                            <LinkCard icon='play'
                                 key={album.id}
                                 title={album.name}
                                 thumbnailUrl={album.image[2]?.url}
@@ -130,8 +130,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 ) : (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                         {artist.similarArtists.map((similarArtist) => (
-                            <MusicCard
+                            <LinkCard
                                 key={similarArtist.id}
+                                icon='play'
                                 title={similarArtist.name}
                                 thumbnailUrl={similarArtist.image[2]?.url}
                                 href={APP_ROUTES.MUSIC.JS.ARTISTS(similarArtist.id)}

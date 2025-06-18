@@ -48,7 +48,7 @@ export const APP_ROUTES = {
     },
 
     ANILIST: {
-        INDEX: '/anilist',
+        ROOT: '/anilist',
         USER: {
             ANIME: '/anilist/user/anime',
             MANGA: '/anilist/user/manga',
@@ -60,7 +60,7 @@ export const APP_ROUTES = {
 
     GAMES: {
         TIC_TAC_TOE: {
-            INDEX: '/games/tic-tac-toe',
+            ROOT: '/games/tic-tac-toe',
             CLASSIC: '/games/tic-tac-toe/classic',
             ULTIMATE: '/games/tic-tac-toe/ultimate',
             ONLINE: '/games/tic-tac-toe/online',
@@ -86,6 +86,17 @@ export const APP_ROUTES = {
             ARTISTS: (id: string) => `/music/js/artists/${id}`,
             ALBUMS: (id: string) => `/music/js/albums/${id}`,
             PLAYLISTS: (id: string) => `/music/js/playlists/${id}`,
+        },
+    },
+
+    TUNE_SYNC: {
+        ROOT: '/tune-sync',
+        REMOVE_DUPLICATES: {
+            ROOT: '/tune-sync/remove-duplicates',
+            SPOTIFY: '/tune-sync/remove-duplicates/spotify/',
+            SPOTIFY_PLAYLIST: (id: string) => `/tune-sync/remove-duplicates/spotify/playlists/${id}`,
+            SAAVN: '/tune-sync/remove-duplicates/saavn/',
+            ITUNES: '/tune-sync/remove-duplicates/itunes/',
         },
     },
 
@@ -244,7 +255,7 @@ export const EXTERNAL_ROUTES = {
 
 /**
  * PUBLIC_ROUTES is an array of route paths that are accessible without requiring user authentication.
-    APP_ROUTES.INDEX,
+    APP_ROUTES.ROOT,
  * Additionally, it includes paths for sitemap and robots.txt files for SEO purposes.
  */
 export const PUBLIC_ROUTES: string[] = [
@@ -254,7 +265,7 @@ export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.AUTH.FORGOT_PASSWORD,
     APP_ROUTES.AUTH.RESET_PASSWORD,
     APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR(),
-    APP_ROUTES.GAMES.TIC_TAC_TOE.INDEX,
+    APP_ROUTES.GAMES.TIC_TAC_TOE.ROOT,
     APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC,
     APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE,
 ];

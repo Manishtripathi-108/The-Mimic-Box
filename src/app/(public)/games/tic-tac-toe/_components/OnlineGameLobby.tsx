@@ -16,7 +16,7 @@ const OnlineGameLobby = ({ mode }: { mode: GameMode | 'waiting-room' }) => {
     const { playerSymbol, gameRoomId, isNextX, hasGameEnded, gameWinner, isStalemate, stalemateCount, playerXData, playerOData } =
         useTicTacToeContext().state;
 
-    if (!gameRoomId) redirect(APP_ROUTES.GAMES.TIC_TAC_TOE.INDEX);
+    if (!gameRoomId) redirect(APP_ROUTES.GAMES.TIC_TAC_TOE.ROOT);
 
     const renderGameStatus = () => {
         if (hasGameEnded) {

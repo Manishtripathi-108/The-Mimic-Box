@@ -6,6 +6,7 @@ import Cell from '@/app/(public)/games/tic-tac-toe/_components/Cell';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { GameMode } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
 import Icon from '@/components/ui/Icon';
+import cn from '@/lib/utils/cn';
 
 const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
     const { state, makeMove, setMode } = useTicTacToeContext();
@@ -50,7 +51,12 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
                 ultimateBoardState.map((macroBoard, macroIndex) => (
                     <div
                         key={macroIndex}
-                        className={`shadow-pressed-xs size-full rounded-md p-1 sm:p-2 ${macroIndex === activeCellIndex ? 'bg-highlight' : ''} ${winningIndexes?.includes(macroIndex) ? 'text-accent' : ''} ${!classicBoardState[macroIndex] && 'grid grid-cols-3 gap-1 sm:gap-2'}`}>
+                        className={cn('shadow-pressed-xs size-full rounded-md p-1 sm:p-2', {
+                            'bg-highlight': macroIndex === activeCellIndex,
+                            'text-accent': winningIndexes?.includes(macroIndex),
+                            'text-text-primary': !winningIndexes?.includes(macroIndex),
+                            'grid grid-cols-3 gap-1 sm:gap-2': !classicBoardState[macroIndex],
+                        })}>
                         {classicBoardState[macroIndex] ? (
                             <Icon
                                 key={macroIndex}

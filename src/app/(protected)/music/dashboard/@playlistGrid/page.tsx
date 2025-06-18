@@ -1,7 +1,7 @@
 import { getSpotifyUserPlaylists } from '@/actions/spotify.actions';
-import MusicCard from '@/app/(protected)/music/_components/MusicCard';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
+import LinkCard from '@/components/ui/LinkCard';
 import { APP_ROUTES } from '@/constants/routes.constants';
 
 const Page = async () => {
@@ -21,9 +21,10 @@ const Page = async () => {
     return (
         <HorizontalScrollSection title="Playlists" href={APP_ROUTES.MUSIC.PLAYLISTS}>
             {sortedPlaylists.map((item) => (
-                <MusicCard
+                <LinkCard
                     key={item.id}
                     title={item.name}
+                    icon='play'
                     sub={`${item.tracks.total} tracks`}
                     thumbnailUrl={item.images[0].url}
                     href={APP_ROUTES.MUSIC.PLAYLIST(item.id)}

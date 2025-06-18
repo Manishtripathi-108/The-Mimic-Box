@@ -29,10 +29,14 @@ const features = [
     {
         category: 'Games',
         items: [
-            { name: 'Tic Tac Toe', href: APP_ROUTES.GAMES.TIC_TAC_TOE.INDEX },
+            { name: 'Tic Tac Toe', href: APP_ROUTES.GAMES.TIC_TAC_TOE.ROOT },
             { name: 'Classic', href: APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC },
             { name: 'Ultimate', href: APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE },
         ],
+    },
+    {
+        category: 'Tune Sync',
+        items: [{ name: 'Remove Duplicates', href: APP_ROUTES.TUNE_SYNC.REMOVE_DUPLICATES.ROOT }],
     },
 ];
 

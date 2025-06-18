@@ -1,6 +1,6 @@
-import { MusicCardSkeleton } from '@/app/(protected)/music/_components/MusicCard';
 import { MusicMediaHeaderSkeleton } from '@/app/(protected)/music/_components/MusicMediaHeader';
 import MusicTrackCardSkeleton from '@/app/(protected)/music/_components/skeletons/MusicTrackCardSkeleton';
+import { LinkCardSkeleton } from '@/components/ui/LinkCard';
 
 const loading = () => {
     const skeletonArray = Array.from({ length: 10 });
@@ -13,7 +13,7 @@ const loading = () => {
 
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] place-items-center gap-4 *:w-full">
                     {skeletonArray.map((_, idx) => (
-                        <MusicCardSkeleton key={idx} />
+                        <LinkCardSkeleton key={idx} />
                     ))}
                 </div>
             </section>
@@ -33,7 +33,7 @@ const loading = () => {
 
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] place-items-center gap-4 *:w-full">
                     {skeletonArray.map((_, idx) => (
-                        <MusicCardSkeleton key={idx} />
+                        <LinkCardSkeleton key={idx} />
                     ))}
                 </div>
             </section>
@@ -43,7 +43,7 @@ const loading = () => {
 
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] place-items-center gap-4 *:w-full">
                     {skeletonArray.map((_, idx) => (
-                        <MusicCardSkeleton key={idx} />
+                        <LinkCardSkeleton key={idx} />
                     ))}
                 </div>
             </section>

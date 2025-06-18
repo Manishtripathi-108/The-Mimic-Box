@@ -3,10 +3,11 @@ import React, { memo } from 'react';
 import { IconProps, Icon as Iconify } from '@iconify/react';
 
 import IconSet from '@/constants/icons.constants';
+import { T_IconType } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';
 
 type Props = {
-    icon: keyof typeof IconSet;
+    icon: T_IconType;
     className?: string;
 } & Omit<IconProps, 'icon' | 'className'>;
 

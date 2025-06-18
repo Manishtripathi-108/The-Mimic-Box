@@ -25,6 +25,8 @@ export type FileTypesMap = Record<
     | 'disk image'
 >;
 
+export type T_IconType = keyof typeof IconSet;
+
 /* -------------------------------------------------------------------------- */
 /*                                 Form Types                                 */
 /* -------------------------------------------------------------------------- */
@@ -52,7 +54,7 @@ export type InputProps<T extends FieldValues = FieldValues> = {
     min?: number;
     max?: number;
     label?: string;
-    iconName?: keyof typeof IconSet;
+    iconName?: T_IconType;
     iconPosition?: 'left' | 'right';
     onIconClick?: () => void;
     classNames?: BaseClassNames & {
@@ -82,6 +84,9 @@ export type T_UploadState = {
     formattedEstimated: string;
 } & AxiosProgressEvent;
 
+/* -------------------------------------------------------------------------- */
+/*                                    Audio                                   */
+/* -------------------------------------------------------------------------- */
 export type T_AudioEntityLink = {
     id: string;
     name: string;
