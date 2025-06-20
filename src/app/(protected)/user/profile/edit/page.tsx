@@ -14,7 +14,7 @@ import * as z from 'zod';
 
 import { editProfileAction } from '@/actions/user.actions';
 import Icon from '@/components/ui/Icon';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { profileSchema } from '@/lib/schema/user.validations';
 
 type ProfileFormData = z.infer<typeof profileSchema>;

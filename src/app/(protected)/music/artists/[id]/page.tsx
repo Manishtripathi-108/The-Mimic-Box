@@ -1,12 +1,12 @@
 import { Metadata } from 'next';
 
-import { getSpotifyArtistDetails } from '@/actions/spotify.actions';
+import { spotifyGetArtist } from '@/actions/spotify.actions';
 import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHeader';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
     const { id } = await params;
-    const res = await getSpotifyArtistDetails(id);
+    const res = await spotifyGetArtist(id);
 
     if (!res.success || !res.payload) {
         return {
@@ -36,7 +36,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
-    const res = await getSpotifyArtistDetails(id);
+    const res = await spotifyGetArtist(id);
 
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch artist details'} />;

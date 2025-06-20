@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import stringSimilarity from 'string-similarity';
 
 import { saavnGetEntityTracks } from '@/actions/saavn.actions';
-import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
+import { spotifyGetEntityTracks } from '@/actions/spotify.actions';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_SaavnSong } from '@/lib/types/saavn/song.types';
@@ -161,7 +161,7 @@ const useAudioSourceTrackMapper = () => {
             }
 
             if (context.source === 'spotify') {
-                const res = await getSpotifyEntityTracks(context.id, context.type);
+                const res = await spotifyGetEntityTracks(context.id, context.type);
                 if (!res.success || !res.payload) {
                     setIsPending(false);
                     return [];

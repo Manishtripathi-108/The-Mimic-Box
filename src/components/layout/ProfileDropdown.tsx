@@ -11,8 +11,9 @@ import { useSession } from 'next-auth/react';
 import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { APP_ROUTES, DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import useTheme from '@/hooks/useTheme';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 const ProfileDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
+import { spotifyGetEntityTracks } from '@/actions/spotify.actions';
 import DuplicateTracks from '@/app/(protected)/tune-sync/remove-duplicates/_components/DuplicateTracks';
 import ErrorCard from '@/components/layout/ErrorCard';
 import { T_SpotifyTrack } from '@/lib/types/spotify.types';
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
-    const res = await getSpotifyEntityTracks(id, 'playlist');
+    const res = await spotifyGetEntityTracks(id, 'playlist');
 
     if (!res.success || !res.payload) {
         return <ErrorCard message={res.message || 'Failed to fetch playlist'} />;

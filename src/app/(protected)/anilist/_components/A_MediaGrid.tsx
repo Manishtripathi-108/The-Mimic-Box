@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import { getFilteredMediaList } from '@/actions/anilist.actions';
 import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { AnilistMedia, AnilistMediaType, AnilistSearchCategories } from '@/lib/types/anilist.types';
 import { buildMediaSearchParams, getCategoryDisplayTitle } from '@/lib/utils/core.utils';
 

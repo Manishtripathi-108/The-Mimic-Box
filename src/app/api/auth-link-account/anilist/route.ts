@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
-import { API_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import ANILIST_ROUTES from '@/constants/external-routes/anilist.routes';
+import API_ROUTES from '@/constants/routes/api.routes';
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils/createResponse.utils';
 
 export async function GET() {
@@ -16,5 +17,5 @@ export async function GET() {
     });
 
     // return NextResponse.json({ success: true, redirectUrl: `${EXTERNAL_ROUTES.ANILIST.AUTH}?${params.toString()}` });
-    return createSuccessResponse({ message: 'Redirecting to Anilist', payload: `${EXTERNAL_ROUTES.ANILIST.AUTH}?${params.toString()}` });
+    return createSuccessResponse({ message: 'Redirecting to Anilist', payload: `${ANILIST_ROUTES.AUTH}?${params.toString()}` });
 }

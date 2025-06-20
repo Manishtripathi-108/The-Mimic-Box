@@ -7,7 +7,7 @@ import MusicActionBtns from '@/app/(protected)/music/_components/MusicActionBtns
 import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHeader';
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import ErrorCard from '@/components/layout/ErrorCard';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
     const { id } = await params;

@@ -4,9 +4,12 @@ import { NextRequest } from 'next/server';
 import axios from 'axios';
 
 import { auth } from '@/auth';
-import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_ROUTE, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
+import API_ROUTES from '@/constants/routes/api.routes';
+import APP_ROUTES from '@/constants/routes/app.routes';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { db } from '@/lib/db';
-import { getUserProfile } from '@/lib/services/spotify.service';
+import { getMe } from '@/lib/services/spotify/user.spotify.services';
 import { ErrorCodes } from '@/lib/types/response.types';
 import { T_SpotifyAccessToken } from '@/lib/types/spotify.types';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
@@ -32,7 +35,7 @@ export async function GET(req: NextRequest) {
 
     const [tokenErr, tokenRes] = await safeAwait(
         axios.post<T_SpotifyAccessToken>(
-            EXTERNAL_ROUTES.SPOTIFY.EXCHANGE_TOKEN,
+            spotifyApiRoutes.exchangeToken,
             new URLSearchParams({
                 grant_type: 'authorization_code',
                 code,
@@ -55,7 +58,7 @@ export async function GET(req: NextRequest) {
     }
 
     const tokens = tokenRes.data;
-    const userProfileRes = await getUserProfile(tokens.access_token);
+    const userProfileRes = await getMe(tokens.access_token);
 
     if (!userProfileRes.success) {
         console.error('[Spotify Link] Failed to fetch user profile', userProfileRes);

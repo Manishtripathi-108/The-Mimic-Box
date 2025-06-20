@@ -1,8 +1,9 @@
 import { NextRequest } from 'next/server';
 
 import { auth } from '@/auth';
-import { API_ROUTES, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils/createResponse.utils';
+import API_ROUTES from '@/constants/routes/api.routes';
 
 export async function GET(req: NextRequest) {
     const session = await auth();
@@ -20,5 +21,5 @@ export async function GET(req: NextRequest) {
         state: searchParams.get('callbackUrl') || '/',
     });
 
-    return createSuccessResponse({ message: 'Redirecting to Spotify', payload: `${EXTERNAL_ROUTES.SPOTIFY.AUTH}?${params.toString()}` });
+    return createSuccessResponse({ message: 'Redirecting to Spotify', payload: `${spotifyApiRoutes.auth}?${params.toString()}` });
 }

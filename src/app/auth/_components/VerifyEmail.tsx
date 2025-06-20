@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import { verifyEmailToken } from '@/actions/auth.actions';
 import { verifyEmailChangeToken } from '@/actions/user.actions';
 import Icon from '@/components/ui/Icon';
-import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 
 const VerifyEmail = ({ type }: { type: 'verify' | 'change' }) => {
     const { data: session, update } = useSession();

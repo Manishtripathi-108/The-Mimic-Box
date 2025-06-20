@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import LRCLIB_ROUTES from '@/constants/external-routes/lrclib.routes';
 import { T_LyricsRecord } from '@/lib/types/common.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 
@@ -19,11 +19,11 @@ const fetchLyricsData = async <T>(url: string, params?: Record<string, string | 
 };
 
 export const getLyricsById = (id: number) =>
-    fetchLyricsData<T_LyricsRecord>(`${EXTERNAL_ROUTES.LRCLIB.GET}/${id}`, undefined, 'Lyrics fetched successfully by ID!');
+    fetchLyricsData<T_LyricsRecord>(`${LRCLIB_ROUTES.GET}/${id}`, undefined, 'Lyrics fetched successfully by ID!');
 
 export const getLyricsByMetadata = (trackName: string, artistName: string, albumName: string, duration: number) =>
     fetchLyricsData<T_LyricsRecord>(
-        EXTERNAL_ROUTES.LRCLIB.GET,
+        LRCLIB_ROUTES.GET,
         {
             track_name: trackName,
             artist_name: artistName,
@@ -47,7 +47,7 @@ export const searchLyrics = ({
     duration?: number;
 }) =>
     fetchLyricsData<T_LyricsRecord[]>(
-        EXTERNAL_ROUTES.LRCLIB.SEARCH,
+        LRCLIB_ROUTES.SEARCH,
         {
             q,
             track_name: trackName,

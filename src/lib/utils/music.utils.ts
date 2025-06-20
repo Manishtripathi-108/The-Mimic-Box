@@ -1,7 +1,7 @@
 import axios from 'axios';
 import stringSimilarity from 'string-similarity';
 
-import { API_ROUTES } from '@/constants/routes.constants';
+import API_ROUTES from '@/constants/routes/api.routes';
 import { T_AudioFile, T_AudioPlayerTrack } from '@/lib/types/client.types';
 import { T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { SuccessResponseOutput } from '@/lib/types/response.types';

@@ -1,12 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
 
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import iTunesConfig from '@/lib/config/iTunes.config';
 import { T_ITunesAlbumCollectionResponse, T_ITunesPayload, T_ITunesTrackResponse } from '@/lib/types/iTunes/api.types';
 import { ITunesMusicAlbumTracks, T_ITunesAlbum, T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { createITunesTrack, createItunesAlbum } from '@/lib/utils/iTunes.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
+import ITUNES_ROUTES from '@/constants/external-routes/iTunes.routes';
 
 /** Helper to fetch and validate data from iTunes */
 const fetchITunesData = async <T, R>(
@@ -34,7 +34,7 @@ export const searchTracks = async ({ track, artist, album, limit = 5 }: { track:
     const term = [track, artist, album].filter(Boolean).join(' ');
 
     return fetchITunesData<T_ITunesTrackResponse, T_ITunesTrack[]>(
-        EXTERNAL_ROUTES.ITUNES.SEARCH,
+        ITUNES_ROUTES.SEARCH,
         { term, entity: 'song', limit },
         'No tracks found for the given query',
         (data) => data.map(createITunesTrack)
@@ -44,7 +44,7 @@ export const searchTracks = async ({ track, artist, album, limit = 5 }: { track:
 /** Get iTunes albums by ID */
 export const getAlbumsById = async (id: number | string, limit = 5) => {
     return fetchITunesData<T_ITunesAlbumCollectionResponse, T_ITunesAlbum[]>(
-        EXTERNAL_ROUTES.ITUNES.LOOKUP,
+        ITUNES_ROUTES.LOOKUP,
         { id, entity: 'album', limit },
         'No collection found for the given ID',
         (data) => data.map(createItunesAlbum)
@@ -54,7 +54,7 @@ export const getAlbumsById = async (id: number | string, limit = 5) => {
 /** Get album and its tracks by ID */
 export const getAlbumTracksById = async (id: number | string, limit = 5) => {
     return fetchITunesData<T_ITunesAlbumCollectionResponse | T_ITunesTrackResponse, ITunesMusicAlbumTracks>(
-        EXTERNAL_ROUTES.ITUNES.LOOKUP,
+        ITUNES_ROUTES.LOOKUP,
         { id, entity: 'song', limit },
         'No album or tracks found for the given ID',
         (data) => {

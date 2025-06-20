@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import Icon from '@/components/ui/Icon';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { T_IconType } from '@/lib/types/client.types';
 
 const platforms: {

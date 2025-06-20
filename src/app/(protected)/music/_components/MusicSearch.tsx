@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import { saavnGlobalSearch } from '@/actions/saavn.actions';
 import Icon from '@/components/ui/Icon';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { T_SaavnSearchResponse } from '@/lib/types/saavn/search.types';
 
 const createLink = (id: string, type: string) => {

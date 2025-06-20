@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 const features = [
     {

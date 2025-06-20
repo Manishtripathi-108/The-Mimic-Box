@@ -1,11 +1,11 @@
-import { getSpotifyUserPlaylists } from '@/actions/spotify.actions';
+import { spotifyGetUserPlaylists } from '@/actions/spotify.actions';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
 import LinkCard from '@/components/ui/LinkCard';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async () => {
-    const res = await getSpotifyUserPlaylists();
+    const res = await spotifyGetUserPlaylists();
     if (!res.success || !res.payload) {
         return <ErrorMessage message={res.message || 'Failed to fetch playlists'} />;
     }
@@ -24,7 +24,7 @@ const Page = async () => {
                 <LinkCard
                     key={item.id}
                     title={item.name}
-                    icon='play'
+                    icon="play"
                     sub={`${item.tracks.total} tracks`}
                     thumbnailUrl={item.images[0].url}
                     href={APP_ROUTES.MUSIC.PLAYLIST(item.id)}

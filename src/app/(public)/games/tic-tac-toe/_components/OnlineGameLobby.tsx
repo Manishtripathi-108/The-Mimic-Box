@@ -10,7 +10,7 @@ import TicTacToeBoard from '@/app/(public)/games/tic-tac-toe/_components/TicTacT
 import WaitingRoom from '@/app/(public)/games/tic-tac-toe/_components/WaitingRoom';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { GameMode } from '@/app/(public)/games/tic-tac-toe/_lib/tic-tac-toe.types';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 const OnlineGameLobby = ({ mode }: { mode: GameMode | 'waiting-room' }) => {
     const { playerSymbol, gameRoomId, isNextX, hasGameEnded, gameWinner, isStalemate, stalemateCount, playerXData, playerOData } =

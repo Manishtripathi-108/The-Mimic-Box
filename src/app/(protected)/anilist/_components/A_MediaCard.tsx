@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import Icon from '@/components/ui/Icon';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { AnilistMedia } from '@/lib/types/anilist.types';
 import { getMonthName } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';

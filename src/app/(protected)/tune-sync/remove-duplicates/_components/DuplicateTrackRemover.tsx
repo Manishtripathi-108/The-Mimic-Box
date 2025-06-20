@@ -27,7 +27,6 @@ export default function DuplicateTrackRemover({ duplicates, source }: { duplicat
 
     // Handle manual toggle of "Select All"
     const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('🪵 > DuplicateTrackRemover.tsx:19 > DuplicateTrackRemover > source:', source);
         const checked = e.target.checked;
         setValue('selectAll', checked);
         setValue('trackId', checked ? allTrackIds : []);
@@ -48,10 +47,17 @@ export default function DuplicateTrackRemover({ duplicates, source }: { duplicat
     }, [selectedTrackIds, allTrackIds, isAllSelected, setValue]);
 
     const onSubmit = (data: T_FormData) => {
+        console.log('🪵 > DuplicateTrackRemover.tsx:19 > DuplicateTrackRemover > source:', source);
         const idsToDelete = data.trackId || [];
         if (idsToDelete.length === 0) {
             toast.error('No duplicates selected.');
             return;
+        }
+
+        try {
+        } catch (error) {
+            console.error('🪵 Error deleting duplicates:', error);
+            toast.error('Failed to delete duplicates. Please try again.');
         }
 
         toast.success(`${idsToDelete.length} duplicate${idsToDelete.length > 1 ? 's' : ''} deleted.`);

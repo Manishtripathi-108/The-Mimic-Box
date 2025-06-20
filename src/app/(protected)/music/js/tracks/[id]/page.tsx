@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { saavnGetSongDetails } from '@/actions/saavn.actions';
 import MusicTrackPage from '@/app/(protected)/music/_components/MusicTrackPage';
 import ErrorCard from '@/components/layout/ErrorCard';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {

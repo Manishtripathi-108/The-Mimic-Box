@@ -11,8 +11,8 @@ import { forgotPasswordAction } from '@/actions/auth.actions';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
-import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
 import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 
 const ForgotPasswordForm = () => {
     const {

@@ -4,11 +4,12 @@ import { LinkedAccountProvider } from '@prisma/client';
 import axios from 'axios';
 
 import { auth } from '@/auth';
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import { db } from '@/lib/db';
 import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
 import { createAniListErrorReturn, createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
+import ANILIST_ROUTES from '@/constants/external-routes/anilist.routes';
 
 export const removeLinkedAccount = async (provider: LinkedAccountProvider) => {
     const session = await auth();
@@ -94,7 +95,7 @@ const getProviderConfig = (
     switch (provider) {
         case 'anilist':
             return {
-                url: EXTERNAL_ROUTES.ANILIST.EXCHANGE_TOKEN,
+                url: ANILIST_ROUTES.TOKEN,
                 data: {
                     grant_type: 'refresh_token',
                     refresh_token: refreshToken,
@@ -104,7 +105,7 @@ const getProviderConfig = (
             };
         case 'spotify':
             return {
-                url: EXTERNAL_ROUTES.SPOTIFY.EXCHANGE_TOKEN,
+                url: spotifyApiRoutes.exchangeToken,
                 data: new URLSearchParams({
                     grant_type: 'refresh_token',
                     refresh_token: refreshToken,

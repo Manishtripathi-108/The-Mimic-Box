@@ -17,7 +17,7 @@ import Input from '@/components/ui/Input';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import Textarea from '@/components/ui/Textarea';
 import { META_TAGS } from '@/constants/client.constants';
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { AudioMetaTagsSchema } from '@/lib/schema/audio.validations';
 import { T_AudioMetaTags } from '@/lib/types/common.types';
@@ -66,7 +66,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
 
         if (process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL) {
             await makeApiCall({
-                url: EXTERNAL_ROUTES.AUDIO.EDIT_META_TAGS,
+                url: AUDIO_ROUTES.EDIT_META_TAGS,
                 method: 'post',
                 responseType: 'blob',
                 isExternalApiCall: true,

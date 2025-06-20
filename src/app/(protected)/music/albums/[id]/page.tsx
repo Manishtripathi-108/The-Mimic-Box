@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
-import { getSpotifyAlbumDetails } from '@/actions/spotify.actions';
+import { spotifyGetAlbum } from '@/actions/spotify.actions';
 import MusicSpotifyAlbum from '@/app/(protected)/music/albums/[id]/_component/MusicSpotifyAlbum';
 import ErrorCard from '@/components/layout/ErrorCard';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
     const { id } = await params;
 
-    const res = await getSpotifyAlbumDetails(id);
+    const res = await spotifyGetAlbum(id);
 
     if (!res.success || !res.payload) {
         return {
@@ -38,7 +38,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ id: strin
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
-    const res = await getSpotifyAlbumDetails(id);
+    const res = await spotifyGetAlbum(id);
 
     if (!res.success || !res.payload) {
         return <ErrorCard message={res.message || 'Failed to fetch album'} />;

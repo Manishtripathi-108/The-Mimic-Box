@@ -11,7 +11,7 @@ import { useSession } from 'next-auth/react';
 import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { T_IconType } from '@/lib/types/client.types';
 
 type T_Sidebar = {

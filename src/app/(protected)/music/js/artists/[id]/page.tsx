@@ -5,7 +5,7 @@ import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHead
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import ErrorCard from '@/components/layout/ErrorCard';
 import LinkCard from '@/components/ui/LinkCard';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
     const { id } = await params;
@@ -59,7 +59,8 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 ) : (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                         {artist.topAlbums.map((album) => (
-                            <LinkCard icon='play'
+                            <LinkCard
+                                icon="play"
                                 key={album.id}
                                 title={album.name}
                                 thumbnailUrl={album.image[2]?.url}
@@ -112,7 +113,8 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 ) : (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                         {artist.singles.map((album) => (
-                            <LinkCard icon='play'
+                            <LinkCard
+                                icon="play"
                                 key={album.id}
                                 title={album.name}
                                 thumbnailUrl={album.image[2]?.url}
@@ -132,7 +134,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                         {artist.similarArtists.map((similarArtist) => (
                             <LinkCard
                                 key={similarArtist.id}
-                                icon='play'
+                                icon="play"
                                 title={similarArtist.name}
                                 thumbnailUrl={similarArtist.image[2]?.url}
                                 href={APP_ROUTES.MUSIC.JS.ARTISTS(similarArtist.id)}

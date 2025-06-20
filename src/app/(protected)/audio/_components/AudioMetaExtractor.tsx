@@ -12,7 +12,7 @@ import UploadProgressCard from '@/components/layout/UploadProgressCard';
 import CardContainer from '@/components/ui/CardContainer';
 import FileUpload from '@/components/ui/FileUpload';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { AudioFileValidationSchema } from '@/lib/schema/audio.validations';
 
@@ -79,7 +79,7 @@ const AudioMetaExtractor = () => {
     const submitTagsExtraction = async (values: FormValue) => {
         if (process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL) {
             makeApiCall({
-                url: EXTERNAL_ROUTES.AUDIO.EXTRACT_METADATA,
+                url: AUDIO_ROUTES.EXTRACT_METADATA,
                 method: 'POST',
                 isExternalApiCall: true,
                 onStart: () => {

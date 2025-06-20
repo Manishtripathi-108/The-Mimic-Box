@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { auth } from '@/auth';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 export const metadata: Metadata = {
     title: 'Profile',

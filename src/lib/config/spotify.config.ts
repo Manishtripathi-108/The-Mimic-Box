@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 
 const spotifyConfig = axios.create({
-    baseURL: EXTERNAL_ROUTES.SPOTIFY.BASE,
+    baseURL: spotifyApiRoutes.base,
 });
 
 console.log('Spotify API configured!');

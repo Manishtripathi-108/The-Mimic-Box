@@ -6,12 +6,12 @@ import Link from 'next/link';
 
 import toast from 'react-hot-toast';
 
-import { fetchSpotifyDataByUrl } from '@/actions/spotify.actions';
+import { spotifyGetByUrl } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/music/_components/MusicActionBtns';
 import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHeader';
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import MusicTrackCardSkeleton from '@/app/(protected)/music/_components/skeletons/MusicTrackCardSkeleton';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/lib/types/spotify.types';
 
 type Props = {
@@ -29,7 +29,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
     const fetchNextTracks = useCallback(async () => {
         if (!nextUrl) return;
 
-        const res = await fetchSpotifyDataByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
+        const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
         if (!res.success || !res.payload) {
             toast.error('Failed to fetch more tracks');
             return;
