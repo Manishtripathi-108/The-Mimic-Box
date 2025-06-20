@@ -535,7 +535,7 @@ const spotifyApiRoutes = {
          * @method GET
          * @param playlistId - Playlist ID
          */
-        checkFollowingPlaylist: (playlistId: string) => `playlists/${playlistId}/followers/contains`,
+        checkFollowingPlaylist: (playlistId: string) => `/playlists/${playlistId}/followers/contains`,
     },
 } as const;
 

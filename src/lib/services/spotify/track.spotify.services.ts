@@ -95,6 +95,8 @@ export const removeTracks = async (accessToken: string, trackIds: string[]) => {
         if (error || !response) {
             return createErrorReturn('Failed to remove tracks', error);
         }
+
+        return createSuccessReturn('Tracks removed successfully!');
     });
 
     const results = await Promise.all(promises);
