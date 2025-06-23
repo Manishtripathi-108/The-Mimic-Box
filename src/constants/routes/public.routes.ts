@@ -14,4 +14,7 @@ export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.GAMES.TIC_TAC_TOE.ROOT,
     APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC,
     APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE,
+    '/download/ffmpeg-core.js',
+    '/download/ffmpeg-core.wasm',
+    '/download/ffmpeg-core.worker.js',
 ];
