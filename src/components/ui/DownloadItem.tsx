@@ -1,11 +1,10 @@
 import { memo } from 'react';
 
 import Icon from '@/components/ui/Icon';
-import IconSet from '@/constants/icons.constants';
-import { T_DownloadFile } from '@/lib/types/client.types';
+import { T_DownloadFile, T_IconType } from '@/lib/types/client.types';
 
 const DownloadItem = ({ file, onCancel }: { file: T_DownloadFile; onCancel: () => void }) => {
-    const statusMap: Record<T_DownloadFile['status'], { icon: keyof typeof IconSet; className: string; label: string }> = {
+    const statusMap: Record<T_DownloadFile['status'], { icon: T_IconType; className: string; label: string }> = {
         pending: {
             icon: 'pending',
             className: 'text-yellow-500',

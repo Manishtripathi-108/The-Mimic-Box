@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import Icon from '@/components/ui/Icon';
-import { API_ROUTES } from '@/constants/routes.constants';
+import API_ROUTES from '@/constants/routes/api.routes';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import cn from '@/lib/utils/cn';

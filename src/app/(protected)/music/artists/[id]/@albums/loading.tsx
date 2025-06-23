@@ -1,4 +1,4 @@
-import { MusicCardSkeleton } from '@/app/(protected)/music/_components/MusicCard';
+import { LinkCardSkeleton } from '@/components/ui/LinkCard';
 
 const Loading = () => {
     return (
@@ -7,7 +7,7 @@ const Loading = () => {
 
             <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] place-items-center gap-4 *:w-full">
                 {Array.from({ length: 20 }).map((_, idx) => (
-                    <MusicCardSkeleton key={idx} />
+                    <LinkCardSkeleton key={idx} />
                 ))}
             </div>
         </section>

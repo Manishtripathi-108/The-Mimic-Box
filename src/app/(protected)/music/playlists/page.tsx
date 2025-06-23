@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
-import { getSpotifyUserPlaylists } from '@/actions/spotify.actions';
-import MusicCard from '@/app/(protected)/music/_components/MusicCard';
+import { spotifyGetUserPlaylists } from '@/actions/spotify.actions';
 import ErrorCard from '@/components/layout/ErrorCard';
 import { NoDataCard } from '@/components/layout/NoDataCard';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import LinkCard from '@/components/ui/LinkCard';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 export const metadata: Metadata = {
     title: 'Your Playlists',
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const Page = async () => {
-    const res = await getSpotifyUserPlaylists();
+    const res = await spotifyGetUserPlaylists();
 
     if (!res.success || !res.payload) {
         return <ErrorCard message={res.message || 'Failed to fetch playlists'} />;
@@ -29,8 +29,9 @@ const Page = async () => {
             ) : (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                     {sortedPlaylists.map((playlist) => (
-                        <MusicCard
+                        <LinkCard
                             key={playlist.id}
+                            icon="play"
                             title={playlist.name}
                             sub={`${playlist.tracks.total} tracks`}
                             thumbnailUrl={playlist.images[0].url}

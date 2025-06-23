@@ -5,9 +5,12 @@ import axios from 'axios';
 
 import { getUserProfile } from '@/actions/anilist.actions';
 import { auth } from '@/auth';
-import { API_ROUTES, APP_ROUTES, DEFAULT_AUTH_ROUTE, EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import API_ROUTES from '@/constants/routes/api.routes';
 import { db } from '@/lib/db';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
+import ANILIST_ROUTES from '@/constants/external-routes/anilist.routes';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 export async function GET(req: NextRequest) {
     const session = await auth();
@@ -25,7 +28,7 @@ export async function GET(req: NextRequest) {
     }
 
     const [exchError, exchResponse] = await safeAwait(
-        axios.post(EXTERNAL_ROUTES.ANILIST.EXCHANGE_TOKEN, {
+        axios.post(ANILIST_ROUTES.TOKEN, {
             grant_type: 'authorization_code',
             client_id: process.env.AUTH_ANILIST_ID,
             client_secret: process.env.AUTH_ANILIST_SECRET,

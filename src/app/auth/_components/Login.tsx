@@ -15,7 +15,8 @@ import { loginAction } from '@/actions/auth.actions';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
-import { APP_ROUTES, DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
+import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
 import { loginSchema } from '@/lib/schema/auth.validations';
 
 const LoginInForm = () => {

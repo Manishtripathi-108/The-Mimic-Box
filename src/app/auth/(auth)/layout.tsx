@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
 import Icon from '@/components/ui/Icon';
-import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes.constants';
+import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     return (

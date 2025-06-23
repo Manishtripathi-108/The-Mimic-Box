@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import Icon from '@/components/ui/Icon';
-import { DEFAULT_AUTH_ROUTE } from '@/constants/routes.constants';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 
 const AuthError = () => {
     return (

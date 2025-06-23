@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import Icon from '@/components/ui/Icon';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import { shareUrl } from '@/lib/utils/client.utils';
 
 const WaitingRoom = () => {

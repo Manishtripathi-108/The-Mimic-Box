@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Tailwind, Text } from '@react-email/components';
 
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 // Load public URL from environment variables
 const PUBLIC_URL = process.env.NEXT_PUBLIC_URL || 'https://themimicbox.com';

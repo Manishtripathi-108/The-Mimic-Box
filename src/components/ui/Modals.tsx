@@ -1,7 +1,7 @@
 'use client';
 
 import Icon from '@/components/ui/Icon';
-import IconSet from '@/constants/icons.constants';
+import { T_IconType } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';
 
 type ModalProps = {
@@ -15,7 +15,7 @@ type ModalProps = {
 
 type ConfirmationModalProps = {
     modalId: string;
-    icon: keyof typeof IconSet;
+    icon: T_IconType;
     iconClassName?: string;
     onConfirm: () => void;
     onCancel?: () => void;

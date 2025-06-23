@@ -1,11 +1,11 @@
-import { getSpotifyArtistAlbums } from '@/actions/spotify.actions';
-import MusicCard from '@/app/(protected)/music/_components/MusicCard';
+import { spotifyGetArtistAlbums } from '@/actions/spotify.actions';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import LinkCard from '@/components/ui/LinkCard';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
-    const response = await getSpotifyArtistAlbums(id);
+    const response = await spotifyGetArtistAlbums(id);
 
     if (!response.success || !response.payload) {
         return <ErrorMessage message={response.message || 'Failed to fetch artist albums.'} />;
@@ -21,7 +21,13 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             ) : (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 *:w-full">
                     {albums.map((album) => (
-                        <MusicCard key={album.id} title={album.name} thumbnailUrl={album.images?.[0]?.url} href={APP_ROUTES.MUSIC.ALBUMS(album.id)} />
+                        <LinkCard
+                            key={album.id}
+                            title={album.name}
+                            icon="play"
+                            thumbnailUrl={album.images?.[0]?.url}
+                            href={APP_ROUTES.MUSIC.ALBUMS(album.id)}
+                        />
                     ))}
                 </div>
             )}

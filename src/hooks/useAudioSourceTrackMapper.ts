@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import stringSimilarity from 'string-similarity';
 
 import { saavnGetEntityTracks } from '@/actions/saavn.actions';
-import { getSpotifyEntityTracks } from '@/actions/spotify.actions';
+import { spotifyGetEntityTracks } from '@/actions/spotify.actions';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_SaavnSong } from '@/lib/types/saavn/song.types';
@@ -54,7 +54,7 @@ const useAudioSourceTrackMapper = () => {
         for (const saavnTrack of saavnResults) {
             const saavnTitle = saavnTrack.name.trim().toLowerCase();
             const titleScore = stringSimilarity.compareTwoStrings(spotifyTitle, saavnTitle);
-            if (titleScore < 0.6) continue;
+            if (titleScore < 0.7) continue;
 
             const saavnArtists = saavnTrack.artists.primary.map((a) => a.name.toLowerCase());
             const artistMatched = saavnArtists.some((a) => spotifyArtists.includes(a));
@@ -182,7 +182,7 @@ const useAudioSourceTrackMapper = () => {
             }
 
             if (context.source === 'spotify') {
-                const res = await getSpotifyEntityTracks(context.id, context.type);
+                const res = await spotifyGetEntityTracks(context.id, context.type);
                 if (!res.success || !res.payload) {
                     setIsPending(false);
                     return [];

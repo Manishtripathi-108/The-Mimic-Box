@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
+import ANILIST_ROUTES from '@/constants/external-routes/anilist.routes';
 
 const anilistConfig = axios.create({
-    baseURL: EXTERNAL_ROUTES.ANILIST.GRAPHQL,
+    baseURL: ANILIST_ROUTES.GRAPHQL,
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',

@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios';
+
 import anilistConfig from '@/lib/config/anilist.config';
 import { T_SpotifyPlayHistory } from '@/lib/types/spotify.types';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
@@ -31,3 +33,7 @@ export const extractRecentPlaylists = (items: T_SpotifyPlayHistory[]) => {
 
     return Array.from(playlistIds);
 };
+
+export const withAuthHeader = (token: string): AxiosRequestConfig['headers'] => ({
+    Authorization: `Bearer ${token}`,
+});

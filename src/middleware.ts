@@ -1,7 +1,9 @@
 import NextAuth from 'next-auth';
 
 import authConfig from '@/auth.config';
-import { API_AUTH_PREFIX, AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE, PUBLIC_ROUTES } from '@/constants/routes.constants';
+import { API_AUTH_PREFIX } from '@/constants/routes/api.routes';
+import { AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import { PUBLIC_ROUTES } from '@/constants/routes/public.routes';
 
 const { auth } = NextAuth(authConfig);
 

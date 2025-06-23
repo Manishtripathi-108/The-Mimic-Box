@@ -5,7 +5,7 @@ import { LinkedAccountProvider } from '@prisma/client';
 import { auth } from '@/auth';
 import Icon from '@/components/ui/Icon';
 import { ConnectAccount, DisconnectAccount } from '@/components/ui/LinkedAccountButtons';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 export const metadata: Metadata = {
     title: 'Linked Accounts',

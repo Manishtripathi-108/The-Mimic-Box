@@ -1,41 +1,42 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 
 import Icon from '@/components/ui/Icon';
+import { T_IconType } from '@/lib/types/client.types';
 
-type MusicCardProps = {
+type LinkCardProps = {
     title: string;
     sub?: string;
     thumbnailUrl: string;
     href: string;
+    icon?: T_IconType;
+    srText?: string;
 };
 
-const MusicCard = ({ title, sub, thumbnailUrl, href }: MusicCardProps) => {
+const LinkCard = ({ title, sub, thumbnailUrl, href, icon, srText }: LinkCardProps) => {
     return (
-        <article
-            className="text-text-primary relative grid w-40 shrink-0 grid-rows-[auto_1fr] gap-1"
-            aria-label={`Play ${title}${sub ? ` by ${sub}` : ''}`}>
+        <article className="text-text-primary relative grid w-40 shrink-0 grid-rows-[auto_1fr] gap-1">
             <Link
                 href={href}
                 className="group relative block aspect-square w-full overflow-hidden rounded-xl focus:outline-none"
-                title={`Play ${title}`}
-                aria-label={`Play ${title}`}>
+                title={`${title}`}
+                aria-label={`${title}`}>
                 <Image
                     src={thumbnailUrl}
-                    alt={`Thumbnail for ${title}`}
+                    alt={`${title}`}
                     fill
                     className="object-cover transition-transform group-hover:scale-105 group-focus:scale-105"
                 />
 
-                {/* Play Button Overlay */}
-                <div className="bg-secondary/40 absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-xs backdrop-saturate-150 transition-opacity group-hover:opacity-100 group-focus:opacity-100">
-                    <Icon icon="play" className="size-14" />
-                </div>
+                {/* Overlay */}
+                {icon && (
+                    <div className="bg-secondary/40 absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-xs backdrop-saturate-150 transition-opacity group-hover:opacity-100 group-focus:opacity-100">
+                        <Icon icon={icon} className="size-14" />
+                    </div>
+                )}
 
                 {/* Screen reader text */}
-                <span className="sr-only">Play {title}</span>
+                <span className="sr-only">{srText}</span>
             </Link>
 
             <div className="flex flex-col gap-0.5 overflow-hidden">
@@ -46,7 +47,7 @@ const MusicCard = ({ title, sub, thumbnailUrl, href }: MusicCardProps) => {
     );
 };
 
-export const MusicCardSkeleton = () => {
+export const LinkCardSkeleton = () => {
     return (
         <div className="text-text-primary relative grid w-40 shrink-0 animate-pulse grid-rows-[auto_1fr] gap-1">
             <div className="bg-secondary relative block aspect-square w-full overflow-hidden rounded-xl" />
@@ -59,4 +60,4 @@ export const MusicCardSkeleton = () => {
     );
 };
 
-export default MusicCard;
+export default LinkCard;

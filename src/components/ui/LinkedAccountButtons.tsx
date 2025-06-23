@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { removeLinkedAccount } from '@/actions/linkedAccount.actions';
-import { API_ROUTES } from '@/constants/routes.constants';
+import API_ROUTES from '@/constants/routes/api.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import cn from '@/lib/utils/cn';
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import stringSimilarity from 'string-similarity';
 
-import { API_ROUTES } from '@/constants/routes.constants';
+import API_ROUTES from '@/constants/routes/api.routes';
 import { T_AudioFile, T_AudioPlayerTrack } from '@/lib/types/client.types';
 import { T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { SuccessResponseOutput } from '@/lib/types/response.types';
@@ -62,7 +62,7 @@ export const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> =>
             const artistScore = stringSimilarity.compareTwoStrings(track.artist.toLowerCase(), file.metadata.artist.toString().toLowerCase());
             const albumScore = stringSimilarity.compareTwoStrings((track.album ?? '').toLowerCase(), file.metadata.album.toString().toLowerCase());
 
-            if (titleScore < 0.6) continue;
+            if (titleScore < 0.7) continue;
             const score = titleScore * 0.5 + artistScore * 0.3 + albumScore * 0.2;
 
             if (score > bestScore) {

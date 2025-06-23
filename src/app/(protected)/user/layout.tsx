@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 
 import NavLink from '@/components/ui/NavLink';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     return (

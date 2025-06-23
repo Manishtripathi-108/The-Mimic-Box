@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { getRandomUserAgent } from '@/constants/user-agents.constants';
+import ITUNES_ROUTES from '@/constants/external-routes/iTunes.routes';
 
 const iTunesConfig = axios.create({
-    baseURL: EXTERNAL_ROUTES.ITUNES.BASE,
+    baseURL: ITUNES_ROUTES.BASE,
 });
 
 iTunesConfig.interceptors.request.use((config) => {

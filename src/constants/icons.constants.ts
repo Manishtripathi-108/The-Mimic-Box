@@ -6,6 +6,7 @@ enum IconSet {
 
     '3d' = 'file-icons:3d-model',
     /* ------------------------------------ A ----------------------------------- */
+    apple = 'jam:apple',
     anilist = 'simple-icons:anilist',
     arrowOpenLeft = 'line-md:arrow-open-left',
     arrowOpenRight = 'line-md:arrow-open-right',
@@ -85,6 +86,9 @@ enum IconSet {
     notFound = 'tabler:error-404',
     next = 'solar:skip-next-bold',
 
+    /* ------------------------------------ o ----------------------------------- */
+    open='majesticons:open',
+
     /* ------------------------------------ P ----------------------------------- */
     pause = 'line-md:pause',
     pauseToPlay = 'line-md:play-filled-to-pause-transition',
@@ -110,6 +114,7 @@ enum IconSet {
     repeatOne = 'solar:repeat-one-bold',
 
     /* ------------------------------------ S ----------------------------------- */
+    saavn = 'custom:jioSaavn',
     script = 'proicons:script',
     shuffle = 'fluent:arrow-shuffle-32-regular',
     shuffleOff = 'fluent:arrow-shuffle-off-32-regular',

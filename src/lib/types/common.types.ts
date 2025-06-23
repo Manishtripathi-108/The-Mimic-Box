@@ -28,3 +28,19 @@ export type T_LyricsError = {
     name: string;
     message: string;
 };
+
+export type T_DuplicateTrack = {
+    id: string;
+    title: string;
+    artist: string;
+    album: string;
+    cover: string;
+    duplicates: {
+        reason: 'same-id' | 'same-name-artist';
+        id: string;
+        title: string;
+        artist: string;
+        album: string;
+        cover: string;
+    }[];
+};

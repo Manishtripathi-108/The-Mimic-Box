@@ -11,12 +11,12 @@ import { useSession } from 'next-auth/react';
 import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import IconSet from '@/constants/icons.constants';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
+import { T_IconType } from '@/lib/types/client.types';
 
 type T_Sidebar = {
     title: string;
-    icon: keyof typeof IconSet;
+    icon: T_IconType;
     children?: PropChild[];
     badge?: number;
     link?: string;
@@ -140,7 +140,7 @@ const Sidebar = () => {
                                 href={item.link}
                                 className="hover:bg-secondary text-text-secondary hover:text-text-primary flex items-center gap-2 rounded-lg p-2.5 transition"
                                 onClick={() => closeSidebar()}>
-                                <Icon icon={item.icon as keyof typeof IconSet} className="size-5" />
+                                <Icon icon={item.icon as T_IconType} className="size-5" />
                                 <span className="flex-1">{item.title}</span>
                                 {item.badge && <span className="ml-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">{item.badge}</span>}
                             </Link>
@@ -150,7 +150,7 @@ const Sidebar = () => {
                                 className="hover:bg-secondary text-text-secondary hover:text-text-primary flex w-full items-center justify-between rounded-lg p-2.5 transition"
                                 aria-expanded={openMenus[index]}>
                                 <div className="flex items-center gap-2">
-                                    <Icon icon={item.icon as keyof typeof IconSet} className="size-5" />
+                                    <Icon icon={item.icon as T_IconType} className="size-5" />
                                     <span className="flex-1">{item.title}</span>
                                 </div>
                                 {item.children && (

@@ -7,7 +7,7 @@ import A_Main from '@/app/(protected)/anilist/_components/A_Main';
 import { auth } from '@/auth';
 import ErrorCard from '@/components/layout/ErrorCard';
 import { NoDataCard } from '@/components/layout/NoDataCard';
-import { APP_ROUTES } from '@/constants/routes.constants';
+import APP_ROUTES from '@/constants/routes/app.routes';
 
 interface AnilistMediaPageProps {
     params: Promise<{ type: 'anime' | 'manga' | 'favourites' }>;

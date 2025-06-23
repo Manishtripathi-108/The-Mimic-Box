@@ -18,11 +18,11 @@ import RangeSlider from '@/components/ui/RangeSlider';
 import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { AudioFormatsSchema } from '@/lib/schema/audio.validations';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { downloadFile } from '@/lib/utils/file.utils';
+import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 
 const MAX_SIZE_MB = 50;
 const MAX_FILES = 10;
@@ -120,7 +120,7 @@ const AudioFileConverter = () => {
     const submitAudioConvert = async (values: T_FormValues) => {
         if (process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL) {
             makeApiCall({
-                url: EXTERNAL_ROUTES.AUDIO.CONVERTER,
+                url: AUDIO_ROUTES.CONVERTER,
                 isExternalApiCall: true,
                 method: 'post',
                 responseType: 'blob',

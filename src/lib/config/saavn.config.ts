@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { EXTERNAL_ROUTES } from '@/constants/routes.constants';
 import { getRandomUserAgent } from '@/constants/user-agents.constants';
+import SAAVN_ROUTES from '@/constants/external-routes/saavn.routes';
 
 const saavnConfig = axios.create({
-    baseURL: EXTERNAL_ROUTES.SAAVN.BASE,
+    baseURL: SAAVN_ROUTES.BASE,
     headers: {
         'Content-Type': 'application/json',
         cookie: `gdpr_acceptance=true; DL=english`,
