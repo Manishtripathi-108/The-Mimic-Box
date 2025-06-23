@@ -1,13 +1,33 @@
 import type { NextConfig } from 'next';
 
 import withSerwistInit from '@serwist/next';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+
+function fileHash(filePath: string) {
+    const buffer = fs.readFileSync(path.join(process.cwd(), 'public', filePath));
+    return crypto.createHash('md5').update(buffer).digest('hex');
+}
 
 const withSerwist = withSerwistInit({
     swSrc: 'src/app/sw.ts',
     swDest: 'public/sw.js',
     disable: process.env.NODE_ENV === 'development',
-
-    additionalPrecacheEntries: ['/download/ffmpeg-core.js', '/download/ffmpeg-core.wasm', '/download/ffmpeg-core.worker.js'],
+    additionalPrecacheEntries: [
+        {
+            url: '/download/ffmpeg-core.js',
+            revision: fileHash('download/ffmpeg-core.js'),
+        },
+        {
+            url: '/download/ffmpeg-core.wasm',
+            revision: fileHash('download/ffmpeg-core.wasm'),
+        },
+        {
+            url: '/download/ffmpeg-core.worker.js',
+            revision: fileHash('download/ffmpeg-core.worker.js'),
+        },
+    ],
 });
 
 const nextConfig: NextConfig = {

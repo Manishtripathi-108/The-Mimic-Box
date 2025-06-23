@@ -257,6 +257,9 @@ export const PUBLIC_ROUTES: string[] = [
     APP_ROUTES.GAMES.TIC_TAC_TOE.INDEX,
     APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC,
     APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE,
+    '/download/ffmpeg-core.js',
+    '/download/ffmpeg-core.wasm',
+    '/download/ffmpeg-core.worker.js',
 ];
 
 export const AUTH_ROUTES: string[] = [APP_ROUTES.AUTH.LOGIN, APP_ROUTES.AUTH.REGISTER, APP_ROUTES.AUTH.FORGOT_PASSWORD, APP_ROUTES.AUTH.ERROR];

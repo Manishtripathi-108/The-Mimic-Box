@@ -105,7 +105,26 @@ const useAudioSourceTrackMapper = () => {
             }));
 
             const start = performance.now();
-            const responses = await makeParallelApiCalls(queries);
+            const batchedQueries = queries.reduce(
+                (acc, _, i) => {
+                    if (i % 50 === 0) acc.push([]);
+                    acc[acc.length - 1].push(queries[i]);
+                    return acc;
+                },
+                [] as { url: string; params: Record<string, string> }[][]
+            );
+
+            const responses: {
+                total: number;
+                start: number;
+                results: T_SaavnSong[];
+            }[] = [];
+
+            for (const batch of batchedQueries) {
+                const res = await makeParallelApiCalls(batch);
+                responses.push(...res);
+            }
+
             const end = performance.now();
             console.log(`[useAudioSourceTrackMapper] Saavn API calls took ${((end - start) / 1000).toFixed(2)} seconds`);
 
@@ -114,6 +133,8 @@ const useAudioSourceTrackMapper = () => {
                 if (!saavnResults?.length) return;
 
                 const match = matchSaavnTrack(spotifyTrack, saavnResults);
+
+                // this check ensures we only add unique Saavn tracks
                 if (match && !usedSaavnIds.has(match.id)) {
                     usedSaavnIds.add(match.id);
                     matchedTracks.push({
