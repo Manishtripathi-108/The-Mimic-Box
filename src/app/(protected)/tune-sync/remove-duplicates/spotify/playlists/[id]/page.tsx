@@ -20,7 +20,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     const tracks = res.payload.map((track) => (track && !('show' in track) ? track : null)).filter((t) => t !== null);
 
-    return <DuplicateTracks tracks={tracks as T_SpotifyTrack[]} />;
+    return <DuplicateTracks tracks={tracks as T_SpotifyTrack[]} playlistId={id} />;
 };
 
 export default Page;

@@ -31,7 +31,7 @@ const useTrackDuplicates = () => {
         let progressIndex = 0;
 
         const seenIds = new Set<string>();
-        const seenMeta: { artist: string; album: string; title: string; id: string; cover: string }[] = [];
+        const seenMeta: { artist: string; album: string; title: string; id: string; cover: string; position: number }[] = [];
         const duplicateMap = new Map<string, T_DuplicateTrack>();
 
         switch (source) {
@@ -43,13 +43,14 @@ const useTrackDuplicates = () => {
                     // Skip invalid tracks
                     if (!track.id || !track.name || !track.artists?.length) continue;
 
-                    const id = track.id;
+                    const id = track.uri;
                     const artist = track.artists.map((a) => a.name).join(', ');
                     const album = track.album?.name || '';
                     const title = track.name;
                     const cover = track.album?.images?.[0]?.url || '';
+                    const position = progressIndex;
 
-                    const meta = { id, artist, album, title, cover };
+                    const meta = { id, artist, album, title, cover, position };
 
                     let original = meta;
                     let reason: 'same-id' | 'same-name-artist' | null = null;

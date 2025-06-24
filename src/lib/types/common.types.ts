@@ -35,6 +35,7 @@ export type T_DuplicateTrack = {
     artist: string;
     album: string;
     cover: string;
+    position?: number;
     duplicates: {
         reason: 'same-id' | 'same-name-artist';
         id: string;
@@ -42,5 +43,30 @@ export type T_DuplicateTrack = {
         artist: string;
         album: string;
         cover: string;
+        position?: number;
     }[];
 };
+
+export type T_RemoveDuplicatesSource = 'spotify' | 'saavn';
+
+export type T_TrackToRemove = {
+    uri: string;
+    positions: number[];
+};
+
+export type T_SpotifyRemove = {
+    source: 'spotify';
+    playlistId: string;
+    data: {
+        tracks: T_TrackToRemove[];
+        snapshot_id?: string;
+    };
+};
+
+export type T_SaavnRemove = {
+    source: 'saavn';
+    playlistId: string;
+    data: string[];
+};
+
+export type T_RemoveDuplicates = T_SpotifyRemove | T_SaavnRemove;

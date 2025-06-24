@@ -10,6 +10,7 @@ import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_SaavnSong } from '@/lib/types/saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
+import { chunkArray } from '@/lib/utils/core.utils';
 
 const CACHE_DURATION_MS = 15 * 24 * 60 * 60 * 1000; // 15 days
 
@@ -105,14 +106,7 @@ const useAudioSourceTrackMapper = () => {
             }));
 
             const start = performance.now();
-            const batchedQueries = queries.reduce(
-                (acc, _, i) => {
-                    if (i % 50 === 0) acc.push([]);
-                    acc[acc.length - 1].push(queries[i]);
-                    return acc;
-                },
-                [] as { url: string; params: Record<string, string> }[][]
-            );
+            const batchedQueries = chunkArray(queries, 50);
 
             const responses: {
                 total: number;

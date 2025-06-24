@@ -8,17 +8,14 @@ import useTrackDuplicates from '@/hooks/useTrackDuplicates';
 import { T_DuplicateTrack } from '@/lib/types/common.types';
 import { T_SpotifyTrack } from '@/lib/types/spotify.types';
 
-const DuplicateTracks = ({ tracks }: { tracks: T_SpotifyTrack[] }) => {
+const DuplicateTracks = ({ tracks, playlistId }: { tracks: T_SpotifyTrack[]; playlistId: string }) => {
     const { identifyDuplicateTracks, progress } = useTrackDuplicates();
-    console.log('🪵 > DuplicateTracks.tsx:13 > DuplicateTracks > progress:', progress);
     const [sampleDuplicates, setSampleDuplicates] = useState<T_DuplicateTrack[]>([]);
 
     useEffect(() => {
         const duplicates = identifyDuplicateTracks({ tracks, source: 'spotify' });
         setSampleDuplicates(duplicates);
     }, [tracks, identifyDuplicateTracks]);
-
-    console.log('🪵 Sample Duplicates:', sampleDuplicates);
 
     if (!sampleDuplicates.length)
         return (
@@ -30,7 +27,7 @@ const DuplicateTracks = ({ tracks }: { tracks: T_SpotifyTrack[] }) => {
     return (
         <main className="p-6">
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Duplicate Tracks</h1>
-            <DuplicateTrackRemover duplicates={sampleDuplicates} source="spotify" />
+            <DuplicateTrackRemover duplicates={sampleDuplicates} source="spotify" playlistId={playlistId} />
         </main>
     );
 };

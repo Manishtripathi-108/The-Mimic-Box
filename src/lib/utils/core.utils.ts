@@ -111,3 +111,25 @@ export const formatDurationInReadableFormat = (milliseconds: number): string => 
 
     return time;
 };
+
+/**
+ * Chunks an array into multiple batches of a given size.
+ *
+ * @example
+ * chunkArray([1, 2, 3, 4, 5], 2)
+ * // [[1, 2], [3, 4], [5]]
+ *
+ * @param array The array to chunk
+ * @param batchSize The size of each chunk
+ * @returns An array of arrays, each containing batchSize elements
+ */
+export const chunkArray = <T>(array: T[], batchSize: number): T[][] => {
+    if (batchSize <= 0) {
+        throw new Error('batchSize must be a positive number');
+    }
+    const batches: T[][] = [];
+    for (let i = 0; i < array.length; i += batchSize) {
+        batches.push(array.slice(i, i + batchSize));
+    }
+    return batches;
+};
