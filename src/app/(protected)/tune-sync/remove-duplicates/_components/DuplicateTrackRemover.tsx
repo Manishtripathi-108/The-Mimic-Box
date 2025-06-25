@@ -5,7 +5,7 @@ import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
 import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import { deduplicatePlaylistItems } from '@/actions/tune-sync.actions';
@@ -26,19 +26,22 @@ export default function DuplicateTrackRemover({
     playlistId: string;
 }) {
     const {
-        handleSubmit,
         register,
+        handleSubmit,
         setValue,
-        watch,
+        control,
         formState: { isSubmitting },
     } = useForm<T_FormData>({
         defaultValues: { trackId: [] },
     });
 
-    const selectedTrackIds = watch('trackId');
-    const isAllSelected = watch('selectAll');
+    const selectedTrackIds = useWatch({ control, name: 'trackId' });
+    const isAllSelected = useWatch({ control, name: 'selectAll' });
 
-    const allTrackIds = useMemo(() => duplicates.flatMap((group) => group.duplicates.map((t) => t.id)), [duplicates]);
+    const allTrackIds = useMemo(
+        () => duplicates.flatMap((group) => group.duplicates.map((t) => JSON.stringify({ id: t.id, position: t.position }))),
+        [duplicates]
+    );
 
     // Handle manual toggle of "Select All"
     const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,24 +64,19 @@ export default function DuplicateTrackRemover({
         }
     }, [selectedTrackIds, allTrackIds, isAllSelected, setValue]);
 
-    const onSubmit = async (data: T_FormData) => {
-        const parsedTrackData: { id: string; position: number }[] = [];
-        for (const json of data.trackId) {
+    const onSubmit = async ({ trackId }: T_FormData) => {
+        const trackMap = new Map<string, number[]>();
+
+        for (const json of trackId) {
             try {
-                const parsed = JSON.parse(json) as { id: string; position: number };
-                if (parsed && typeof parsed.id === 'string' && typeof parsed.position === 'number') {
-                    parsedTrackData.push(parsed);
+                const { id, position } = JSON.parse(json);
+                if (typeof id === 'string' && typeof position === 'number') {
+                    if (!trackMap.has(id)) trackMap.set(id, []);
+                    trackMap.get(id)!.push(position);
                 }
             } catch {
-                // Skip malformed JSON
+                continue;
             }
-        }
-
-        // group positions by ID
-        const trackMap = new Map<string, number[]>();
-        for (const { id, position } of parsedTrackData) {
-            if (!trackMap.has(id)) trackMap.set(id, []);
-            trackMap.get(id)!.push(position);
         }
 
         if (!trackMap.size) {
@@ -87,6 +85,7 @@ export default function DuplicateTrackRemover({
         }
 
         const toastId = toast.loading('Deleting duplicates...');
+
         try {
             let args: T_RemoveDuplicates;
 
@@ -123,34 +122,44 @@ export default function DuplicateTrackRemover({
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-            <fieldset disabled={isSubmitting}>
-                <div className="mx-auto max-w-5xl space-y-4">
-                    <div className="mb-2 flex items-center justify-between">
-                        <h2 className="text-text-primary text-lg font-semibold">Duplicate Tracks</h2>
-                        <label className="form-checkbox">
-                            <input type="checkbox" className="checkbox-field" checked={isAllSelected} onChange={handleSelectAllChange} />
-                            <span className="form-text">Select All</span>
-                        </label>
-                    </div>
+            <fieldset disabled={isSubmitting} className="mx-auto max-w-6xl space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <h2 className="text-text-primary text-lg font-semibold">Duplicate Tracks</h2>
+                    <label className="form-checkbox">
+                        <input type="checkbox" className="checkbox-field" checked={isAllSelected} onChange={handleSelectAllChange} />
+                        <span className="form-text">Select All</span>
+                    </label>
+                </div>
 
+                <div className="space-y-4">
                     {duplicates.map((group, idx) => (
                         <motion.div
                             key={`${group.id}-${idx}`}
-                            className="bg-secondary shadow-floating-sm rounded-xl p-4"
-                            initial={{ opacity: 0, y: 10 }}
+                            className="bg-secondary shadow-floating-sm flex flex-col gap-4 rounded-xl p-4 md:flex-row md:items-start"
+                            initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}>
-                            <div className="mb-3 flex items-center gap-3">
-                                <Image src={group.cover} alt="cover" height={52} width={52} className="size-16 rounded" />
-                                <div className="text-sm">
+                            {/* Original Track */}
+                            <div className="flex w-full items-center gap-3 md:w-1/2">
+                                <input
+                                    type="checkbox"
+                                    className="checkbox-field"
+                                    value={JSON.stringify({ id: group.id, position: group.position })}
+                                    {...register('trackId')}
+                                />
+                                <Image src={group.cover} alt="cover" width={52} height={52} className="size-14 rounded" />
+                                <div className="space-y-0.5 text-sm">
                                     <div className="text-text-primary font-medium">{group.title}</div>
                                     <div className="text-text-secondary text-xs">{group.artist}</div>
                                     <div className="text-text-secondary text-xs">{group.album}</div>
-                                    <div className="text-text-secondary text-xs">{group.position}</div>
-                                    <div className="text-xs text-green-500">Original</div>
+                                    <div className="mt-1 flex items-center gap-2">
+                                        <span className="badge badge-success text-xs">Original</span>
+                                        <span className="badge badge-outline text-xs">#{group.position}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="ml-4 space-y-2">
+                            {/* Duplicates */}
+                            <div className="flex w-full flex-col gap-2 md:w-1/2">
                                 {group.duplicates.map((track, i) => (
                                     <label key={`${track.id}-${i}`} className="form-checkbox flex items-center gap-3">
                                         <input
@@ -159,14 +168,16 @@ export default function DuplicateTrackRemover({
                                             value={JSON.stringify({ id: track.id, position: track.position })}
                                             {...register('trackId')}
                                         />
-                                        <Image src={track.cover} alt="cover" height={40} width={40} className="h-10 w-10 rounded" />
-                                        <div className="text-sm">
+                                        <Image src={track.cover} alt="cover" width={40} height={40} className="h-10 w-10 rounded" />
+                                        <div className="flex-1 space-y-0.5 text-sm">
                                             <div className="text-text-primary">{track.title}</div>
                                             <div className="text-text-secondary text-xs">{track.artist}</div>
                                             <div className="text-text-secondary text-xs">{track.album}</div>
-                                            <div className="text-text-secondary text-xs">{track.position}</div>
+                                            <div className="mt-1 flex items-center gap-2">
+                                                <span className="badge badge-outline text-xs">#{track.position}</span>
+                                                <span className="text-xs text-red-500">{track.reason === 'same-id' ? 'Same ID' : 'Same Title'}</span>
+                                            </div>
                                         </div>
-                                        <span className="text-xs text-red-500">{track.reason === 'same-id' ? 'Same ID' : 'Same Title'}</span>
                                     </label>
                                 ))}
                             </div>
@@ -174,8 +185,9 @@ export default function DuplicateTrackRemover({
                     ))}
                 </div>
 
-                <div className="sticky bottom-4 z-10 flex justify-end py-4">
-                    <button type="submit" disabled={!selectedTrackIds.length} className="button button-danger">
+                {/* Submit button */}
+                <div className="sticky bottom-4 z-10 flex justify-end pt-4">
+                    <button type="submit" disabled={isSubmitting || !selectedTrackIds.length} className="button button-danger">
                         Delete Selected ({selectedTrackIds.length})
                     </button>
                 </div>

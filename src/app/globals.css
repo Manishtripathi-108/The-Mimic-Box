@@ -217,6 +217,7 @@
         0% {
             transform: rotate(0deg) scale(0.4);
         }
+
         100% {
             transform: rotate(-360deg) scale(0.4);
         }
@@ -226,6 +227,7 @@
         0% {
             transform: translateX(100%);
         }
+
         100% {
             transform: translateX(-100%);
         }
@@ -561,4 +563,16 @@
     &:hover .checkbox-field:not(:disabled, :checked) ~ .form-text {
         @apply text-text-primary translate-x-2;
     }
+}
+
+@utility badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+}
+
+@utility badge-outline {
+    @apply badge border border-gray-400 bg-white text-gray-700;
+}
+
+@utility badge-success {
+    @apply badge bg-green-100 text-green-700;
 }
