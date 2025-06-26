@@ -9,6 +9,8 @@ import { useForm, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import { deduplicatePlaylistItems } from '@/actions/tune-sync.actions';
+import Badge from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { T_DuplicateTrack, T_RemoveDuplicates, T_RemoveDuplicatesSource } from '@/lib/types/common.types';
 
 type T_FormData = {
@@ -32,11 +34,12 @@ export default function DuplicateTrackRemover({
         control,
         formState: { isSubmitting },
     } = useForm<T_FormData>({
-        defaultValues: { trackId: [] },
+        defaultValues: { trackId: [''] },
     });
 
     const selectedTrackIds = useWatch({ control, name: 'trackId' });
     const isAllSelected = useWatch({ control, name: 'selectAll' });
+    console.log('🪵 > DuplicateTrackRemover.tsx:41 > selectedTrackIds:', selectedTrackIds);
 
     const allTrackIds = useMemo(
         () => duplicates.flatMap((group) => group.duplicates.map((t) => JSON.stringify({ id: t.id, position: t.position }))),
@@ -151,10 +154,7 @@ export default function DuplicateTrackRemover({
                                     <div className="text-text-primary font-medium">{group.title}</div>
                                     <div className="text-text-secondary text-xs">{group.artist}</div>
                                     <div className="text-text-secondary text-xs">{group.album}</div>
-                                    <div className="mt-1 flex items-center gap-2">
-                                        <span className="badge badge-success text-xs">Original</span>
-                                        <span className="badge badge-outline text-xs">#{group.position}</span>
-                                    </div>
+                                    <Badge variant="outline">#{group.position}</Badge>
                                 </div>
                             </div>
 
@@ -174,8 +174,8 @@ export default function DuplicateTrackRemover({
                                             <div className="text-text-secondary text-xs">{track.artist}</div>
                                             <div className="text-text-secondary text-xs">{track.album}</div>
                                             <div className="mt-1 flex items-center gap-2">
-                                                <span className="badge badge-outline text-xs">#{track.position}</span>
-                                                <span className="text-xs text-red-500">{track.reason === 'same-id' ? 'Same ID' : 'Same Title'}</span>
+                                                <Badge variant="outline">#{track.position}</Badge>
+                                                <Badge variant="danger">{track.reason === 'same-id' ? 'Same ID' : 'Same Title'}</Badge>
                                             </div>
                                         </div>
                                     </label>
@@ -187,9 +187,9 @@ export default function DuplicateTrackRemover({
 
                 {/* Submit button */}
                 <div className="sticky bottom-4 z-10 flex justify-end pt-4">
-                    <button type="submit" disabled={isSubmitting || !selectedTrackIds.length} className="button button-danger">
+                    <Button type="submit" disabled={isSubmitting || !selectedTrackIds.length} variant="danger" icon="trash">
                         Delete Selected ({selectedTrackIds.length})
-                    </button>
+                    </Button>
                 </div>
             </fieldset>
         </form>

@@ -11,11 +11,12 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { registerAction } from '@/actions/auth.actions';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
-import { registerSchema } from '@/lib/schema/auth.validations';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import { registerSchema } from '@/lib/schema/auth.validations';
 
 const RegisterForm = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -91,9 +92,9 @@ const RegisterForm = () => {
                     <hr className="my-5" />
 
                     {/* Submit Button */}
-                    <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
+                    <Button type="submit" variant="highlight" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? 'Creating Account...' : 'Create an Account'}
-                    </button>
+                    </Button>
                 </fieldset>
             </form>
 

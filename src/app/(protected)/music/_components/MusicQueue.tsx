@@ -5,6 +5,7 @@ import { memo } from 'react';
 import Image from 'next/image';
 
 import MusicTrackPlayBtn from '@/app/(protected)/music/_components/MusicTrackPlayBtn';
+import { Button } from '@/components/ui/Button';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import cn from '@/lib/utils/cn';
 
@@ -20,9 +21,9 @@ const MusicQueue = ({ className }: { className?: string }) => {
             className={cn('bg-secondary absolute inset-auto z-50 flex flex-col overflow-hidden rounded-2xl shadow-lg', className)}>
             <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
                 <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Queue</h2>
-                <button className="button shrink-0 text-xs" title="Clear Queue" aria-label="Clear Queue" onClick={clearQueue}>
+                <Button size="sm" className="shrink-0 text-xs" title="Clear Queue" aria-label="Clear Queue" onClick={clearQueue}>
                     Clear queue
-                </button>
+                </Button>
             </div>
             <ul className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
                 {queue.map((track) => (

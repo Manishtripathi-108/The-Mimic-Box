@@ -8,11 +8,12 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
-import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
 
 const ForgotPasswordForm = () => {
     const {
@@ -62,9 +63,9 @@ const ForgotPasswordForm = () => {
 
                     <ErrorMessage message={errors.root?.message} />
 
-                    <button type="submit" disabled={isSubmitting} className="button button-highlight mt-4 w-full">
+                    <Button type="submit" disabled={isSubmitting} variant="highlight" className="mt-4 w-full">
                         {isSubmitting ? 'Please wait...' : 'Reset Password'}
-                    </button>
+                    </Button>
                 </form>
 
                 <Link className="text-highlight mb-6 block text-center text-sm hover:underline" href={DEFAULT_AUTH_ROUTE}>

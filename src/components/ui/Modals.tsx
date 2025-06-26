@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { T_IconType } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';
@@ -114,15 +115,12 @@ export const ConfirmationModal = ({
             <div className="relative max-h-full w-full max-w-md p-8 text-center md:p-10">
                 <Icon icon={icon} className={cn('mx-auto mb-4 size-12 text-red-500', iconClassName)} />
                 <h3 className="text-text-primary mb-5 text-lg font-normal">{children}</h3>
-                <button onClick={handleConfirmClick} title={confirmText} className={`button mt-4 inline ${isConfirmDanger && 'button-danger'}`}>
+                <Button onClick={handleConfirmClick} title={confirmText} variant={isConfirmDanger ? 'danger' : 'primary'} className="mt-4">
                     {confirmText}
-                </button>
-                <button
-                    title={cancelText}
-                    className={`button mt-4 ml-4 inline ${!isConfirmDanger && 'button-highlight'}`}
-                    onClick={handleCancelClick}>
+                </Button>
+                <Button title={cancelText} variant={!isConfirmDanger ? 'danger' : 'primary'} className="mt-4 ml-4" onClick={handleCancelClick}>
                     {cancelText}
-                </button>
+                </Button>
             </div>
         </Modal>
     );

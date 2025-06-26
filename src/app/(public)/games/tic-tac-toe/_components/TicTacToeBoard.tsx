@@ -71,6 +71,7 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
                                     isActive={macroIndex === activeCellIndex}
                                     data-index={cellIndex}
                                     data-macro={macroIndex}
+                                    disabled={activeCellIndex !== null && activeCellIndex !== macroIndex}
                                 />
                             ))
                         )}

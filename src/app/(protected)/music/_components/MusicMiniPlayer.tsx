@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
 import MusicDurationSlider from '@/app/(protected)/music/_components/MusicDurationSlider';
-import Icon from '@/components/ui/Icon';
+import { Button } from '@/components/ui/Button';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 
@@ -88,14 +88,14 @@ const MusicMiniPlayer = () => {
                 <div className="mr-2 flex flex-col items-center gap-1 @xl:mr-auto @xl:flex-2">
                     <div className="flex items-center justify-center gap-4">
                         <div className="relative hidden @md:flex" id="lyrics-popover-container">
-                            <button
-                                type="button"
+                            <Button
+                                variant="ghost"
                                 title="Lyrics"
                                 onClick={() => setIsLyricsOpen((prev) => !prev)}
-                                className="hover:text-text-primary cursor-pointer rounded-full p-1"
-                                aria-label="Open Lyrics">
-                                <Icon icon="lyrics" className="size-5" />
-                            </button>
+                                aria-label="Open Lyrics"
+                                icon="lyrics"
+                                active={isLyricsOpen}
+                            />
 
                             {isLyricsOpen && (
                                 <MusicLyricsCard
@@ -105,49 +105,35 @@ const MusicMiniPlayer = () => {
                             )}
                         </div>
 
-                        <button
-                            type="button"
+                        <Button
                             title="Shuffle"
+                            variant="ghost"
                             onClick={toggleShuffle}
-                            className={`hidden cursor-pointer rounded-full p-1 @md:inline ${isShuffled ? 'text-highlight' : 'hover:text-text-primary'}`}
-                            aria-label="Toggle Shuffle">
-                            <Icon icon={isShuffled ? 'shuffle' : 'shuffleOff'} className="size-5" />
-                        </button>
+                            className={`hidden @md:inline-flex ${isShuffled ? 'text-highlight' : ''}`}
+                            aria-label="Toggle Shuffle"
+                            icon={isShuffled ? 'shuffle' : 'shuffleOff'}
+                        />
 
-                        <button
-                            type="button"
-                            title="Previous Track"
-                            onClick={playPrevious}
-                            className="hover:text-text-primary cursor-pointer rounded-full p-1"
-                            aria-label="Previous Track">
-                            <Icon icon="previous" className="size-4" />
-                        </button>
+                        <Button title="Previous Track" variant="ghost" onClick={playPrevious} aria-label="Previous Track" icon="previous" />
 
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => toggleFadePlay()}
-                            className="button button-highlight flex size-8 items-center justify-center rounded-full p-1.5"
-                            aria-label={playing ? 'Pause' : 'Play'}>
-                            <Icon icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'} />
-                        </button>
+                            variant="highlight"
+                            title={playing ? 'Pause' : 'Play'}
+                            aria-label={playing ? 'Pause' : 'Play'}
+                            icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'}
+                        />
 
-                        <button
-                            type="button"
-                            title="Next Track"
-                            onClick={playNext}
-                            className="hover:text-text-primary cursor-pointer rounded-full p-1"
-                            aria-label="Next Track">
-                            <Icon icon="next" className="size-4" />
-                        </button>
+                        <Button title="Next Track" onClick={playNext} variant="ghost" aria-label="Next Track" icon="next" />
 
-                        <button
-                            type="button"
+                        <Button
                             title={loop ? 'Loop One' : 'Loop'}
                             onClick={toggleLoop}
-                            className={`hidden cursor-pointer rounded-full p-1 @md:inline ${loop ? 'text-highlight' : 'hover:text-text-primary'}`}
-                            aria-label="Toggle Loop Mode">
-                            <Icon icon={loop ? 'repeatOne' : 'repeat'} className="size-5" />
-                        </button>
+                            variant="ghost"
+                            className={`hidden @md:inline-flex ${loop ? 'text-highlight' : ''}`}
+                            aria-label="Toggle Loop Mode"
+                            icon={loop ? 'repeatOne' : 'repeat'}
+                        />
 
                         <div className="relative hidden items-center @md:flex" id="download-popover-container">
                             {isPopoverOpen && (
@@ -157,14 +143,14 @@ const MusicMiniPlayer = () => {
                                     className="right-1/2 bottom-full z-60 mb-4"
                                 />
                             )}
-                            <button
-                                type="button"
+                            <Button
                                 title="Download"
                                 onClick={() => setIsPopoverOpen((prev) => !prev)}
-                                className="hover:text-text-primary cursor-pointer rounded-full p-1"
-                                aria-label="Download">
-                                <Icon icon="download" className="size-5" />
-                            </button>
+                                variant="ghost"
+                                aria-label="Download"
+                                icon="download"
+                                active={isPopoverOpen}
+                            />
                         </div>
                     </div>
 
@@ -176,14 +162,15 @@ const MusicMiniPlayer = () => {
                 <div className="hidden shrink-0 items-center justify-end gap-2 @2xl:flex @5xl:flex-1">
                     {/* Volume */}
                     <div className="group hidden w-24 items-center gap-1 @5xl:flex">
-                        <button
-                            type="button"
+                        <Button
+                            variant="transparent"
                             title={muted || volume === 0 ? 'Unmute' : 'Mute'}
                             onClick={toggleMute}
-                            className="hover:text-text-primary shrink-0 cursor-pointer rounded-full p-1"
-                            aria-label="Toggle Mute">
-                            <Icon icon={muted || volume === 0 ? 'volumeOff' : 'volumeLoud'} className="size-5" />
-                        </button>
+                            className="shrink-0"
+                            aria-label="Toggle Mute"
+                            icon={muted || volume === 0 ? 'volumeOff' : 'volumeLoud'}
+                        />
+
                         <input
                             type="range"
                             aria-label="Volume Control"
@@ -198,34 +185,36 @@ const MusicMiniPlayer = () => {
 
                     {/* Queue */}
                     <div className="relative" id="queue-popover-container">
-                        <button
-                            type="button"
+                        <Button
+                            variant="ghost"
                             title="Open Queue"
                             aria-label="Open Queue"
                             onClick={() => setIsQueueOpen((prev) => !prev)}
-                            className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
-                            <Icon icon="musicQueue" className="size-5" />
-                        </button>
-
+                            icon="musicQueue"
+                            active={isQueueOpen}
+                        />
                         {isQueueOpen && <MusicQueue className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right" />}
                     </div>
 
                     {/* Playback Rate */}
-                    <button
-                        type="button"
+                    <Button
+                        variant="ghost"
                         title="Change Playback Speed"
                         onClick={() => setPlaybackRate(playbackRate >= 2 ? 0.25 : playbackRate + 0.25)}
-                        className="hover:text-text-primary cursor-pointer rounded-full p-1 text-xs font-semibold"
+                        className="text-xs"
+                        size="sm"
                         aria-label="Playback Rate">
                         {playbackRate.toFixed(2)}x
-                    </button>
-                    <button
-                        type="button"
-                        title="Add to Queue"
-                        // onClick={() => addToQueue(/** test add */)}
-                        className="hover:text-text-primary flex size-7 cursor-pointer items-center justify-center rounded-full">
-                        <Icon icon="fullscreen" className="size-4" />
-                    </button>
+                    </Button>
+
+                    {/* Full Screen */}
+                    <Button
+                        // ToDo: Make Full Screen
+                        variant="ghost"
+                        title="Enter Full Screen"
+                        aria-label="Enter Full Screen"
+                        icon="fullscreen"
+                    />
                 </div>
             </section>
         </footer>

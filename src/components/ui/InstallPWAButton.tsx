@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import cn from '@/lib/utils/cn';
+import { Button } from '@/components/ui/Button';
 
 // Define the BeforeInstallPromptEvent type
 interface BeforeInstallPromptEvent extends Event {
@@ -48,9 +48,9 @@ const InstallPWAButton = ({ className }: { className?: string }) => {
     if (!isVisible) return null;
 
     return (
-        <button onClick={handleInstallClick} className={cn('button', className)}>
+        <Button onClick={handleInstallClick} className={className}>
             Install App
-        </button>
+        </Button>
     );
 };
 

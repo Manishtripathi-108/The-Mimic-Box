@@ -317,65 +317,6 @@
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                   Button                                   */
-/* -------------------------------------------------------------------------- */
-@utility button {
-    @apply text-text-secondary bg-primary shadow-floating-xs flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-center text-sm transition-all duration-300;
-
-    &.active,
-    &:active {
-        @apply text-text-primary shadow-pressed-xs;
-    }
-
-    &:hover:not(.active),
-    &:focus:not(.active) {
-        @apply text-text-primary scale-105 transform;
-    }
-
-    &:disabled {
-        @apply cursor-not-allowed opacity-60;
-    }
-
-    /*----------------------------------- button Sizes -------------------------------- */
-    &.button-sm {
-        @apply px-2 py-1 text-xs;
-    }
-
-    &.button-base {
-        @apply px-4 py-2 text-sm;
-    }
-
-    &.button-lg {
-        @apply px-4 py-3 text-base;
-    }
-
-    &.button-xl {
-        @apply px-5 py-4 text-lg;
-    }
-
-    /*----------------------------------- button Variants -------------------------------- */
-    &.button-secondary {
-        @apply bg-secondary;
-    }
-
-    &.button-tertiary {
-        @apply bg-tertiary;
-    }
-
-    &.button-highlight {
-        @apply from-highlight bg-linear-150 from-25% to-[#003032] to-75% text-white hover:text-white dark:to-[#1a676a];
-    }
-
-    &.button-accent {
-        @apply from-accent bg-linear-150 from-25% to-[#af1e32] to-75% text-white hover:text-gray-200 dark:to-[#ff0022];
-    }
-
-    &.button-danger {
-        @apply bg-linear-150 from-red-500 from-25% to-red-900 to-75% text-white hover:text-gray-200 dark:to-[#ff0022];
-    }
-}
-
-/* -------------------------------------------------------------------------- */
 /*                                    Form                                    */
 /* -------------------------------------------------------------------------- */
 @utility form-group {
@@ -563,16 +504,4 @@
     &:hover .checkbox-field:not(:disabled, :checked) ~ .form-text {
         @apply text-text-primary translate-x-2;
     }
-}
-
-@utility badge {
-    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
-}
-
-@utility badge-outline {
-    @apply badge border border-gray-400 bg-white text-gray-700;
-}
-
-@utility badge-success {
-    @apply badge bg-green-100 text-green-700;
 }

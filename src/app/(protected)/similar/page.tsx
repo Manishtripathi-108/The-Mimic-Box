@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import stringSimilarity from 'string-similarity';
 import { z } from 'zod';
 
+import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import Input from '@/components/ui/Input';
 
@@ -28,16 +29,16 @@ const Page = () => {
     };
 
     return (
-        <main className="min-h-calc-full-height flex flex-col w-full items-center justify-center p-2 sm:p-6">
+        <main className="min-h-calc-full-height flex w-full flex-col items-center justify-center p-2 sm:p-6">
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Find String Similar Score</h1>
-            <CardContainer className="max-w-xl w-full">
+            <CardContainer className="w-full max-w-xl">
                 <form onSubmit={handleSubmit(onSubmit)} className="mx-auto flex w-full flex-col gap-2">
                     <Input name="string1" label="String 1" type="text" placeholder="String 1" control={control} />
                     <Input name="string2" label="String 2" type="text" placeholder="String 2" control={control} />
 
-                    <button type="submit" className="button button-highlight mt-4">
+                    <Button variant="highlight" type="submit" className="mt-4">
                         Compare
-                    </button>
+                    </Button>
                 </form>
                 {score !== null && (
                     <div className="mt-6 text-center">

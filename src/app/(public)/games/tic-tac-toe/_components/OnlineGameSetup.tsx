@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
@@ -39,12 +40,9 @@ const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Input name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
             <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
-            <input
-                type="submit"
-                className="button button-highlight mt-6 w-full"
-                value={isFetching ? 'Joining Room...' : 'Join Room'}
-                disabled={isFetching}
-            />
+            <Button type="submit" variant="highlight" className="mt-6 w-full" disabled={isFetching}>
+                {isFetching ? 'Joining Room...' : 'Join Room'}
+            </Button>
         </form>
     );
 };
@@ -65,12 +63,9 @@ const CreateRoomForm = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Select name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
             <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
-            <input
-                type="submit"
-                className="button button-highlight mt-6 w-full"
-                value={isFetching ? 'Creating Room...' : 'Create Room'}
-                disabled={isFetching}
-            />
+            <Button type="submit" variant="highlight" className="mt-6 w-full" disabled={isFetching}>
+                {isFetching ? 'Creating Room...' : 'Create Room'}
+            </Button>
         </form>
     );
 };
@@ -89,12 +84,12 @@ const OnlineGameSetup = () => {
 
                 {/* Toggle Join/Create Form */}
                 <div className="mb-5 flex justify-center gap-x-4">
-                    <button className={`button ${isJoinForm ? 'active' : ''}`} onClick={() => setIsJoinForm(true)}>
+                    <Button active={isJoinForm} onClick={() => setIsJoinForm(true)}>
                         Join a Room
-                    </button>
-                    <button className={`button ${!isJoinForm ? 'active' : ''}`} onClick={() => setIsJoinForm(false)}>
+                    </Button>
+                    <Button active={!isJoinForm} onClick={() => setIsJoinForm(false)}>
                         Create a Room
-                    </button>
+                    </Button>
                 </div>
 
                 {isJoinForm ? <JoinRoomForm roomId={roomId || undefined} /> : <CreateRoomForm />}

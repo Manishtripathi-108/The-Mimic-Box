@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { openModal } from '@/components/ui/Modals';
 import { AnilistMediaFilters } from '@/lib/types/anilist.types';
@@ -50,7 +51,8 @@ const A_Toolbar = ({
                         if (searchTerm) setSearchTerm('');
                     }}
                     icon={searchTerm ? 'close' : 'search'}
-                    className="form-icon hover:cursor-pointer"
+                    className="form-icon cursor-pointer"
+                    flip="horizontal"
                 />
             </div>
 
@@ -68,12 +70,13 @@ const A_Toolbar = ({
                         </button>
                     ))}
                 </span>
-                <button
+                <Button
+                    aria-label="Filter"
                     title="Filter"
                     onClick={() => openModal('modal-anilist-filters')}
-                    className="button text-highlight ml-4 size-8 rounded-xl p-2">
-                    <Icon icon="filter" />
-                </button>
+                    className="text-highlight ml-4 rounded-xl"
+                    icon="filter"
+                />
             </div>
         </div>
     );

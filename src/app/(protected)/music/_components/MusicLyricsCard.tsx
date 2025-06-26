@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import API_ROUTES from '@/constants/routes/api.routes';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
@@ -101,9 +102,7 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
             ref={lyricsContainerRef}>
             <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
                 <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Lyrics</h2>
-                <button className="button size-8 shrink-0 rounded-full p-1 text-xs" title="Close lyrics" aria-label="Close lyrics" onClick={onClose}>
-                    <Icon icon="close" />
-                </button>
+                <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
             </div>
 
             <div className="sm:scrollbar-thin text-text-secondary h-full flex-1 space-y-2 overflow-y-auto p-4 text-sm">

@@ -10,9 +10,9 @@ import toast from 'react-hot-toast';
 
 import { handleEditMetaTags } from '@/actions/audio.actions';
 import SearchLyrics from '@/app/(protected)/audio/_components/SearchLyrics';
+import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import Textarea from '@/components/ui/Textarea';
@@ -157,13 +157,13 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                                     disabled={isSubmitting}
                                 />
 
-                                <button
-                                    type="button"
+                                <Button
                                     title="search lyrics"
                                     onClick={() => openModal('modal-search-lyrics')}
-                                    className="button button-primary absolute right-2 bottom-4 size-8 rounded-full p-1.5">
-                                    <Icon icon="search" className="size-full -rotate-90" />
-                                </button>
+                                    className="absolute right-2 bottom-4"
+                                    icon="search"
+                                    iconClassName="-rotate-90"
+                                />
                             </div>
                         ) : (
                             <Input
@@ -180,41 +180,37 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                     )}
 
                     {/* Toggle Tags Button */}
-                    <button
-                        type="button"
-                        className="button button-sm order-last col-span-full inline-flex items-center justify-center gap-2 text-sm"
+                    <Button
+                        className="order-last col-span-full"
+                        icon={showAllTags ? 'minus' : 'plus'}
                         onClick={() => setShowAllTags((prev) => !prev)}>
                         {showAllTags ? 'Show Less Tags' : 'Show All Tags'}
-                        <Icon icon={showAllTags ? 'minus' : 'plus'} className="size-5" />
-                    </button>
+                    </Button>
 
                     <ErrorMessage message={errors.root?.message} className="order-last col-span-full" />
 
                     {/* Form Buttons */}
                     <div className="order-last col-span-full flex w-full justify-end gap-3 pt-6">
-                        <button type="submit" className="button button-highlight" disabled={isSubmitting}>
+                        <Button type="submit" variant="highlight" disabled={isSubmitting}>
                             {isSubmitting ? 'Saving...' : 'Save Changes'}
-                        </button>
-                        <button
-                            type="button"
-                            className="button button-danger"
+                        </Button>
+                        <Button
+                            variant="danger"
                             onClick={() => {
                                 reset();
                                 setCover(coverImage);
                             }}
                             disabled={isSubmitting}>
                             Reset
-                        </button>
-                        <button
-                            type="button"
-                            className="button"
+                        </Button>
+                        <Button
                             onClick={() => {
                                 cancelRequest();
                                 onCancel();
                             }}
                             disabled={isSubmitting}>
                             Go Back
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </form>

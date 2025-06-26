@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { loginAction } from '@/actions/auth.actions';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
@@ -103,9 +104,9 @@ const LoginInForm = () => {
 
                     <hr className="my-5" />
                     {/* Submit Button */}
-                    <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
+                    <Button type="submit" variant="highlight" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? 'Logging in...' : 'Login'}
-                    </button>
+                    </Button>
                 </fieldset>
             </form>
 

@@ -77,6 +77,7 @@ const DownloadItem = ({ file, onCancel }: { file: T_DownloadFile; onCancel: () =
                 {/* Cancel Button */}
                 {isCancelable && (
                     <button
+                        type="button"
                         onClick={onCancel}
                         title={`Cancel download of ${file.title}`}
                         className="ml-2 size-5 shrink-0 cursor-pointer rounded-full text-red-500 hover:text-red-600"

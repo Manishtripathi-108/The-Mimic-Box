@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { resetPasswordAction } from '@/actions/auth.actions';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
@@ -82,9 +83,9 @@ const ResetPasswordForm = () => {
 
                         <ErrorMessage message={errors.root?.message || errors.token?.message} />
 
-                        <button type="submit" disabled={isSubmitting} className="button button-highlight mt-4 w-full">
+                        <Button type="submit" disabled={isSubmitting} variant="highlight" className="mt-4 w-full">
                             {isSubmitting ? 'Please wait...' : 'Reset Password'}
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </article>

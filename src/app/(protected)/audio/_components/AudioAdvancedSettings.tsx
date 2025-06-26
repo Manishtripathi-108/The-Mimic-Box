@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 
+import { Button } from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';
@@ -108,12 +109,12 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
             <hr />
 
             <div className="flex justify-between px-4 pb-2">
-                <button className="button button-danger" title="Reset" type="button" onClick={() => reset(AUDIO_ADVANCED_SETTINGS_DEFAULTS)}>
+                <Button variant="danger" title="Reset" onClick={() => reset(AUDIO_ADVANCED_SETTINGS_DEFAULTS)}>
                     Reset
-                </button>
-                <button title="Apply Changes" className="button button-highlight" type="submit">
+                </Button>
+                <Button title="Apply Changes" variant="highlight" type="submit">
                     Apply Changes
-                </button>
+                </Button>
             </div>
         </form>
     );

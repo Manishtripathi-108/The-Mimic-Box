@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { signIn } from 'next-auth/react';
 
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
 
@@ -43,22 +44,25 @@ const AuthLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
                 {/* Social Sign-In Buttons */}
                 <div className="mt-4 flex justify-center gap-3">
-                    <button
+                    <Button
                         title="Sign in with Google"
+                        aria-label="Sign in with Google"
                         onClick={() => signInSocial('google')}
-                        className="button w-full rounded-xl"
-                        aria-label="Sign in with Google">
-                        <Icon icon="google" className="size-7" />
+                        className="w-full"
+                        size="lg"
+                        icon="google">
                         <span className="sr-only text-sm sm:not-sr-only">Sign in with Google</span>
-                    </button>
-                    <button
+                    </Button>
+
+                    <Button
                         title="Sign in with GitHub"
+                        aria-label="Sign in with GitHub"
                         onClick={() => signInSocial('github')}
-                        className="button w-full rounded-xl"
-                        aria-label="Sign in with GitHub">
-                        <Icon icon="github" className="size-7" />
+                        className="w-full"
+                        size="lg"
+                        icon="github">
                         <span className="sr-only text-sm sm:not-sr-only">Sign in with GitHub</span>
-                    </button>
+                    </Button>
                 </div>
             </div>
         </section>

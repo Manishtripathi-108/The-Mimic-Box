@@ -5,6 +5,7 @@ import React, { memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { AnilistMedia } from '@/lib/types/anilist.types';
@@ -52,14 +53,14 @@ const A_MediaCard = ({
 
                 {/* Floating Edit Button */}
                 {onEdit && !detailed && (
-                    <button
-                        type="button"
+                    <Button
                         title="Edit"
+                        variant="tertiary"
                         onClick={() => onEdit(media)}
-                        className="button absolute top-2 right-2 z-10 size-7 rounded-full p-1"
-                        aria-label="Edit">
-                        <Icon icon="edit" />
-                    </button>
+                        aria-label="Edit"
+                        icon="edit"
+                        className="absolute top-2 right-2 z-10"
+                    />
                 )}
 
                 <Link
@@ -79,14 +80,14 @@ const A_MediaCard = ({
                             {title}
                         </h2>
                         {onEdit && (
-                            <button
-                                type="button"
+                            <Button
                                 title="Edit"
+                                variant="tertiary"
                                 onClick={() => onEdit(media)}
-                                className="button size-7 shrink-0 rounded-full p-1"
-                                aria-label="Edit">
-                                <Icon icon="edit" />
-                            </button>
+                                aria-label="Edit"
+                                className="shrink-0"
+                                icon="edit"
+                            />
                         )}
                     </header>
 

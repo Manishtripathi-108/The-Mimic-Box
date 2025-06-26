@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 
 import Link from 'next/link';
 
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import InstallPWAButton from '@/components/ui/InstallPWAButton';
 
@@ -52,15 +53,15 @@ const Header = () => {
             <header
                 id="page-header"
                 className="bg-primary shadow-floating-xs h-header-height sticky top-0 z-50 mb-0.5 flex w-full items-center justify-between gap-2 rounded-b-2xl p-2 transition-all duration-300 ease-in-out sm:gap-6">
-                <button
+                <Button
                     aria-label="Toggle Sidenav"
-                    className="button size-10 rounded-xl p-2"
+                    className="shrink-0 rounded-lg"
                     onClick={() => {
                         const sidebar = document.getElementById('sidebar') as HTMLDialogElement;
                         sidebar?.showModal();
-                    }}>
-                    <Icon icon="menu" className="size-6" />
-                </button>
+                    }}
+                    icon="menu"
+                />
 
                 <div className="flex w-full items-center justify-center">
                     <Link href="/" className="text-text-primary ml-5 flex items-center gap-2">
