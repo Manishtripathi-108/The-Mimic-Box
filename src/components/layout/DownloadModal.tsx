@@ -70,7 +70,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                     </motion.div>
                 ) : (
                     <Button
-                        className="relative"
+                        className="relative size-10 rounded-full p-1.5"
                         size="lg"
                         title="Open Downloads"
                         aria-haspopup="dialog"
