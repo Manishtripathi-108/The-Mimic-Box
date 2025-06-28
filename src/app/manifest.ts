@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
+    const appName = process.env.NEXT_PUBLIC_APP_NAME;
     return {
-        name: 'The Mimic Box',
+        name: appName,
         short_name: 'Mimic Box',
         start_url: '/',
         theme_color: '#e1102c',

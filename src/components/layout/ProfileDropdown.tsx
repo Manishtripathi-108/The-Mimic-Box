@@ -47,8 +47,8 @@ const ProfileDropdown = () => {
         return (
             <Button asChild className="rounded-full">
                 <Link href={DEFAULT_AUTH_ROUTE}>
-                    <Icon icon="login" />
-                    <span>Login</span>
+                    <Icon icon="login" className="size-5" />
+                    Login
                 </Link>
             </Button>
         );

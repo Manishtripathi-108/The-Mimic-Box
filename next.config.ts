@@ -5,6 +5,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 
+import { isDev } from '@/lib/utils/core.utils';
+
 function fileHash(filePath: string) {
     const buffer = fs.readFileSync(path.join(process.cwd(), 'public', filePath));
     return crypto.createHash('md5').update(buffer).digest('hex');
@@ -13,7 +15,7 @@ function fileHash(filePath: string) {
 const withSerwist = withSerwistInit({
     swSrc: 'src/app/sw.ts',
     swDest: 'public/sw.js',
-    disable: process.env.NODE_ENV === 'development',
+    disable: isDev,
     additionalPrecacheEntries: [
         {
             url: '/download/ffmpeg-core.js',

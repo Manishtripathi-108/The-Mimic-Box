@@ -8,15 +8,27 @@ type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'highlight' | 'accen
 
 type ButtonSize = 'sm' | 'md' | 'lg';
 
-type ButtonProps = React.ComponentProps<'button'> & {
+type CommonProps = {
     variant?: ButtonVariant;
     size?: ButtonSize;
-    asChild?: boolean;
     active?: boolean;
+};
+
+type ButtonWithChild = CommonProps & {
+    asChild: true;
+    icon?: never;
+    iconClassName?: never;
+    children: React.ReactNode;
+};
+
+type ButtonWithoutChild = CommonProps & {
+    asChild?: false;
     icon?: T_IconType;
     iconClassName?: string;
     children?: React.ReactNode;
 };
+
+type ButtonProps = React.ComponentProps<'button'> & (ButtonWithChild | ButtonWithoutChild);
 
 const BASE_CLASSES =
     'inline-flex items-center justify-center gap-2 text-sm font-medium whitespace-nowrap transition-all transform outline-none cursor-pointer shadow-floating-xs active:shadow-pressed-xs [&:hover:not(.active)]:scale-105 [&:focus:not(.active)]:scale-105';

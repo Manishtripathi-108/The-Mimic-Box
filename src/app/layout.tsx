@@ -12,6 +12,8 @@ import ProgressBarProvider from '@/contexts/ProgressProvider';
 import { ThemeScript } from '@/hooks/useTheme';
 import '@/lib/iconSetup';
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
+
 const fontKarla = Karla({
     variable: '--font-karla',
     subsets: ['latin'],
@@ -30,24 +32,36 @@ const fontAlegreya = Alegreya({
 
 export const metadata: Metadata = {
     title: {
-        default: 'The Mimic Box',
-        template: '%s | The Mimic Box',
+        default: APP_NAME!,
+        template: `%s | ${APP_NAME}`,
     },
-    description: 'Welcome to The Mimic Box.',
+    description: `Discover ${APP_NAME}, the ultimate Next.js-powered gaming and media platform. Play fun online games like Tic Tac Toe, manage your media with Spotify, JioSaavn, and Anilist integrations, and enjoy seamless media playback, file uploads, and a modern, responsive design. Join ${APP_NAME}'s community for social gaming, media syncing, and entertainment!`,
     keywords: [
-        'Mimic Box',
-        'The Mimic Box',
-        'Mimic Box Games',
-        'Mimic Box Tic Tac Toe',
-        'Mimic Box Online Games',
-        'Mimic Box Classic Games',
-        'Mimic Box Multiplayer Games',
-        'Mimic Box Fun Games',
-        'Mimic Box Entertainment',
-        'Mimic Box Community',
-        'Mimic Box Gaming',
-        'Mimic Box Fun',
-        'Mimic Box Online',
+        `${APP_NAME}`,
+        `${APP_NAME} platform`,
+        `${APP_NAME} online games`,
+        `${APP_NAME} Next.js app`,
+        `${APP_NAME} media player`,
+        `${APP_NAME} Spotify integration`,
+        `${APP_NAME} JioSaavn integration`,
+        `${APP_NAME} Anilist integration`,
+        `${APP_NAME} multiplayer games`,
+        `${APP_NAME} social gaming`,
+        `${APP_NAME} file uploads`,
+        `${APP_NAME} TypeScript app`,
+        `${APP_NAME} Tailwind CSS`,
+        `${APP_NAME} media synchronization`,
+        `${APP_NAME} React Context API`,
+        `${APP_NAME} Prisma PostgreSQL`,
+        `${APP_NAME} game night`,
+        `${APP_NAME} entertainment hub`,
+        `${APP_NAME} responsive design`,
+        `${APP_NAME} fun casual games`,
+        `${APP_NAME} audio player`,
+        `${APP_NAME} gaming experience`,
+        `${APP_NAME} play with friends`,
+        `${APP_NAME} tech stack project`,
+        `${APP_NAME} open source media platform`,
     ],
 };
 
