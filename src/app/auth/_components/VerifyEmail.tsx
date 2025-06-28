@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 
 import { verifyEmailToken } from '@/actions/auth.actions';
 import { verifyEmailChangeToken } from '@/actions/user.actions';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 

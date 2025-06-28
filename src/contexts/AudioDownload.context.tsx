@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 
 import { useFFmpeg } from '@/hooks/useFFmpeg.hook';
 import { T_AudioFile, T_AudioPlayerTrack, T_DownloadFile } from '@/lib/types/client.types';
+import { sleep } from '@/lib/utils/core.utils';
 import { downloadFile, sanitizeFilename } from '@/lib/utils/file.utils';
 import { buildAudioFileFromTrack, getLyrics, searchMetadata } from '@/lib/utils/music.utils';
 
@@ -41,7 +42,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
     const isCancelledAllRef = useRef(false);
     const cancelledTracksRef = useRef<Record<string, boolean>>({});
 
-    const { isLoaded, load, writeFile, exec, readFile, deleteFile } = useFFmpeg();
+    const { isLoaded, load, writeFile, exec, readFile, deleteFile, cleanup } = useFFmpeg();
 
     const addDownload: DownloadContextType['addDownload'] = (file) => {
         const entries = Array.isArray(file) ? file : [file];
@@ -50,8 +51,14 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
     };
 
     const updateDownload: DownloadContextType['updateDownload'] = (id, updates) => {
-        setDownloads((prev) => prev.map((d) => (d.id === id ? { ...d, ...updates } : d)));
-        if (updates.status === 'ready') setCompleted((prev) => prev + 1);
+        setDownloads((prev) => {
+            const alreadyCompleted = prev.find((d) => d.id === id && d.status === 'ready');
+            if (updates.status === 'ready' && !alreadyCompleted) {
+                setCompleted((prevCompleted) => prevCompleted + 1);
+                updates.progress = 100;
+            }
+            return prev.map((d) => (d.id === id ? { ...d, ...updates } : d));
+        });
     };
 
     const cancelDownload = (id: string) => {
@@ -65,6 +72,8 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         isCancelledAllRef.current = true;
         Object.values(abortControllers.current).forEach((controller) => controller.abort());
         abortControllers.current = {};
+
+        cleanup();
 
         downloads.forEach((d, i) => {
             const base = sanitizeFilename(d.title || `track_${i}`);
@@ -95,7 +104,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         abortControllers.current[file.src] = abortController;
 
         try {
-            if (cancelledTracksRef.current[file.src]) return;
+            if (isCancelledAllRef.current || cancelledTracksRef.current[file.src]) return;
 
             const response = await axios.get(file.src, {
                 responseType: 'blob',
@@ -156,7 +165,13 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
             console.error(`Error processing ${file.src}:`, errorMessage, error);
         } finally {
-            await Promise.all([deleteFile(inputFile), coverFile ? deleteFile(coverFile) : Promise.resolve(), deleteFile(outputFile)]);
+            try {
+                await deleteFile(inputFile);
+                if (coverFile) await deleteFile(coverFile);
+                await deleteFile(outputFile);
+            } catch (e) {
+                console.warn('FFmpeg file cleanup failed:', e);
+            }
             delete abortControllers.current[file.src];
             delete cancelledTracksRef.current[file.src];
         }
@@ -187,8 +202,18 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             const zip = new JSZip();
 
             await Promise.allSettled(batch.map((file, i) => processTrack(i, file, zip)));
+            if (isCancelledAllRef.current) break;
+            await cleanup();
+            const zipFilesLength = Object.keys(zip.files).length;
 
-            if (isCancelledAllRef.current || !Object.keys(zip.files).length) continue;
+            if (zipFilesLength === 0) continue;
+
+            if (zipFilesLength === 1) {
+                const file = zip.files[Object.keys(zip.files)[0]];
+                const blob = await file.async('blob');
+                downloadFile(blob, file.name);
+                continue;
+            }
 
             const zipId = `zip_${Date.now()}_${batchIndex}`;
             const zipFilename = `${zipName}_Part_${batchIndex}.zip`;
@@ -200,7 +225,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
                 const blob = await zip.generateAsync({
                     type: 'blob',
                     compression: 'STORE',
-                    streamFiles: true,
+                    // streamFiles: true,
                     encodeFileName: sanitizeFilename,
                 });
 
@@ -215,7 +240,8 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             }
 
             batchIndex++;
-            await new Promise((res) => setTimeout(res, 100));
+            await cleanup();
+            await sleep(100);
         }
     };
 

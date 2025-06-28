@@ -49,7 +49,7 @@ export const useSocket = ({ namespace, connectOnMount = false }: { namespace?: s
             socketRef.current?.disconnect();
             socketRef.current = null;
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectSocket, connectOnMount]);
 
     const reconnect = useCallback(() => {

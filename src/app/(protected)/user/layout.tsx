@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import NavLink from '@/components/ui/NavLink';
 import APP_ROUTES from '@/constants/routes/app.routes';
 

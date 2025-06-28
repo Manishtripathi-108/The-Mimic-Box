@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';

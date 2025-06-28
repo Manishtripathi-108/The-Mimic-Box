@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { shareUrl } from '@/lib/utils/client.utils';
 

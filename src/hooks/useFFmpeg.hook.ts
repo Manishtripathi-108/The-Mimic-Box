@@ -21,15 +21,6 @@ export const useFFmpeg = () => {
             return;
         }
 
-        // ffmpeg.on('log', ({ message }) => {
-        //     setLog((prev) => [...prev, message]);
-        //     console.log('[ffmpeg]', message);
-        // });
-
-        // ffmpeg.on('progress', ({ progress }) => {
-        //     console.log('[ffmpeg] Progress:', progress * 100);
-        // });
-
         await ffmpeg.load({
             coreURL: '/download/ffmpeg-core.js',
             wasmURL: '/download/ffmpeg-core.wasm',
@@ -66,6 +57,19 @@ export const useFFmpeg = () => {
         await ffmpeg.deleteFile(name);
     };
 
+    const cleanup = async () => {
+        const ffmpeg = ffmpegRef.current;
+        if (ffmpeg) {
+            try {
+                ffmpeg.terminate();
+            } catch (err) {
+                console.warn('Failed to terminate ffmpeg:', err);
+            }
+            ffmpegRef.current = null;
+            setIsLoaded(false);
+        }
+    };
+
     return {
         load,
         isLoaded,
@@ -74,5 +78,6 @@ export const useFFmpeg = () => {
         readFile,
         deleteFile,
         ffmpeg: ffmpegRef.current,
+        cleanup,
     };
 };

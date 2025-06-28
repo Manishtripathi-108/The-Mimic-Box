@@ -1,12 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
 
+import ITUNES_ROUTES from '@/constants/external-routes/iTunes.routes';
 import iTunesConfig from '@/lib/config/iTunes.config';
 import { T_ITunesAlbumCollectionResponse, T_ITunesPayload, T_ITunesTrackResponse } from '@/lib/types/iTunes/api.types';
 import { ITunesMusicAlbumTracks, T_ITunesAlbum, T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { createITunesTrack, createItunesAlbum } from '@/lib/utils/iTunes.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
-import ITUNES_ROUTES from '@/constants/external-routes/iTunes.routes';
 
 /** Helper to fetch and validate data from iTunes */
 const fetchITunesData = async <T, R>(

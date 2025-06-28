@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { T_IconType } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';

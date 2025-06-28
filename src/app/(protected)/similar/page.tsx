@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import stringSimilarity from 'string-similarity';
 import { z } from 'zod';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import Input from '@/components/ui/Input';
 

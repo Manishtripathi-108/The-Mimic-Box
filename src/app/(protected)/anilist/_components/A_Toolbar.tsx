@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { openModal } from '@/components/ui/Modals';
 import { AnilistMediaFilters } from '@/lib/types/anilist.types';

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { getRandomUserAgent } from '@/constants/user-agents.constants';
 import ITUNES_ROUTES from '@/constants/external-routes/iTunes.routes';
+import { getRandomUserAgent } from '@/constants/user-agents.constants';
 
 const iTunesConfig = axios.create({
     baseURL: ITUNES_ROUTES.BASE,

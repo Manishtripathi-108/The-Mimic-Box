@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { signIn } from 'next-auth/react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
 

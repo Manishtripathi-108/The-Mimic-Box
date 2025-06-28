@@ -5,7 +5,7 @@ import { memo } from 'react';
 import Image from 'next/image';
 
 import MusicTrackPlayBtn from '@/app/(protected)/music/_components/MusicTrackPlayBtn';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import cn from '@/lib/utils/cn';
 

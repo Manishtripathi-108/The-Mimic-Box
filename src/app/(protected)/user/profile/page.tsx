@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { auth } from '@/auth';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import APP_ROUTES from '@/constants/routes/app.routes';

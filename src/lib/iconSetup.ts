@@ -2,10 +2,6 @@
 
 import { addCollection } from '@iconify/react';
 
-
-
-
-
 const myIconCollection = {
     prefix: 'custom',
     icons: {

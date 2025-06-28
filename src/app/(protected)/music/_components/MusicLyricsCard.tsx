@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import API_ROUTES from '@/constants/routes/api.routes';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';

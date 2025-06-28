@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 
 // Define the BeforeInstallPromptEvent type
 interface BeforeInstallPromptEvent extends Event {

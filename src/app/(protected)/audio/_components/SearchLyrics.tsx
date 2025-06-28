@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { getLyrics } from '@/actions/lrclib.actions';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Input from '@/components/ui/Input';
 import TabNavigation from '@/components/ui/TabNavigation';

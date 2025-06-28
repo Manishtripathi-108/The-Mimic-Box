@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';

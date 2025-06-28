@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import cn from '@/lib/utils/cn';
 import { formatFileSize, getFileExtension, getFileType } from '@/lib/utils/file.utils';

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal, { closeModal } from '@/components/ui/Modals';
 

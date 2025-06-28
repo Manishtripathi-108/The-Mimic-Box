@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 
 import { handleEditMetaTags } from '@/actions/audio.actions';
 import SearchLyrics from '@/app/(protected)/audio/_components/SearchLyrics';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Input from '@/components/ui/Input';

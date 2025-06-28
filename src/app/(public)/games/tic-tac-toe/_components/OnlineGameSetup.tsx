@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';

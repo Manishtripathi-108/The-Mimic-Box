@@ -2,7 +2,7 @@
 
 import React, { memo } from 'react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import cn from '@/lib/utils/cn';
 
 type T_CellValue = 'X' | 'O' | 'D' | null;

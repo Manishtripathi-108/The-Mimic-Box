@@ -46,7 +46,7 @@ const ICON_ONLY_SIZE_CLASSES: Record<ButtonSize, string> = {
     lg: 'size-10 p-2 rounded-full',
 };
 
-export function Button({
+const Button = ({
     className,
     variant = 'primary',
     size = 'md',
@@ -56,7 +56,7 @@ export function Button({
     iconClassName,
     children,
     ...props
-}: ButtonProps) {
+}: ButtonProps) => {
     const isIconOnly = !!icon && !children;
     const Comp = asChild ? Slot : 'button';
 
@@ -82,4 +82,6 @@ export function Button({
             {children}
         </Comp>
     );
-}
+};
+
+export default Button;

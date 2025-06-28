@@ -4,7 +4,7 @@ import { memo, useEffect, useState } from 'react';
 
 import { AnimatePresence, motion } from 'motion/react';
 
-import { Button } from '@/components/ui/Button';
+import Button from '@/components/ui/Button';
 import DownloadItem from '@/components/ui/DownloadItem';
 import { useAudioDownload } from '@/contexts/AudioDownload.context';
 import cn from '@/lib/utils/cn';
