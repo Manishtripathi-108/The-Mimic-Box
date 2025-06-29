@@ -1,84 +1,90 @@
 'use client';
 
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { isBrowser } from '@/lib/utils/core.utils';
 
 /**
- * Options for the `useIntersectionObserver` hook.
+ * Options for configuring the IntersectionObserver.
  */
 export type T_UseIntersectionObserverOptions = {
     /**
-     * The intersection threshold. The callback will be invoked when the intersection between the target element and the root element crosses this threshold.
-     * A value of 0 means the callback will be called whenever the target element and root element are not intersecting.
-     * A value of 1.0 means the callback will only be called when the target element and root element are fully intersecting.
-     * A value between 0 and 1.0 will be called when the target element is intersecting with the root element at the given percentage.
-     *
-     * @default 0
+     * A single number or an array of numbers indicating at what percentage of the target's
+     * visibility the observer's callback should be executed.
+     * Default is 0.
      */
     threshold?: number | number[];
+
     /**
-     * The element to use as the root when observing the target element.
-     * If null, the root is the document.
-     * If a RefObject, the current value of the ref is used.
-     * If an Element, the element is used.
-     * If a Document, the document is used.
-     * @default null
+     * The element that is used as the viewport for checking visibility of the target.
+     * Must be the ancestor of the target. Defaults to the browser viewport if null.
      */
     root?: Element | Document | null | RefObject<Element | Document | null>;
+
     /**
-     * The root margin to use when observing the target element.
-     * @default '0px'
+     * Margin around the root. Can have values similar to the CSS margin property.
+     * The values can be percentages or pixels (e.g., "10px 20px 30px 40px").
      */
     rootMargin?: string;
+
     /**
-     * If true, the hook will automatically unobserve the element when it is removed from the DOM.
-     * @default false
+     * If true, the observer will automatically unobserve the element when it is removed from the DOM.
      */
     autoUnobserveIfRemoved?: boolean;
+
     /**
-     * The callback to call when the intersection between the target element and the root element changes.
-     * The callback will be called with the IntersectionObserverEntry object.
-     * @default undefined
-     */
-    onChange?: (entry: IntersectionObserverEntry) => void;
-    /**
-     * If true, the callback will be called only once.
-     * @default false
+     * If true, the observer will unobserve the target after it has intersected once.
      */
     once?: boolean;
+
+    /**
+     * Callback function that is called whenever there is a change in the intersection status
+     * of the elements being observed.
+     */
+    onChange?: (entry: IntersectionObserverEntry) => void;
+
+    /**
+     * Callback function that is called whenever an observed element becomes visible.
+     */
+    onEntry?: (entry: IntersectionObserverEntry) => void;
+
+    /**
+     * Callback function that is called whenever an observed element becomes invisible.
+     */
+    onLeave?: (entry: IntersectionObserverEntry) => void;
 };
 
 /**
- * The return type of the `useIntersectionObserver` hook.
+ * Return type for the useIntersectionObserver hook.
  */
 export type T_UseIntersectionObserverReturn<T extends Element> = {
     /**
-     * The function to call to observe the given element.
-     * @param element The element to observe.
+     * Function to start observing the specified element.
      */
     observe: (element: T | null) => void;
+
     /**
-     * The function to call to unobserve the given element.
-     * @param element The element to unobserve.
+     * Function to stop observing the specified element.
      */
     unobserve: (element: T | null) => void;
+
     /**
-     * The map of elements to IntersectionObserverEntry objects.
+     * A map of elements being observed and their corresponding IntersectionObserverEntry.
      */
     entries: Map<Element, IntersectionObserverEntry>;
+
     /**
-     * The function to call to observe the given element via a ref.
-     * @param node The element to observe via a ref.
+     * Function to observe a reference to a React node element.
      */
     observeRef: (node: T | null) => void;
+
     /**
-     * The function to call to get the IntersectionObserverEntry for the given element.
-     * @param el The element to get the IntersectionObserverEntry for.
+     * Function to get the IntersectionObserverEntry for a specified element.
      */
     getEntry: (el: Element) => IntersectionObserverEntry | undefined;
+
     /**
-     * The map of elements that are currently intersecting to their IntersectionObserverEntry objects.
+     * A map of elements that are currently intersecting and their corresponding IntersectionObserverEntry.
      */
     intersectingEntries: Map<Element, IntersectionObserverEntry>;
 };
@@ -92,31 +98,16 @@ const getObserverKey = (root: Element | Document | null, rootMargin: string, thr
 };
 
 /**
- * React hook that observes the intersection of an element with its root element.
- * Automatically observes the element when it is mounted and unobserve it when it is removed from the DOM.
- * Provides a map of elements to their IntersectionObserverEntry objects.
- * @param options The options for the hook.
- * @param options.root The root element to observe against. If null, the root is the document.
- * @param options.rootMargin The root margin to use when observing the element.
- * @param options.threshold The intersection threshold. The callback will be invoked when the intersection between the target element and the root element crosses this threshold.
- * @param options.once If true, the callback will be called only once.
- * @param options.onChange The callback to call when the intersection between the target element and the root element changes.
- * @param options.autoUnobserveIfRemoved If true, the hook will automatically unobserve the element when it is removed from the DOM.
- * @return An object with the following properties:
- * - observe: The function to call to observe the given element.
- * - unobserve: The function to call to unobserve the given element.
- * - entries: The map of elements to IntersectionObserverEntry objects.
- * - observeRef: The function to call to observe the given element via a ref.
- * - getEntry: The function to call to get the IntersectionObserverEntry for the given element.
- * - intersectingEntries: The map of elements that are currently intersecting to their IntersectionObserverEntry objects.
+ * React hook that wraps IntersectionObserver API.
  */
 const useIntersectionObserver = <T extends Element = Element>(options: T_UseIntersectionObserverOptions = {}): T_UseIntersectionObserverReturn<T> => {
-    const { root = null, rootMargin = '0px', threshold = 0, once = false, autoUnobserveIfRemoved = false, onChange } = options;
+    const { root = null, rootMargin = '0px', threshold = 0, once = false, autoUnobserveIfRemoved = false, onChange, onEntry, onLeave } = options;
 
     const [entryMap, setEntryMap] = useState<Map<Element, IntersectionObserverEntry>>(new Map());
     const observerRef = useRef<IntersectionObserver | null>(null);
     const mutationObserverRef = useRef<MutationObserver | null>(null);
     const watchedElements = useRef<Set<Element>>(new Set());
+    const prevIntersecting = useRef<Map<Element, boolean>>(new Map());
 
     const resolvedRoot = root && 'current' in root ? root.current : root;
     const observerKey = getObserverKey(resolvedRoot, rootMargin, threshold);
@@ -127,20 +118,31 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
                 const nextMap = new Map(prev);
 
                 for (const entry of entries) {
-                    nextMap.set(entry.target, entry);
+                    const wasIntersecting = prevIntersecting.current.get(entry.target) ?? false;
+                    const isIntersecting = entry.isIntersecting;
 
-                    if (once && entry.isIntersecting) {
+                    nextMap.set(entry.target, entry);
+                    prevIntersecting.current.set(entry.target, isIntersecting);
+
+                    if (once && isIntersecting) {
                         observerRef.current?.unobserve(entry.target);
                         watchedElements.current.delete(entry.target);
                     }
 
+                    // Callbacks
                     onChange?.(entry);
+
+                    if (isIntersecting && !wasIntersecting) {
+                        onEntry?.(entry);
+                    } else if (!isIntersecting && wasIntersecting) {
+                        onLeave?.(entry);
+                    }
                 }
 
                 return nextMap;
             });
         },
-        [once, onChange]
+        [once, onChange, onEntry, onLeave]
     );
 
     const getOrCreateObserver = useCallback(() => {
@@ -160,35 +162,35 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
 
     const observe = useCallback(
         (element: T | null) => {
-            if (!element) return;
+            if (!element || watchedElements.current.has(element)) return;
+
             const observer = getOrCreateObserver();
             observer.observe(element);
             watchedElements.current.add(element);
             observerRef.current = observer;
 
-            if (autoUnobserveIfRemoved) {
-                if (!mutationObserverRef.current) {
-                    mutationObserverRef.current = new MutationObserver((mutations) => {
-                        mutations.forEach((mutation) => {
-                            for (const node of mutation.removedNodes) {
-                                if (node instanceof Element && watchedElements.current.has(node)) {
-                                    observer.unobserve(node);
-                                    watchedElements.current.delete(node);
-                                    setEntryMap((prev) => {
-                                        const next = new Map(prev);
-                                        next.delete(node);
-                                        return next;
-                                    });
-                                }
+            if (autoUnobserveIfRemoved && !mutationObserverRef.current) {
+                mutationObserverRef.current = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        for (const node of mutation.removedNodes) {
+                            if (node instanceof Element && watchedElements.current.has(node)) {
+                                observer.unobserve(node);
+                                watchedElements.current.delete(node);
+                                prevIntersecting.current.delete(node);
+                                setEntryMap((prev) => {
+                                    const next = new Map(prev);
+                                    next.delete(node);
+                                    return next;
+                                });
                             }
-                        });
+                        }
                     });
+                });
 
-                    mutationObserverRef.current.observe(document.body, {
-                        childList: true,
-                        subtree: true,
-                    });
-                }
+                mutationObserverRef.current.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                });
             }
         },
         [getOrCreateObserver, autoUnobserveIfRemoved]
@@ -198,6 +200,7 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
         if (!element || !observerRef.current) return;
         observerRef.current.unobserve(element);
         watchedElements.current.delete(element);
+        prevIntersecting.current.delete(element);
         setEntryMap((prev) => {
             const next = new Map(prev);
             next.delete(element);
@@ -207,6 +210,8 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
 
     const observeRef = useCallback(
         (node: T | null) => {
+            console.log('🪵 > useIntersectionObserver.ts:103 > observeRef called with node:');
+
             observe(node);
         },
         [observe]
@@ -214,13 +219,13 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
 
     const getEntry = useCallback((el: Element) => entryMap.get(el), [entryMap]);
 
-    const intersectingEntries = useCallback(() => {
+    const intersectingEntries = useMemo(() => {
         const map = new Map<Element, IntersectionObserverEntry>();
         for (const [el, entry] of entryMap.entries()) {
             if (entry.isIntersecting) map.set(el, entry);
         }
         return map;
-    }, [entryMap])();
+    }, [entryMap]);
 
     useEffect(() => {
         return () => {

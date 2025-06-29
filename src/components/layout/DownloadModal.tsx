@@ -1,28 +1,51 @@
 'use client';
 
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 import { AnimatePresence, motion } from 'motion/react';
 
 import Button from '@/components/ui/Button';
 import DownloadItem from '@/components/ui/DownloadItem';
+import Icon from '@/components/ui/Icon';
 import { useAudioDownload } from '@/contexts/AudioDownload.context';
+import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+import useToggle from '@/hooks/useToggle';
 import cn from '@/lib/utils/cn';
 
+const ITEMS_PER_BATCH = 50;
 const DownloadModal = ({ className }: { className?: string }) => {
     const { downloads, total, completed, cancelDownload, cancelAllDownloads, clearDownloads } = useAudioDownload();
-    const [open, setOpen] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
+    const rootRef = useRef<HTMLDivElement>(null);
+    const { observeRef } = useIntersectionObserver({
+        onEntry() {
+            console.log('🪵 > DownloadModal.tsx:23 > useIntersectionObserver > onEntry called');
 
-    // Close on Escape
+            setVisibleCount((prev) => {
+                const next = Math.min(prev + ITEMS_PER_BATCH, downloads.length);
+                return prev !== next ? next : prev;
+            });
+        },
+        root: rootRef,
+    });
+    const [open, { toggle }] = useToggle(false, true, {
+        onChange(value) {
+            console.log('🪵 > DownloadModal.tsx:15 > useToggle > toggle called with value:', value);
+            if (!value) setVisibleCount(ITEMS_PER_BATCH);
+        },
+    });
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') setOpen(false);
+            if (e.key === 'Escape') toggle(false);
         };
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [toggle]);
 
     if (!downloads.length) return null;
+
+    console.log('🪵 > DownloadModal.tsx:19 > DownloadModal > visibleCount:', visibleCount);
     return (
         <div
             className={cn('fixed z-50', className, {
@@ -43,7 +66,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         {/* Header */}
                         <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
                             <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Download Progress</h2>
-                            <Button title="Close modal" aria-label="Close modal" onClick={() => setOpen(false)} icon="close" />
+                            <Button title="Close modal" aria-label="Close modal" onClick={() => toggle(false)} icon="close" />
                         </div>
 
                         {/* Progress Summary */}
@@ -60,11 +83,18 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         </div>
 
                         {/* Content */}
-                        <div className="sm:scrollbar-thin max-h-full flex-1 space-y-2 overflow-y-auto px-4 pt-2 pb-4">
-                            {downloads.length === 0 ? (
-                                <div className="text-text-secondary py-6 text-center">No active downloads.</div>
-                            ) : (
-                                downloads.map((file) => <DownloadItem key={file.id} file={file} onCancel={() => cancelDownload(file.id)} />)
+                        <div ref={rootRef} className="sm:scrollbar-thin max-h-full flex-1 space-y-2 overflow-y-auto px-4 pt-2 pb-4">
+                            {downloads.slice(0, visibleCount).map((file) => (
+                                <DownloadItem key={file.id} file={file} onCancel={() => cancelDownload(file.id)} />
+                            ))}
+                            {visibleCount < downloads.length && (
+                                <div
+                                    ref={observeRef}
+                                    role="status"
+                                    aria-live="polite"
+                                    className="text-text-secondary flex items-center justify-center gap-2 py-2 text-center text-sm">
+                                    <Icon icon="loading" className="text-accent size-8" />
+                                </div>
                             )}
                         </div>
                     </motion.div>
@@ -74,7 +104,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         size="lg"
                         title="Open Downloads"
                         aria-haspopup="dialog"
-                        onClick={() => setOpen(true)}
+                        onClick={() => toggle(true)}
                         aria-label="Open Downloads"
                         icon="download">
                         {downloads.length > 0 && (

@@ -25,17 +25,18 @@ type T_Equals<T> = {
 };
 
 /**
- * Hook to create a toggleable state and corresponding actions.
+ * A hook to create a toggleable state and functions to interact with it.
  *
- * @param defaultValue - default value of the state
- * @param alternateValue - alternate value of the state (default: opposite of `defaultValue`)
- * @param options - options
- * @param options.onChange - callback when state changes
- * @param options.equals - custom comparison function (default: strict equality)
- * @returns an array containing the state and an object with the following properties:
- *   - `toggle`: a function to toggle the state between `defaultValue` and `alternateValue`.
- *   - `setToDefault`: a function to set the state to `defaultValue`.
- *   - `setToAlternate`: a function to set the state to `alternateValue`.
+ * @param defaultValue The default value of the state. Defaults to false.
+ * @param alternateValue The alternate value of the state. Defaults to the opposite of `defaultValue`.
+ * @param options
+ * @param options.onChange Called when the state changes.
+ * @param options.equals A function that checks if two values are equal. Defaults to `(a, b) => a === b`.
+ *
+ * @returns An array containing the current state and an object with three functions: `toggle`, `setToDefault`, and `setToAlternate`.
+ * - `toggle` toggles the state between `defaultValue` and `alternateValue`.
+ * - `setToDefault` sets the state to `defaultValue`.
+ * - `setToAlternate` sets the state to `alternateValue`.
  */
 const useToggle = <D = boolean, R = D>(
     defaultValue: D = false as unknown as D,
