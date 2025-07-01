@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useRef, useState } from 'react';
 
 import axios from 'axios';
 import JSZip from 'jszip';
@@ -61,14 +61,14 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         });
     };
 
-    const cancelDownload = (id: string) => {
+    const cancelDownload = useCallback((id: string) => {
         abortControllers.current[id]?.abort();
         delete abortControllers.current[id];
         updateDownload(id, { status: 'cancelled', error: 'cancelled' });
         cancelledTracksRef.current[id] = true;
-    };
+    }, []);
 
-    const cancelAllDownloads = () => {
+    const cancelAllDownloads = useCallback(() => {
         isCancelledAllRef.current = true;
         Object.values(abortControllers.current).forEach((controller) => controller.abort());
         abortControllers.current = {};
@@ -88,12 +88,12 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
         setCompleted(0);
 
         toast.success('All downloads cancelled.');
-    };
+    }, [cleanup, deleteFile, downloads]);
 
-    const clearDownloads = () => {
+    const clearDownloads = useCallback(() => {
         setDownloads((prev) => prev.filter((d) => !['ready', 'failed', 'cancelled'].includes(d.status)));
         setCompleted(0);
-    };
+    }, []);
 
     const processTrack = async (index: number, file: T_AudioFile, zip: JSZip) => {
         const inputFile = `input_${index}.mp4`;
@@ -151,7 +151,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             const result = await readFile(outputFile);
             zip.file(outputFile, result);
 
-            updateDownload(file.src, { status: 'ready', progress: 100 });
+            updateDownload(file.src, { status: 'ready' });
         } catch (error) {
             const isCancelled = axios.isCancel(error) || (error instanceof Error && error.message === 'Cancelled');
             const errorMessage = axios.isAxiosError(error) ? error.message : error instanceof Error ? error.message : 'Unknown error';
@@ -231,7 +231,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
                 const zipUrl = URL.createObjectURL(blob);
                 zipUrlsRef.current.push(zipUrl);
-                updateDownload(zipId, { url: zipUrl, status: 'ready', progress: 100 });
+                updateDownload(zipId, { url: zipUrl, status: 'ready' });
                 downloadFile(blob, zipFilename);
             } catch (err) {
                 console.error('Zip error:', err);

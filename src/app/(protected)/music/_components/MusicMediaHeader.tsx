@@ -22,7 +22,14 @@ const MusicMediaHeader = ({
             <section className="text-text-primary flex flex-col gap-6 px-4 sm:flex-row sm:items-end">
                 <div className="bg-secondary shadow-floating-sm relative mx-auto aspect-square w-full max-w-60 shrink-0 rounded-2xl p-2 sm:mx-0">
                     {coverImage && (
-                        <Image src={coverImage} alt={`${title} Cover`} width={240} height={240} className="aspect-square rounded-xl border" />
+                        <Image
+                            src={coverImage}
+                            priority
+                            alt={`${title} Cover`}
+                            width={240}
+                            height={240}
+                            className="aspect-square rounded-xl border"
+                        />
                     )}
                 </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -19,8 +19,6 @@ const DownloadModal = ({ className }: { className?: string }) => {
     const rootRef = useRef<HTMLDivElement>(null);
     const { observeRef } = useIntersectionObserver({
         onEntry() {
-            console.log('🪵 > DownloadModal.tsx:23 > useIntersectionObserver > onEntry called');
-
             setVisibleCount((prev) => {
                 const next = Math.min(prev + ITEMS_PER_BATCH, downloads.length);
                 return prev !== next ? next : prev;
@@ -28,20 +26,13 @@ const DownloadModal = ({ className }: { className?: string }) => {
         },
         root: rootRef,
     });
-    const [open, { toggle }] = useToggle(false, true, {
+    const [open, { setAlternate: openModal, setDefault: closeModal }] = useToggle(false, true, {
         onChange(value) {
-            console.log('🪵 > DownloadModal.tsx:15 > useToggle > toggle called with value:', value);
             if (!value) setVisibleCount(ITEMS_PER_BATCH);
         },
+        keybind: 'Escape',
+        toggleOnKeyTo: false,
     });
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') toggle(false);
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [toggle]);
 
     if (!downloads.length) return null;
 
@@ -66,7 +57,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         {/* Header */}
                         <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
                             <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Download Progress</h2>
-                            <Button title="Close modal" aria-label="Close modal" onClick={() => toggle(false)} icon="close" />
+                            <Button title="Close modal" aria-label="Close modal" onClick={closeModal} icon="close" />
                         </div>
 
                         {/* Progress Summary */}
@@ -104,7 +95,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                         size="lg"
                         title="Open Downloads"
                         aria-haspopup="dialog"
-                        onClick={() => toggle(true)}
+                        onClick={openModal}
                         aria-label="Open Downloads"
                         icon="download">
                         {downloads.length > 0 && (

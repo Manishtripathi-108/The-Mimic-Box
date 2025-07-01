@@ -104,9 +104,15 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
     const { root = null, rootMargin = '0px', threshold = 0, once = false, autoUnobserveIfRemoved = false, onChange, onEntry, onLeave } = options;
 
     const [entryMap, setEntryMap] = useState<Map<Element, IntersectionObserverEntry>>(new Map());
+
     const observerRef = useRef<IntersectionObserver | null>(null);
     const mutationObserverRef = useRef<MutationObserver | null>(null);
+
+    // Use a ref to keep track of elements being observed
     const watchedElements = useRef<Set<Element>>(new Set());
+    // Use a ref to track elements that have been observed once
+    const observedOnce = useRef<WeakSet<Element>>(new WeakSet());
+    // Use a ref to track previous intersection state
     const prevIntersecting = useRef<Map<Element, boolean>>(new Map());
 
     const resolvedRoot = root && 'current' in root ? root.current : root;
@@ -118,20 +124,23 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
                 const nextMap = new Map(prev);
 
                 for (const entry of entries) {
-                    const wasIntersecting = prevIntersecting.current.get(entry.target) ?? false;
+                    const target = entry.target;
+                    const wasIntersecting = prevIntersecting.current.get(target) ?? false;
                     const isIntersecting = entry.isIntersecting;
 
-                    nextMap.set(entry.target, entry);
-                    prevIntersecting.current.set(entry.target, isIntersecting);
+                    nextMap.set(target, entry);
+                    prevIntersecting.current.set(target, isIntersecting);
 
+                    // If the element is observed once and is intersecting, unobserve it and remove it from observed,
                     if (once && isIntersecting) {
-                        observerRef.current?.unobserve(entry.target);
-                        watchedElements.current.delete(entry.target);
+                        observerRef.current?.unobserve(target);
+                        watchedElements.current.delete(target);
+                        observedOnce.current.add(target);
                     }
 
-                    // Callbacks
                     onChange?.(entry);
 
+                    // Call onEntry or onLeave callbacks based on intersection state
                     if (isIntersecting && !wasIntersecting) {
                         onEntry?.(entry);
                     } else if (!isIntersecting && wasIntersecting) {
@@ -162,13 +171,21 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
 
     const observe = useCallback(
         (element: T | null) => {
-            if (!element || watchedElements.current.has(element)) return;
+            if (!element) return;
+
+            // If the element is already being observed, skip
+            if (watchedElements.current.has(element)) return;
+            console.log('🪵 > useIntersectionObserver.ts:81 > observe called with element:');
+
+            // Once already intersected, don't observe again
+            if (once && observedOnce.current.has(element)) return;
 
             const observer = getOrCreateObserver();
             observer.observe(element);
             watchedElements.current.add(element);
             observerRef.current = observer;
 
+            // handle unobserve when the element is removed from the DOM
             if (autoUnobserveIfRemoved && !mutationObserverRef.current) {
                 mutationObserverRef.current = new MutationObserver((mutations) => {
                     mutations.forEach((mutation) => {
@@ -193,7 +210,7 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
                 });
             }
         },
-        [getOrCreateObserver, autoUnobserveIfRemoved]
+        [getOrCreateObserver, autoUnobserveIfRemoved, once]
     );
 
     const unobserve = useCallback((element: T | null) => {
@@ -210,8 +227,6 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
 
     const observeRef = useCallback(
         (node: T | null) => {
-            console.log('🪵 > useIntersectionObserver.ts:103 > observeRef called with node:');
-
             observe(node);
         },
         [observe]

@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import Slot from '@/components/Slot';
 import Icon from '@/components/ui/Icon';
 import { DISABLED, FOCUS_RING, SVG_UTILS } from '@/lib/styles/tailwind.helpers';
@@ -96,4 +98,4 @@ const Button = ({
     );
 };
 
-export default Button;
+export default memo(Button);
