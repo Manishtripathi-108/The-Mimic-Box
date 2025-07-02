@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
@@ -12,6 +12,7 @@ import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHead
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import MusicTrackCardSkeleton from '@/app/(protected)/music/_components/skeletons/MusicTrackCardSkeleton';
 import APP_ROUTES from '@/constants/routes/app.routes';
+import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
 const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
@@ -20,10 +21,9 @@ const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
     const [tracks, setTracks] = useState(initialTracks.items);
     const [nextUrl, setNextUrl] = useState(initialTracks.next);
     const [isPending, startTransition] = useTransition();
-    const loadingRef = useRef<HTMLDivElement>(null);
 
     const fetchNextTracks = useCallback(async () => {
-        if (!nextUrl) return;
+        if (!nextUrl || isPending) return;
 
         const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifySimplifiedTrack>>(nextUrl);
         if (!res.success || !res.payload) {
@@ -33,27 +33,18 @@ const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
 
         setTracks((prev) => [...prev, ...res.payload.items]);
         setNextUrl(res.payload.next);
-    }, [nextUrl]);
+    }, [nextUrl, isPending]);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && nextUrl) {
-                    startTransition(() => {
-                        fetchNextTracks();
-                    });
-                }
-            },
-            { threshold: 1 }
-        );
-
-        const loadingEl = loadingRef.current;
-        if (loadingEl) observer.observe(loadingEl);
-
-        return () => {
-            if (loadingEl) observer.unobserve(loadingEl);
-        };
-    }, [fetchNextTracks, nextUrl]);
+    const { observeRef } = useIntersectionObserver({
+        onEntry: () => {
+            if (nextUrl) {
+                startTransition(() => {
+                    fetchNextTracks();
+                });
+            }
+        },
+        threshold: 1,
+    });
 
     return (
         <>
@@ -89,7 +80,7 @@ const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
                 )}
 
                 {/* Loading Indicator */}
-                <div ref={loadingRef} className="grid w-full gap-2">
+                <div ref={observeRef} className="grid w-full gap-2">
                     {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={idx} />)}
                 </div>
             </div>

@@ -23,7 +23,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
     }, [total, visibleCount]);
 
     const rootRef = useRef<HTMLDivElement>(null);
-    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef });
+    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef, threshold: 1 });
 
     const [open, { setAlternate: openModal, setDefault: closeModal }] = useToggle(false, true, {
         onChange: (value) => {

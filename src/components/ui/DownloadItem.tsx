@@ -1,10 +1,10 @@
 import { memo } from 'react';
 
 import Icon from '@/components/ui/Icon';
-import { T_DownloadFile, T_IconType } from '@/lib/types/client.types';
+import { T_AudioDownloadFile, T_IconType } from '@/lib/types/client.types';
 
-const DownloadItem = ({ file, onCancel }: { file: T_DownloadFile; onCancel: () => void }) => {
-    const statusMap: Record<T_DownloadFile['status'], { icon: T_IconType; className: string; label: string }> = {
+const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel: () => void }) => {
+    const statusMap: Record<T_AudioDownloadFile['status'], { icon: T_IconType; className: string; label: string }> = {
         pending: {
             icon: 'pending',
             className: 'text-yellow-500',

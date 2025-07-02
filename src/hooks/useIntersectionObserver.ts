@@ -175,7 +175,6 @@ const useIntersectionObserver = <T extends Element = Element>(options: T_UseInte
 
             // If the element is already being observed, skip
             if (watchedElements.current.has(element)) return;
-            console.log('🪵 > useIntersectionObserver.ts:81 > observe called with element:');
 
             // Once already intersected, don't observe again
             if (once && observedOnce.current.has(element)) return;
