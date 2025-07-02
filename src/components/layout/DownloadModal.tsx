@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef, useState } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -13,20 +13,17 @@ import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import useToggle from '@/hooks/useToggle';
 import cn from '@/lib/utils/cn';
 
-const ITEMS_PER_BATCH = 50;
+const ITEMS_PER_BATCH = 30;
 
 const DownloadModal = ({ className }: { className?: string }) => {
     const { downloads, total, completed, cancelDownload, cancelAllDownloads, clearDownloads } = useAudioDownload();
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
-    const rootRef = useRef<HTMLDivElement>(null);
+    const loadMoreItems = useCallback(() => {
+        if (visibleCount < total) setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
+    }, [total, visibleCount]);
 
-    const { observeRef } = useIntersectionObserver({
-        onEntry: () => {
-            if (visibleCount === total) return;
-            setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
-        },
-        root: rootRef,
-    });
+    const rootRef = useRef<HTMLDivElement>(null);
+    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef });
 
     const [open, { setAlternate: openModal, setDefault: closeModal }] = useToggle(false, true, {
         onChange: (value) => {
