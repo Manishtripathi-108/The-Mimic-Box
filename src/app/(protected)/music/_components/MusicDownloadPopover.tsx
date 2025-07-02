@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 
-import isEqual from 'lodash.isequal';
+import deepEqual from 'fast-deep-equal';
 import toast from 'react-hot-toast';
 
 import { useAudioDownload } from '@/contexts/AudioDownload.context';
@@ -26,7 +26,7 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, onC
     const { downloadTracks } = useAudioDownload();
 
     const getTracksToDownload = async (): Promise<T_AudioPlayerTrack[]> => {
-        if (playbackContext && isEqual(playbackContext, context)) return queue;
+        if (playbackContext && deepEqual(playbackContext, context)) return queue;
 
         if (context) return await getPlayableTracks(context);
 

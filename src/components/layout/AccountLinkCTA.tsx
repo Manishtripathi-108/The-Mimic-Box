@@ -1,5 +1,6 @@
 import { $Enums } from '@prisma/client';
 
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
 
@@ -12,7 +13,9 @@ const AccountLinkCTA = ({ account, callBackUrl, message }: { account: $Enums.Lin
                 Oops! You are not connected to <strong className="capitalize">{account.toLowerCase()}</strong>.
             </h2>
             <p className="text-text-secondary">{message}</p>
-            <ConnectAccount account={account} className="button" callBackUrl={callBackUrl} />
+            <Button asChild>
+                <ConnectAccount account={account} callBackUrl={callBackUrl} />
+            </Button>
         </section>
     );
 };
