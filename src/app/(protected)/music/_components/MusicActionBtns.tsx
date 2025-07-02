@@ -9,6 +9,7 @@ import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
 import { T_AudioSourceContext } from '@/lib/types/client.types';
 import { shareUrl } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
+import { buildAudioCacheKey } from '@/lib/utils/music.utils';
 
 const MusicActionBtns = ({ className, context }: { className?: string; context: T_AudioSourceContext }) => {
     const { setQueue, toggleFadePlay, playbackContext, playing } = useAudioPlayerContext();
@@ -37,6 +38,11 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
         }
     }, [isCurrentContext, toggleFadePlay, isPending, getPlayableTracks, setQueue, context]);
 
+    const removeCachedData = useCallback(() => {
+        const cacheKey = buildAudioCacheKey(context);
+        localStorage.removeItem(cacheKey);
+    }, [context]);
+
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>
             <Button title="Share" icon="share" aria-label="Share" onClick={() => shareUrl({ url: window.location.href })} />
@@ -56,14 +62,22 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
             <div
                 id="moreOptions-popover"
                 popover="auto"
-                className="bg-tertiary text-text-secondary absolute inset-auto mr-1 rounded-md border shadow-lg [position-area:left_span-bottom]">
+                className="bg-tertiary text-text-secondary absolute inset-auto mr-1 rounded-md border shadow-lg [position-area:left_span-top]">
                 <ul className="divide-y">
+                    <li>
+                        <button
+                            type="button"
+                            onClick={removeCachedData}
+                            className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize hover:text-white">
+                            Remove Cached Data
+                        </button>
+                    </li>
                     <li>
                         <button
                             type="button"
                             popoverTarget="download-popover"
                             className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize hover:text-white">
-                            download {context.type}
+                            Download {context.type}
                         </button>
                     </li>
                 </ul>

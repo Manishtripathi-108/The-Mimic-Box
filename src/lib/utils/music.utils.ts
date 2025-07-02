@@ -2,9 +2,11 @@ import axios from 'axios';
 import stringSimilarity from 'string-similarity';
 
 import API_ROUTES from '@/constants/routes/api.routes';
-import { T_AudioFile, T_AudioPlayerTrack } from '@/lib/types/client.types';
+import { T_AudioFile, T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { SuccessResponseOutput } from '@/lib/types/response.types';
+
+export const buildAudioCacheKey = (context: T_AudioSourceContext) => `${context.source}:${context.type}:${context.id}`;
 
 export const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: string): T_AudioFile | null => {
     const url = track.urls.find((u) => u.quality === quality);

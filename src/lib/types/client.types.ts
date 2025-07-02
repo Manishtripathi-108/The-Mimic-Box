@@ -97,6 +97,7 @@ type T_AudioEntityType = 'album' | 'playlist' | 'track' | 'artist';
 export type T_AudioSource = 'spotify' | 'saavn' | 'youtube';
 
 export type T_AudioSourceContext = {
+    snapshotId?: string;
     source: T_AudioSource;
     type: T_AudioEntityType;
     id: string;
