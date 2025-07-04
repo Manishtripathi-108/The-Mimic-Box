@@ -3,6 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import Button from '@/components/ui/Button';
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
 import API_ROUTES from '@/constants/routes/api.routes';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
@@ -97,15 +98,20 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
     }, [audio, updateLyricsHighlight, isSynced]);
 
     return (
-        <div
-            className={cn('bg-secondary absolute inset-auto z-50 flex flex-col overflow-hidden rounded-2xl shadow-lg', className)}
+        <Card
+            id="lyrics-card"
+            role="dialog"
+            aria-label="Music lyrics"
+            className={cn('absolute inset-auto z-50 gap-4', className)}
             ref={lyricsContainerRef}>
-            <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
-                <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Lyrics</h2>
-                <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
-            </div>
+            <CardHeader className="p-4">
+                <CardTitle className="font-alegreya tracking-wide">Lyrics</CardTitle>
+                <CardAction>
+                    <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
+                </CardAction>
+            </CardHeader>
 
-            <div className="sm:scrollbar-thin text-text-secondary h-full flex-1 space-y-2 overflow-y-auto p-4 text-sm">
+            <CardContent className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto px-4 text-sm">
                 {isPending ? (
                     <Icon icon="loading" className="text-highlight mx-auto size-20 shrink-0" />
                 ) : data ? (
@@ -126,8 +132,8 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
                 ) : (
                     <div className="text-center">No lyrics found.</div>
                 )}
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 };
 

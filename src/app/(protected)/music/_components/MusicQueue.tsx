@@ -1,33 +1,56 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
 import MusicTrackPlayBtn from '@/app/(protected)/music/_components/MusicTrackPlayBtn';
 import Button from '@/components/ui/Button';
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
+import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import cn from '@/lib/utils/cn';
+
+const ITEMS_PER_BATCH = 30;
 
 const MusicQueue = ({ className }: { className?: string }) => {
     const { clearQueue, playbackContext, queue } = useAudioPlayerContext();
+    const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
+    const total = queue?.length || 0;
+
+    const loadMoreItems = useCallback(() => {
+        if (visibleCount < total) {
+            setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
+        }
+    }, [total, visibleCount]);
+
+    const rootRef = useRef<HTMLDivElement>(null);
+    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef, threshold: 1 });
+
     if (!queue || queue.length === 0) return null;
 
     return (
-        <div
+        <Card
             id="queue-popover"
             role="dialog"
-            aria-label="Music queue"
-            className={cn('bg-secondary absolute inset-auto z-50 flex flex-col overflow-hidden rounded-2xl shadow-lg', className)}>
-            <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
-                <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Queue</h2>
-                <Button size="sm" className="shrink-0 text-xs" title="Clear Queue" aria-label="Clear Queue" onClick={clearQueue}>
-                    Clear queue
-                </Button>
-            </div>
-            <ul className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
-                {queue.map((track) => (
-                    <li
+            aria-labelledby="queue-heading"
+            aria-modal="false"
+            className={cn('absolute inset-auto z-50', className)}>
+            <CardHeader className="shadow-raised-xs flex items-center justify-between px-4 py-3">
+                <CardTitle id="queue-heading" className="font-alegreya tracking-wide">
+                    Music Queue
+                </CardTitle>
+                <CardAction>
+                    <Button size="sm" className="shrink-0 text-xs" title="Clear Queue" aria-label="Clear the music queue" onClick={clearQueue}>
+                        Clear queue
+                    </Button>
+                </CardAction>
+            </CardHeader>
+
+            <CardContent ref={rootRef} className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
+                {queue.slice(0, visibleCount).map((track) => (
+                    <div
                         key={track.id}
                         className="from-secondary to-tertiary text-text-secondary shadow-floating-xs flex items-center rounded-xl bg-linear-120 p-1 transition-transform hover:scale-101">
                         <MusicTrackPlayBtn id={track.id} context={playbackContext!} />
@@ -35,7 +58,7 @@ const MusicQueue = ({ className }: { className?: string }) => {
                         <div className="flex items-center gap-3 overflow-hidden">
                             <Image
                                 src={track.covers?.[0]?.url || '/fallback-cover.jpg'}
-                                alt={track.title}
+                                alt={`Album cover for ${track.title || 'Unknown Title'}`}
                                 width={40}
                                 height={40}
                                 className="size-9 shrink-0 rounded-md object-cover"
@@ -45,16 +68,26 @@ const MusicQueue = ({ className }: { className?: string }) => {
                                 <p className="text-text-primary truncate" title={track.title}>
                                     {track.title}
                                 </p>
-
                                 <p className="text-text-secondary truncate text-sm" title={track.artists}>
                                     {track.artists || 'Unknown Artist'}
                                 </p>
                             </div>
                         </div>
-                    </li>
+                    </div>
                 ))}
-            </ul>
-        </div>
+
+                {visibleCount < total && (
+                    <div
+                        ref={observeRef}
+                        role="status"
+                        aria-live="polite"
+                        className="text-text-secondary flex items-center justify-center gap-2 py-2 text-center text-sm">
+                        <Icon icon="loading" className="text-accent size-8" />
+                        <span className="sr-only">Loading more tracks...</span>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
     );
 };
 
