@@ -40,12 +40,14 @@ const features = [
     },
 ];
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
+
 const Page = () => {
     return (
         <div className="bg-primary text-text-secondary min-h-screen p-6">
             <div className="mx-auto max-w-5xl">
                 <h1 className="text-text-primary font-alegreya mb-10 text-center text-4xl font-bold tracking-wide">
-                    Welcome to <span className="text-highlight">The Mimic Box</span>
+                    Welcome to <span className="text-highlight">{APP_NAME}</span>
                 </h1>
 
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-2">

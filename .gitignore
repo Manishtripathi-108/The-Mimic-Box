@@ -56,3 +56,6 @@ robots.txt
 # Serwist
 public/sw*
 public/swe-worker*
+
+# Local development files
+**/dev

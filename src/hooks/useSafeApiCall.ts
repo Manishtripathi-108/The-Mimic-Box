@@ -6,8 +6,9 @@ import axios, { AxiosResponse } from 'axios';
 
 import useUploadProgress from '@/hooks/useUploadProgress';
 import { MakeApiCallType, SuccessResponseOutput } from '@/lib/types/response.types';
+import { isDev } from '@/lib/utils/core.utils';
 
-const ENABLE_DEBUG_LOGS = process.env.NODE_ENV === 'development';
+const ENABLE_DEBUG_LOGS = isDev;
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios = axios) => {

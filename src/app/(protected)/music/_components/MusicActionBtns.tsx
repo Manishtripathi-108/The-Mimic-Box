@@ -3,12 +3,13 @@
 import { useCallback } from 'react';
 
 import MusicDownloadPopover from '@/app/(protected)/music/_components/MusicDownloadPopover';
-import Icon from '@/components/ui/Icon';
+import Button from '@/components/ui/Button';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
 import { T_AudioSourceContext } from '@/lib/types/client.types';
 import { shareUrl } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
+import { buildAudioCacheKey } from '@/lib/utils/music.utils';
 
 const MusicActionBtns = ({ className, context }: { className?: string; context: T_AudioSourceContext }) => {
     const { setQueue, toggleFadePlay, playbackContext, playing } = useAudioPlayerContext();
@@ -37,45 +38,46 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
         }
     }, [isCurrentContext, toggleFadePlay, isPending, getPlayableTracks, setQueue, context]);
 
+    const removeCachedData = useCallback(() => {
+        const cacheKey = buildAudioCacheKey(context);
+        localStorage.removeItem(cacheKey);
+    }, [context]);
+
     return (
         <div className={cn('mx-auto flex items-end justify-center gap-x-6 px-4 sm:justify-between', className)}>
-            <button
-                type="button"
-                aria-label="Share"
-                onClick={() => shareUrl({ url: window.location.href })}
-                className="button inline-flex size-9 rounded-full p-2">
-                <Icon icon="share" />
-            </button>
+            <Button title="Share" icon="share" aria-label="Share" onClick={() => shareUrl({ url: window.location.href })} />
 
-            <button
-                type="button"
+            <Button
                 onClick={handlePlay}
+                icon={isPending ? 'loading' : isContextPlaying ? 'pauseToPlay' : 'playToPause'}
                 aria-label={isContextPlaying ? 'Pause' : 'Play'}
                 title={isContextPlaying ? 'Pause' : 'Play'}
-                className="button button-highlight inline-flex size-14 rounded-full p-2"
-                disabled={isPending}>
-                <Icon icon={isPending ? 'loading' : isContextPlaying ? 'pauseToPlay' : 'playToPause'} />
-            </button>
+                variant="highlight"
+                className="size-14"
+                disabled={isPending}
+            />
 
-            <button
-                type="button"
-                popoverTarget="moreOptions-popover"
-                aria-label="More Options"
-                className="button inline-flex size-9 rounded-full p-2">
-                <Icon icon="moreDots" className="size-full rotate-90" />
-            </button>
+            <Button popoverTarget="moreOptions-popover" aria-label="More Options" icon="moreDots" iconClassName="rotate-90" />
 
             <div
                 id="moreOptions-popover"
                 popover="auto"
-                className="bg-tertiary text-text-secondary absolute inset-auto mr-1 rounded-md border shadow-lg [position-area:left_span-bottom]">
+                className="bg-tertiary text-text-secondary absolute inset-auto mr-1 rounded-md border shadow-lg [position-area:left_span-top]">
                 <ul className="divide-y">
+                    <li>
+                        <button
+                            type="button"
+                            onClick={removeCachedData}
+                            className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize hover:text-white">
+                            Remove Cached Data
+                        </button>
+                    </li>
                     <li>
                         <button
                             type="button"
                             popoverTarget="download-popover"
                             className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize hover:text-white">
-                            download {context.type}
+                            Download {context.type}
                         </button>
                     </li>
                 </ul>

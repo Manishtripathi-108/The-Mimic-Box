@@ -1,6 +1,7 @@
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
 import { T_SpotifyTrack } from '@/lib/types/spotify.types';
+import { chunkArray } from '@/lib/utils/core.utils';
 import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import { withAuthHeader } from '@/lib/utils/server.utils';
@@ -54,10 +55,7 @@ export const getMyTracks = async (accessToken: string, limit?: number, offset?: 
  * Service: Save one or more tracks to the current user's Spotify library.
  */
 export const saveTracks = async (accessToken: string, trackIds: string[]) => {
-    const chunks = trackIds.reduce<string[][]>(
-        (acc, _, i) => (i % 50 === 0 ? acc.push([trackIds[i]]) : acc[acc.length - 1].push(trackIds[i]), acc),
-        []
-    );
+    const chunks = chunkArray(trackIds, 50);
 
     const promises = chunks.map(async (chunk) => {
         const [error, response] = await safeAwait(
@@ -82,10 +80,7 @@ export const saveTracks = async (accessToken: string, trackIds: string[]) => {
  * Service: Remove one or more tracks from the current user's Spotify library.
  */
 export const removeTracks = async (accessToken: string, trackIds: string[]) => {
-    const chunks = trackIds.reduce<string[][]>(
-        (acc, _, i) => (i % 50 === 0 ? acc.push([trackIds[i]]) : acc[acc.length - 1].push(trackIds[i]), acc),
-        []
-    );
+    const chunks = chunkArray(trackIds, 50);
 
     const promises = chunks.map(async (chunk) => {
         const [error, response] = await safeAwait(
@@ -112,10 +107,7 @@ export const removeTracks = async (accessToken: string, trackIds: string[]) => {
  * Service: Check if one or more tracks are saved in the current user's Spotify library.
  */
 export const checkSavedTracks = async (accessToken: string, trackIds: string[]) => {
-    const chunks = trackIds.reduce<string[][]>(
-        (acc, _, i) => (i % 50 === 0 ? acc.push([trackIds[i]]) : acc[acc.length - 1].push(trackIds[i]), acc),
-        []
-    );
+    const chunks = chunkArray(trackIds, 50);
 
     const promises = chunks.map(async (chunk) => {
         const [error, response] = await safeAwait(

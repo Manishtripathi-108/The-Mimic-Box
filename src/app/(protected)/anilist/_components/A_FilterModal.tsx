@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
+import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import Modal, { closeModal } from '@/components/ui/Modals';
@@ -133,19 +134,16 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 </div>
 
                 <div className="flex items-center justify-end gap-4">
-                    <button className="button" type="submit">
-                        Apply Filters
-                    </button>
+                    <Button type="submit">Apply Filters</Button>
 
-                    <button
-                        type="button"
-                        className="button button-danger"
+                    <Button
+                        variant="danger"
                         onClick={() => {
                             reset(ResetFilters);
                             setFilters(ResetFilters);
                         }}>
                         Clear Filters
-                    </button>
+                    </Button>
                 </div>
             </form>
         </Modal>

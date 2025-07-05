@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { auth } from '@/auth';
+import Button from '@/components/ui/Button';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import APP_ROUTES from '@/constants/routes/app.routes';
@@ -44,11 +45,13 @@ const Page = async () => {
 
                         <div className="mt-6 flex items-center justify-between px-4">
                             {provider === 'credentials' && (
-                                <Link href={APP_ROUTES.USER.EDIT_PROFILE} className="button button-highlight">
-                                    Edit
-                                </Link>
+                                <Button variant="highlight" asChild>
+                                    <Link href={APP_ROUTES.USER.EDIT_PROFILE}>Edit</Link>
+                                </Button>
                             )}
-                            <LogoutButton className="button button-danger ml-auto" />
+                            <Button asChild variant="danger" className="ml-auto">
+                                <LogoutButton />
+                            </Button>
                         </div>
                     </div>
                 </div>

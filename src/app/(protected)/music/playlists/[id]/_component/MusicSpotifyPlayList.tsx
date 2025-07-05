@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { useCallback, useMemo, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
@@ -12,6 +12,7 @@ import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHead
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import MusicTrackCardSkeleton from '@/app/(protected)/music/_components/skeletons/MusicTrackCardSkeleton';
 import APP_ROUTES from '@/constants/routes/app.routes';
+import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/lib/types/spotify.types';
 
 type Props = {
@@ -24,40 +25,34 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
     const [playlistTracks, setPlaylistTracks] = useState(initialTracks.items);
     const [nextUrl, setNextUrl] = useState(initialTracks.next);
     const [isPending, startTransition] = useTransition();
-    const loadingRef = useRef<HTMLDivElement>(null);
 
-    const fetchNextTracks = useCallback(async () => {
-        if (!nextUrl) return;
+    const fetchNextTracks = useCallback(() => {
+        startTransition(() => {
+            (async () => {
+                if (!nextUrl || isPending) return;
 
-        const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
-        if (!res.success || !res.payload) {
-            toast.error('Failed to fetch more tracks');
-            return;
-        }
-
-        setPlaylistTracks((prev) => [...prev, ...res.payload.items]);
-        setNextUrl(res.payload.next);
-    }, [nextUrl]);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting && nextUrl) {
-                    startTransition(() => {
-                        fetchNextTracks();
-                    });
+                const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
+                if (!res.success || !res.payload) {
+                    toast.error('Failed to fetch more tracks');
+                    return;
                 }
-            },
-            { threshold: 1 }
-        );
 
-        const loadingEl = loadingRef.current;
-        if (loadingEl) observer.observe(loadingEl);
+                setPlaylistTracks((prev) => [...prev, ...res.payload.items]);
+                setNextUrl(res.payload.next);
+            })();
+        });
+    }, [nextUrl, isPending]);
 
-        return () => {
-            if (loadingEl) observer.unobserve(loadingEl);
-        };
-    }, [fetchNextTracks, nextUrl]);
+    const { observeRef } = useIntersectionObserver({
+        onEntry: () => {
+            if (nextUrl && !isPending) {
+                queueMicrotask(() => {
+                    fetchNextTracks();
+                });
+            }
+        },
+        threshold: 1,
+    });
 
     const tracks = useMemo(
         () => playlistTracks.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null),
@@ -75,7 +70,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: playlist.id, type: 'playlist', source: 'spotify' }} className="mt-4" />
+            <MusicActionBtns context={{ id: playlist.id, type: 'playlist', source: 'spotify', snapshotId: playlist.snapshot_id }} className="mt-4" />
 
             <div className="mt-6 grid w-full gap-2">
                 {tracks.map((t, idx) => (
@@ -100,7 +95,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
                     />
                 ))}
 
-                <div ref={loadingRef} className="grid w-full gap-2">
+                <div ref={observeRef} className="grid w-full gap-2">
                     {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={`skeleton-${idx}`} />)}
                 </div>
             </div>

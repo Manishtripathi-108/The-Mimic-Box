@@ -5,6 +5,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
+import Button from '@/components/ui/Button';
 
 const MatchResultModal = ({ status }: { status: string }) => {
     const playRef = useRef<HTMLButtonElement>(null);
@@ -24,12 +25,12 @@ const MatchResultModal = ({ status }: { status: string }) => {
             <p className="text-text-primary mt-10 mb-3 text-lg">Would you like to play again?</p>
 
             <div className="flex justify-center gap-x-5">
-                <button className="button" ref={playRef} onClick={resetBoard} tabIndex={0}>
+                <Button ref={playRef} onClick={resetBoard} tabIndex={0}>
                     Play Again
-                </button>
-                <button className="button button-danger" onClick={() => alert('Thanks for playing!')} tabIndex={1}>
+                </Button>
+                <Button variant="danger" onClick={() => alert('Thanks for playing!')} tabIndex={1}>
                     Exit
-                </button>
+                </Button>
             </div>
         </motion.div>
     );

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 
 const ErrorCard = ({
@@ -32,11 +33,7 @@ const ErrorCard = ({
                     <p className="text-sm tracking-wide text-gray-500">{message || 'Oh no, something went wrong.'}</p>
                 </div>
 
-                {reset && !children && (
-                    <button onClick={() => reset()} className="button">
-                        Try Again
-                    </button>
-                )}
+                {reset && !children && <Button onClick={() => reset()}>Try Again</Button>}
                 {children}
             </div>
         </div>

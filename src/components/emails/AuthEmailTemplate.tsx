@@ -16,6 +16,8 @@ interface AuthEmailTemplateProps {
     url: string;
 }
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
+
 /**
  * Common reusable email template component.
  */
@@ -34,7 +36,7 @@ const AuthEmailTemplate: React.FC<AuthEmailTemplateProps> = ({ heading, preview,
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src={IMAGE_FALLBACKS.APP_LOGO}
-                                alt="The Mimic Box logo"
+                                alt={`${APP_NAME} Logo`}
                                 width={48}
                                 height={48}
                                 className="h-12 w-12 rounded-full border border-gray-300 object-contain"
@@ -59,7 +61,7 @@ const AuthEmailTemplate: React.FC<AuthEmailTemplateProps> = ({ heading, preview,
 
                             <Text className="my-1 text-center text-sm text-[#1d1d1f]">{footerText}</Text>
                             <Text className="my-1 text-center text-xs text-[#666666]">
-                                &copy; {new Date().getFullYear()} The Mimic Box. All rights reserved.
+                                &copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.
                             </Text>
                         </div>
                     </Container>
@@ -80,7 +82,7 @@ export const generateEmailVerificationEmail = (token: string) => (
     <AuthEmailTemplate
         heading="Welcome! Let’s Verify Your Email"
         preview="Almost there—confirm your email to complete setup"
-        body="Hey there! We're excited to have you at The Mimic Box. To complete your registration, just tap the button below and verify your email. This helps us keep your account safe and secure."
+        body={`Hey there! We're excited to have you at ${APP_NAME}. To complete your registration, just tap the button below and verify your email. This helps us keep your account safe and secure.`}
         buttonText="Confirm My Email"
         footerText="Didn’t sign up? No worries—feel free to ignore this message."
         url={`${PUBLIC_URL}${APP_ROUTES.AUTH.VERIFY_EMAIL}?token=${token}`}
@@ -112,7 +114,7 @@ export const generateEmailChangeEmail = (token: string) => (
     <AuthEmailTemplate
         heading="Confirm Your New Email Address"
         preview="One quick step to finish updating your email"
-        body="We received a request to update your email address linked with The Mimic Box. To confirm the change, just tap the button below. If this wasn’t you, no need to worry—your current email will stay active."
+        body={`We received a request to update your email address linked with ${APP_NAME}. To confirm the change, just tap the button below. If this wasn’t you, no need to worry—your current email will stay active.`}
         buttonText="Confirm Email Change"
         footerText="Ignore this message if you didn’t start this update."
         url={`${PUBLIC_URL}${APP_ROUTES.AUTH.CHANGE_EMAIL}?token=${token}`}

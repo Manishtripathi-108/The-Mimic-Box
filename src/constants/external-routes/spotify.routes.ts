@@ -320,14 +320,14 @@ const spotifyApiRoutes = {
          * Replace or reorder items in a playlist.
          * @method PUT
          * @param id - The ID of the playlist.
-         * @param uris - A list of Spotify track or episode URIs to replace the current items.
-         * @data uris - A list of Spotify URIs to set in the playlist.
+         * @param uris - A list of Spotify track or episode URIs to replace the current items. Max 100 URIs.
+         * @data uris - A list of Spotify URIs to set in the playlist. Max 100 URIs.
          * @data snapshot_id - (Optional) The current version ID of the playlist for safe updates.
          * @data range_start - The index of the first item you want to move.
          * @data insert_before - The position to insert the moved items into.
          * @data range_length - Number of items to move (default is 1).
          */
-        replaceItems: (id: string, uris: string[]) => `/playlists/${id}/tracks?uris=${uris.join(',')}`,
+        replaceItems: (id: string, uris?: string[]) => `/playlists/${id}/tracks${uris?.length ? `?uris=${uris.join(',')}` : ''}`,
 
         /**
          * Add new tracks or episodes to a playlist.

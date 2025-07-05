@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 
 import Link from 'next/link';
 
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
@@ -24,12 +25,12 @@ const Page = () => {
                 <div className="mb-6">
                     <h2 className="font-alegreya mb-3 text-lg font-medium tracking-wide">Choose a Mode:</h2>
                     <div className="flex justify-center gap-6">
-                        <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC} className="button w-full text-center">
-                            Classic
-                        </Link>
-                        <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE} className="button w-full text-center">
-                            Ultimate
-                        </Link>
+                        <Button asChild className="w-full">
+                            <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC}>Classic</Link>
+                        </Button>
+                        <Button asChild className="w-full">
+                            <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE}>Ultimate</Link>
+                        </Button>
                     </div>
                 </div>
 
@@ -41,9 +42,9 @@ const Page = () => {
                 </div>
 
                 {/* Play Online Section */}
-                <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE} className="button w-full text-center">
-                    Play Online
-                </Link>
+                <Button asChild className="w-full">
+                    <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE}>Play Online</Link>
+                </Button>
             </div>
         </main>
     );

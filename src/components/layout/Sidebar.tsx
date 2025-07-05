@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
@@ -121,14 +122,14 @@ const Sidebar = () => {
                         <p className="text-text-secondary text-xs">{session?.user?.email}</p>
                     </div>
                 </div>
-                <button
-                    type="button"
+                <Button
                     title="Close sidebar"
+                    variant="transparent"
+                    className="bg-tertiary"
                     aria-label="Close sidebar"
-                    className="text-text-secondary hover:text-text-primary bg-tertiary rounded-full p-1"
-                    onClick={() => closeSidebar()}>
-                    <Icon icon="close" className="size-6" />
-                </button>
+                    onClick={() => closeSidebar()}
+                    icon="close"
+                />
             </div>
 
             {/* Navigation Section */}
@@ -146,6 +147,7 @@ const Sidebar = () => {
                             </Link>
                         ) : (
                             <button
+                                type="button"
                                 onClick={() => toggleMenu(`${index}`)}
                                 className="hover:bg-secondary text-text-secondary hover:text-text-primary flex w-full items-center justify-between rounded-lg p-2.5 transition"
                                 aria-expanded={openMenus[index]}>
@@ -178,6 +180,7 @@ const Sidebar = () => {
                                                 </Link>
                                             ) : (
                                                 <button
+                                                    type="button"
                                                     onClick={() => toggleMenu(`${index}-${idx}`)}
                                                     className="hover:bg-secondary text-text-secondary hover:text-text-primary flex w-full items-center justify-between rounded-lg p-2 text-sm transition">
                                                     <span className="flex-1 text-left">{child.name}</span>

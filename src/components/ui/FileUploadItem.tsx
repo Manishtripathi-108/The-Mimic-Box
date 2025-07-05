@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import cn from '@/lib/utils/cn';
 import { formatFileSize, getFileExtension, getFileType } from '@/lib/utils/file.utils';
@@ -50,14 +51,13 @@ const FileUploadItem = ({ file, error, onRemove, children, className }: FileUplo
             {children}
 
             {/* Remove Button */}
-            <button
-                type="button"
+            <Button
                 title="Remove file"
                 aria-label="Remove uploaded file"
                 onClick={onRemove}
-                className="sm:button absolute top-4 right-3 size-5 shrink-0 cursor-pointer text-red-500 sm:relative sm:top-0 sm:right-0 sm:size-9 sm:rounded-xl sm:p-1 dark:text-red-500">
-                <Icon icon="closeAnimated" />
-            </button>
+                className="sm:bg-primary sm:shadow-floating-xs absolute top-4 right-3 size-5 shrink-0 bg-transparent p-0 text-red-500 shadow-none sm:relative sm:top-0 sm:right-0 sm:size-8 sm:rounded-xl sm:p-1.5 dark:text-red-500"
+                icon="closeAnimated"
+            />
         </section>
     );
 };

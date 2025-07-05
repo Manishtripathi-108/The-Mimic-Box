@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { getUserMediaEntry, updateMediaProgress } from '@/actions/anilist.actions';
-import Icon from '@/components/ui/Icon';
+import Button from '@/components/ui/Button';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
 import { AnilistMediaListStatus, AnilistMediaType } from '@/lib/types/anilist.types';
@@ -42,9 +42,9 @@ const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
 
     if (!anilist?.accessToken) {
         return (
-            <ConnectAccount account="anilist" className={cn('button button-highlight mt-4 capitalize', className)}>
-                Connect Anilist Account to add to list
-            </ConnectAccount>
+            <Button asChild className={cn('mt-4 capitalize', className)}>
+                <ConnectAccount account="anilist">Connect Anilist Account to add to list</ConnectAccount>
+            </Button>
         );
     }
 
@@ -66,17 +66,14 @@ const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
 
     return (
         <div className="relative">
-            <button popoverTarget="add-to-list" disabled={isPending} className={cn('button button-highlight mt-4 gap-1 capitalize', className)}>
-                {isPending ? (
-                    <>
-                        <Icon icon="loading" className="size-5" /> Saving...
-                    </>
-                ) : (
-                    <>
-                        <Icon icon="down" className="size-5" /> {mediaStatus?.toLowerCase() ?? 'Add to list'}
-                    </>
-                )}
-            </button>
+            <Button
+                popoverTarget="add-to-list"
+                disabled={isPending}
+                icon={isPending ? 'loading' : 'down'}
+                variant="highlight"
+                className={cn('mt-4 capitalize', className)}>
+                {isPending ? 'Saving...' : (mediaStatus?.toLowerCase() ?? 'Add to list')}
+            </Button>
 
             <div
                 id="add-to-list"

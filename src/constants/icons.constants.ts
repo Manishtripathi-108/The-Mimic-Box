@@ -87,7 +87,7 @@ enum IconSet {
     next = 'solar:skip-next-bold',
 
     /* ------------------------------------ o ----------------------------------- */
-    open='majesticons:open',
+    open = 'majesticons:open',
 
     /* ------------------------------------ P ----------------------------------- */
     pause = 'line-md:pause',

@@ -2,9 +2,11 @@ import axios from 'axios';
 import stringSimilarity from 'string-similarity';
 
 import API_ROUTES from '@/constants/routes/api.routes';
-import { T_AudioFile, T_AudioPlayerTrack } from '@/lib/types/client.types';
+import { T_AudioFile, T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
 import { SuccessResponseOutput } from '@/lib/types/response.types';
+
+export const buildAudioCacheKey = (context: T_AudioSourceContext) => `${context.source}:${context.type}:${context.id}`;
 
 export const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: string): T_AudioFile | null => {
     const url = track.urls.find((u) => u.quality === quality);
@@ -25,14 +27,11 @@ export const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: stri
     };
 };
 
-export const getLyrics = async (track: T_AudioFile) => {
+export const getLyrics = async (musicTrack: { track: string; artist: string; album: string; duration: string | number }) => {
     try {
         const res = await axios.get<SuccessResponseOutput<string>>(API_ROUTES.LYRICS.GET, {
             params: {
-                track: track.metadata.title,
-                artist: track.metadata.artist,
-                album: track.metadata.album,
-                duration: track.metadata.duration,
+                ...musicTrack,
                 lyricsOnly: 'true',
             },
         });
@@ -42,13 +41,13 @@ export const getLyrics = async (track: T_AudioFile) => {
     }
 };
 
-export const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> => {
+export const searchMetadata = async (metadata: Record<string, string | number>): Promise<Record<string, string | number>> => {
     try {
         const res = await axios.get<SuccessResponseOutput<T_ITunesTrack[]>>(API_ROUTES.ITUNES.SEARCH.TRACKS, {
             params: {
-                track: file.metadata.title,
-                artist: file.metadata.artist,
-                album: file.metadata.album,
+                track: metadata.title,
+                artist: metadata.artist,
+                album: metadata.album,
             },
         });
 
@@ -58,9 +57,9 @@ export const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> =>
         let bestScore = 0;
 
         for (const track of res.data.payload) {
-            const titleScore = stringSimilarity.compareTwoStrings(track.title.toLowerCase(), file.metadata.title.toString().toLowerCase());
-            const artistScore = stringSimilarity.compareTwoStrings(track.artist.toLowerCase(), file.metadata.artist.toString().toLowerCase());
-            const albumScore = stringSimilarity.compareTwoStrings((track.album ?? '').toLowerCase(), file.metadata.album.toString().toLowerCase());
+            const titleScore = stringSimilarity.compareTwoStrings(track.title.toLowerCase(), metadata.title.toString().toLowerCase());
+            const artistScore = stringSimilarity.compareTwoStrings(track.artist.toLowerCase(), metadata.artist.toString().toLowerCase());
+            const albumScore = stringSimilarity.compareTwoStrings((track.album ?? '').toLowerCase(), metadata.album.toString().toLowerCase());
 
             if (titleScore < 0.7) continue;
             const score = titleScore * 0.5 + artistScore * 0.3 + albumScore * 0.2;
@@ -73,17 +72,14 @@ export const searchMetadata = async (file: T_AudioFile): Promise<T_AudioFile> =>
 
         return bestMatch
             ? {
-                  ...file,
-                  metadata: {
-                      ...file.metadata,
-                      genre: bestMatch.genre,
-                      track: bestMatch.track,
-                      album_artist: bestMatch.albumArtistName || file.metadata.artist,
-                      disc: bestMatch.disc,
-                  },
+                  ...metadata,
+                  genre: bestMatch.genre,
+                  track: bestMatch.track,
+                  album_artist: bestMatch.albumArtistName || metadata.artist,
+                  disc: bestMatch.disc,
               }
-            : file;
+            : metadata;
     } catch {
-        return file;
+        return metadata;
     }
 };

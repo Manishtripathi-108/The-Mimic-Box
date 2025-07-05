@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from 'react';
 
-import isEqual from 'lodash.isequal';
+import deepEqual from 'fast-deep-equal';
 import toast from 'react-hot-toast';
 
 import Icon from '@/components/ui/Icon';
@@ -14,7 +14,7 @@ const MusicTrackPlayBtn = ({ id, context }: { id: string; context: T_AudioSource
     const { playbackContext, currentTrack, playing, toggleFadePlay, playTrackById, setQueue } = useAudioPlayerContext();
     const { isPending, getPlayableTracks } = useAudioSourceTrackMapper();
 
-    const isSameContext = useMemo(() => isEqual(playbackContext, context), [playbackContext, context]);
+    const isSameContext = useMemo(() => deepEqual(playbackContext, context), [playbackContext, context]);
     const isCurrentTrack = useMemo(() => currentTrack?.id === id, [currentTrack, id]);
     const isPlaying = isSameContext && isCurrentTrack && playing;
 

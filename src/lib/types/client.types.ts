@@ -97,6 +97,7 @@ type T_AudioEntityType = 'album' | 'playlist' | 'track' | 'artist';
 export type T_AudioSource = 'spotify' | 'saavn' | 'youtube';
 
 export type T_AudioSourceContext = {
+    snapshotId?: string;
     source: T_AudioSource;
     type: T_AudioEntityType;
     id: string;
@@ -134,14 +135,16 @@ export type T_AudioPlayerAction =
 
 type T_DownloadStatus = 'pending' | 'processing' | 'downloading' | 'ready' | 'failed' | 'cancelled';
 
-export type T_DownloadFile = {
+export type T_AudioDownloadFile = {
     id: string;
     url: string;
     title: string;
+    cover?: string;
     progress?: number;
     error?: string;
     status: T_DownloadStatus;
     blobUrl?: string;
+    metadata: Record<string, string | number>;
 };
 
 export type T_AudioFile = {

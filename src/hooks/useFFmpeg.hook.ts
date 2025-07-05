@@ -21,15 +21,6 @@ export const useFFmpeg = () => {
             return;
         }
 
-        // ffmpeg.on('log', ({ message }) => {
-        //     setLog((prev) => [...prev, message]);
-        //     console.log('[ffmpeg]', message);
-        // });
-
-        // ffmpeg.on('progress', ({ progress }) => {
-        //     console.log('[ffmpeg] Progress:', progress * 100);
-        // });
-
         await ffmpeg.load({
             coreURL: '/download/ffmpeg-core.js',
             wasmURL: '/download/ffmpeg-core.wasm',
@@ -39,31 +30,47 @@ export const useFFmpeg = () => {
         setIsLoaded(true);
     };
 
-    const ensureLoaded = () => {
+    const ensureLoaded = async () => {
         if (!ffmpegRef.current || !ffmpegRef.current.loaded) {
-            throw new Error('FFmpeg is not loaded');
+            await load();
+            if (!ffmpegRef.current) {
+                throw new Error('FFmpeg instance is not initialized');
+            }
         }
         return ffmpegRef.current;
     };
 
     const exec = async (args: string[]) => {
-        const ffmpeg = ensureLoaded();
+        const ffmpeg = await ensureLoaded();
         await ffmpeg.exec(args);
     };
 
     const writeFile = async (name: string, data: string | File | Blob) => {
-        const ffmpeg = ensureLoaded();
+        const ffmpeg = await ensureLoaded();
         await ffmpeg.writeFile(name, await fetchFile(data));
     };
 
     const readFile = async (name: string) => {
-        const ffmpeg = ensureLoaded();
+        const ffmpeg = await ensureLoaded();
         return await ffmpeg.readFile(name);
     };
 
     const deleteFile = async (name: string) => {
-        const ffmpeg = ensureLoaded();
+        const ffmpeg = await ensureLoaded();
         await ffmpeg.deleteFile(name);
+    };
+
+    const cleanup = async () => {
+        const ffmpeg = ffmpegRef.current;
+        if (ffmpeg) {
+            try {
+                ffmpeg.terminate();
+            } catch (err) {
+                console.warn('Failed to terminate ffmpeg:', err);
+            }
+            ffmpegRef.current = null;
+            setIsLoaded(false);
+        }
     };
 
     return {
@@ -74,5 +81,6 @@ export const useFFmpeg = () => {
         readFile,
         deleteFile,
         ffmpeg: ffmpegRef.current,
+        cleanup,
     };
 };

@@ -59,7 +59,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                     <Waves className="mx-auto my-20 block">
                         <label
                             htmlFor={id}
-                            className="shadow-raised-sm button button-secondary relative aspect-square w-full cursor-pointer rounded-full p-6">
+                            className="shadow-raised-sm relative flex aspect-square w-full cursor-pointer items-center justify-center rounded-full p-6">
                             <input id={id} type="file" name={id} multiple accept={accept} className="hidden" onChange={handleFileSelect} />
                             <Icon icon="upload" className="text-highlight size-full" />
                         </label>

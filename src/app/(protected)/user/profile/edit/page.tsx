@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import * as z from 'zod';
 
 import { editProfileAction } from '@/actions/user.actions';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { profileSchema } from '@/lib/schema/user.validations';
@@ -167,9 +168,9 @@ const Page = () => {
                     <hr className="my-5" />
 
                     {/* Submit Button */}
-                    <button type="submit" className="button button-highlight w-full" disabled={isSubmitting}>
+                    <Button type="submit" variant="highlight" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? 'Saving...' : 'Save Changes'}
-                    </button>
+                    </Button>
                 </fieldset>
             </form>
         </div>

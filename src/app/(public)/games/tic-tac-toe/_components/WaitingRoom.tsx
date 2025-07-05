@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Icon from '@/components/ui/Icon';
+import Button from '@/components/ui/Button';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { shareUrl } from '@/lib/utils/client.utils';
 
@@ -62,13 +62,7 @@ const WaitingRoom = () => {
                         aria-label={`Room code ${gameRoomId}`}>
                         {`Code: ${gameRoomId}`}
                     </p>
-                    <button
-                        onClick={shareRoom}
-                        className="button button-sm shrink-0 rounded-full p-2"
-                        title="Share Room Code"
-                        aria-label="Share Room Code">
-                        <Icon icon="share" className="size-5" />
-                    </button>
+                    <Button onClick={shareRoom} className="shrink-0 rounded-full" title="Share Room Code" aria-label="Share Room Code" icon="share" />
                 </div>
             </motion.div>
 
@@ -109,15 +103,16 @@ const WaitingRoom = () => {
                 transition={{ delay: 0.4, duration: 0.5, ease: 'easeOut' }}
                 className="mt-10 flex w-full items-center justify-center gap-4"
                 title="Start Game">
-                <button
+                <Button
                     onClick={() => startMatch()}
                     disabled={!(playerXData.id && playerOData.id)}
-                    className={`button button-highlight disabled:${!(playerXData.id && playerOData.id) ? 'cursor-not-allowed' : ''}`}>
+                    variant="highlight"
+                    className={`disabled:${!(playerXData.id && playerOData.id) ? 'cursor-not-allowed' : ''}`}>
                     Start Game
-                </button>
-                <button onClick={() => leaveRoom()} className="button button-danger" title="Exit Room">
+                </Button>
+                <Button onClick={() => leaveRoom()} variant="danger" title="Exit Room">
                     Leave Room
-                </button>
+                </Button>
             </motion.div>
         </motion.div>
     );

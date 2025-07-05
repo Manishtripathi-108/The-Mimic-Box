@@ -8,7 +8,7 @@ import MatchResultModal from '@/app/(public)/games/tic-tac-toe/_components/Match
 import ScoreBoard from '@/app/(public)/games/tic-tac-toe/_components/ScoreBoard';
 import SetPlayerNamesModal from '@/app/(public)/games/tic-tac-toe/_components/SetPlayerNamesModal';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Icon from '@/components/ui/Icon';
+import Button from '@/components/ui/Button';
 import { ConfirmationModal, openModal } from '@/components/ui/Modals';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
@@ -29,14 +29,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <header className="flex w-full max-w-4xl items-center justify-between border-b px-2 py-4">
                 <h1 className="text-highlight text-lg font-bold tracking-wide capitalize md:text-4xl">{gameMode}</h1>
                 <nav className="flex gap-2">
-                    <Link
-                        href={gameMode === 'ultimate' ? APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC : APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE}
-                        className="button">
-                        {gameMode === 'ultimate' ? 'Play Classic' : 'Play Ultimate'}
-                    </Link>
-                    <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE} className="button">
-                        Play Online
-                    </Link>
+                    <Button asChild>
+                        <Link href={gameMode === 'ultimate' ? APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC : APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE}>
+                            {gameMode === 'ultimate' ? 'Play Classic' : 'Play Ultimate'}
+                        </Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE}>Play Online</Link>
+                    </Button>
                 </nav>
             </header>
 
@@ -44,14 +44,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <section className="flex w-full max-w-4xl items-center justify-between rounded-lg px-4 py-3">
                 <span className="text-text-secondary text-4xl">{isNextX ? 'X' : 'O'}</span>
                 <h2 className="text-accent text-center text-2xl font-bold capitalize">{renderGameStatus()}</h2>
-                <button
+                <Button
                     onClick={() => openModal('game_action')}
-                    type="button"
+                    className="rounded-lg"
                     title="Clear Board"
-                    className="button size-10 rounded-xl p-2"
-                    aria-label="Clear Board">
-                    <Icon icon="broom" />
-                </button>
+                    size="lg"
+                    aria-label="Clear Board"
+                    icon="broom"
+                />
             </section>
 
             {/* Game Board */}
@@ -65,14 +65,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Controls */}
             <footer className="mt-5 grid grid-cols-2 gap-4">
-                <button onClick={restartGame} className="button">
-                    <Icon icon="gamepad" className="size-6" />
+                <Button onClick={restartGame} icon="gamepad">
                     Start Over
-                </button>
-                <button className="button" onClick={() => openModal('SetPlayerNamesModal')}>
-                    <Icon icon="player" className="size-5" />
+                </Button>
+                <Button icon="player" onClick={() => openModal('SetPlayerNamesModal')}>
                     Change <span className="hidden md:inline">Player</span> Name
-                </button>
+                </Button>
             </footer>
 
             {/* Modals */}

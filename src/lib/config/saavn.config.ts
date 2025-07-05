@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { getRandomUserAgent } from '@/constants/user-agents.constants';
 import SAAVN_ROUTES from '@/constants/external-routes/saavn.routes';
+import { getRandomUserAgent } from '@/constants/user-agents.constants';
 
 const saavnConfig = axios.create({
     baseURL: SAAVN_ROUTES.BASE,

@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { closeModal } from '@/components/ui/Modals';
@@ -86,15 +87,13 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
                 {entry.media.title.english || entry.media.title.native || entry.media.title.romaji || 'Unknown Title'}
             </h2>
 
-            <button
-                type="button"
-                className={`button absolute top-2/4 right-8 cursor-pointer rounded-full p-2 ${
-                    isLiked ? 'shadow-neumorphic-inset-xs text-red-500 dark:text-red-500' : ''
-                }`}
+            <Button
+                icon="heart"
+                className={`absolute top-2/4 right-8 rounded-full p-2 ${isLiked ? 'text-red-500 dark:text-red-500' : ''}`}
+                active={isLiked}
                 onClick={toggleLike}
-                disabled={isToggling}>
-                <Icon icon="heart" className="size-5 text-inherit" />
-            </button>
+                disabled={isToggling}
+            />
 
             <form onSubmit={handleSubmit(onSubmit)} className="px-4 pb-4">
                 <div className="grid grid-cols-2 place-items-center gap-4">
@@ -118,12 +117,12 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
                 </div>
 
                 <div className="mt-8 flex justify-end space-x-2">
-                    <button type="button" className="button button-danger" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
+                    <Button variant="danger" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
                         {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Remove'}
-                    </button>
-                    <button type="submit" className="button button-primary" disabled={isToggling || isSubmitting}>
+                    </Button>
+                    <Button type="submit" disabled={isToggling || isSubmitting}>
                         {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Save'}
-                    </button>
+                    </Button>
                 </div>
             </form>
         </>

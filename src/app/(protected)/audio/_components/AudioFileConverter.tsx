@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { handleConvertAudio } from '@/actions/audio.actions';
 import AudioAdvancedSettings from '@/app/(protected)/audio/_components/AudioAdvancedSettings';
 import UploadProgressCard from '@/components/layout/UploadProgressCard';
+import Button from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUpload from '@/components/ui/FileUpload';
@@ -18,11 +19,11 @@ import RangeSlider from '@/components/ui/RangeSlider';
 import Select from '@/components/ui/Select';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
+import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { AudioFormatsSchema } from '@/lib/schema/audio.validations';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { downloadFile } from '@/lib/utils/file.utils';
-import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 
 const MAX_SIZE_MB = 50;
 const MAX_FILES = 10;
@@ -219,13 +220,12 @@ const AudioFileConverter = () => {
                                                         label: 'font-alegreya text-base tracking-wide',
                                                     }}
                                                 />
-                                                <button
+                                                <Button
                                                     title="Settings"
-                                                    type="button"
-                                                    className="sm:button size-5 shrink-0 cursor-pointer rounded-full sm:size-9 sm:p-2"
-                                                    onClick={() => openAdvancedSettings(fileSettings[index], `fileSettings.${index}`)}>
-                                                    <Icon icon="settings" />
-                                                </button>
+                                                    className="sm:bg-primary sm:shadow-floating-xs size-5 shrink-0 bg-transparent p-0 shadow-none sm:size-8 sm:p-1.5"
+                                                    onClick={() => openAdvancedSettings(fileSettings[index], `fileSettings.${index}`)}
+                                                    icon="settings"
+                                                />
                                             </div>
                                         )}
                                     </FileUploadItem>
@@ -243,9 +243,9 @@ const AudioFileConverter = () => {
 
                             <ErrorMessage message={errors.root?.message} />
 
-                            <button type="button" className="button h-10 w-full" onClick={() => document.getElementById('file-upload')?.click()}>
-                                <Icon icon="plus" className="h-full" /> Add More Files
-                            </button>
+                            <Button className="w-full" onClick={() => document.getElementById('file-upload')?.click()}>
+                                <Icon icon="plus" /> Add More Files
+                            </Button>
 
                             <hr />
 
@@ -271,7 +271,6 @@ const AudioFileConverter = () => {
                                             {AUDIO_BITRATE_OPTIONS.map(({ label, value }) => (
                                                 <button
                                                     key={value}
-                                                    type="button"
                                                     className={`cursor-pointer text-xs transition-transform duration-300 ease-in-out ${
                                                         Number(globalSettings.audio.bitrate) === value
                                                             ? 'text-highlight translate-y-0'
@@ -286,23 +285,22 @@ const AudioFileConverter = () => {
                                         </div>
                                     </div>
 
-                                    <button
-                                        type="button"
+                                    <Button
                                         title="Advanced Settings"
-                                        className="button mt-4 ml-auto h-10"
+                                        className="mt-4 ml-auto"
                                         onClick={() => openAdvancedSettings(globalSettings, 'global')}>
-                                        <Icon icon="settings" className="h-full" /> Advanced Settings
-                                    </button>
+                                        <Icon icon="settings" /> Advanced Settings
+                                    </Button>
                                 </div>
                             )}
 
                             <div className="mt-5 flex w-full justify-between">
-                                <button className="button button-danger mr-2 h-10" type="button" onClick={() => reset(defaultValues)}>
-                                    <Icon icon="trash" className="h-full" /> Clear
-                                </button>
-                                <button className="button button-highlight h-10" type="submit">
-                                    <Icon icon="musicConvert" className="h-full" /> Convert
-                                </button>
+                                <Button variant="danger" className="mr-2" onClick={() => reset(defaultValues)}>
+                                    <Icon icon="trash" /> Clear
+                                </Button>
+                                <Button variant="highlight" type="submit">
+                                    <Icon icon="musicConvert" /> Convert
+                                </Button>
                             </div>
                         </CardContainer>
                     )}

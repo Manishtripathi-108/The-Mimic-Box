@@ -84,5 +84,5 @@ export const LyricsQuerySchema = z
     })
     .refine((data) => data.id !== undefined || (data.q && data.q.trim() !== '') || (data.trackName && data.trackName.trim() !== ''), {
         message: 'At least one of the following fields must be provided: track name, lyrics, or Lrclib ID.',
-        path: ['trackName'],
+        path: ['q'],
     });

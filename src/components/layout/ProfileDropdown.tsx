@@ -8,12 +8,13 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSession } from 'next-auth/react';
 
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
-import useTheme from '@/hooks/useTheme';
-import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import APP_ROUTES from '@/constants/routes/app.routes';
+import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import useTheme from '@/hooks/useTheme';
 
 const ProfileDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -39,20 +40,17 @@ const ProfileDropdown = () => {
     }, [isOpen]);
 
     // Show nothing until session is loaded to prevent flicker
-    if (status === 'loading')
-        return (
-            <div className="button text-highlight size-9 cursor-wait rounded-full p-1.5">
-                <Icon icon="loading" />
-            </div>
-        );
+    if (status === 'loading') return <Button className="cursor-wait" icon="loading" />;
 
     // If user is NOT logged in, show only the login button
     if (!session?.user) {
         return (
-            <Link href={DEFAULT_AUTH_ROUTE} className="button rounded-full">
-                <Icon icon="login" className="size-5" />
-                <span>Login</span>
-            </Link>
+            <Button asChild className="rounded-full">
+                <Link href={DEFAULT_AUTH_ROUTE}>
+                    <Icon icon="login" className="size-5" />
+                    Login
+                </Link>
+            </Button>
         );
     }
 
@@ -61,11 +59,9 @@ const ProfileDropdown = () => {
     return (
         <div className="relative" ref={dropdownRef}>
             {/* Profile Button */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="shadow-floating-xs text-text-secondary relative flex aspect-square w-fit cursor-pointer items-center justify-center overflow-hidden rounded-full p-0.5">
-                <Image src={image || IMAGE_FALLBACKS.PROFILE} alt="Profile" width={36} height={36} className="size-9 rounded-full object-cover" />
-            </button>
+            <Button onClick={() => setIsOpen(!isOpen)} className="aspect-square w-fit overflow-hidden rounded-full p-0.5">
+                <Image src={image || IMAGE_FALLBACKS.PROFILE} alt="Profile" width={32} height={32} className="size-8 rounded-full object-cover" />
+            </Button>
 
             {/* Dropdown Menu */}
             <AnimatePresence>

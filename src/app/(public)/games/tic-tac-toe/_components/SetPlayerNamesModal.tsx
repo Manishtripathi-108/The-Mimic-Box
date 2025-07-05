@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
+import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal, { closeModal } from '@/components/ui/Modals';
 
@@ -68,9 +69,9 @@ const SetPlayerNamesModal = () => {
                 />
 
                 {/* Submit Button */}
-                <button id="submitBtn" type="submit" className="button button-highlight mt-6 w-full">
+                <Button id="submitBtn" type="submit" variant="highlight" className="mt-6 w-full">
                     <span className="text-sm font-semibold">Save</span>
-                </button>
+                </Button>
             </form>
         </Modal>
     );

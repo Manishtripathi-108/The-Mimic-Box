@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 
 import { verifyEmailToken } from '@/actions/auth.actions';
 import { verifyEmailChangeToken } from '@/actions/user.actions';
+import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 
@@ -72,9 +73,9 @@ const VerifyEmail = ({ type }: { type: 'verify' | 'change' }) => {
                         </p>
 
                         <form action={verifyAction}>
-                            <button type="submit" className="button button-highlight mt-4 w-full" disabled={isPending}>
+                            <Button type="submit" variant="highlight" className="mt-4 w-full" disabled={isPending}>
                                 {isPending ? 'Verifying...' : 'Verify Email'}
-                            </button>
+                            </Button>
                         </form>
                     </div>
                 ) : (

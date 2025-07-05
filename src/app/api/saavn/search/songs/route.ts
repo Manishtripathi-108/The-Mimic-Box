@@ -4,8 +4,6 @@ import saavnApi from '@/lib/services/saavn.service';
 import { createErrorResponse, createSuccessResponse } from '@/lib/utils/createResponse.utils';
 
 export async function GET(req: NextRequest) {
-    console.log('GET /api/saavn/search/songs');
-
     const searchParams = req.nextUrl.searchParams;
     const query = searchParams.get('query');
     const limit = parseInt(searchParams.get('limit') || '10');

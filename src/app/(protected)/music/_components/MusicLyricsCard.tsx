@@ -2,9 +2,12 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
+import Button from '@/components/ui/Button';
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
 import API_ROUTES from '@/constants/routes/api.routes';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import cn from '@/lib/utils/cn';
 
@@ -35,13 +38,6 @@ const parseLyrics = (lyricsText: string): LyricLine[] => {
 const MusicLyricsCard = ({ className, onClose }: Props) => {
     const { currentTrack, getAudioElement } = useAudioPlayerContext();
     const { isPending, makeApiCall, data } = useSafeApiCall<null, string>();
-
-    const lyricsContainerRef = useRef<HTMLDivElement>(null);
-    const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const activeIndexRef = useRef<number | null>(null);
-
-    const audio = getAudioElement();
-
     const fetchLyrics = useCallback(() => {
         if (!currentTrack) return;
 
@@ -56,6 +52,12 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
             },
         });
     }, [currentTrack, makeApiCall]);
+
+    const lyricsContainerRef = useRef<HTMLDivElement>(null);
+    const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const activeIndexRef = useRef<number | null>(null);
+
+    const audio = getAudioElement();
 
     const parsedLyrics = useMemo(() => (data ? parseLyrics(data) : []), [data]);
     const isSynced = parsedLyrics.length > 0;
@@ -95,18 +97,29 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
         return () => audio.removeEventListener('timeupdate', updateLyricsHighlight);
     }, [audio, updateLyricsHighlight, isSynced]);
 
-    return (
-        <div
-            className={cn('bg-secondary absolute inset-auto z-50 flex flex-col overflow-hidden rounded-2xl shadow-lg', className)}
-            ref={lyricsContainerRef}>
-            <div className="shadow-raised-xs flex items-center justify-between px-4 py-3">
-                <h2 className="text-text-primary font-alegreya text-lg tracking-wide">Lyrics</h2>
-                <button className="button size-8 shrink-0 rounded-full p-1 text-xs" title="Close lyrics" aria-label="Close lyrics" onClick={onClose}>
-                    <Icon icon="close" />
-                </button>
-            </div>
+    useClickOutside({
+        targets: [lyricsContainerRef],
+        onClickOutside: onClose,
+    });
 
-            <div className="sm:scrollbar-thin text-text-secondary h-full flex-1 space-y-2 overflow-y-auto p-4 text-sm">
+    return (
+        <Card
+            id="lyrics-card"
+            role="dialog"
+            aria-label="Music lyrics"
+            className={cn('absolute inset-auto z-50 gap-4', className)}
+            ref={lyricsContainerRef}>
+            <CardHeader className="p-4">
+                <CardTitle className="font-alegreya tracking-wide">Lyrics</CardTitle>
+                <CardDescription className='truncate text-xs'>
+                    {currentTrack?.title} - {currentTrack?.artists}
+                </CardDescription>
+                <CardAction>
+                    <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
+                </CardAction>
+            </CardHeader>
+
+            <CardContent className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto px-4 text-sm">
                 {isPending ? (
                     <Icon icon="loading" className="text-highlight mx-auto size-20 shrink-0" />
                 ) : data ? (
@@ -127,8 +140,8 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
                 ) : (
                     <div className="text-center">No lyrics found.</div>
                 )}
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 };
 

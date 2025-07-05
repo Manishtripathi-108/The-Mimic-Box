@@ -10,90 +10,95 @@ import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_SaavnSong } from '@/lib/types/saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
+import { chunkArray } from '@/lib/utils/core.utils';
+import { buildAudioCacheKey } from '@/lib/utils/music.utils';
 
 const CACHE_DURATION_MS = 15 * 24 * 60 * 60 * 1000; // 15 days
+
+const normalize = (s: string) => s.trim().toLowerCase();
+
+const getCachedTracks = (cacheKey: string): { data: T_AudioPlayerTrack[]; snapshotId?: string } | null => {
+    try {
+        const raw = localStorage.getItem(cacheKey);
+        if (!raw) return null;
+
+        const { data, timestamp, snapshotId } = JSON.parse(raw);
+        if (Date.now() - timestamp < CACHE_DURATION_MS) return { data, snapshotId };
+
+        localStorage.removeItem(cacheKey);
+    } catch {
+        localStorage.removeItem(cacheKey);
+    }
+    return null;
+};
+
+const saveToCache = (cacheKey: string, tracks: T_AudioPlayerTrack[], snapshotId?: string) => {
+    localStorage.setItem(
+        cacheKey,
+        JSON.stringify({
+            data: tracks,
+            snapshotId: snapshotId || null,
+            timestamp: Date.now(),
+        })
+    );
+};
+
+const matchSaavnTrack = (spotifyTrack: T_SpotifySimplifiedTrack, saavnResults: T_SaavnSong[]): T_SaavnSong | null => {
+    const spotifyTitle = normalize(spotifyTrack.name);
+    const spotifyArtists = spotifyTrack.artists.map((a) => normalize(a.name));
+
+    let bestMatch: T_SaavnSong | null = null;
+    let bestScore = 0;
+
+    for (const saavnTrack of saavnResults) {
+        const saavnTitle = normalize(saavnTrack.name);
+        const titleScore = stringSimilarity.compareTwoStrings(spotifyTitle, saavnTitle);
+        if (titleScore < 0.7) continue;
+
+        const saavnArtists = saavnTrack.artists.primary.map((a) => normalize(a.name));
+        const artistMatched = saavnArtists.some((sa) => spotifyArtists.some((sp) => sp.includes(sa) || sa.includes(sp)));
+        if (!artistMatched) continue;
+
+        if (titleScore > bestScore) {
+            bestMatch = saavnTrack;
+            bestScore = titleScore;
+        }
+    }
+
+    return bestMatch;
+};
 
 const useAudioSourceTrackMapper = () => {
     const { makeParallelApiCalls } = useSafeApiCall<null, { total: number; start: number; results: T_SaavnSong[] }>();
     const [isPending, setIsPending] = useState(false);
 
-    const buildCacheKey = (context: T_AudioSourceContext) => `${context.source}:${context.type}:${context.id}`;
-
-    const getCachedTracks = (cacheKey: string): T_AudioPlayerTrack[] | null => {
-        try {
-            const raw = localStorage.getItem(cacheKey);
-            if (!raw) return null;
-
-            const { data, timestamp } = JSON.parse(raw);
-            if (Date.now() - timestamp < CACHE_DURATION_MS) return data;
-
-            localStorage.removeItem(cacheKey);
-        } catch {
-            localStorage.removeItem(cacheKey);
-        }
-        return null;
-    };
-
-    const saveToCache = (cacheKey: string, tracks: T_AudioPlayerTrack[]) => {
-        localStorage.setItem(
-            cacheKey,
-            JSON.stringify({
-                data: tracks,
-                timestamp: Date.now(),
-            })
-        );
-    };
-
-    const matchSaavnTrack = (spotifyTrack: T_SpotifySimplifiedTrack, saavnResults: T_SaavnSong[]): T_SaavnSong | null => {
-        const spotifyTitle = spotifyTrack.name.trim().toLowerCase();
-        const spotifyArtists = spotifyTrack.artists.map((a) => a.name.toLowerCase());
-
-        let bestMatch: T_SaavnSong | null = null;
-        let bestScore = 0;
-
-        for (const saavnTrack of saavnResults) {
-            const saavnTitle = saavnTrack.name.trim().toLowerCase();
-            const titleScore = stringSimilarity.compareTwoStrings(spotifyTitle, saavnTitle);
-            if (titleScore < 0.7) continue;
-
-            const saavnArtists = saavnTrack.artists.primary.map((a) => a.name.toLowerCase());
-            const artistMatched = saavnArtists.some((a) => spotifyArtists.includes(a));
-            if (!artistMatched) continue;
-
-            if (titleScore > bestScore) {
-                bestMatch = saavnTrack;
-                bestScore = titleScore;
-            }
-        }
-
-        return bestMatch;
-    };
-
     const mapSpotifyToSaavnTracks = useCallback(
         async ({
             context,
             spotifyTracks,
+            snapshotId,
         }: {
             context: T_AudioSourceContext;
             spotifyTracks: T_SpotifySimplifiedTrack[];
+            snapshotId?: string;
         }): Promise<T_AudioPlayerTrack[]> => {
             setIsPending(true);
 
             const matchedTracks: T_AudioPlayerTrack[] = [];
-            const usedSaavnIds = new Set<string>();
-            const cacheKey = buildCacheKey(context);
+            const usedSaavnIds = new Map<string, boolean>();
+            const cacheKey = buildAudioCacheKey(context);
 
             const cached = getCachedTracks(cacheKey);
             let remainingTracks = spotifyTracks;
 
-            if (cached?.length) {
-                const cachedSpotifyIds = new Set(cached.map((t) => t.id));
-                matchedTracks.push(...cached);
+            if (cached && cached.data.length) {
+                const cachedSpotifyIds = new Set(cached.data.map((t) => t.id));
+                matchedTracks.push(...cached.data);
                 remainingTracks = spotifyTracks.filter((t) => !cachedSpotifyIds.has(t.id));
 
                 if (!remainingTracks.length) {
                     setIsPending(false);
-                    return cached;
+                    return cached.data;
                 }
             }
 
@@ -104,29 +109,18 @@ const useAudioSourceTrackMapper = () => {
                 },
             }));
 
-            const start = performance.now();
-            const batchedQueries = queries.reduce(
-                (acc, _, i) => {
-                    if (i % 50 === 0) acc.push([]);
-                    acc[acc.length - 1].push(queries[i]);
-                    return acc;
-                },
-                [] as { url: string; params: Record<string, string> }[][]
-            );
+            const batchedQueries = chunkArray(queries, 50);
 
-            const responses: {
-                total: number;
-                start: number;
-                results: T_SaavnSong[];
-            }[] = [];
+            const responses: { total: number; start: number; results: T_SaavnSong[] }[] = [];
 
             for (const batch of batchedQueries) {
-                const res = await makeParallelApiCalls(batch);
-                responses.push(...res);
+                try {
+                    const res = await makeParallelApiCalls(batch);
+                    responses.push(...res);
+                } catch (e) {
+                    console.warn('Skipping failed batch:', e);
+                }
             }
-
-            const end = performance.now();
-            console.log(`[useAudioSourceTrackMapper] Saavn API calls took ${((end - start) / 1000).toFixed(2)} seconds`);
 
             remainingTracks.forEach((spotifyTrack, i) => {
                 const saavnResults = responses[i]?.results;
@@ -134,9 +128,8 @@ const useAudioSourceTrackMapper = () => {
 
                 const match = matchSaavnTrack(spotifyTrack, saavnResults);
 
-                // this check ensures we only add unique Saavn tracks
                 if (match && !usedSaavnIds.has(match.id)) {
-                    usedSaavnIds.add(match.id);
+                    usedSaavnIds.set(match.id, true);
                     matchedTracks.push({
                         id: spotifyTrack.id,
                         title: match.name,
@@ -151,7 +144,9 @@ const useAudioSourceTrackMapper = () => {
                 }
             });
 
-            saveToCache(cacheKey, matchedTracks);
+            if (matchedTracks.length > 0) {
+                saveToCache(cacheKey, matchedTracks, snapshotId);
+            }
             setIsPending(false);
             return matchedTracks;
         },
@@ -182,13 +177,22 @@ const useAudioSourceTrackMapper = () => {
             }
 
             if (context.source === 'spotify') {
+                if (context.type === 'playlist' && context.snapshotId) {
+                    const cacheKey = buildAudioCacheKey(context);
+                    const cached = getCachedTracks(cacheKey);
+                    if (cached && cached.snapshotId === context.snapshotId) {
+                        setIsPending(false);
+                        return cached.data;
+                    }
+                }
+
                 const res = await spotifyGetEntityTracks(context.id, context.type);
                 if (!res.success || !res.payload) {
                     setIsPending(false);
                     return [];
                 }
 
-                const tracks = await mapSpotifyToSaavnTracks({ context, spotifyTracks: res.payload });
+                const tracks = await mapSpotifyToSaavnTracks({ context, spotifyTracks: res.payload, snapshotId: context.snapshotId });
                 setIsPending(false);
                 return tracks;
             }

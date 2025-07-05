@@ -7,10 +7,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { getLyrics } from '@/actions/lrclib.actions';
+import Button from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Input from '@/components/ui/Input';
 import TabNavigation from '@/components/ui/TabNavigation';
-import Textarea from '@/components/ui/Textarea';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
 
@@ -56,9 +56,9 @@ const LyricsResult = memo(({ lyric, onSelect }: LyricsResultProps) => {
                     </div>
 
                     {onSelect && (
-                        <button onClick={() => onSelect(currentLyrics)} className="button button-highlight mx-auto mt-2">
+                        <Button variant="highlight" onClick={() => onSelect(currentLyrics)} className="mx-auto mt-2">
                             Select {tab}
-                        </button>
+                        </Button>
                     )}
                 </div>
             )}
@@ -108,28 +108,24 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
             </h3>
 
             <form onSubmit={handleSubmit(submitSearchLyrics)} className={`space-y-2 ${isSubmitting ? 'pointer-events-none animate-pulse' : ''}`}>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <Input control={control} name="trackName" label="Track Name" placeholder="e.g. Departure Lane" disabled={isSubmitting} />
-                    <Textarea
-                        control={control}
-                        name="q"
-                        label="Search By Lyrics"
-                        classNames={{ field: 'field-sizing-content' }}
-                        rows={1}
-                        placeholder="e.g. Khushfehmiyan hein Khudse bani hein..."
-                        disabled={isSubmitting}
-                    />
-                </div>
+                <Input
+                    control={control}
+                    name="q"
+                    label="Search here..."
+                    iconName="search"
+                    placeholder="e.g. Departure Lane Umair & Talha Anjum"
+                    disabled={isSubmitting}
+                />
 
-                <button
-                    type="button"
-                    onClick={() => setShowAdvanced((prev) => !prev)}
-                    className="text-text-secondary hover:text-text-primary w-full cursor-pointer text-end text-sm">
-                    {showAdvanced ? 'Hide Advanced Filters' : 'More filters'}
-                </button>
+                <div className="flex items-center justify-end">
+                    <Button onClick={() => setShowAdvanced((prev) => !prev)} variant="transparent" size="sm">
+                        {showAdvanced ? 'Hide Advance Search' : 'Open Advance Search'}
+                    </Button>
+                </div>
 
                 {showAdvanced && (
                     <div className="grid gap-2 sm:grid-cols-2">
+                        <Input control={control} name="trackName" label="Track Name" placeholder="e.g. Departure Lane" disabled={isSubmitting} />
                         <Input
                             control={control}
                             name="artistName"
@@ -152,12 +148,12 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
                 <ErrorMessage message={errors.root?.message} />
 
                 <div className="flex items-center justify-end gap-6 pt-2">
-                    <button type="submit" disabled={isSubmitting} className="button button-highlight">
-                        {isSubmitting ? 'Searching...' : 'Search Lyrics'}
-                    </button>
-                    <button type="button" onClick={() => reset()} disabled={isSubmitting} className="button button-danger">
+                    <Button onClick={() => reset()} disabled={isSubmitting} variant="danger">
                         Clear
-                    </button>
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting} variant="highlight">
+                        {isSubmitting ? 'Searching...' : 'Search Lyrics'}
+                    </Button>
                 </div>
             </form>
 

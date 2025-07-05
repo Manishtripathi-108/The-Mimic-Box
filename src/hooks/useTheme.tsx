@@ -2,13 +2,15 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { isBrowser } from '@/lib/utils/core.utils';
+
 type ThemeType = 'light' | 'dark' | 'system';
 
 const THEME_KEY = 'theme';
 
 const useTheme = () => {
     const [theme, setTheme] = useState<ThemeType>(() => {
-        if (typeof window === 'undefined') return 'system';
+        if (!isBrowser) return 'system';
         return (localStorage.getItem(THEME_KEY) as ThemeType) || 'system';
     });
 
@@ -33,7 +35,7 @@ const useTheme = () => {
 
     // Load theme on mount and listen for system changes if needed
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (!isBrowser) return;
 
         applyTheme(theme);
         if (theme === 'system') {

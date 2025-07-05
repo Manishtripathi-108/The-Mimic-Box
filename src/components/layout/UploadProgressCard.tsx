@@ -1,5 +1,6 @@
 'use client';
 
+import Button from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { T_UploadState } from '@/lib/types/client.types';
@@ -30,9 +31,9 @@ const UploadProgressCard = ({ uploadState, onCancel }: { uploadState: T_UploadSt
             </div>
 
             {onCancel && (
-                <button type="button" className="button button-danger" onClick={onCancel}>
+                <Button variant="danger" onClick={onCancel}>
                     Cancel
-                </button>
+                </Button>
             )}
         </CardContainer>
     );
