@@ -2,6 +2,8 @@
 
 import { useCallback } from 'react';
 
+import toast from 'react-hot-toast';
+
 import MusicDownloadPopover from '@/app/(protected)/music/_components/MusicDownloadPopover';
 import Button from '@/components/ui/Button';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
@@ -26,14 +28,14 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
             getPlayableTracks(context)
                 .then((tracks) => {
                     if (!tracks.length) {
-                        throw new Error('No valid tracks found for selected context');
+                        throw new Error('No valid tracks found. Try Searching instead.');
                     }
                     setQueue(tracks, context);
                     setTimeout(() => toggleFadePlay(), 100);
                 })
                 .catch((err) => {
                     console.error(err);
-                    shareUrl({ url: window.location.href });
+                    toast.error(err.message || 'Failed to load tracks');
                 });
         }
     }, [isCurrentContext, toggleFadePlay, isPending, getPlayableTracks, setQueue, context]);
@@ -41,6 +43,7 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
     const removeCachedData = useCallback(() => {
         const cacheKey = buildAudioCacheKey(context);
         localStorage.removeItem(cacheKey);
+        toast.success('Cache cleared');
     }, [context]);
 
     return (
