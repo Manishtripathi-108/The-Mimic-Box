@@ -20,13 +20,18 @@ const MusicQueue = ({ className }: { className?: string }) => {
     const total = queue?.length || 0;
 
     const loadMoreItems = useCallback(() => {
+        console.log('Loading more items...');
         if (visibleCount < total) {
             setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
         }
     }, [total, visibleCount]);
 
     const rootRef = useRef<HTMLDivElement>(null);
-    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef, threshold: 1 });
+    const { observeRef } = useIntersectionObserver({
+        onEntry: loadMoreItems,
+        root: rootRef,
+        threshold: 1,
+    });
 
     if (!queue || queue.length === 0) return null;
 
@@ -48,7 +53,7 @@ const MusicQueue = ({ className }: { className?: string }) => {
                 </CardAction>
             </CardHeader>
 
-            <CardContent ref={rootRef} className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
+            <CardContent id="queue-content" ref={rootRef} className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
                 {queue.slice(0, visibleCount).map((track) => (
                     <div
                         key={track.id}
@@ -80,6 +85,7 @@ const MusicQueue = ({ className }: { className?: string }) => {
                     <div
                         ref={observeRef}
                         role="status"
+                        id="loading-more-queue-tracks"
                         aria-live="polite"
                         className="text-text-secondary flex items-center justify-center gap-2 py-2 text-center text-sm">
                         <Icon icon="loading" className="text-accent size-8" />

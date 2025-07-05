@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
@@ -35,16 +35,25 @@ const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
         setNextUrl(res.payload.next);
     }, [nextUrl, isPending]);
 
+    const [shouldLoadMore, setShouldLoadMore] = useState(false);
+
     const { observeRef } = useIntersectionObserver({
         onEntry: () => {
-            if (nextUrl) {
-                startTransition(() => {
-                    fetchNextTracks();
-                });
+            if (nextUrl && !isPending) {
+                setShouldLoadMore(true);
             }
         },
         threshold: 1,
     });
+
+    useEffect(() => {
+        if (shouldLoadMore && nextUrl && !isPending) {
+            startTransition(() => {
+                fetchNextTracks();
+            });
+            setShouldLoadMore(false);
+        }
+    }, [shouldLoadMore, nextUrl, isPending, fetchNextTracks]);
 
     return (
         <>

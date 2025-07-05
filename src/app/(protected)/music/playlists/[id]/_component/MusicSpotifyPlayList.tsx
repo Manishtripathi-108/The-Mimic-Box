@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
@@ -39,16 +39,25 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
         setNextUrl(res.payload.next);
     }, [nextUrl, isPending]);
 
+    const [shouldLoadMore, setShouldLoadMore] = useState(false);
+
     const { observeRef } = useIntersectionObserver({
         onEntry: () => {
-            if (nextUrl) {
-                startTransition(() => {
-                    fetchNextTracks();
-                });
+            if (nextUrl && !isPending) {
+                setShouldLoadMore(true);
             }
         },
         threshold: 1,
     });
+
+    useEffect(() => {
+        if (shouldLoadMore && nextUrl && !isPending) {
+            startTransition(() => {
+                fetchNextTracks();
+            });
+            setShouldLoadMore(false);
+        }
+    }, [shouldLoadMore, nextUrl, isPending, fetchNextTracks]);
 
     const tracks = useMemo(
         () => playlistTracks.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null),

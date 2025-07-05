@@ -19,11 +19,13 @@ const DownloadModal = ({ className }: { className?: string }) => {
     const { downloads, total, completed, cancelDownload, cancelAllDownloads, clearDownloads } = useAudioDownload();
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
     const loadMoreItems = useCallback(() => {
+        console.log('Loading more items...');
+
         if (visibleCount < total) setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
     }, [total, visibleCount]);
 
     const rootRef = useRef<HTMLDivElement>(null);
-    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef, threshold: 1 });
+    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef });
 
     const [open, { setAlternate: openModal, setDefault: closeModal }] = useToggle(false, true, {
         onChange: (value) => {
