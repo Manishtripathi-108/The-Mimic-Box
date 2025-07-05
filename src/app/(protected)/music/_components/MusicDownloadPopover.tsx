@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useRef } from 'react';
 
 import deepEqual from 'fast-deep-equal';
 import toast from 'react-hot-toast';
@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { useAudioDownload } from '@/contexts/AudioDownload.context';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';
 
@@ -17,13 +18,19 @@ type Props = {
     className?: string;
     context?: T_AudioSourceContext;
     downloadCurrent?: boolean;
-    onClose?: () => void;
+    onClose: () => void;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const MusicDownloadPopover = ({ className, context, downloadCurrent = false, onClose, ...props }: Props) => {
     const { currentTrack, playbackContext, queue } = useAudioPlayerContext();
     const { getPlayableTracks, isPending } = useAudioSourceTrackMapper();
     const { downloadTracks } = useAudioDownload();
+    const ref = useRef<HTMLDivElement | null>(null);
+
+    useClickOutside({
+        targets: [ref],
+        onClickOutside: onClose,
+    });
 
     const getTracksToDownload = async (): Promise<T_AudioPlayerTrack[]> => {
         if (playbackContext && deepEqual(playbackContext, context)) return queue;
@@ -55,6 +62,7 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, onC
 
     return (
         <div
+            ref={ref}
             id="download-popover"
             role="tooltip"
             className={cn('bg-tertiary text-text-secondary absolute inset-auto m-0 overflow-hidden rounded-md border shadow-lg', className)}

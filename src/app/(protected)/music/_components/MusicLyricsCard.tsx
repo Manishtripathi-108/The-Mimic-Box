@@ -3,10 +3,11 @@
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import Button from '@/components/ui/Button';
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
 import API_ROUTES from '@/constants/routes/api.routes';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
 import cn from '@/lib/utils/cn';
 
@@ -37,13 +38,6 @@ const parseLyrics = (lyricsText: string): LyricLine[] => {
 const MusicLyricsCard = ({ className, onClose }: Props) => {
     const { currentTrack, getAudioElement } = useAudioPlayerContext();
     const { isPending, makeApiCall, data } = useSafeApiCall<null, string>();
-
-    const lyricsContainerRef = useRef<HTMLDivElement>(null);
-    const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const activeIndexRef = useRef<number | null>(null);
-
-    const audio = getAudioElement();
-
     const fetchLyrics = useCallback(() => {
         if (!currentTrack) return;
 
@@ -58,6 +52,12 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
             },
         });
     }, [currentTrack, makeApiCall]);
+
+    const lyricsContainerRef = useRef<HTMLDivElement>(null);
+    const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const activeIndexRef = useRef<number | null>(null);
+
+    const audio = getAudioElement();
 
     const parsedLyrics = useMemo(() => (data ? parseLyrics(data) : []), [data]);
     const isSynced = parsedLyrics.length > 0;
@@ -97,6 +97,11 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
         return () => audio.removeEventListener('timeupdate', updateLyricsHighlight);
     }, [audio, updateLyricsHighlight, isSynced]);
 
+    useClickOutside({
+        targets: [lyricsContainerRef],
+        onClickOutside: onClose,
+    });
+
     return (
         <Card
             id="lyrics-card"
@@ -106,6 +111,9 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
             ref={lyricsContainerRef}>
             <CardHeader className="p-4">
                 <CardTitle className="font-alegreya tracking-wide">Lyrics</CardTitle>
+                <CardDescription className='truncate text-xs'>
+                    {currentTrack?.title} - {currentTrack?.artists}
+                </CardDescription>
                 <CardAction>
                     <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
                 </CardAction>

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -9,15 +9,20 @@ import MusicDurationSlider from '@/app/(protected)/music/_components/MusicDurati
 import Button from '@/components/ui/Button';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
+import useMultiToggle from '@/hooks/useMultiToggle';
 
 const MusicDownloadPopover = dynamic(() => import('@/app/(protected)/music/_components/MusicDownloadPopover'), { ssr: false });
 const MusicQueue = dynamic(() => import('@/app/(protected)/music/_components/MusicQueue'), { ssr: false });
 const MusicLyricsCard = dynamic(() => import('@/app/(protected)/music/_components/MusicLyricsCard'), { ssr: false });
 
 const MusicMiniPlayer = () => {
-    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-    const [isQueueOpen, setIsQueueOpen] = useState(false);
-    const [isLyricsOpen, setIsLyricsOpen] = useState(false);
+    const [toggles, { setDefault: close, toggle }] = useMultiToggle(false, true, {
+        onChange: (key, value) => {
+            console.log(`Toggle ${key} changed to ${value}`);
+        },
+        keybinds: { global: 'Escape' },
+        toggleOnKeyTo: false,
+    });
 
     const {
         currentTrack,
@@ -37,29 +42,6 @@ const MusicMiniPlayer = () => {
         playNext,
         playPrevious,
     } = useAudioPlayerContext();
-
-    // Close popover on outside click
-    useEffect(() => {
-        if (!isPopoverOpen && !isQueueOpen && !isLyricsOpen) return;
-
-        const handleClickOutside = (event: MouseEvent) => {
-            const popoverContainer = document.getElementById('download-popover-container');
-            if (popoverContainer && !popoverContainer.contains(event.target as Node)) {
-                setIsPopoverOpen(false);
-            }
-            const queueContainer = document.getElementById('queue-popover-container');
-            if (queueContainer && !queueContainer.contains(event.target as Node)) {
-                setIsQueueOpen(false);
-            }
-            const lyricsContainer = document.getElementById('lyrics-popover-container');
-            if (lyricsContainer && !lyricsContainer.contains(event.target as Node)) {
-                setIsLyricsOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isPopoverOpen, isQueueOpen, isLyricsOpen]);
 
     if (!currentTrack) return null;
 
@@ -91,15 +73,16 @@ const MusicMiniPlayer = () => {
                             <Button
                                 variant="ghost"
                                 title="Lyrics"
-                                onClick={() => setIsLyricsOpen((prev) => !prev)}
+                                onClick={() => toggle('lyrics')}
                                 aria-label="Open Lyrics"
                                 icon="lyrics"
-                                active={isLyricsOpen}
+                                active={toggles.lyrics}
+                                className="ignore-onClickOutside"
                             />
 
-                            {isLyricsOpen && (
+                            {toggles.lyrics && (
                                 <MusicLyricsCard
-                                    onClose={() => setIsLyricsOpen(false)}
+                                    onClose={() => close('lyrics')}
                                     className="right-1/2 bottom-full z-60 mb-6 max-h-[60vh] w-sm translate-x-1/2"
                                 />
                             )}
@@ -136,20 +119,17 @@ const MusicMiniPlayer = () => {
                         />
 
                         <div className="relative hidden items-center @md:flex" id="download-popover-container">
-                            {isPopoverOpen && (
-                                <MusicDownloadPopover
-                                    onClose={() => setIsPopoverOpen(false)}
-                                    downloadCurrent
-                                    className="right-1/2 bottom-full z-60 mb-4"
-                                />
+                            {toggles.download && (
+                                <MusicDownloadPopover onClose={() => close('download')} downloadCurrent className="right-1/2 bottom-full z-60 mb-4" />
                             )}
                             <Button
                                 title="Download"
-                                onClick={() => setIsPopoverOpen((prev) => !prev)}
+                                className="ignore-onClickOutside"
+                                onClick={() => toggle('download')}
                                 variant="ghost"
                                 aria-label="Download"
                                 icon="download"
-                                active={isPopoverOpen}
+                                active={toggles.download}
                             />
                         </div>
                     </div>
@@ -189,11 +169,17 @@ const MusicMiniPlayer = () => {
                             variant="ghost"
                             title="Open Queue"
                             aria-label="Open Queue"
-                            onClick={() => setIsQueueOpen((prev) => !prev)}
+                            onClick={() => toggle('queue')}
                             icon="musicQueue"
-                            active={isQueueOpen}
+                            className="ignore-onClickOutside"
+                            active={toggles.queue}
                         />
-                        {isQueueOpen && <MusicQueue className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right" />}
+                        {toggles.queue && (
+                            <MusicQueue
+                                onClose={() => close('queue')}
+                                className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right"
+                            />
+                        )}
                     </div>
 
                     {/* Playback Rate */}

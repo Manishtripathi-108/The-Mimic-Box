@@ -49,9 +49,9 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-    sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
-    md: 'h-9 rounded-lg px-4 py-2 has-[>svg]:px-3',
-    lg: 'h-10 rounded-xl px-6 has-[>svg]:px-4',
+    sm: 'h-6 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 text-xs',
+    md: 'h-8 rounded-lg px-4 py-2 has-[>svg]:px-3',
+    lg: 'h-10 rounded-xl px-6 has-[>svg]:px-4 text-base',
 };
 
 const ICON_ONLY_SIZE_CLASSES: Record<ButtonSize, string> = {

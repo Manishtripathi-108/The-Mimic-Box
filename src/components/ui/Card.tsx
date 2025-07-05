@@ -28,7 +28,7 @@ export const CardHeader = ({ className, ...props }: React.ComponentProps<'div'>)
 );
 
 export const CardTitle = ({ className, ...props }: React.ComponentProps<'div'>) => (
-    <div data-slot="card-title" className={cn('text-text-primary leading-none font-semibold', className)} {...props} />
+    <div data-slot="card-title" className={cn('text-text-primary text-xl leading-none font-semibold', className)} {...props} />
 );
 
 export const CardDescription = ({ className, ...props }: React.ComponentProps<'div'>) => (

@@ -9,15 +9,22 @@ import Button from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import cn from '@/lib/utils/cn';
 
 const ITEMS_PER_BATCH = 30;
 
-const MusicQueue = ({ className }: { className?: string }) => {
+const MusicQueue = ({ className, onClose }: { className?: string; onClose?: () => void }) => {
     const { clearQueue, playbackContext, queue } = useAudioPlayerContext();
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
     const total = queue?.length || 0;
+
+    const cardRef = useRef<HTMLDivElement>(null);
+    useClickOutside({
+        targets: [cardRef],
+        onClickOutside: onClose || (() => {}),
+    });
 
     const loadMoreItems = useCallback(() => {
         if (visibleCount < total) setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
@@ -34,19 +41,21 @@ const MusicQueue = ({ className }: { className?: string }) => {
 
     return (
         <Card
+            ref={cardRef}
             id="queue-popover"
             role="dialog"
             aria-labelledby="queue-heading"
             aria-modal="false"
-            className={cn('absolute inset-auto z-50', className)}>
+            className={cn('absolute inset-auto z-50 gap-0', className)}>
             <CardHeader className="shadow-raised-xs flex items-center justify-between px-4 py-3">
                 <CardTitle id="queue-heading" className="font-alegreya tracking-wide">
                     Music Queue
                 </CardTitle>
-                <CardAction>
-                    <Button size="sm" className="shrink-0 text-xs" title="Clear Queue" aria-label="Clear the music queue" onClick={clearQueue}>
+                <CardAction className="flex items-center gap-2">
+                    <Button size="sm" className="shrink-0" title="Clear Queue" aria-label="Clear the music queue" onClick={clearQueue}>
                         Clear queue
                     </Button>
+                    <Button size="sm" className="shrink-0" title="Close Queue" aria-label="Close the music queue" icon="close" onClick={onClose} />
                 </CardAction>
             </CardHeader>
 
