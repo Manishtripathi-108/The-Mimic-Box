@@ -20,10 +20,7 @@ const MusicQueue = ({ className }: { className?: string }) => {
     const total = queue?.length || 0;
 
     const loadMoreItems = useCallback(() => {
-        console.log('Loading more items...');
-        if (visibleCount < total) {
-            setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
-        }
+        if (visibleCount < total) setVisibleCount((prev) => Math.min(prev + ITEMS_PER_BATCH, total));
     }, [total, visibleCount]);
 
     const rootRef = useRef<HTMLDivElement>(null);

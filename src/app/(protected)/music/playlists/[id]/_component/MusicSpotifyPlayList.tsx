@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { useCallback, useMemo, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
@@ -26,38 +26,33 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
     const [nextUrl, setNextUrl] = useState(initialTracks.next);
     const [isPending, startTransition] = useTransition();
 
-    const fetchNextTracks = useCallback(async () => {
-        if (!nextUrl || isPending) return;
+    const fetchNextTracks = useCallback(() => {
+        startTransition(() => {
+            (async () => {
+                if (!nextUrl || isPending) return;
 
-        const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
-        if (!res.success || !res.payload) {
-            toast.error('Failed to fetch more tracks');
-            return;
-        }
+                const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
+                if (!res.success || !res.payload) {
+                    toast.error('Failed to fetch more tracks');
+                    return;
+                }
 
-        setPlaylistTracks((prev) => [...prev, ...res.payload.items]);
-        setNextUrl(res.payload.next);
+                setPlaylistTracks((prev) => [...prev, ...res.payload.items]);
+                setNextUrl(res.payload.next);
+            })();
+        });
     }, [nextUrl, isPending]);
-
-    const [shouldLoadMore, setShouldLoadMore] = useState(false);
 
     const { observeRef } = useIntersectionObserver({
         onEntry: () => {
             if (nextUrl && !isPending) {
-                setShouldLoadMore(true);
+                queueMicrotask(() => {
+                    fetchNextTracks();
+                });
             }
         },
         threshold: 1,
     });
-
-    useEffect(() => {
-        if (shouldLoadMore && nextUrl && !isPending) {
-            startTransition(() => {
-                fetchNextTracks();
-            });
-            setShouldLoadMore(false);
-        }
-    }, [shouldLoadMore, nextUrl, isPending, fetchNextTracks]);
 
     const tracks = useMemo(
         () => playlistTracks.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null),

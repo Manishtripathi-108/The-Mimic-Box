@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
@@ -22,38 +22,33 @@ const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
     const [nextUrl, setNextUrl] = useState(initialTracks.next);
     const [isPending, startTransition] = useTransition();
 
-    const fetchNextTracks = useCallback(async () => {
-        if (!nextUrl || isPending) return;
+    const fetchNextTracks = useCallback(() => {
+        startTransition(() => {
+            (async () => {
+                if (!nextUrl || isPending) return;
 
-        const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifySimplifiedTrack>>(nextUrl);
-        if (!res.success || !res.payload) {
-            toast.error('Failed to fetch more tracks');
-            return;
-        }
+                const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifySimplifiedTrack>>(nextUrl);
+                if (!res.success || !res.payload) {
+                    toast.error('Failed to fetch more tracks');
+                    return;
+                }
 
-        setTracks((prev) => [...prev, ...res.payload.items]);
-        setNextUrl(res.payload.next);
+                setTracks((prev) => [...prev, ...res.payload.items]);
+                setNextUrl(res.payload.next);
+            })();
+        });
     }, [nextUrl, isPending]);
-
-    const [shouldLoadMore, setShouldLoadMore] = useState(false);
 
     const { observeRef } = useIntersectionObserver({
         onEntry: () => {
             if (nextUrl && !isPending) {
-                setShouldLoadMore(true);
+                queueMicrotask(() => {
+                    fetchNextTracks();
+                });
             }
         },
         threshold: 1,
     });
-
-    useEffect(() => {
-        if (shouldLoadMore && nextUrl && !isPending) {
-            startTransition(() => {
-                fetchNextTracks();
-            });
-            setShouldLoadMore(false);
-        }
-    }, [shouldLoadMore, nextUrl, isPending, fetchNextTracks]);
 
     return (
         <>
