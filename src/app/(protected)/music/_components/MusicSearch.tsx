@@ -12,6 +12,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { saavnGlobalSearch } from '@/actions/saavn.actions';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
+import { useClickOutside } from '@/hooks/useClickOutside';
+import useToggle from '@/hooks/useToggle';
 import { T_SaavnSearchResponse } from '@/lib/types/saavn/search.types';
 
 const createLink = (id: string, type: string) => {
@@ -32,10 +34,21 @@ const createLink = (id: string, type: string) => {
 const MusicSearch = () => {
     const [search, setSearch] = useState('');
     const [results, setResults] = useState<T_SaavnSearchResponse | null>(null);
-    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+    const [isOpen, { setDefault: close, setAlternate: open }] = useToggle();
     const containerRef = useRef<HTMLDivElement>(null);
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
+    useClickOutside({
+        targets: [containerRef],
+        onClickOutside: () => {
+            if (isOpen) {
+                close();
+                setSearch('');
+                setResults(null);
+            }
+        },
+        disabled: !isOpen,
+    });
 
     const debouncedSearch = useMemo(
         () =>
@@ -44,14 +57,14 @@ const MusicSearch = () => {
                     const response = await saavnGlobalSearch(query);
                     if (response.success) {
                         setResults(response.payload);
-                        setIsOverlayOpen(true);
+                        open();
                     } else {
                         setResults(null);
-                        setIsOverlayOpen(false);
+                        close();
                     }
                 });
             }, 500),
-        []
+        [close, open]
     );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +73,7 @@ const MusicSearch = () => {
 
         if (!value.trim()) {
             setResults(null);
-            setIsOverlayOpen(false);
+            close();
             debouncedSearch.cancel();
             return;
         }
@@ -74,22 +87,12 @@ const MusicSearch = () => {
         return;
         if (!search.trim()) return;
 
-        setIsOverlayOpen(false);
+        close();
         router.push(APP_ROUTES.MUSIC.SEARCH(search.trim()));
     };
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-                setIsOverlayOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            debouncedSearch.cancel();
-        };
+        return () => debouncedSearch.cancel();
     }, [debouncedSearch]);
 
     const nonEmptySections = results ? Object.entries(results).filter(([, section]) => section.results.length > 0) : [];
@@ -108,7 +111,7 @@ const MusicSearch = () => {
             </form>
 
             <AnimatePresence>
-                {isOverlayOpen && (
+                {isOpen && (
                     <motion.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -135,7 +138,7 @@ const MusicSearch = () => {
                                             <Link
                                                 href={createLink(item.id, item.type)}
                                                 key={i}
-                                                onClick={() => setIsOverlayOpen(false)}
+                                                onClick={() => close()}
                                                 className="group hover:bg-primary flex cursor-pointer items-center gap-3 rounded-lg p-2 transition">
                                                 <div className="relative size-10 shrink-0 overflow-hidden rounded-md">
                                                     <Image
