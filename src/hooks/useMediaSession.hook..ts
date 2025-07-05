@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { isBrowser } from '@/lib/utils/core.utils';
+
 type T_MediaCover = {
     url: string;
     quality: string;
@@ -24,7 +26,7 @@ type T_MediaSessionActions = {
 
 const useMediaSession = (current: T_MediaMetadata | null, actions: T_MediaSessionActions) => {
     useEffect(() => {
-        if (typeof window === 'undefined' || !current || !('mediaSession' in navigator)) return;
+        if (!isBrowser || !current || !('mediaSession' in navigator)) return;
 
         const { play, pause, next, previous, getAudioElement } = actions;
 

@@ -1,13 +1,14 @@
 'use client';
 
 import { T_AudioPlayerAction, T_AudioPlayerState } from '@/lib/types/client.types';
+import { isBrowser } from '@/lib/utils/core.utils';
 
 export const audioPlayerInitialState: T_AudioPlayerState = {
     playbackContext: null,
     currentTrackIndex: 0,
     queue: [],
     playbackOrder: [],
-    isShuffled: false,
+    isShuffled: isBrowser ? localStorage.getItem('audioPlayerShuffle') === 'true' : false,
 };
 
 const generateShuffleOrder = (length: number): number[] => {
@@ -90,6 +91,9 @@ export function audioPlayerReducer(state: T_AudioPlayerState, action: T_AudioPla
 
         case 'TOGGLE_SHUFFLE': {
             const isShuffleEnabled = !state.isShuffled;
+            if (isBrowser) {
+                localStorage.setItem('audioPlayerShuffle', String(isShuffleEnabled));
+            }
             return {
                 ...state,
                 isShuffled: isShuffleEnabled,
