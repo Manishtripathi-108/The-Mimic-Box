@@ -72,9 +72,7 @@ const Header = () => {
 
                 <InstallPWAButton className="shrink-0" />
 
-                <div className="shrink-0">
-                    <ProfileDropdown />
-                </div>
+                <ProfileDropdown />
             </header>
 
             <Sidebar />

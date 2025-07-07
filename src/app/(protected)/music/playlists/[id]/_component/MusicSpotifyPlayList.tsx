@@ -13,6 +13,7 @@ import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import MusicTrackCardSkeleton from '@/app/(protected)/music/_components/skeletons/MusicTrackCardSkeleton';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+import { T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/lib/types/spotify.types';
 
 type Props = {
@@ -31,6 +32,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
             (async () => {
                 if (!nextUrl || isPending) return;
 
+                console.log('🪵 > MusicSpotifyPlayList.tsx:43 > nextUrl:', nextUrl);
                 const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
                 if (!res.success || !res.payload) {
                     toast.error('Failed to fetch more tracks');
@@ -59,6 +61,8 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
         [playlistTracks]
     );
 
+    const context: T_AudioSourceContext = { id: playlist.id, type: 'playlist', source: 'spotify', snapshotId: playlist.snapshot_id };
+
     return (
         <>
             <MusicMediaHeader title={name} description={description} coverImage={images?.[0]?.url} metadata={`${initialTracks.total} Songs`}>
@@ -70,7 +74,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: playlist.id, type: 'playlist', source: 'spotify', snapshotId: playlist.snapshot_id }} className="mt-4" />
+            <MusicActionBtns context={context} className="mt-4" />
 
             <div className="mt-6 grid w-full gap-2">
                 {tracks.map((t, idx) => (
@@ -91,7 +95,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
                             name: t.album.name,
                             link: APP_ROUTES.MUSIC.ALBUMS(t.album.id),
                         }}
-                        context={{ id: playlist.id, type: 'playlist', source: 'spotify' }}
+                        context={context}
                     />
                 ))}
 

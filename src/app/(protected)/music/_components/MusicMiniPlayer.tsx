@@ -17,9 +17,6 @@ const MusicLyricsCard = dynamic(() => import('@/app/(protected)/music/_component
 
 const MusicMiniPlayer = () => {
     const [toggles, { setDefault: close, toggle }] = useMultiToggle(false, true, {
-        onChange: (key, value) => {
-            console.log(`Toggle ${key} changed to ${value}`);
-        },
         keybinds: { global: 'Escape' },
         toggleOnKeyTo: false,
     });
