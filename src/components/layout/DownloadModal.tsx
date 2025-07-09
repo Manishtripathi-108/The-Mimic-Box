@@ -9,6 +9,7 @@ import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/componen
 import DownloadItem from '@/components/ui/DownloadItem';
 import Icon from '@/components/ui/Icon';
 import { useAudioDownload } from '@/contexts/AudioDownload.context';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import useToggle from '@/hooks/useToggle';
 import cn from '@/lib/utils/cn';
@@ -33,6 +34,12 @@ const DownloadModal = ({ className }: { className?: string }) => {
         toggleOnKeyTo: false,
     });
 
+    useClickOutside({
+        targets: [rootRef],
+        onClickOutside: closeModal,
+        disabled: !open,
+    });
+
     if (!total) return null;
 
     return (
@@ -40,7 +47,9 @@ const DownloadModal = ({ className }: { className?: string }) => {
             className={cn(
                 'fixed z-50',
                 className,
-                open ? 'inset-0 h-dvh sm:inset-auto sm:top-24 sm:right-10 sm:max-h-[60vh] sm:w-full sm:max-w-sm' : 'top-24 right-10'
+                open
+                    ? 'ignore-onClickOutside inset-0 h-dvh sm:inset-auto sm:top-24 sm:right-10 sm:max-h-[60vh] sm:w-full sm:max-w-sm'
+                    : 'top-24 right-10'
             )}
             aria-modal="true"
             role="dialog"
