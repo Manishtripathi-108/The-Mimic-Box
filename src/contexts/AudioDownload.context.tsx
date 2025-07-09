@@ -246,6 +246,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
             id: f.src,
             url: '',
             title: f.filename || 'Unknown Track',
+            cover: f.cover,
             metadata: f.metadata,
             status: 'pending',
         }));
