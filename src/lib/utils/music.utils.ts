@@ -45,7 +45,7 @@ export const searchMetadata = async (metadata: Record<string, string | number>):
     try {
         const res = await axios.get<SuccessResponseOutput<T_ITunesTrack[]>>(API_ROUTES.ITUNES.SEARCH.TRACKS, {
             params: {
-                track: metadata.title,
+                title: metadata.title,
                 artist: metadata.artist,
                 album: metadata.album,
             },

@@ -30,8 +30,8 @@ const fetchITunesData = async <T, R>(
 };
 
 /** Search for iTunes tracks by query */
-export const searchTracks = async ({ track, artist, album, limit = 5 }: { track: string; artist?: string; album?: string; limit?: number }) => {
-    const term = [track, artist, album].filter(Boolean).join(' ');
+export const searchTracks = async ({ title, artist, album, limit = 5 }: { title: string; artist?: string; album?: string; limit?: number }) => {
+    const term = [title, artist, album].filter(Boolean).join(' ');
 
     return fetchITunesData<T_ITunesTrackResponse, T_ITunesTrack[]>(
         ITUNES_ROUTES.SEARCH,

@@ -28,9 +28,9 @@ export async function getLyrics(params: T_LyricsQuery) {
         if (q || trackName) {
             return lrclib.searchLyrics({
                 q: q,
-                trackName: trackName,
-                artistName: artistName,
-                albumName: albumName,
+                track_name: trackName,
+                artist_name: artistName,
+                album_name: albumName,
                 duration: duration,
             });
         }
