@@ -44,7 +44,7 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
         makeApiCall({
             url: API_ROUTES.LYRICS.GET,
             params: {
-                track: currentTrack.title,
+                title: currentTrack.title,
                 artist: currentTrack.artists,
                 album: currentTrack.album,
                 duration: currentTrack.duration,
@@ -111,7 +111,7 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
             ref={lyricsContainerRef}>
             <CardHeader className="p-4">
                 <CardTitle className="font-alegreya tracking-wide">Lyrics</CardTitle>
-                <CardDescription className='truncate text-xs'>
+                <CardDescription className="truncate text-xs">
                     {currentTrack?.title} - {currentTrack?.artists}
                 </CardDescription>
                 <CardAction>
@@ -138,7 +138,11 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
                         <div className="text-center whitespace-pre-wrap">{data}</div>
                     )
                 ) : (
-                    <div className="text-center">No lyrics found.</div>
+                    <div className="text-center">
+                        Oops! Looks like the lyrics are on vacation.
+                        <br />
+                        Try humming instead 🎤😅
+                    </div>
                 )}
             </CardContent>
         </Card>
