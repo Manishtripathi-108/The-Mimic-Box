@@ -1,7 +1,7 @@
 import { LinkedAccountProvider } from '@prisma/client';
 
 import { AnilistSearchCategories } from '@/lib/types/anilist.types';
-import { ErrorCodes } from '@/lib/types/response.types';
+import { T_ErrorCode } from '@/lib/types/response.types';
 
 const APP_ROUTES = {
     ROOT: '/',
@@ -17,7 +17,7 @@ const APP_ROUTES = {
         RESET_PASSWORD: '/auth/reset-password',
         VERIFY_EMAIL: '/auth/verify-email',
         ERROR: '/auth/error',
-        LINK_ACCOUNT_ERROR: (provider?: LinkedAccountProvider, errorCode?: ErrorCodes, errorDescription?: string): string => {
+        LINK_ACCOUNT_ERROR: (provider?: LinkedAccountProvider, errorCode?: T_ErrorCode, errorDescription?: string): string => {
             const basePath = '/auth/link-account-error';
             const urlParams = new URLSearchParams();
 

@@ -64,7 +64,7 @@ const Page = () => {
                 },
             });
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'name' | 'email' | 'image', {
                     message: err.message,
                 });

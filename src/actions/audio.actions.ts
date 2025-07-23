@@ -9,13 +9,13 @@ import { AudioFileArrayValidationSchema, AudioFileValidationSchema } from '@/lib
 import { convertAudioFormat, editAudioMetadata, extractAudioMetaTags } from '@/lib/services/audio.service';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
 import { createZipFile } from '@/lib/utils/archiver.utils';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createNotFound, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 import { cleanupFiles, cleanupFilesAfterDelay, createDirectoryIfNotExists, getTempPath, saveUploadedFile } from '@/lib/utils/file-server-only.utils';
 import { safeAwait, safeAwaitAll } from '@/lib/utils/safeAwait.utils';
 
 export const handleExtractAudioMetaTags = async (file: File) => {
     const parsedFile = AudioFileValidationSchema.safeParse(file);
-    if (!parsedFile.success) return createErrorReturn(parsedFile.error.errors[0].message);
+    if (!parsedFile.success) return createValidationError(parsedFile.error.errors[0].message);
 
     const [saveError, fileDetails] = await safeAwait(
         saveUploadedFile({
@@ -26,21 +26,21 @@ export const handleExtractAudioMetaTags = async (file: File) => {
         })
     );
 
-    if (saveError || !fileDetails) return createErrorReturn('Error saving the audio file.', saveError);
+    if (saveError || !fileDetails) return createError('Error saving the audio file.', { error: saveError });
 
     const [error, response] = await safeAwait(extractAudioMetaTags(fileDetails.fullPath));
-    if (error || !response.success) return createErrorReturn(response?.message || 'Error extracting audio metaTags', error);
+    if (error || !response.success) return createError(response?.message || 'Error extracting audio metaTags', { error });
 
-    return createSuccessReturn(response.message, { ...response.payload, fileName: fileDetails.fileName });
+    return createSuccess(response.message, { ...response.payload, fileName: fileDetails.fileName });
 };
 
 export const handleEditMetaTags = async (fileName: string, metaTags: string | Record<string, string | number | null>, coverImage?: File) => {
-    if (!fileName || !metaTags) return createErrorReturn('Audio file or metaTags is missing. Please provide valid inputs.');
+    if (!fileName || !metaTags) return createValidationError('Audio file or metaTags is missing. Please provide valid inputs.');
 
     const parsedMetaTags = typeof metaTags === 'string' ? JSON.parse(metaTags) : metaTags;
     const tempAudioPath = getTempPath('audio', fileName);
 
-    if (!existsSync(tempAudioPath)) return createErrorReturn('Audio file not found. Please reupload a valid file.');
+    if (!existsSync(tempAudioPath)) return createNotFound('Audio file not found. Please reupload a valid file.');
 
     let coverImagePath: string | null = null;
 
@@ -58,23 +58,23 @@ export const handleEditMetaTags = async (fileName: string, metaTags: string | Re
     if (!result.success) return result;
 
     cleanupFilesAfterDelay([result.payload.fileUrl], 60);
-    return createSuccessReturn(result.message, { downloadUrl: result.payload.fileUrl, fileName: `edited_audio${extname(fileName)}` });
+    return createSuccess(result.message, { downloadUrl: result.payload.fileUrl, fileName: `edited_audio${extname(fileName)}` });
 };
 
 export const handleConvertAudio = async (files: File[], settings: T_AudioAdvanceSettings | T_AudioAdvanceSettings[]) => {
     if (!files.length || !settings || (Array.isArray(settings) && !settings.length)) {
-        return createErrorReturn('No files or settings provided.');
+        return createNotFound('No files or settings provided.');
     }
 
     if (Array.isArray(settings) && settings.length !== files.length) {
-        return createErrorReturn('Settings length must match the number of files.');
+        return createValidationError('Settings length must match the number of files.');
     }
 
     const normalizedSettings = Array.isArray(settings) ? settings : Array(files.length).fill(settings);
 
     const validationResult = AudioFileArrayValidationSchema.safeParse(files);
     if (!validationResult.success) {
-        return createErrorReturn('Invalid audio files.', null, validationResult.error.errors);
+        return createValidationError('Invalid audio files.', validationResult.error.errors);
     }
 
     const savedResults = await safeAwaitAll(
@@ -90,7 +90,7 @@ export const handleConvertAudio = async (files: File[], settings: T_AudioAdvance
     const validFiles = savedResults.flatMap(([, result]) => (result ? [result] : []));
 
     if (!validFiles.length) {
-        return createErrorReturn('Error saving the audio files.');
+        return createError('Error saving the audio files.');
     }
 
     const convertedFileUrls: string[] = [];
@@ -108,7 +108,7 @@ export const handleConvertAudio = async (files: File[], settings: T_AudioAdvance
     );
 
     if (!convertedFileUrls.length) {
-        return createErrorReturn('Failed to convert any files.');
+        return createError('Failed to convert any files.');
     }
 
     const zipDir = getTempPath('zip');
@@ -121,7 +121,7 @@ export const handleConvertAudio = async (files: File[], settings: T_AudioAdvance
     cleanupFiles(convertedFileUrls);
     cleanupFilesAfterDelay([zipFilePath], 60);
 
-    return createSuccessReturn('Files converted successfully!', {
+    return createSuccess('Files converted successfully!', {
         downloadUrl: zipFilePath,
         fileName: `converted_${uuidV4()}.zip`,
     });

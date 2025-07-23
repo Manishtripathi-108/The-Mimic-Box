@@ -1,7 +1,7 @@
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import { withAuthHeader } from '@/lib/utils/server.utils';
 
@@ -14,8 +14,8 @@ export const getAlbum = async (accessToken: string, albumId: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch album details', error)
-        : createSuccessReturn('Album details fetched successfully!', response.data);
+        ? createError('Failed to fetch album details', { error })
+        : createSuccess('Album details fetched successfully!', response.data);
 };
 
 /**
@@ -29,8 +29,8 @@ export const getAlbums = async (accessToken: string, albumIds: string[]) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch album details', error)
-        : createSuccessReturn('Album details fetched successfully!', {
+        ? createError('Failed to fetch album details', { error })
+        : createSuccess('Album details fetched successfully!', {
               albums: response.data.albums,
           });
 };
@@ -46,8 +46,8 @@ export const getAlbumTracks = async (accessToken: string, albumId: string, limit
         })
     );
     return error || !response
-        ? createErrorReturn('Failed to fetch album tracks', error)
-        : createSuccessReturn('Album tracks fetched successfully!', response.data);
+        ? createError('Failed to fetch album tracks', { error })
+        : createSuccess('Album tracks fetched successfully!', response.data);
 };
 
 /**
@@ -62,8 +62,8 @@ export const getUserAlbums = async (accessToken: string, limit?: number) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch  user albums', error)
-        : createSuccessReturn(' user albums fetched successfully!', response.data);
+        ? createError('Failed to fetch  user albums', { error })
+        : createSuccess(' user albums fetched successfully!', response.data);
 };
 
 /**
@@ -74,9 +74,7 @@ export const saveAlbums = async (accessToken: string, albumIds: string[]) => {
         spotifyConfig.put(spotifyApiRoutes.albums.saveAlbums(albumIds), {}, { headers: withAuthHeader(accessToken) })
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to save album for  user', error)
-        : createSuccessReturn('Album saved successfully!', response.data);
+    return error || !response ? createError('Failed to save album for  user', { error }) : createSuccess('Album saved successfully!', response.data);
 };
 
 /**
@@ -88,8 +86,8 @@ export const removeAlbums = async (accessToken: string, albumIds: string[]) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to remove album for  user', error)
-        : createSuccessReturn('Album removed successfully!', response.data);
+        ? createError('Failed to remove album for  user', { error })
+        : createSuccess('Album removed successfully!', response.data);
 };
 
 /**
@@ -101,8 +99,8 @@ export const checkSavedAlbums = async (accessToken: string, albumIds: string[]) 
     );
 
     return error || !response
-        ? createErrorReturn('Failed to check if album is saved for  user', error)
-        : createSuccessReturn('Album saved status checked successfully!', response.data);
+        ? createError('Failed to check if album is saved for  user', { error })
+        : createSuccess('Album saved status checked successfully!', response.data);
 };
 
 /**
@@ -116,8 +114,8 @@ export const getNewReleases = async (accessToken: string, limit?: number) => {
         })
     );
     return error || !response
-        ? createErrorReturn('Failed to fetch new releases', error)
-        : createSuccessReturn('New releases fetched successfully!', response.data);
+        ? createError('Failed to fetch new releases', { error })
+        : createSuccess('New releases fetched successfully!', response.data);
 };
 
 /**

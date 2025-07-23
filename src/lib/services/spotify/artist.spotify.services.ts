@@ -1,7 +1,7 @@
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
 import { T_SpotifyArtist, T_SpotifyPaging, T_SpotifySimplifiedAlbum, T_SpotifyTrack } from '@/lib/types/spotify.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import { withAuthHeader } from '@/lib/utils/server.utils';
 
@@ -14,8 +14,8 @@ export const getArtist = async (accessToken: string, artistId: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch artist details', error)
-        : createSuccessReturn('Artist details fetched successfully!', response.data);
+        ? createError('Failed to fetch artist details', { error })
+        : createSuccess('Artist details fetched successfully!', response.data);
 };
 
 /**
@@ -29,8 +29,8 @@ export const getArtists = async (accessToken: string, artistIds: string[]) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch multiple artist details', error)
-        : createSuccessReturn('Multiple artist details fetched successfully!', response.data.artists);
+        ? createError('Failed to fetch multiple artist details', { error })
+        : createSuccess('Multiple artist details fetched successfully!', response.data.artists);
 };
 
 /**
@@ -44,8 +44,8 @@ export const getArtistTopTracks = async (accessToken: string, artistId: string, 
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch artist top tracks', error)
-        : createSuccessReturn('Artist top tracks fetched successfully!', response.data.tracks);
+        ? createError('Failed to fetch artist top tracks', { error })
+        : createSuccess('Artist top tracks fetched successfully!', response.data.tracks);
 };
 
 /**
@@ -60,8 +60,8 @@ export const getArtistAlbums = async (accessToken: string, artistId: string, lim
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch artist albums', error)
-        : createSuccessReturn('Artist albums fetched successfully!', response.data);
+        ? createError('Failed to fetch artist albums', { error })
+        : createSuccess('Artist albums fetched successfully!', response.data);
 };
 
 /**

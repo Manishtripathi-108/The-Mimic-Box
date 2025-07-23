@@ -43,7 +43,7 @@ const RegisterForm = () => {
             toast.success(response.message || 'Account created successfully.', { duration: 3000 });
             redirect(DEFAULT_AUTH_ROUTE);
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'fullName' | 'email' | 'password' | 'confirmPassword', {
                     message: err.message,
                 });

@@ -2,6 +2,7 @@ import { render } from '@react-email/components';
 import nodemailer from 'nodemailer';
 
 import { isDev } from '@/lib/utils/core.utils';
+import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
 const EMAIL_SENDER = `${APP_NAME} <noreply@${APP_NAME!.toLowerCase().replaceAll(' ', '')}.com>`;
@@ -33,9 +34,9 @@ export const sendEmail = async (to: string, subject: string, emailComponent: Rea
 
         const response = await transporter.sendMail({ from: EMAIL_SENDER, to, subject, html });
         if (!response) throw new Error('Email sending failed');
-        return { success: true };
+        return createSuccess('Email sent successfully.');
     } catch (error) {
         console.error(`Error sending email to ${to}:`, error);
-        return { success: false, message: 'Failed to send email.' };
+        return createError('Failed to send email.', { error });
     }
 };

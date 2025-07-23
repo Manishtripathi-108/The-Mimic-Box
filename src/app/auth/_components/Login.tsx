@@ -42,7 +42,7 @@ const LoginInForm = () => {
             update();
             redirect(callBackUrl ? decodeURIComponent(callBackUrl) : DEFAULT_AUTH_REDIRECT);
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'email' | 'password', {
                     message: err.message,
                 });

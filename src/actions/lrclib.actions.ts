@@ -5,12 +5,12 @@ import axios from 'axios';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import lrclib from '@/lib/services/lrclib.service';
 import { T_LyricsQuery } from '@/lib/types/common.types';
-import { createErrorReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createValidationError } from '@/lib/utils/createResponse.utils';
 
 export async function getLyrics(params: T_LyricsQuery) {
     try {
         const parsedParams = LyricsQuerySchema.safeParse(params);
-        if (!parsedParams.success) return createErrorReturn(parsedParams.error.errors[0].message);
+        if (!parsedParams.success) return createValidationError(parsedParams.error.errors[0].message, parsedParams.error.errors);
 
         const { id, q, trackName, artistName, albumName, duration } = parsedParams.data;
 
@@ -35,7 +35,7 @@ export async function getLyrics(params: T_LyricsQuery) {
             });
         }
 
-        return createErrorReturn('No valid parameters provided for lyrics lookup.');
+        return createValidationError('No valid parameters provided for lyrics lookup.');
     } catch (err) {
         const message = axios.isAxiosError(err)
             ? err.response?.data?.message || err.message
@@ -43,6 +43,6 @@ export async function getLyrics(params: T_LyricsQuery) {
               ? err.message
               : 'Failed to fetch lyrics.';
 
-        return createErrorReturn(message);
+        return createError(message);
     }
 }

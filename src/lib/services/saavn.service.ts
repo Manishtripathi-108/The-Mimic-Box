@@ -19,7 +19,7 @@ import {
     T_SaavnSearchSongAPIResponse,
 } from '@/lib/types/saavn/search.types';
 import { T_SaavnSong, T_SaavnSongAPIResponse, T_SaavnSongSuggestionAPIResponse } from '@/lib/types/saavn/song.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createNotFound, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 import {
     createAlbumPayload,
     createArtistBasePayload,
@@ -54,7 +54,7 @@ const apiHandler = async <T, R>(
     );
 
     const hasError = typeof response?.data === 'object' && response?.data !== null && 'error' in response.data;
-    return error || !response || hasError ? createErrorReturn(errorMsg, error) : createSuccessReturn(successMsg, transform(response.data as T));
+    return error || !response || hasError ? createError(errorMsg, { error }) : createSuccess(successMsg, transform(response.data as T));
 };
 
 /* -------------------------------------------------------------------------- */
@@ -121,13 +121,13 @@ export const getSongByIds = async (ids: string) => {
         saavnConfig.get<{ songs: T_SaavnSongAPIResponse[] }>('/', { params: { pids: ids, __call: SAAVN_ROUTES.SONG.ID } })
     );
 
-    if (error || !response) return createErrorReturn('Failed to fetch song', error);
+    if (error || !response) return createError('Failed to fetch song', { error });
 
     const songs = response.data.songs;
 
-    if (!songs?.length) return createErrorReturn('Song not found');
+    if (!songs?.length) return createNotFound('Song not found');
 
-    return createSuccessReturn(
+    return createSuccess(
         'Song fetched successfully!',
         songs.map((song) => createSongPayload(song))
     );
@@ -135,19 +135,19 @@ export const getSongByIds = async (ids: string) => {
 
 export const getSongByLink = async (link: string) => {
     const token = link.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/)?.[1];
-    if (!token) return createErrorReturn('Invalid song link');
+    if (!token) return createValidationError('Invalid song link');
 
     const [error, response] = await safeAwait(
         saavnConfig.get<{ songs: T_SaavnSongAPIResponse[] }>('/', { params: { token, type: 'song', __call: SAAVN_ROUTES.SONG.LINK } })
     );
 
-    if (error || !response) return createErrorReturn('Failed to fetch song', error);
+    if (error || !response) return createError('Failed to fetch song', { error });
 
     const songs = response.data.songs;
 
-    if (!songs?.length) return createErrorReturn('Song not found');
+    if (!songs?.length) return createNotFound('Song not found');
 
-    return createSuccessReturn(
+    return createSuccess(
         'Song fetched successfully!',
         songs.map((song) => createSongPayload(song))
     );
@@ -167,16 +167,14 @@ export const getSongStation = async (id: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch song station', error)
-        : createSuccessReturn('Song station fetched successfully!', response.data.stationid);
+        ? createError('Failed to fetch song station', { error })
+        : createSuccess('Song station fetched successfully!', response.data.stationid);
 };
 
 export const getSongSuggestions = async ({ id, limit }: { id: string; limit: number }) => {
     const stationsRes = await getSongStation(id);
 
-    if (!stationsRes.success) {
-        return createErrorReturn('Failed to fetch song suggestions');
-    }
+    if (!stationsRes.success) return stationsRes;
 
     const [error, response] = await safeAwait(
         saavnConfig.get<T_SaavnSongSuggestionAPIResponse>(SAAVN_ROUTES.SONG.SUGGESTIONS, {
@@ -189,7 +187,7 @@ export const getSongSuggestions = async ({ id, limit }: { id: string; limit: num
     );
 
     if (error || !response?.data) {
-        return createErrorReturn('Failed to fetch song suggestions', error);
+        return createError('Failed to fetch song suggestions', { error });
     }
 
     const rawSuggestions = Object.values(response.data);
@@ -203,7 +201,7 @@ export const getSongSuggestions = async ({ id, limit }: { id: string; limit: num
         .filter((s) => s !== null)
         .slice(0, limit);
 
-    return createSuccessReturn('Song suggestions fetched successfully!', suggestions);
+    return createSuccess('Song suggestions fetched successfully!', suggestions);
 };
 
 export const getSongLyrics = async (id: string) => {
@@ -216,8 +214,8 @@ export const getSongLyrics = async (id: string) => {
     const hasError = typeof response?.data === 'object' && response?.data !== null && 'error' in response.data;
 
     return error || !response || hasError || !response.data.lyrics
-        ? createErrorReturn('Failed to fetch song lyrics', error)
-        : createSuccessReturn('Song lyrics fetched successfully!', response.data.lyrics);
+        ? createError('Failed to fetch song lyrics', { error })
+        : createSuccess('Song lyrics fetched successfully!', response.data.lyrics);
 };
 
 /* -------------------------------------------------------------------------- */
@@ -236,7 +234,7 @@ export const getAlbumByLink = async (link: string) => {
     const token = link.match(/jiosaavn\.com\/album\/[^/]+\/([^/]+)$/)?.[1];
 
     if (!token) {
-        return createErrorReturn('Invalid album link');
+        return createValidationError('Invalid album link');
     }
 
     return apiHandler<T_SaavnAlbumAPIResponse, T_SaavnAlbum>(
@@ -292,7 +290,7 @@ export const getArtistByLink = async ({
     const token = link.match(/jiosaavn\.com\/artist\/[^/]+\/([^/]+)$/)?.[1];
 
     if (!token) {
-        return createErrorReturn('Invalid artist link');
+        return createValidationError('Invalid artist link');
     }
 
     return apiHandler<T_SaavnArtistAPIResponse, T_SaavnArtist>(
@@ -351,7 +349,7 @@ export const getPlaylistByLink = async ({ link, limit, page }: { link: string; p
     const token = link.match(/jiosaavn\.com\/playlist\/([^/]+)$/)?.[1];
 
     if (!token) {
-        return createErrorReturn('Invalid playlist link');
+        return createValidationError('Invalid playlist link');
     }
 
     return apiHandler<T_SaavnPlaylistAPIResponse, T_SaavnPlaylist & { songCount: number | null; songs: T_SaavnSong[] }>(

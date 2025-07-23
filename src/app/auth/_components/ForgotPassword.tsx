@@ -29,7 +29,7 @@ const ForgotPasswordForm = () => {
         if (response.success) {
             toast.success(response.message || 'Check your inbox to reset your password.', { duration: 3000 });
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'email', {
                     message: err.message,
                 });

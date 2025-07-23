@@ -3,7 +3,7 @@
 import { z } from 'zod';
 
 import saavnApi from '@/lib/services/saavn.service';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 
 const validatePaginationOptions = z.object({
     page: z.number().min(0, 'Page must be non-negative').optional().default(0),
@@ -30,7 +30,7 @@ type SearchOptions = z.input<typeof validateSearchOptions>;
  * const result = await saavnGlobalSearch('Arijit Singh');
  */
 export const saavnGlobalSearch = async (query: string) => {
-    if (!query) return createErrorReturn('Query is required');
+    if (!query) return createValidationError('Query is required');
     return await saavnApi.searchAll(query);
 };
 
@@ -41,7 +41,7 @@ export const saavnGlobalSearch = async (query: string) => {
  */
 export const saavnSearchSongs = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
+    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
     return await saavnApi.searchSongs(validate.data);
 };
 
@@ -52,7 +52,7 @@ export const saavnSearchSongs = async (options: SearchOptions) => {
  */
 export const saavnSearchAlbums = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
+    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
     return await saavnApi.searchAlbums(validate.data);
 };
 
@@ -63,7 +63,7 @@ export const saavnSearchAlbums = async (options: SearchOptions) => {
  */
 export const saavnSearchPlaylists = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
+    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
     return await saavnApi.searchPlaylists(validate.data);
 };
 
@@ -74,7 +74,7 @@ export const saavnSearchPlaylists = async (options: SearchOptions) => {
  */
 export const saavnSearchArtists = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createErrorReturn(validate.error.format()._errors[0]);
+    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
     return await saavnApi.searchArtists(validate.data);
 };
 
@@ -88,7 +88,7 @@ export const saavnSearchArtists = async (options: SearchOptions) => {
  * const result = await saavnGetSongDetails('abc123,xyz456');
  */
 export const saavnGetSongDetails = async (ids: string) => {
-    if (!ids) return createErrorReturn('IDs are required');
+    if (!ids) return createValidationError('IDs are required');
     return await saavnApi.getSongByIds(ids);
 };
 
@@ -98,7 +98,7 @@ export const saavnGetSongDetails = async (ids: string) => {
  * const result = await saavnGetSongDetailsByLink('https://www.saavn.com/song/abc123');
  */
 export const saavnGetSongDetailsByLink = async (link: string) => {
-    if (!link) return createErrorReturn('Link is required');
+    if (!link) return createValidationError('Link is required');
     return await saavnApi.getSongByLink(link);
 };
 
@@ -108,7 +108,7 @@ export const saavnGetSongDetailsByLink = async (link: string) => {
  * const result = await saavnGetSongSuggestions('abc123');
  */
 export const saavnGetSongSuggestions = async (id: string, limit = 10) => {
-    if (!id) return createErrorReturn('ID is required');
+    if (!id) return createValidationError('ID is required');
     return await saavnApi.getSongSuggestions({ id, limit });
 };
 
@@ -118,7 +118,7 @@ export const saavnGetSongSuggestions = async (id: string, limit = 10) => {
  * const result = await saavnGetSongLyrics('abc123');
  */
 export const saavnGetSongLyrics = async (id: string) => {
-    if (!id) return createErrorReturn('ID is required');
+    if (!id) return createValidationError('ID is required');
     return await saavnApi.getSongLyrics(id);
 };
 
@@ -132,7 +132,7 @@ export const saavnGetSongLyrics = async (id: string) => {
  * const result = await saavnGetAlbumDetails('album123');
  */
 export const saavnGetAlbumDetails = async (id: string) => {
-    if (!id) return createErrorReturn('ID is required');
+    if (!id) return createValidationError('ID is required');
     return await saavnApi.getAlbumById(id);
 };
 
@@ -142,7 +142,7 @@ export const saavnGetAlbumDetails = async (id: string) => {
  * const result = await saavnGetAlbumDetailsByLink('https://www.saavn.com/album/xyz');
  */
 export const saavnGetAlbumDetailsByLink = async (link: string) => {
-    if (!link) return createErrorReturn('Link is required');
+    if (!link) return createValidationError('Link is required');
     return await saavnApi.getAlbumByLink(link);
 };
 
@@ -156,16 +156,16 @@ export const saavnGetAlbumDetailsByLink = async (link: string) => {
  * const result = await saavnGetArtistDetails({ id: 'artist123', page: 0, songCount: 10, albumCount: 5, sortBy: 'popularity', sortOrder: 'asc' });
  */
 export const saavnGetArtistDetails = async (params: { id: string; songCount: number; albumCount: number } & PaginationOptions & SortOptions) => {
-    if (!params.id) return createErrorReturn('ID is required');
+    if (!params.id) return createValidationError('ID is required');
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
-    if (!sort.success) return createErrorReturn(sort.error.format()._errors[0]);
-    if (params.songCount == null) return createErrorReturn('Song count is required');
-    if (params.albumCount == null) return createErrorReturn('Album count is required');
-    if (params.songCount < 0) return createErrorReturn('Song count must be a non-negative number');
-    if (params.albumCount < 0) return createErrorReturn('Album count must be a non-negative number');
+    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
+    if (!sort.success) return createValidationError(sort.error.format()._errors[0], sort.error.errors);
+    if (params.songCount == null) return createValidationError('Song count is required');
+    if (params.albumCount == null) return createValidationError('Album count is required');
+    if (params.songCount < 0) return createValidationError('Song count must be a non-negative number');
+    if (params.albumCount < 0) return createValidationError('Album count must be a non-negative number');
 
     return await saavnApi.getArtistById({
         ...pagination.data,
@@ -184,16 +184,16 @@ export const saavnGetArtistDetails = async (params: { id: string; songCount: num
 export const saavnGetArtistDetailsByLink = async (
     params: { link: string; songCount: number; albumCount: number } & PaginationOptions & SortOptions
 ) => {
-    if (!params.link) return createErrorReturn('Link is required');
+    if (!params.link) return createValidationError('Link is required');
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
-    if (!sort.success) return createErrorReturn(sort.error.format()._errors[0]);
-    if (params.songCount == null) return createErrorReturn('Song count is required');
-    if (params.albumCount == null) return createErrorReturn('Album count is required');
-    if (params.songCount < 0) return createErrorReturn('Song count must be a non-negative number');
-    if (params.albumCount < 0) return createErrorReturn('Album count must be a non-negative number');
+    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0]);
+    if (!sort.success) return createValidationError(sort.error.format()._errors[0]);
+    if (params.songCount == null) return createValidationError('Song count is required');
+    if (params.albumCount == null) return createValidationError('Album count is required');
+    if (params.songCount < 0) return createValidationError('Song count must be a non-negative number');
+    if (params.albumCount < 0) return createValidationError('Album count must be a non-negative number');
 
     return await saavnApi.getArtistByLink({
         ...pagination.data,
@@ -210,12 +210,12 @@ export const saavnGetArtistDetailsByLink = async (
  * const result = await saavnGetArtistSongs({ id: 'artist123', page: 0, sortBy: 'popularity', sortOrder: 'asc' });
  */
 export const saavnGetArtistSongs = async (params: { id: string } & PaginationOptions & SortOptions) => {
-    if (!params.id) return createErrorReturn('ID is required');
+    if (!params.id) return createValidationError('ID is required');
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
-    if (!sort.success) return createErrorReturn(sort.error.format()._errors[0]);
+    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
+    if (!sort.success) return createValidationError(sort.error.format()._errors[0], sort.error.errors);
 
     return await saavnApi.getArtistSongs({
         ...pagination.data,
@@ -231,12 +231,12 @@ export const saavnGetArtistSongs = async (params: { id: string } & PaginationOpt
  * const result = await saavnGetArtistAlbums({ id: 'artist123', page: 1, sortBy: 'release', sortOrder: 'desc' });
  */
 export const saavnGetArtistAlbums = async (params: { id: string } & PaginationOptions & SortOptions) => {
-    if (!params.id) return createErrorReturn('ID is required');
+    if (!params.id) return createValidationError('ID is required');
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
-    if (!sort.success) return createErrorReturn(sort.error.format()._errors[0]);
+    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
+    if (!sort.success) return createValidationError(sort.error.format()._errors[0], sort.error.errors);
 
     return await saavnApi.getArtistAlbums({
         ...pagination.data,
@@ -256,10 +256,10 @@ export const saavnGetArtistAlbums = async (params: { id: string } & PaginationOp
  * const result = await saavnGetPlaylistDetails({ id: 'playlist123', page: 0, limit: 15 });
  */
 export const saavnGetPlaylistDetails = async (params: { id: string } & PaginationOptions) => {
-    if (!params.id) return createErrorReturn('ID is required');
+    if (!params.id) return createValidationError('ID is required');
     const pagination = validatePaginationOptions.safeParse(params);
 
-    if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
+    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
 
     return await saavnApi.getPlaylistById({
         ...pagination.data,
@@ -273,10 +273,10 @@ export const saavnGetPlaylistDetails = async (params: { id: string } & Paginatio
  * const result = await saavnGetPlaylistDetailsByLink({ link: 'https://www.saavn.com/playlist/xyz', page: 0, limit: 10 });
  */
 export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & PaginationOptions) => {
-    if (!params.link) return createErrorReturn('Link is required');
+    if (!params.link) return createValidationError('Link is required');
     const pagination = validatePaginationOptions.safeParse(params);
 
-    if (!pagination.success) return createErrorReturn(pagination.error.format()._errors[0]);
+    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
 
     return await saavnApi.getPlaylistByLink({
         ...pagination.data,
@@ -292,7 +292,7 @@ export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & P
  * const result = await saavnGetEntityTracks('album123', 'album');
  */
 export const saavnGetEntityTracks = async (id: string, type: 'album' | 'playlist' | 'artist' | 'track') => {
-    if (!id || !type) return createErrorReturn('ID and type are required');
+    if (!id || !type) return createValidationError('ID and type are required');
 
     try {
         let result;
@@ -300,33 +300,33 @@ export const saavnGetEntityTracks = async (id: string, type: 'album' | 'playlist
             case 'album': {
                 const res = await saavnApi.getAlbumById(id);
                 if (!res.success || !res.payload.songs) throw new Error(res.message || 'Failed to fetch album tracks');
-                result = createSuccessReturn('Album tracks fetched successfully', res.payload.songs);
+                result = createSuccess('Album tracks fetched successfully', res.payload.songs);
                 break;
             }
             case 'playlist': {
                 const res = await saavnApi.getPlaylistById({ id, page: 0, limit: 1000 });
                 if (!res.success || !res.payload.songs) throw new Error(res.message || 'Failed to fetch playlist tracks');
-                result = createSuccessReturn('Playlist tracks fetched successfully', res.payload.songs);
+                result = createSuccess('Playlist tracks fetched successfully', res.payload.songs);
                 break;
             }
             case 'artist': {
                 const res = await saavnApi.getArtistSongs({ id, page: 0, sortBy: 'popularity', sortOrder: 'desc' });
                 if (!res.success || !res.payload.songs) throw new Error(res.message || 'Failed to fetch artist songs');
-                result = createSuccessReturn('Artist songs fetched successfully', res.payload.songs);
+                result = createSuccess('Artist songs fetched successfully', res.payload.songs);
                 break;
             }
             case 'track': {
                 const res = await saavnApi.getSongByIds(id);
                 if (!res.success || !res.payload || res.payload.length === 0) throw new Error(res.message || 'Failed to fetch track');
-                result = createSuccessReturn('Track fetched successfully', res.payload);
+                result = createSuccess('Track fetched successfully', res.payload);
                 break;
             }
             default:
-                return createErrorReturn('Invalid type provided');
+                return createValidationError('Invalid type provided');
         }
         return result;
     } catch (err) {
         const message = err instanceof Error ? err.message : 'An unexpected error occurred';
-        return createErrorReturn(message);
+        return createError(message);
     }
 };

@@ -1,7 +1,7 @@
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
 import { T_SpotifyRecentlyPlayed } from '@/lib/types/spotify.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import { withAuthHeader } from '@/lib/utils/server.utils';
 
@@ -17,8 +17,8 @@ export const getRecentTracks = async (accessToken: string, limit?: number, after
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch recently played tracks', error)
-        : createSuccessReturn('Recently played tracks fetched successfully!', response.data);
+        ? createError('Failed to fetch recently played tracks', { error })
+        : createSuccess('Recently played tracks fetched successfully!', response.data);
 };
 
 /**

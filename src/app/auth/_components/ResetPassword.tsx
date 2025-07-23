@@ -28,7 +28,7 @@ const ResetPasswordForm = () => {
         if (response.success) {
             toast.success(response.message || 'Password reset successfully.', { duration: 3000 });
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'token' | 'password' | 'confirmPassword', {
                     message: err.message,
                 });

@@ -10,7 +10,7 @@ import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { db } from '@/lib/db';
 import { getMe } from '@/lib/services/spotify/user.spotify.services';
-import { ErrorCodes } from '@/lib/types/response.types';
+import { T_ErrorCode } from '@/lib/types/response.types';
 import { T_SpotifyAccessToken } from '@/lib/types/spotify.types';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
     );
 
     if (tokenErr || !tokenRes?.data) {
-        const errorCode: ErrorCodes = axios.isAxiosError(tokenErr) ? tokenErr.response?.data?.error || 'invalid_grant' : 'server_error';
+        const errorCode: T_ErrorCode = axios.isAxiosError(tokenErr) ? tokenErr.response?.data?.error || 'invalid_grant' : 'server_error';
 
         console.error('[Spotify Link] Token exchange failed', tokenErr);
         return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('spotify', errorCode));

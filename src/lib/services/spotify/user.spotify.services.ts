@@ -2,9 +2,9 @@ import { isAxiosError } from 'axios';
 
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
-import { ErrorCodes } from '@/lib/types/response.types';
+import { T_ErrorCode } from '@/lib/types/response.types';
 import { T_SpotifyArtist, T_SpotifyPaging, T_SpotifyPrivateUser, T_SpotifyTrack } from '@/lib/types/spotify.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import { withAuthHeader } from '@/lib/utils/server.utils';
 
@@ -18,7 +18,7 @@ export const getMe = async (accessToken: string) => {
 
     if (error || !data?.data) {
         const message = isAxiosError(error) ? error.response?.data?.message || 'Failed to fetch user profile' : 'Failed to fetch user profile';
-        let errorCode: ErrorCodes = 'server_error';
+        let errorCode: T_ErrorCode = 'server_error';
         if (isAxiosError(error)) {
             switch (error.response?.status) {
                 case 400:
@@ -35,10 +35,10 @@ export const getMe = async (accessToken: string) => {
                     break;
             }
         }
-        return createErrorReturn(message, isAxiosError(error) ? error.response?.data : (error as Error), undefined, errorCode);
+        return createError(message, { code: errorCode, error });
     }
 
-    return createSuccessReturn('User profile fetched successfully!', data.data);
+    return createSuccess('User profile fetched successfully!', data.data);
 };
 
 /**
@@ -50,8 +50,8 @@ export const getUser = async (accessToken: string, userId: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch user profile', error)
-        : createSuccessReturn('User profile fetched successfully!', response.data);
+        ? createError('Failed to fetch user profile', { error })
+        : createSuccess('User profile fetched successfully!', response.data);
 };
 
 /**
@@ -66,8 +66,8 @@ export const getTopTracks = async (accessToken: string, limit?: number) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch top tracks', error)
-        : createSuccessReturn('Top tracks fetched successfully!', response.data);
+        ? createError('Failed to fetch top tracks', { error })
+        : createSuccess('Top tracks fetched successfully!', response.data);
 };
 
 /**
@@ -82,8 +82,8 @@ export const getTopArtists = async (accessToken: string, limit?: number) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch top artists', error)
-        : createSuccessReturn('Top artists fetched successfully!', response.data);
+        ? createError('Failed to fetch top artists', { error })
+        : createSuccess('Top artists fetched successfully!', response.data);
 };
 
 /**
@@ -94,7 +94,7 @@ export const followUsers = async (accessToken: string, userId: string[]) => {
         spotifyConfig.put(spotifyApiRoutes.users.follow('user', userId), {}, { headers: withAuthHeader(accessToken) })
     );
 
-    return error || !response ? createErrorReturn('Failed to follow user', error) : createSuccessReturn('User followed successfully!', response.data);
+    return error || !response ? createError('Failed to follow user', { error }) : createSuccess('User followed successfully!', response.data);
 };
 
 /**
@@ -105,9 +105,7 @@ export const unfollowUsers = async (accessToken: string, userId: string[]) => {
         spotifyConfig.delete(spotifyApiRoutes.users.unfollow('user', userId), { headers: withAuthHeader(accessToken) })
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to unfollow user', error)
-        : createSuccessReturn('User unfollowed successfully!', response.data);
+    return error || !response ? createError('Failed to unfollow user', { error }) : createSuccess('User unfollowed successfully!', response.data);
 };
 
 /**
@@ -118,9 +116,7 @@ export const followArtists = async (accessToken: string, artistIds: string[]) =>
         spotifyConfig.put(spotifyApiRoutes.users.follow('artist', artistIds), {}, { headers: withAuthHeader(accessToken) })
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to follow artists', error)
-        : createSuccessReturn('Artists followed successfully!', response.data);
+    return error || !response ? createError('Failed to follow artists', { error }) : createSuccess('Artists followed successfully!', response.data);
 };
 
 /**
@@ -132,8 +128,8 @@ export const unfollowArtists = async (accessToken: string, artistIds: string[]) 
     );
 
     return error || !response
-        ? createErrorReturn('Failed to unfollow artists', error)
-        : createSuccessReturn('Artists unfollowed successfully!', response.data);
+        ? createError('Failed to unfollow artists', { error })
+        : createSuccess('Artists unfollowed successfully!', response.data);
 };
 
 /**
@@ -144,9 +140,7 @@ export const followPlaylist = async (accessToken: string, playlistId: string) =>
         spotifyConfig.put(spotifyApiRoutes.users.followPlaylist(playlistId), {}, { headers: withAuthHeader(accessToken) })
     );
 
-    return error || !response
-        ? createErrorReturn('Failed to follow playlist', error)
-        : createSuccessReturn('Playlist followed successfully!', response.data);
+    return error || !response ? createError('Failed to follow playlist', { error }) : createSuccess('Playlist followed successfully!', response.data);
 };
 
 /**
@@ -158,8 +152,8 @@ export const unfollowPlaylist = async (accessToken: string, playlistId: string) 
     );
 
     return error || !response
-        ? createErrorReturn('Failed to unfollow playlist', error)
-        : createSuccessReturn('Playlist unfollowed successfully!', response.data);
+        ? createError('Failed to unfollow playlist', { error })
+        : createSuccess('Playlist unfollowed successfully!', response.data);
 };
 
 /**
@@ -174,8 +168,8 @@ export const getFollowedArtists = async (accessToken: string, limit?: number) =>
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch followed artists', error)
-        : createSuccessReturn('Followed artists fetched successfully!', response.data);
+        ? createError('Failed to fetch followed artists', { error })
+        : createSuccess('Followed artists fetched successfully!', response.data);
 };
 
 /**
@@ -189,8 +183,8 @@ export const checkFollowingUsers = async (accessToken: string, userIds: string[]
     );
 
     return error || !response
-        ? createErrorReturn('Failed to check if following users', error)
-        : createSuccessReturn('Following users check completed successfully!', response.data);
+        ? createError('Failed to check if following users', { error })
+        : createSuccess('Following users check completed successfully!', response.data);
 };
 
 /**
@@ -204,8 +198,8 @@ export const checkFollowingArtists = async (accessToken: string, artistIds: stri
     );
 
     return error || !response
-        ? createErrorReturn('Failed to check if following artists', error)
-        : createSuccessReturn('Following artists check completed successfully!', response.data);
+        ? createError('Failed to check if following artists', { error })
+        : createSuccess('Following artists check completed successfully!', response.data);
 };
 
 /**
@@ -219,8 +213,8 @@ export const checkFollowingPlaylist = async (accessToken: string, playlistId: st
     );
 
     return error || !response
-        ? createErrorReturn('Failed to check if following playlist', error)
-        : createSuccessReturn('Following playlist check completed successfully!', response.data);
+        ? createError('Failed to check if following playlist', { error })
+        : createSuccess('Following playlist check completed successfully!', response.data);
 };
 
 /**
