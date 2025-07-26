@@ -34,3 +34,13 @@ export const shareUrl = async ({ url, title, text, fallback = true }: { url: str
         return toast.error('Error sharing. Please try again.');
     }
 };
+
+export const copyToClipboard = async (text: string, showToast = true) => {
+    try {
+        await navigator.clipboard.writeText(text);
+        if (showToast) toast.success('Copied to clipboard');
+    } catch (error) {
+        console.error('Error copying to clipboard:', error);
+        if (showToast) toast.error('Failed to copy. Please try again.');
+    }
+};

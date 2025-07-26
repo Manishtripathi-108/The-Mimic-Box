@@ -283,7 +283,7 @@ export function createAniListError<B extends boolean = false>(
         message = response.data?.hint || response.data?.message || message;
         data.code = isRateLimit ? ErrorCode.RATE_LIMIT_EXCEEDED : data.code;
     }
-    
+
     data.data = rateLimitData;
 
     // Fallback for non-Axios errors

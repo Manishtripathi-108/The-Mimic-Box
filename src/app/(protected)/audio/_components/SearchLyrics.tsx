@@ -13,6 +13,7 @@ import Input from '@/components/ui/Input';
 import TabNavigation from '@/components/ui/TabNavigation';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
+import { copyToClipboard } from '@/lib/utils/client.utils';
 
 type SearchLyricsProps = {
     defaultParams?: Partial<T_LyricsQuery>;
@@ -55,11 +56,17 @@ const LyricsResult = memo(({ lyric, onSelect }: LyricsResultProps) => {
                         </p>
                     </div>
 
-                    {onSelect && (
-                        <Button variant="highlight" onClick={() => onSelect(currentLyrics)} className="mx-auto mt-2">
-                            Select {tab}
-                        </Button>
-                    )}
+                    <div className="flex items-center justify-center">
+                        {onSelect ? (
+                            <Button variant="highlight" onClick={() => onSelect(currentLyrics)} className="mx-auto mt-2">
+                                Select {tab}
+                            </Button>
+                        ) : (
+                            <Button variant="highlight" icon="copy" onClick={() => copyToClipboard(currentLyrics)} className="mx-auto mt-2">
+                                Copy {tab}
+                            </Button>
+                        )}
+                    </div>
                 </div>
             )}
         </details>

@@ -22,6 +22,7 @@ enum IconSet {
     close = 'iconamoon:close',
     closeAnimated = 'line-md:close-small',
     code = 'solar:code-file-linear',
+    copy = 'solar:copy-outline',
 
     /* ------------------------------------ D ----------------------------------- */
     database = 'solar:database-linear',
