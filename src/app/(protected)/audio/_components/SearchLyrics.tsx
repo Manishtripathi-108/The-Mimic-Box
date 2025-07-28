@@ -14,6 +14,7 @@ import TabNavigation from '@/components/ui/TabNavigation';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
 import { copyToClipboard } from '@/lib/utils/client.utils';
+import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 type SearchLyricsProps = {
     defaultParams?: Partial<T_LyricsQuery>;
@@ -42,7 +43,7 @@ const LyricsResult = memo(({ lyric, onSelect }: LyricsResultProps) => {
                     </span>
                     <span className="text-text-secondary shadow-pressed-xs w-fit rounded-md border px-2 text-sm">{badgeText}</span>
                     <p className="text-text-secondary text-sm">
-                        {lyric.albumName || 'Unknown'} • {lyric.duration || 'N/A'}s
+                        {lyric.albumName || 'Unknown'} • {formatTimeDuration(lyric.duration * 1000, 'minutes') || 'N/A'}s
                     </p>
                 </div>
             </summary>

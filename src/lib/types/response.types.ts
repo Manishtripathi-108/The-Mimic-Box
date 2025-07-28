@@ -59,13 +59,14 @@ export type T_ErrorResponseOutput<T = undefined> = {
     success: false;
     message: string;
     status?: number;
-    code?: T_ErrorCode;
-    error?: Record<string, unknown> | Error | string | null | unknown;
     data?: T;
+    code?: T_ErrorCode;
     timestamp: Date;
     requestId?: string;
     stackTrace?: string;
+    meta?: Record<string, unknown>;
     details?: Record<string, unknown>;
+    error?: Record<string, unknown> | Error | string | null | unknown;
 };
 
 /**

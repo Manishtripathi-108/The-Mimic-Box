@@ -27,7 +27,7 @@ export const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: stri
     };
 };
 
-export const getLyrics = async (musicTrack: { track: string; artist: string; album: string; duration: string | number }) => {
+export const getLyrics = async (musicTrack: { title: string; artist: string; album: string; duration: string | number }) => {
     try {
         const res = await axios.get<T_SuccessResponseOutput<string>>(API_ROUTES.LYRICS.GET, {
             params: {

@@ -13,9 +13,7 @@ export async function GET(req: NextRequest) {
 
     const response = await lrclib.searchLyrics({ q });
 
-    if (!response.success || !response.payload) {
-        return createResponse(response);
-    }
+    if (!response.success) return createResponse(response);
 
     return createSuccess(
         'Success',

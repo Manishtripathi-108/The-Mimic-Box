@@ -122,7 +122,7 @@ export const AudioDownloadProvider = ({ children }: { children: React.ReactNode 
 
             const [lyrics, metadata] = await Promise.all([
                 getLyrics({
-                    track: file.metadata.title as string,
+                    title: file.metadata.title as string,
                     artist: file.metadata.artist as string,
                     album: file.metadata.album as string,
                     duration: file.metadata.duration,

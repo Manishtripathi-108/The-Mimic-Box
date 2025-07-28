@@ -19,5 +19,5 @@ export const PUBLIC_ROUTES: string[] = [
     '/download/ffmpeg-core.js',
     '/download/ffmpeg-core.wasm',
     '/download/ffmpeg-core.worker.js',
-    ...(isDev ? [API_ROUTES.ITUNES.SEARCH.TRACKS, API_ROUTES.LYRICS.GET] : []),
+    ...(isDev ? [API_ROUTES.ITUNES.SEARCH.TRACKS, API_ROUTES.LYRICS.GET, API_ROUTES.LYRICS.SEARCH] : []),
 ];

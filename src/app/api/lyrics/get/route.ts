@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 
 import lrclib from '@/lib/services/lrclib.service';
-import { createResponse, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
+import { createNotFound, createResponse, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 
 export async function GET(req: NextRequest) {
     const title = req.nextUrl.searchParams.get('title');
@@ -24,6 +24,10 @@ export async function GET(req: NextRequest) {
 
     if (!response.success || !response.payload) {
         return createResponse(response);
+    }
+
+    if (lyricsOnly && !response.payload.syncedLyrics && !response.payload.plainLyrics) {
+        return createNotFound('Failed to find lyrics for specified track', {}, true);
     }
 
     return createSuccess('Success', lyricsOnly ? response.payload.syncedLyrics || response.payload.plainLyrics : response.payload, {}, true);

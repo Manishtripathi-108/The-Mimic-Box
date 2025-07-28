@@ -61,11 +61,7 @@ type T_ResponseOrJson<T, B extends boolean> = B extends true ? NextResponse : T;
  * Logs error details in a structured JSON format for debugging and monitoring.
  */
 function logError<T = undefined>(message: string, data: T_ErrorResponse<T>): void {
-    const errorLog = {
-        message,
-        ...data,
-    };
-    console.error('API Error:', JSON.stringify(errorLog, null, 2));
+    console.error(message, JSON.stringify(data, null, 2));
 }
 
 /**
@@ -89,62 +85,58 @@ function buildSuccessData<T = undefined>(message: string, payload?: T, data: T_B
  * Constructs a standardized error response structure with logging.
  */
 export function buildErrorData<T = undefined>(message: string, data: T_ErrorResponse<T> = {}): T_ErrorResponseOutput<T> {
+    const { error, status, code, requestId, stackTrace, details, data: responseData, meta } = data;
+
     const response: T_ErrorResponseOutput<T> = {
         success: false,
         message,
         timestamp: new Date(),
     };
 
-    // Handle error instance (native Error or AxiosError)
-    if (data.error instanceof Error) {
-        response.error = data.error.message;
+    // Handle Error instance (native or AxiosError)
+    if (error instanceof Error) {
+        response.error = error.message;
 
         if (CONFIG.showStack) {
-            response.stackTrace = data.error.stack;
+            response.stackTrace = error.stack;
         }
 
-        // If it's an AxiosError, extract more details
-        if (isAxiosError(data.error)) {
-            const axiosError = data.error;
+        if (isAxiosError(error)) {
+            const axiosResponse = error.response;
 
-            const status = axiosError.response?.status;
-            const statusText = axiosError.response?.statusText;
-            const axiosData = axiosError.response?.data;
+            response.status = axiosResponse?.status ?? response.status;
+            response.code = axiosResponse?.data?.code ?? response.code;
+            response.message ||= axiosResponse?.data?.message ?? message;
 
-            if (status) response.status = status;
-            if (axiosData?.code) response.code = axiosData.code;
-            if (axiosData?.message && !response.message) response.message = axiosData.message;
-
-            // Include raw Axios response data in details if configured
-            if (axiosData && typeof axiosData === 'object') {
+            if (axiosResponse?.data && typeof axiosResponse.data === 'object') {
                 response.details = {
                     ...response.details,
-                    ...axiosData,
-                    statusText,
+                    ...axiosResponse.data,
+                    statusText: axiosResponse.statusText,
                 };
             }
         }
-    } else if (typeof data.error === 'string' || typeof data.error === 'object') {
-        response.error = data.error;
+    } else if (typeof error === 'string' || typeof error === 'object') {
+        response.error = error;
+    }
+
+    // Status & Code fallback
+    if (!response.status && status) {
+        response.status = status;
+    }
+
+    if (!response.code) {
+        response.code = code ?? (response.status ? ErrorHandler.statusToCode(response.status) : undefined) ?? ErrorCode.SERVER_ERROR;
     }
 
     // Optional fields
-    if (data.status && !response.status) response.status = data.status || CONFIG.defaultErrorStatus;
-    if (data.code && !response.code) {
-        response.code = data.code;
-    } else if (data.status && !response.code) {
-        response.code = ErrorHandler.statusToCode(data.status) || ErrorCode.SERVER_ERROR;
-    }
-    if (data.requestId) response.requestId = data.requestId;
-    if (CONFIG.showStack && data.stackTrace && !response.stackTrace) response.stackTrace = data.stackTrace;
-    if (data.details) {
-        response.details = {
-            ...response.details,
-            ...data.details,
-        };
-    }
+    if (requestId) response.requestId = requestId;
+    if (CONFIG.showStack && stackTrace && !response.stackTrace) response.stackTrace = stackTrace;
+    if (details) response.details = { ...response.details, ...details };
+    if (responseData) response.data = responseData;
+    if (meta) response.meta = meta;
 
-    logError(message, response);
+    logError(response.message, response);
     return response;
 }
 
