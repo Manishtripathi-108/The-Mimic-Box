@@ -4,13 +4,14 @@ import { memo, useCallback, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
+import { InView } from 'react-intersection-observer';
+
 import MusicTrackPlayBtn from '@/app/(protected)/music/_components/MusicTrackPlayBtn';
 import Button from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { useClickOutside } from '@/hooks/useClickOutside';
-import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import cn from '@/lib/utils/cn';
 
 const ITEMS_PER_BATCH = 30;
@@ -31,11 +32,6 @@ const MusicQueue = ({ className, onClose }: { className?: string; onClose?: () =
     }, [total, visibleCount]);
 
     const rootRef = useRef<HTMLDivElement>(null);
-    const { observeRef } = useIntersectionObserver({
-        onEntry: loadMoreItems,
-        root: rootRef,
-        threshold: 1,
-    });
 
     if (!queue || queue.length === 0) return null;
 
@@ -88,15 +84,20 @@ const MusicQueue = ({ className, onClose }: { className?: string; onClose?: () =
                 ))}
 
                 {visibleCount < total && (
-                    <div
-                        ref={observeRef}
+                    <InView
+                        as="div"
+                        onChange={(inView) => {
+                            if (inView) loadMoreItems();
+                        }}
+                        threshold={0.5}
+                        root={rootRef.current}
                         role="status"
                         id="loading-more-queue-tracks"
                         aria-live="polite"
                         className="text-text-secondary flex items-center justify-center gap-2 py-2 text-center text-sm">
                         <Icon icon="loading" className="text-accent size-8" />
                         <span className="sr-only">Loading more tracks...</span>
-                    </div>
+                    </InView>
                 )}
             </CardContent>
         </Card>

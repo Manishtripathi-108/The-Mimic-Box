@@ -5,6 +5,7 @@ import { useCallback, useState, useTransition } from 'react';
 import Link from 'next/link';
 
 import toast from 'react-hot-toast';
+import { InView } from 'react-intersection-observer';
 
 import { spotifyGetByUrl } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/music/_components/MusicActionBtns';
@@ -12,7 +13,6 @@ import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHead
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import MusicTrackCardSkeleton from '@/app/(protected)/music/_components/skeletons/MusicTrackCardSkeleton';
 import APP_ROUTES from '@/constants/routes/app.routes';
-import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 
 const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
@@ -38,17 +38,6 @@ const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
             })();
         });
     }, [nextUrl, isPending]);
-
-    const { observeRef } = useIntersectionObserver({
-        onEntry: () => {
-            if (nextUrl && !isPending) {
-                queueMicrotask(() => {
-                    fetchNextTracks();
-                });
-            }
-        },
-        threshold: 1,
-    });
 
     return (
         <>
@@ -84,9 +73,15 @@ const MusicSpotifyAlbum = ({ album }: { album: T_SpotifyAlbum }) => {
                 )}
 
                 {/* Loading Indicator */}
-                <div ref={observeRef} className="grid w-full gap-2">
-                    {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={idx} />)}
-                </div>
+                <InView
+                    as="div"
+                    onChange={(inView) => {
+                        if (inView) fetchNextTracks();
+                    }}
+                    rootMargin="0px 0px 250px 0px"
+                    className="grid w-full gap-2">
+                    {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={`skeleton-${idx}`} />)}
+                </InView>
             </div>
 
             {/* Copyrights Section */}
