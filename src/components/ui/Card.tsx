@@ -1,20 +1,15 @@
-import { forwardRef } from 'react';
-
 import cn from '@/lib/utils/cn';
 
-export const Card = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(({ className, ...props }, ref) => (
+export const Card = ({ className, ...props }: React.ComponentProps<'div'>) => (
     <div
         data-slot="card"
         className={cn(
             'bg-secondary text-text-secondary flex flex-col gap-6 overflow-hidden rounded-xl py-6 shadow-sm has-data-[slot=card-footer]:pb-0 has-data-[slot=card-header]:pt-0',
             className
         )}
-        ref={ref}
         {...props}
     />
-));
-
-Card.displayName = 'Card';
+);
 
 export const CardHeader = ({ className, ...props }: React.ComponentProps<'div'>) => (
     <div
@@ -39,11 +34,9 @@ export const CardAction = ({ className, ...props }: React.ComponentProps<'div'>)
     <div data-slot="card-action" className={cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', className)} {...props} />
 );
 
-export const CardContent = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(({ className, ...props }, ref) => (
-    <div data-slot="card-content" className={cn('px-6', className)} ref={ref} {...props} />
-));
-
-CardContent.displayName = 'CardContent';
+export const CardContent = ({ className, ...props }: React.ComponentProps<'div'>) => (
+    <div data-slot="card-content" className={cn('px-6', className)} {...props} />
+);
 
 export const CardFooter = ({ className, ...props }: React.ComponentProps<'div'>) => (
     <div data-slot="card-footer" className={cn('flex items-center px-6 pb-6 [.border-t]:pt-6', className)} {...props} />
