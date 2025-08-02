@@ -8,7 +8,7 @@ import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import Modal, { closeModal } from '@/components/ui/Modals';
 import Select from '@/components/ui/Select';
-import TabNavigation from '@/components/ui/TabNavigation';
+import TabSwitcher from '@/components/ui/TabSwitcher';
 import { ANILIST_GENRES } from '@/constants/client.constants';
 import {
     AnilistFilterSchema,
@@ -57,7 +57,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 {/* Format */}
                 <div className="form-group relative">
                     <p className="form-text text-text-primary font-alegreya text-base">Format:</p>
-                    <TabNavigation
+                    <TabSwitcher
                         tabs={AnilistMediaFormatTabs}
                         currentTab={watch('format')?.toLowerCase().replace('_', ' ')}
                         className="w-full text-nowrap"
@@ -85,7 +85,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 {/* Status */}
                 <div className="form-group relative">
                     <p className="form-text text-text-primary font-alegreya text-base">Status:</p>
-                    <TabNavigation
+                    <TabSwitcher
                         tabs={AnilistMediaStatusTabs}
                         currentTab={watch('status')?.toLowerCase().replaceAll('_', ' ')}
                         className="w-full text-nowrap"

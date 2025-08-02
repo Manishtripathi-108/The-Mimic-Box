@@ -4,12 +4,12 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 
 import cn from '@/lib/utils/cn';
 
-const TabNavigation = <T extends string>({
+const TabSwitcher = <T extends string>({
     tabs,
     currentTab,
     onTabChange,
-    className = '',
-    buttonClassName = '',
+    className,
+    buttonClassName,
 }: {
     tabs: T[];
     currentTab?: T | null;
@@ -74,7 +74,7 @@ const TabNavigation = <T extends string>({
     );
 };
 
-export default memo(TabNavigation) as <T extends string>(props: {
+export default memo(TabSwitcher) as <T extends string>(props: {
     tabs: T[];
     currentTab?: T | null;
     onTabChange: (tab: T) => void;

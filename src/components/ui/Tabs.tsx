@@ -6,34 +6,32 @@ import Slot from '@/components/Slot';
 import { DISABLED, FOCUS_RING } from '@/lib/styles/tailwind.helpers';
 import cn from '@/lib/utils/cn';
 
-interface TabsContextProps {
-    /** The currently active tab value */
-    readonly activeTab: string;
-    /** Function to set the active tab */
-    readonly setActiveTab: (value: string) => void;
-    /** Function to focus a specific tab */
-    readonly focusTab: (value: string) => void;
-    /** The orientation of the tabs, either horizontal or vertical */
-    readonly orientation: 'horizontal' | 'vertical';
-    /** The activation mode - manual requires explicit activation, automatic activates on focus */
-    readonly activationMode: 'manual' | 'automatic';
-    /** Whether focus should loop around when reaching the first/last tab */
-    readonly loopFocus: boolean;
-    /** Function to register a tab trigger element */
-    readonly registerTrigger: (value: string, ref: HTMLButtonElement | null) => void;
-    /** Array of tab values in their registration order */
-    readonly triggerOrder: readonly string[];
-    /** Whether tab content should be lazily mounted only when first activated */
-    readonly lazyMount: boolean;
-    /** Whether tab content should be unmounted when not active */
-    readonly unmountOnExit: boolean;
-    /** CSS styles for the tab indicator element */
-    readonly indicatorStyle: React.CSSProperties;
-    /** Function to update the indicator position and size */
-    readonly updateIndicator: () => void;
-}
+type TabsOrientation = 'horizontal' | 'vertical';
+type TabsActivation = 'manual' | 'automatic';
 
-const TabsContext = createContext<TabsContextProps | null>(null);
+type TabsContextType = {
+    activeTab: string;
+    setActiveTab: (val: string) => void;
+    focusTab: (val: string) => void;
+    orientation: TabsOrientation;
+    activation: TabsActivation;
+    loopFocus: boolean;
+    registerTrigger: (val: string, ref: HTMLButtonElement | null) => void;
+    triggerOrder: string[];
+    lazyMount: boolean;
+    unmountOnExit: boolean;
+    indicatorStyle: React.CSSProperties;
+    updateIndicator: () => void;
+};
+
+const TabsContext = createContext<TabsContextType | null>(null);
+const useTabsContext = (componentName: string) => {
+    const context = useContext(TabsContext);
+    if (!context) {
+        throw new Error(`${componentName} must be used within <Tabs>`);
+    }
+    return context;
+};
 
 export const Tabs = ({
     defaultValue = '',
@@ -41,7 +39,7 @@ export const Tabs = ({
     asChild = false,
     onValueChange,
     onFocusChange,
-    activationMode = 'automatic',
+    activation = 'automatic',
     orientation = 'horizontal',
     loopFocus = true,
     className,
@@ -53,10 +51,10 @@ export const Tabs = ({
     defaultValue?: string;
     value?: string;
     asChild?: boolean;
-    onValueChange?: (value: string) => void;
-    onFocusChange?: (value: string) => void;
-    activationMode?: 'manual' | 'automatic';
-    orientation?: 'horizontal' | 'vertical';
+    onValueChange?: (val: string) => void;
+    onFocusChange?: (val: string) => void;
+    activation?: TabsActivation;
+    orientation?: TabsOrientation;
     loopFocus?: boolean;
     className?: string;
     children: ReactNode;
@@ -64,16 +62,16 @@ export const Tabs = ({
     unmountOnExit?: boolean;
 } & React.HTMLAttributes<HTMLElement>) => {
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState(defaultValue);
+    const [internalTab, setInternalTab] = useState(defaultValue);
     const [triggerOrder, setTriggerOrder] = useState<string[]>([]);
     const [indicatorStyle, setIndicatorStyle] = useState<React.CSSProperties>({});
-
-    const activeTab = isControlled ? value! : internalValue;
     const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+    const currentTab = isControlled ? value! : internalTab;
 
     const setActiveTab = useCallback(
         (val: string) => {
-            if (!isControlled) setInternalValue(val);
+            if (!isControlled) setInternalTab(val);
             onValueChange?.(val);
         },
         [isControlled, onValueChange]
@@ -83,9 +81,9 @@ export const Tabs = ({
         (val: string) => {
             triggerRefs.current[val]?.focus();
             onFocusChange?.(val);
-            if (activationMode === 'automatic') setActiveTab(val);
+            if (activation === 'automatic') setActiveTab(val);
         },
-        [onFocusChange, setActiveTab, activationMode]
+        [activation, onFocusChange, setActiveTab]
     );
 
     const registerTrigger = useCallback((val: string, ref: HTMLButtonElement | null) => {
@@ -94,31 +92,31 @@ export const Tabs = ({
     }, []);
 
     const updateIndicator = useCallback(() => {
-        const el = triggerRefs.current[activeTab];
+        const el = triggerRefs.current[currentTab];
         if (el?.parentElement) {
-            const rect = el.getBoundingClientRect();
-            const parentRect = el.parentElement.getBoundingClientRect();
+            const { left, width } = el.getBoundingClientRect();
+            const parentLeft = el.parentElement.getBoundingClientRect().left;
 
             setIndicatorStyle({
-                width: `${rect.width}px`,
-                left: `${rect.left - parentRect.left}px`,
+                width: `${width}px`,
+                left: `${left - parentLeft}px`,
             });
         }
-    }, [activeTab]);
+    }, [currentTab]);
 
     useEffect(() => {
         updateIndicator();
         window.addEventListener('resize', updateIndicator);
         return () => window.removeEventListener('resize', updateIndicator);
-    }, [updateIndicator, triggerOrder.length]);
+    }, [updateIndicator]);
 
-    const ctx = useMemo(
+    const contextValue = useMemo(
         () => ({
-            activeTab,
+            activeTab: currentTab,
             setActiveTab,
             focusTab,
             orientation,
-            activationMode,
+            activation,
             loopFocus,
             registerTrigger,
             triggerOrder,
@@ -128,11 +126,11 @@ export const Tabs = ({
             updateIndicator,
         }),
         [
-            activeTab,
+            currentTab,
             setActiveTab,
             focusTab,
             orientation,
-            activationMode,
+            activation,
             loopFocus,
             registerTrigger,
             triggerOrder,
@@ -143,18 +141,18 @@ export const Tabs = ({
         ]
     );
 
-    const Comp = asChild ? Slot : 'div';
+    const Component = asChild ? Slot : 'div';
 
     return (
-        <TabsContext.Provider value={ctx}>
-            <Comp
+        <TabsContext.Provider value={contextValue}>
+            <Component
                 data-scope="tabs"
                 data-part="root"
                 data-orientation={orientation}
                 className={cn('flex gap-2', orientation === 'vertical' ? 'flex-row' : 'flex-col', className)}
                 {...props}>
                 {children}
-            </Comp>
+            </Component>
         </TabsContext.Provider>
     );
 };
@@ -169,24 +167,23 @@ export const TabsList = ({
     children: ReactNode;
     asChild?: boolean;
 } & React.HTMLAttributes<HTMLElement>) => {
-    const ctx = useContext(TabsContext);
-    if (!ctx) throw new Error('TabsList must be used within Tabs');
+    const ctx = useTabsContext('TabsList');
 
-    const Comp = asChild ? Slot : 'div';
+    const Component = asChild ? Slot : 'div';
 
     return (
-        <Comp
+        <Component
             role="tablist"
             data-part="list"
             data-orientation={ctx.orientation}
             className={cn(
-                'from-secondary to-tertiary shadow-floating-xs bg-muted text-muted-foreground relative inline-flex w-fit flex-wrap items-center justify-center gap-1 rounded-xl bg-linear-150 from-15% to-85% p-[3px]',
+                'shadow-floating-xs from-secondary to-tertiary relative inline-flex w-fit flex-wrap items-center justify-center gap-1 rounded-xl bg-linear-150 from-15% to-85% p-[3px]',
                 ctx.orientation === 'vertical' && 'flex-col',
                 className
             )}
             {...props}>
             {children}
-        </Comp>
+        </Component>
     );
 };
 
@@ -204,8 +201,7 @@ export const TabsTrigger = ({
     children: ReactNode;
     asChild?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-    const ctx = useContext(TabsContext);
-    if (!ctx) throw new Error('TabsTrigger must be used within Tabs');
+    const ctx = useTabsContext('TabsTrigger');
 
     const ref = useRef<HTMLButtonElement>(null);
     const isActive = ctx.activeTab === value;
@@ -217,130 +213,149 @@ export const TabsTrigger = ({
     const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
         if (disabled) return;
 
-        const isNext = ['ArrowRight', 'ArrowDown'].includes(e.key);
-        const isPrev = ['ArrowLeft', 'ArrowUp'].includes(e.key);
-        const isHome = e.key === 'Home';
-        const isEnd = e.key === 'End';
+        const key = e.key;
+        const keys = {
+            next: ['ArrowRight', 'ArrowDown'],
+            prev: ['ArrowLeft', 'ArrowUp'],
+            home: 'Home',
+            end: 'End',
+        };
 
-        const isRelevant = ctx.orientation === 'horizontal' ? ['ArrowLeft', 'ArrowRight', 'Home', 'End'] : ['ArrowUp', 'ArrowDown', 'Home', 'End'];
+        const relevantKeys =
+            ctx.orientation === 'horizontal' ? [...keys.prev, ...keys.next, keys.home, keys.end] : [...keys.next, ...keys.prev, keys.home, keys.end];
 
-        if (!isRelevant.includes(e.key)) return;
+        if (!relevantKeys.includes(key)) return;
 
-        const enabledTabs = ctx.triggerOrder.filter((val) => !document.getElementById(`tab-${val}`)?.hasAttribute('disabled'));
-        const index = enabledTabs.indexOf(value);
-        let nextIndex = index;
+        const enabled = ctx.triggerOrder.filter((val) => !document.getElementById(`tab-${val}`)?.hasAttribute('disabled'));
+        let idx = enabled.indexOf(value);
 
-        if (isNext) nextIndex++;
-        else if (isPrev) nextIndex--;
-        else if (isHome) nextIndex = 0;
-        else if (isEnd) nextIndex = enabledTabs.length - 1;
+        if (keys.next.includes(key)) idx++;
+        else if (keys.prev.includes(key)) idx--;
+        else if (key === keys.home) idx = 0;
+        else if (key === keys.end) idx = enabled.length - 1;
 
-        if (ctx.loopFocus) {
-            nextIndex = (nextIndex + enabledTabs.length) % enabledTabs.length;
-        } else if (nextIndex < 0 || nextIndex >= enabledTabs.length) {
-            return;
-        }
+        if (ctx.loopFocus) idx = (idx + enabled.length) % enabled.length;
+        else if (idx < 0 || idx >= enabled.length) return;
 
-        ctx.focusTab(enabledTabs[nextIndex]);
+        ctx.focusTab(enabled[idx]);
         e.preventDefault();
     };
 
-    const triggerProps = {
-        ref,
-        role: 'tab',
-        id: `tab-${value}`,
-        'aria-selected': isActive,
-        'aria-controls': `content-${value}`,
-        disabled,
-        'data-part': 'trigger',
-        'data-selected': isActive,
-        className: cn(
-            'hover:text-text-primary z-30 inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium transition-[color,box-shadow] whitespace-nowrap',
-            isActive ? 'text-text-primary' : 'text-text-secondary',
-            DISABLED,
-            FOCUS_RING,
-            className
-        ),
-        onClick: () => !disabled && ctx.setActiveTab(value),
-        onKeyDown: handleKeyDown,
-        ...props,
-    };
-
-    const Comp = asChild ? Slot : 'button';
-    return <Comp {...triggerProps}>{children}</Comp>;
-};
-
-export const TabIndicator = ({
-    className,
-    asChild,
-    children,
-    ...props
-}: {
-    className?: string;
-    asChild?: boolean;
-    children?: ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>) => {
-    const ctx = useContext(TabsContext);
-    if (!ctx) throw new Error('TabIndicator must be used within Tabs');
-
-    const Comp = asChild ? Slot : 'div';
+    const Component = asChild ? Slot : 'button';
 
     return (
-        <Comp
+        <Component
+            ref={ref}
+            role="tab"
+            id={`tab-${value}`}
+            aria-selected={isActive}
+            aria-controls={`content-${value}`}
+            disabled={disabled}
+            data-part="trigger"
+            data-selected={isActive}
             className={cn(
-                'bg-primary shadow-pressed-xs absolute bottom-1 z-10 h-[calc(100%-0.5rem)] rounded-lg border transition-all duration-300 ease-out',
+                'hover:text-text-primary z-30 inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow]',
+                isActive ? 'text-text-primary' : 'text-text-secondary',
+                DISABLED,
+                FOCUS_RING,
                 className
             )}
-            style={{ ...ctx.indicatorStyle, ...props.style }}
+            onClick={() => !disabled && ctx.setActiveTab(value)}
+            onKeyDown={handleKeyDown}
             {...props}>
             {children}
-        </Comp>
+        </Component>
+    );
+};
+
+export const TabsIndicator = ({
+    className,
+    style,
+    children,
+    asChild = false,
+}: {
+    className?: string;
+    style?: React.CSSProperties;
+    children?: ReactNode;
+    asChild?: boolean;
+}) => {
+    const ctx = useTabsContext('TabsIndicator');
+    const Component = asChild ? Slot : 'div';
+
+    return (
+        <Component
+            role="presentation"
+            data-part="indicator"
+            className={cn(
+                'bg-primary shadow-pressed-xs ease-out-circ absolute bottom-1 z-10 h-[calc(100%-0.5rem)] rounded-lg border transition-all duration-500',
+                className
+            )}
+            style={{ ...ctx.indicatorStyle, ...style }}>
+            {children}
+        </Component>
     );
 };
 
 export const TabsContent = ({
-    value,
-    lazyMount,
-    unmountOnExit,
-    className,
     children,
+    className,
     asChild = false,
+    ...props
+}: {
+    children: ReactNode;
+    className?: string;
+    asChild?: boolean;
+} & React.HTMLAttributes<HTMLElement>) => {
+    const Component = asChild ? Slot : 'div';
+    return (
+        <Component className={cn('relative flex-1', className)} {...props}>
+            {children}
+        </Component>
+    );
+};
+
+export const TabsPanel = ({
+    value,
+    children,
+    className,
+    asChild = false,
+    lazyMount = false,
+    unmountOnExit = false,
     ...props
 }: {
     value: string;
     lazyMount?: boolean;
     unmountOnExit?: boolean;
-    className?: string;
     children: ReactNode;
+    className?: string;
     asChild?: boolean;
 } & React.HTMLAttributes<HTMLElement>) => {
-    const ctx = useContext(TabsContext);
-    if (!ctx) throw new Error('TabsContent must be used within Tabs');
+    const ctx = useTabsContext('TabsPanel');
 
-    const mountedRef = useRef(false);
     const isActive = ctx.activeTab === value;
+    const mountedRef = useRef(false);
 
     useEffect(() => {
         if (isActive) mountedRef.current = true;
     }, [isActive]);
 
-    const shouldUnmount = unmountOnExit ?? ctx.unmountOnExit;
-    const shouldLazy = lazyMount ?? ctx.lazyMount;
+    const shouldHide = (unmountOnExit ?? ctx.unmountOnExit) && !isActive;
+    const shouldLazy = (lazyMount ?? ctx.lazyMount) && !mountedRef.current && !isActive;
 
-    if ((shouldUnmount && !isActive) || (shouldLazy && !mountedRef.current && !isActive)) return null;
+    if (shouldHide || shouldLazy) return null;
 
-    const Comp = asChild ? Slot : 'div';
+    const Component = asChild ? Slot : 'div';
 
     return (
-        <Comp
+        <Component
             role="tabpanel"
             id={`content-${value}`}
             aria-labelledby={`tab-${value}`}
-            data-part="content"
             hidden={!isActive}
-            className={cn('shadow-pressed-xs flex-1 rounded-xl p-4 outline-none', className)}
+            data-part="panel"
+            className={cn('p-4 outline-none', className)}
             {...props}>
             {children}
-        </Comp>
+        </Component>
     );
 };

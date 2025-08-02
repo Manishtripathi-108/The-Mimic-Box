@@ -17,7 +17,7 @@ import Icon from '@/components/ui/Icon';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import RangeSlider from '@/components/ui/RangeSlider';
 import Select from '@/components/ui/Select';
-import TabNavigation from '@/components/ui/TabNavigation';
+import TabSwitcher from '@/components/ui/TabSwitcher';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -252,7 +252,7 @@ const AudioFileConverter = () => {
                             {(files.length < 2 || useGlobalSettings) && (
                                 <div className="w-full">
                                     <p className="text-text-primary font-alegreya mb-1 text-base tracking-wide">Format:</p>
-                                    <TabNavigation
+                                    <TabSwitcher
                                         tabs={AudioFormatsSchema.options}
                                         currentTab={globalSettings.audio.format}
                                         onTabChange={(tab) => setValue('global.audio.format', tab)}

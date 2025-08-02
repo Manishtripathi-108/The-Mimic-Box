@@ -46,6 +46,14 @@
     --shadow-pressed-xl: inset 20px 20px 40px var(--lower-shadow), inset -20px -20px 40px var(--upper-shadow);
 
     /* -------------------------------------------------------------------------- */
+    /*                         Transition Timing Function                         */
+    /* -------------------------------------------------------------------------- */
+    --ease-in-out-back: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    --ease-in-out-circ: cubic-bezier(0.79, 0.14, 0.15, 0.86);
+    --ease-out-back: cubic-bezier(0.18, 0.89, 0.32, 1.27);
+    --ease-out-circ: cubic-bezier(0.08, 0.82, 0.17, 1);
+
+    /* -------------------------------------------------------------------------- */
     /*                                  Animation                                 */
     /* -------------------------------------------------------------------------- */
     --animate-blob: blob 10s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
