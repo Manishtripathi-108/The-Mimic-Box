@@ -5,6 +5,7 @@ import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import Button from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
+import { LYRICS_UNAVAILABLE_MESSAGES } from '@/constants/client.constants';
 import API_ROUTES from '@/constants/routes/api.routes';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import { useClickOutside } from '@/hooks/useClickOutside';
@@ -138,11 +139,7 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
                         <div className="text-center whitespace-pre-wrap">{data}</div>
                     )
                 ) : (
-                    <div className="text-center">
-                        Oops! Looks like the lyrics are on vacation.
-                        <br />
-                        Try humming instead 🎤😅
-                    </div>
+                    <div className="text-center">{LYRICS_UNAVAILABLE_MESSAGES[Math.floor(Math.random() * LYRICS_UNAVAILABLE_MESSAGES.length)]}</div>
                 )}
             </CardContent>
         </Card>

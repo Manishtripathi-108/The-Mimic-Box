@@ -287,3 +287,16 @@ export const META_TAGS: T_AudioMetaTagsRecords = {
         placeholder: 'e.g. https://themimicbox.com',
     },
 };
+
+/* --------------------------------- lyrics --------------------------------- */
+export const LYRICS_UNAVAILABLE_MESSAGES = [
+    'The lyric gods are on vacation… probably sipping margaritas on a beach 🎵🏖️',
+    'Oops! The lyrics went to get milk and joined a rock band instead 🥛🎸',
+    'Lyrics went on a coffee break and forgot to clock back in ☕😅',
+    "These lyrics are playing hide and seek… and they're *really* good at it 🙈",
+    'Someone forgot to feed the lyrics hamster. Again. 🐹💨',
+    "Aliens abducted the lyrics. We hope they're enjoying space karaoke 👽🎤",
+    "The lyrics ghosted us… we're left on read 👻📱",
+    'The lyrics are currently binge-watching Netflix and ignoring responsibilities 📺🍿',
+    'We had the lyrics, but then someone played Free Bird 🕊️🎵',
+];
