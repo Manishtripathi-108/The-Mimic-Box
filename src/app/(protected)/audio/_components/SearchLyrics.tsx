@@ -16,6 +16,18 @@ import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
 import { copyToClipboard } from '@/lib/utils/client.utils';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
+const fallbackMessages = [
+    'The lyric gods are on vacation… probably sipping margaritas on a beach 🎵🏖️',
+    'Oops! The lyrics went to get milk and joined a rock band instead 🥛🎸',
+    'Lyrics went on a coffee break and forgot to clock back in ☕😅',
+    "These lyrics are playing hide and seek… and they're *really* good at it 🙈",
+    'Someone forgot to feed the lyrics hamster. Again. 🐹💨',
+    "Aliens abducted the lyrics. We hope they're enjoying space karaoke 👽🎤",
+    "The lyrics ghosted us… we're left on read 👻📱",
+    'The lyrics are currently binge-watching Netflix and ignoring responsibilities 📺🍿',
+    'We had the lyrics, but then someone played Free Bird 🕊️🎵',
+];
+
 const LyricsResult = memo(({ lyric, onSelect }: { lyric: T_LyricsRecord; onSelect?: (lyrics: string) => void }) => {
     const badgeText = lyric.instrumental ? 'Instrumental' : lyric.syncedLyrics ? 'Synced' : 'Plain';
 
@@ -27,7 +39,7 @@ const LyricsResult = memo(({ lyric, onSelect }: { lyric: T_LyricsRecord; onSelec
         }
     };
 
-    const fallbackMessage = 'The lyric gods are on vacation... try again later!';
+    const fallbackMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
 
     return (
         <details className="shadow-raised-xs relative rounded-md border p-4">
@@ -64,6 +76,7 @@ const LyricsResult = memo(({ lyric, onSelect }: { lyric: T_LyricsRecord; onSelec
                                 <Button
                                     variant="highlight"
                                     className="mx-auto mt-2 block h-auto"
+                                    disabled={!lyric.syncedLyrics}
                                     onClick={() => handleCopy(lyric.syncedLyrics || fallbackMessage)}>
                                     {onSelect ? 'Select' : 'Copy'} Synced Lyrics
                                 </Button>
@@ -76,6 +89,7 @@ const LyricsResult = memo(({ lyric, onSelect }: { lyric: T_LyricsRecord; onSelec
                                 <Button
                                     variant="highlight"
                                     className="mx-auto mt-2 block h-auto"
+                                    disabled={!lyric.plainLyrics}
                                     onClick={() => handleCopy(lyric.plainLyrics || fallbackMessage)}>
                                     {onSelect ? 'Select' : 'Copy'} Plain Lyrics
                                 </Button>
