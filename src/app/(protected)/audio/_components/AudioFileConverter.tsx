@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { handleConvertAudio } from '@/actions/audio.actions';
 import AudioAdvancedSettings from '@/app/(protected)/audio/_components/AudioAdvancedSettings';
 import UploadProgressCard from '@/components/layout/UploadProgressCard';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUpload from '@/components/ui/FileUpload';

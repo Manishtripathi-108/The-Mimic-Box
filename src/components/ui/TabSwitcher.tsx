@@ -61,7 +61,7 @@ const TabSwitcher = <T extends string>({
                     aria-controls={`tabpanel-${index}`}
                     onClick={() => onTabChange(tab)}
                     className={cn(
-                        'hover:text-text-primary text-text-secondary data-[selected=true]:text-text-primary z-30 flex-1 cursor-pointer rounded-lg px-4 py-2 transition-colors',
+                        'hover:text-text-primary text-text-secondary data-selected:text-text-primary z-30 flex-1 cursor-pointer rounded-lg px-4 py-2 transition-colors',
                         buttonClassName
                     )}>
                     {tab}

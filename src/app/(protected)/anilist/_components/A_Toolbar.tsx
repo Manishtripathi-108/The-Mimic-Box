@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Button from '@/components/ui/Button';
+import { Button, ButtonGroup } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { openModal } from '@/components/ui/Modals';
 import { AnilistMediaFilters } from '@/lib/types/anilist.types';
@@ -58,18 +58,16 @@ const A_Toolbar = ({
 
             {/* View Mode & Filter Buttons */}
             <div className="flex items-center justify-end pr-4">
-                <span className="flex w-fit items-center justify-center rounded-full border">
-                    {['detailed list', 'card'].map((mode) => (
-                        <button
-                            onClick={() => setDetailedView(mode === 'detailed list')}
-                            key={mode}
-                            className={`button p-2 shadow-none ${mode === 'detailed list' ? 'rounded-l-full' : 'rounded-r-full'} ${detailedView === (mode === 'detailed list') ? 'active' : ''}`}
-                            title={`View as ${mode}`}
-                            aria-label={`View as ${mode}`}>
-                            <Icon icon={mode === 'detailed list' ? 'list' : 'card'} className="size-4" />
-                        </button>
-                    ))}
-                </span>
+                <ButtonGroup>
+                    <Button
+                        aria-label="Detailed View"
+                        title="Detailed View"
+                        onClick={() => setDetailedView(true)}
+                        active={detailedView}
+                        icon="list"
+                    />
+                    <Button aria-label="Card View" title="Card View" onClick={() => setDetailedView(false)} active={!detailedView} icon="card" />
+                </ButtonGroup>
                 <Button
                     aria-label="Filter"
                     title="Filter"

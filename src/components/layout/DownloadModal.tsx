@@ -5,7 +5,7 @@ import { memo, useCallback, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { InView } from 'react-intersection-observer';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import DownloadItem from '@/components/ui/DownloadItem';
 import Icon from '@/components/ui/Icon';

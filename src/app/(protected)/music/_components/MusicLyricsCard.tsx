@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
 import { LYRICS_UNAVAILABLE_MESSAGES } from '@/constants/client.constants';

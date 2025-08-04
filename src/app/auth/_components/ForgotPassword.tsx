@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';

@@ -60,42 +60,47 @@ const ICON_ONLY_SIZE_CLASSES: Record<ButtonSize, string> = {
     lg: 'size-10 p-2 rounded-full',
 };
 
-const Button = ({
-    className,
-    variant = 'primary',
-    size = 'md',
-    asChild = false,
-    active = false,
-    icon,
-    iconClassName,
-    children,
-    ...props
-}: ButtonProps) => {
-    const isIconOnly = !!icon && !children;
-    const Comp = asChild ? Slot : 'button';
-
-    const finalClassName = cn(
-        BASE_CLASSES,
-        SVG_UTILS,
-        FOCUS_RING,
-        DISABLED,
-        VARIANT_CLASSES[variant],
-        isIconOnly ? ICON_ONLY_SIZE_CLASSES[size] : SIZE_CLASSES[size],
-        className,
-        active && 'shadow-pressed-xs active'
-    );
-
-    props = {
-        ...props,
-        type: !asChild ? props.type || 'button' : undefined,
-    };
-
-    return (
-        <Comp className={finalClassName} {...props}>
-            {icon && <Icon icon={icon} className={cn('pointer-events-none shrink-0', isIconOnly ? 'size-full' : 'size-5', iconClassName)} />}
-            {children}
-        </Comp>
-    );
+const groupButtonStyles: Record<ButtonSize, string> = {
+    sm: 'group-[.group]:rounded-none group-[.group]:first:rounded-l-md group-[.group]:last:rounded-r-md',
+    md: 'group-[.group]:rounded-none group-[.group]:first:rounded-l-lg group-[.group]:last:rounded-r-lg',
+    lg: 'group-[.group]:rounded-none group-[.group]:first:rounded-l-xl group-[.group]:last:rounded-r-xl',
 };
 
-export default memo(Button);
+export const Button = memo(
+    ({ className, variant = 'primary', size = 'md', asChild = false, active = false, icon, iconClassName, children, ...props }: ButtonProps) => {
+        const isIconOnly = !!icon && !children;
+        const Comp = asChild ? Slot : 'button';
+
+        const finalClassName = cn(
+            BASE_CLASSES,
+            SVG_UTILS,
+            FOCUS_RING,
+            DISABLED,
+            VARIANT_CLASSES[variant],
+            isIconOnly ? ICON_ONLY_SIZE_CLASSES[size] : SIZE_CLASSES[size],
+            groupButtonStyles[size],
+            className,
+            active && 'shadow-pressed-xs active'
+        );
+
+        props = {
+            ...props,
+            type: !asChild ? props.type || 'button' : undefined,
+        };
+
+        return (
+            <Comp className={finalClassName} {...props}>
+                {icon && <Icon icon={icon} className={cn('pointer-events-none shrink-0', isIconOnly ? 'size-full' : 'size-5', iconClassName)} />}
+                {children}
+            </Comp>
+        );
+    }
+);
+
+Button.displayName = 'Button';
+
+export const ButtonGroup = memo(({ children }: { children: React.ReactNode }) => {
+    return <div className="group inline-flex rounded-xl">{children}</div>;
+});
+
+ButtonGroup.displayName = 'ButtonGroup';

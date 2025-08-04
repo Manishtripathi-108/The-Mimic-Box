@@ -22,7 +22,7 @@ let redirected = false;
 
 const Page = () => {
     return (
-        <div className="grid h-screen place-items-center">
+        <div className="h-calc-full-height grid place-items-center">
             <h1 className="text-accent font-alegreya text-center text-4xl">Redirecting...</h1>
             <Suspense fallback={<Icon icon="loading" className="size-7" />}>
                 <RedirectLogic />

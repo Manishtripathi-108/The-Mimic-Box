@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
 import MusicDurationSlider from '@/app/(protected)/music/_components/MusicDurationSlider';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useMultiToggle from '@/hooks/useMultiToggle';

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 import Link from 'next/link';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 

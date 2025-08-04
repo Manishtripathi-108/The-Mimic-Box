@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { InView } from 'react-intersection-observer';
 
 import MusicTrackPlayBtn from '@/app/(protected)/music/_components/MusicTrackPlayBtn';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Icon from '@/components/ui/Icon';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';

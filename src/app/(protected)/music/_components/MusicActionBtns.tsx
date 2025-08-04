@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
 import MusicDownloadPopover from '@/app/(protected)/music/_components/MusicDownloadPopover';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
 import { T_AudioSourceContext } from '@/lib/types/client.types';
