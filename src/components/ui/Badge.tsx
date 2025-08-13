@@ -1,5 +1,5 @@
 import Slot from '@/components/Slot';
-import { ARIA_INVALID, FOCUS_RING, SVG_UTILS } from '@/lib/styles/tailwind.helpers';
+import { DATA_INVALID, FOCUS_RING, SVG_UTILS } from '@/lib/styles/tailwind.helpers';
 import cn from '@/lib/utils/cn';
 
 type BadgeVariant = 'primary' | 'secondary' | 'danger' | 'outline' | 'success';
@@ -21,7 +21,7 @@ const variantClasses: Record<BadgeVariant, string> = {
 };
 
 const Badge = ({ className, variant = 'primary', asChild = false, children, ...props }: BadgeProps) => {
-    const combinedClassName = cn(baseBadgeClasses, SVG_UTILS, ARIA_INVALID, FOCUS_RING, variantClasses[variant], className);
+    const combinedClassName = cn(baseBadgeClasses, SVG_UTILS, DATA_INVALID, FOCUS_RING, variantClasses[variant], className);
     const Comp = asChild ? Slot : 'span';
 
     return (

@@ -389,13 +389,14 @@
         }
 
         &::-webkit-slider-thumb {
-            @apply size-6 cursor-ew-resize rounded-full border-5 border-transparent shadow-xs shadow-black transition-transform duration-500;
+            @apply size-6 cursor-ew-resize rounded-full border-5 border-transparent shadow-xs shadow-black transition-transform;
             background:
                 linear-gradient(#eb2300, var(--color-theme-accent)) padding-box,
                 linear-gradient(var(--color-theme-accent), #af1e32) border-box;
         }
 
-        &:focus {
+        &:focus,
+        &:hover {
             outline: none;
 
             &::-webkit-slider-thumb {

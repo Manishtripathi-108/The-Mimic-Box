@@ -1,18 +1,18 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import debounce from 'lodash.debounce';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { saavnGlobalSearch } from '@/actions/saavn.actions';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import useDebouncedCallback from '@/hooks/useDebouncedCallback';
 import useToggle from '@/hooks/useToggle';
 import { T_SaavnSearchResponse } from '@/lib/types/saavn/search.types';
 
@@ -50,22 +50,22 @@ const MusicSearch = () => {
         disabled: !isOpen,
     });
 
-    const debouncedSearch = useMemo(
-        () =>
-            debounce((query: string) => {
-                startTransition(async () => {
-                    const response = await saavnGlobalSearch(query);
-                    if (response.success) {
-                        setResults(response.payload);
-                        open();
-                    } else {
-                        setResults(null);
-                        close();
-                    }
-                });
-            }, 500),
-        [close, open]
-    );
+    const {
+        callback: debouncedSearch,
+        cancel: cancelDebounce,
+        flush: flushDebounce,
+    } = useDebouncedCallback((query: string) => {
+        startTransition(async () => {
+            const response = await saavnGlobalSearch(query);
+            if (response.success) {
+                setResults(response.payload);
+                open();
+            } else {
+                setResults(null);
+                close();
+            }
+        });
+    }, 500);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -74,7 +74,7 @@ const MusicSearch = () => {
         if (!value.trim()) {
             setResults(null);
             close();
-            debouncedSearch.cancel();
+            cancelDebounce();
             return;
         }
 
@@ -83,6 +83,7 @@ const MusicSearch = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        flushDebounce();
         // Todo: make search page and uncomment this 😘
         return;
         if (!search.trim()) return;
@@ -90,10 +91,6 @@ const MusicSearch = () => {
         close();
         router.push(APP_ROUTES.MUSIC.SEARCH(search.trim()));
     };
-
-    useEffect(() => {
-        return () => debouncedSearch.cancel();
-    }, [debouncedSearch]);
 
     const nonEmptySections = results ? Object.entries(results).filter(([, section]) => section.results.length > 0) : [];
 

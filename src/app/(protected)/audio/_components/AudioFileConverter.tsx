@@ -13,7 +13,6 @@ import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUpload from '@/components/ui/FileUpload';
 import FileUploadItem from '@/components/ui/FileUploadItem';
-import Icon from '@/components/ui/Icon';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import RangeSlider from '@/components/ui/RangeSlider';
 import Select from '@/components/ui/Select';
@@ -243,8 +242,8 @@ const AudioFileConverter = () => {
 
                             <ErrorMessage message={errors.root?.message} />
 
-                            <Button className="w-full" onClick={() => document.getElementById('file-upload')?.click()}>
-                                <Icon icon="plus" /> Add More Files
+                            <Button className="w-full" icon="plus" onClick={() => document.getElementById('file-upload')?.click()}>
+                                Add More Files
                             </Button>
 
                             <hr />
@@ -265,7 +264,8 @@ const AudioFileConverter = () => {
                                             min={64}
                                             max={320}
                                             step={64}
-                                            classNames={{ field: 'border mt-1', label: 'font-alegreya text-base  tracking-wide' }}
+                                            sliderProps={{ margin: 0.5 }}
+                                            classNames={{ field: 'border mt-1 w-full', label: 'font-alegreya text-base  tracking-wide' }}
                                         />
                                         <div className="mt-2 flex justify-between text-sm">
                                             {AUDIO_BITRATE_OPTIONS.map(({ label, value }) => (
@@ -288,18 +288,19 @@ const AudioFileConverter = () => {
                                     <Button
                                         title="Advanced Settings"
                                         className="mt-4 ml-auto"
+                                        icon="settings"
                                         onClick={() => openAdvancedSettings(globalSettings, 'global')}>
-                                        <Icon icon="settings" /> Advanced Settings
+                                        Advanced Settings
                                     </Button>
                                 </div>
                             )}
 
                             <div className="mt-5 flex w-full justify-between">
-                                <Button variant="danger" className="mr-2" onClick={() => reset(defaultValues)}>
-                                    <Icon icon="trash" /> Clear
+                                <Button variant="danger" className="mr-2" onClick={() => reset(defaultValues)} icon="trash">
+                                    Clear
                                 </Button>
-                                <Button variant="highlight" type="submit">
-                                    <Icon icon="musicConvert" /> Convert
+                                <Button variant="highlight" type="submit" icon="musicConvert">
+                                    Convert
                                 </Button>
                             </div>
                         </CardContainer>
