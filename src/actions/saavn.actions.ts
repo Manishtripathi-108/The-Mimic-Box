@@ -1,6 +1,6 @@
 'use server';
 
-import { z } from 'zod';
+import z from 'zod';
 
 import saavnApi from '@/lib/services/saavn.service';
 import { createError, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
@@ -41,7 +41,7 @@ export const saavnGlobalSearch = async (query: string) => {
  */
 export const saavnSearchSongs = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
+    if (!validate.success) return createValidationError('Invalid search options!', validate.error.issues);
     return await saavnApi.searchSongs(validate.data);
 };
 
@@ -52,7 +52,7 @@ export const saavnSearchSongs = async (options: SearchOptions) => {
  */
 export const saavnSearchAlbums = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
+    if (!validate.success) return createValidationError('Invalid search options!', validate.error.issues);
     return await saavnApi.searchAlbums(validate.data);
 };
 
@@ -63,7 +63,7 @@ export const saavnSearchAlbums = async (options: SearchOptions) => {
  */
 export const saavnSearchPlaylists = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
+    if (!validate.success) return createValidationError('Invalid search options!', validate.error.issues);
     return await saavnApi.searchPlaylists(validate.data);
 };
 
@@ -74,7 +74,7 @@ export const saavnSearchPlaylists = async (options: SearchOptions) => {
  */
 export const saavnSearchArtists = async (options: SearchOptions) => {
     const validate = validateSearchOptions.safeParse(options);
-    if (!validate.success) return createValidationError(validate.error.format()._errors[0], validate.error.errors);
+    if (!validate.success) return createValidationError('Invalid search options!', validate.error.issues);
     return await saavnApi.searchArtists(validate.data);
 };
 
@@ -160,8 +160,8 @@ export const saavnGetArtistDetails = async (params: { id: string; songCount: num
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
-    if (!sort.success) return createValidationError(sort.error.format()._errors[0], sort.error.errors);
+    if (!pagination.success) return createValidationError('Invalid pagination options!', pagination.error.issues);
+    if (!sort.success) return createValidationError('Invalid sort options!', sort.error.issues);
     if (params.songCount == null) return createValidationError('Song count is required');
     if (params.albumCount == null) return createValidationError('Album count is required');
     if (params.songCount < 0) return createValidationError('Song count must be a non-negative number');
@@ -188,8 +188,8 @@ export const saavnGetArtistDetailsByLink = async (
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0]);
-    if (!sort.success) return createValidationError(sort.error.format()._errors[0]);
+    if (!pagination.success) return createValidationError('Invalid pagination options!', pagination.error.issues);
+    if (!sort.success) return createValidationError('Invalid sort options!', sort.error.issues);
     if (params.songCount == null) return createValidationError('Song count is required');
     if (params.albumCount == null) return createValidationError('Album count is required');
     if (params.songCount < 0) return createValidationError('Song count must be a non-negative number');
@@ -214,8 +214,8 @@ export const saavnGetArtistSongs = async (params: { id: string } & PaginationOpt
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
-    if (!sort.success) return createValidationError(sort.error.format()._errors[0], sort.error.errors);
+    if (!pagination.success) return createValidationError('Invalid pagination options!', pagination.error.issues);
+    if (!sort.success) return createValidationError('Invalid sort options!', sort.error.issues);
 
     return await saavnApi.getArtistSongs({
         ...pagination.data,
@@ -235,8 +235,8 @@ export const saavnGetArtistAlbums = async (params: { id: string } & PaginationOp
     const pagination = validatePaginationOptions.safeParse(params);
     const sort = validateSortOptions.safeParse(params);
 
-    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
-    if (!sort.success) return createValidationError(sort.error.format()._errors[0], sort.error.errors);
+    if (!pagination.success) return createValidationError('Invalid pagination options!', pagination.error.issues);
+    if (!sort.success) return createValidationError('Invalid sort options!', sort.error.issues);
 
     return await saavnApi.getArtistAlbums({
         ...pagination.data,
@@ -259,7 +259,7 @@ export const saavnGetPlaylistDetails = async (params: { id: string } & Paginatio
     if (!params.id) return createValidationError('ID is required');
     const pagination = validatePaginationOptions.safeParse(params);
 
-    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
+    if (!pagination.success) return createValidationError('Invalid pagination options!', pagination.error.issues);
 
     return await saavnApi.getPlaylistById({
         ...pagination.data,
@@ -276,7 +276,7 @@ export const saavnGetPlaylistDetailsByLink = async (params: { link: string } & P
     if (!params.link) return createValidationError('Link is required');
     const pagination = validatePaginationOptions.safeParse(params);
 
-    if (!pagination.success) return createValidationError(pagination.error.format()._errors[0], pagination.error.errors);
+    if (!pagination.success) return createValidationError('Invalid pagination options!', pagination.error.issues);
 
     return await saavnApi.getPlaylistByLink({
         ...pagination.data,

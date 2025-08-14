@@ -56,7 +56,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
         setValue,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<T_AudioMetaTags>({
+    } = useForm({
         resolver: zodResolver(AudioMetaTagsSchema),
         defaultValues: { ...parsedMetadata, cover: undefined },
     });

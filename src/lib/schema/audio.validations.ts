@@ -1,6 +1,8 @@
-import { z } from 'zod';
+import z from 'zod';
 
-import { MAX_FILE_SIZE } from '@/constants/client.constants';
+import { MAX_FILE_SIZE } from '@/constants/common.constants';
+import { imageFileValidation } from '@/lib/schema/common.validations';
+import { formatFileSize } from '@/lib/utils/file.utils';
 
 export const AudioSampleRatesSchema = z.enum(['no change', '44100 Hz', '48000 Hz', '96000 Hz']);
 export const AudioPlaybackSpeedsSchema = z.enum(['0.25x (Very Slow)', '0.5x (Slow)', '1.0x (Normal)', '1.5x (Fast)', '2.0x (Very Fast)']);
@@ -8,15 +10,11 @@ export const AudioFormatsSchema = z.enum(['AAC', 'MP3', 'WMA', 'AIFF', 'FLAC', '
 export const AudioBitrateSchema = z.enum(['0', '64', '128', '192', '256', '320']);
 
 export const AudioFileValidationSchema = z
-    .instanceof(File, { message: 'Invalid audio file.' })
-    .refine((val) => /audio\/.*/.test(val.type), {
-        message: 'Invalid audio file type.',
-    })
-    .refine((val) => val.size <= MAX_FILE_SIZE.audio, {
-        message: `Audio file size must not exceed ${MAX_FILE_SIZE.audio / 1000000} MB`,
-    });
+    .file()
+    .max(MAX_FILE_SIZE.audio, `Audio file size must not exceed ${formatFileSize(MAX_FILE_SIZE.audio)}`)
+    .refine((val) => /audio\/.*/.test(val.type), 'Invalid audio file type.');
 
-export const AudioFileArrayValidationSchema = z.array(AudioFileValidationSchema).max(10, { message: 'You can upload a maximum of 10 audio files.' });
+export const AudioFileArrayValidationSchema = z.array(AudioFileValidationSchema).max(10, 'You can upload a maximum of 10 audio files.');
 
 export const audioAdvanceSettingsSchema = z.object({
     audio: z.object({
@@ -34,21 +32,15 @@ export const audioAdvanceSettingsSchema = z.object({
         normalize: z.boolean().default(false),
     }),
     trim: z.object({
-        trimStart: z.string().time({ message: 'Invalid time format (HH:MM:SS)' }).default('00:00:00'),
-        trimEnd: z.string().time({ message: 'Invalid time format (HH:MM:SS)' }).default('00:00:00'),
+        trimStart: z.iso.time('Invalid time format (HH:MM:SS)').default('00:00:00'),
+        trimEnd: z.iso.time('Invalid time format (HH:MM:SS)').default('00:00:00'),
     }),
 });
 
 export const AudioMetaTagsSchema = z.object({
-    cover: z
-        .instanceof(File, { message: 'Invalid image' })
-        .refine((file) => !file || file.size <= MAX_FILE_SIZE.image, {
-            message: `Image file size must not exceed ${MAX_FILE_SIZE.image / 1000000} MB`,
-        })
-        .refine((file) => !file || file.type.startsWith('image/'), { message: 'File must be a valid image' })
-        .optional(),
-    title: z.string().min(1, { message: 'Title is required' }),
-    artist: z.string().min(1, { message: 'Artist is required' }),
+    cover: imageFileValidation.max(10 * 1024 * 1024, `Cover image file size must not exceed 10 MB`).optional(),
+    title: z.string().min(1, 'Title is required' ),
+    artist: z.string().min(1, 'Artist is required' ),
     album: z.string().optional(),
     album_artist: z.string().optional(),
     genre: z.string().optional(),
@@ -70,7 +62,7 @@ export const AudioMetaTagsSchema = z.object({
     catalog_number: z.string().optional(),
     encoder: z.string().optional(),
     copyright: z.string().optional(),
-    url: z.string().url({ message: 'Invalid URL' }).or(z.literal('')).optional(),
+    url: z.url('Invalid URL').or(z.literal('')).optional(),
 });
 
 export const LyricsQuerySchema = z
@@ -83,6 +75,6 @@ export const LyricsQuerySchema = z
         duration: z.coerce.number().optional(),
     })
     .refine((data) => data.id !== undefined || (data.q && data.q.trim() !== '') || (data.trackName && data.trackName.trim() !== ''), {
-        message: 'At least one of the following fields must be provided: track name, lyrics, or Lrclib ID.',
+        error: 'At least one of the following fields must be provided: track name, lyrics, or Lrclib ID.',
         path: ['q'],
     });

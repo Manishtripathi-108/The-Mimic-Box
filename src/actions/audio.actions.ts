@@ -15,7 +15,7 @@ import { safeAwait, safeAwaitAll } from '@/lib/utils/safeAwait.utils';
 
 export const handleExtractAudioMetaTags = async (file: File) => {
     const parsedFile = AudioFileValidationSchema.safeParse(file);
-    if (!parsedFile.success) return createValidationError(parsedFile.error.errors[0].message);
+    if (!parsedFile.success) return createValidationError(parsedFile.error.issues[0].message);
 
     const [saveError, fileDetails] = await safeAwait(
         saveUploadedFile({
@@ -74,7 +74,7 @@ export const handleConvertAudio = async (files: File[], settings: T_AudioAdvance
 
     const validationResult = AudioFileArrayValidationSchema.safeParse(files);
     if (!validationResult.success) {
-        return createValidationError('Invalid audio files.', validationResult.error.errors);
+        return createValidationError('Invalid audio files.', validationResult.error.issues);
     }
 
     const savedResults = await safeAwaitAll(

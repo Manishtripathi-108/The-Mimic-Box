@@ -328,7 +328,7 @@
 /*                                    Form                                    */
 /* -------------------------------------------------------------------------- */
 @utility form-group {
-    @apply w-full space-y-2;
+    @apply w-full space-y-1;
 
     &:has(.form-field:not(:placeholder-shown)) label,
     &:has(.form-field:hover) label,

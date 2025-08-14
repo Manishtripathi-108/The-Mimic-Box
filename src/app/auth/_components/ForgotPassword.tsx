@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { z } from 'zod';
+import z from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';

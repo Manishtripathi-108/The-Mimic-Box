@@ -1,13 +1,6 @@
 import { FileTypesMap } from '@/lib/types/client.types';
 import { T_AudioAdvanceSettings, T_AudioMetaTagsRecords } from '@/lib/types/common.types';
 
-export const MAX_FILE_SIZE = {
-    image: 5 * 1024 * 1024, // 5MB
-    video: 50 * 1024 * 1024, // 50MB
-    audio: 50 * 1024 * 1024, // 50MB
-    document: 50 * 1024 * 1024, // 50MB
-} as const;
-
 export const FILE_TYPES_MAP: FileTypesMap = {
     // Audio
     mp3: 'audio',

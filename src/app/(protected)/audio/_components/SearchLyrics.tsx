@@ -4,7 +4,6 @@ import React, { memo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { getLyrics } from '@/actions/lrclib.actions';
 import { Button } from '@/components/ui/Button';
@@ -102,7 +101,7 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
         control,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof LyricsQuerySchema>>({
+    } = useForm({
         resolver: zodResolver(LyricsQuerySchema),
         defaultValues: {
             q: '',
@@ -120,6 +119,12 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
             const records = Array.isArray(res.payload) ? res.payload : [res.payload];
             setLyrics(records);
         } else {
+            res.data?.forEach((err) => {
+                setError(err.path[0] as 'q' | 'trackName' | 'artistName' | 'albumName' | 'duration', {
+                    message: err.message,
+                });
+            });
+
             setError('root', { message: res.message });
         }
     };

@@ -31,7 +31,7 @@ const ResetFilters: AnilistMediaFilters = {
 };
 
 const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; setFilters: (filters: AnilistMediaFilters) => void }) => {
-    const { control, handleSubmit, setValue, reset, watch } = useForm<AnilistMediaFilters>({
+    const { control, handleSubmit, setValue, reset, watch } = useForm({
         defaultValues: { ...filters, genres: filters.genres ?? [] },
         resolver: zodResolver(AnilistFilterSchema),
     });

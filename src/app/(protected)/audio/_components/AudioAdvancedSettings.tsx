@@ -23,7 +23,7 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
     const parsedValues = audioAdvanceSettingsSchema.safeParse(values);
     const mergedValues = parsedValues.success ? parsedValues.data : AUDIO_ADVANCED_SETTINGS_DEFAULTS;
 
-    const { control, register, handleSubmit, reset } = useForm<T_AudioAdvanceSettings>({
+    const { control, register, handleSubmit, reset } = useForm({
         resolver: zodResolver(audioAdvanceSettingsSchema),
         defaultValues: mergedValues,
     });

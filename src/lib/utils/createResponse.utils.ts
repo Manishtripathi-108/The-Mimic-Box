@@ -300,7 +300,7 @@ export function createValidationError<T = undefined, B extends boolean = false>(
             requestId: data.requestId,
             details: {
                 type: 'validation',
-                fieldCount: validationErrors ? Object.keys(validationErrors).length : 0,
+                // fieldCount: validationErrors ? Object.keys(validationErrors).length : 0,
                 ...data.details,
             },
         },

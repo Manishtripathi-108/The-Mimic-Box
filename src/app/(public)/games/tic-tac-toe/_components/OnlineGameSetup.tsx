@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import z from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
@@ -21,7 +21,7 @@ const joinRoomSchema = z.object({
 });
 
 const createRoomSchema = z.object({
-    mode: z.enum(['classic', 'ultimate'], { required_error: 'Game Mode is required', message: 'Invalid Game Mode' }),
+    mode: z.enum(['classic', 'ultimate'], 'Game Mode is required'),
     playerName: z.string().min(1, 'Player Name is required').max(20, 'Player Name must not exceed 20 characters'),
 });
 

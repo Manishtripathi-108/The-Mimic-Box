@@ -2,7 +2,7 @@
 
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
-import { z } from 'zod';
+import z from 'zod';
 
 import { signIn } from '@/auth';
 import { generateEmailVerificationEmail, generatePasswordResetEmail } from '@/components/emails/AuthEmailTemplate';
@@ -14,11 +14,11 @@ import { T_ErrorResponseOutput, T_SuccessResponseOutput } from '@/lib/types/resp
 import { createError, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 
 // Unified type for all possible responses
-type ActionResponse = Promise<T_SuccessResponseOutput | T_ErrorResponseOutput<z.ZodIssue[]>>;
+type ActionResponse = Promise<T_SuccessResponseOutput | T_ErrorResponseOutput<z.core.$ZodIssue[]>>;
 
 export const loginAction = async (data: z.infer<typeof loginSchema>): ActionResponse => {
     const parsed = loginSchema.safeParse(data);
-    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.errors);
+    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.issues);
 
     const { email, password } = parsed.data;
 
@@ -56,7 +56,7 @@ export const loginAction = async (data: z.infer<typeof loginSchema>): ActionResp
 
 export const registerAction = async (data: z.infer<typeof registerSchema>): ActionResponse => {
     const parsed = registerSchema.safeParse(data);
-    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.errors);
+    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.issues);
 
     const { email, fullName, password } = parsed.data;
 
@@ -101,7 +101,7 @@ export const verifyEmailToken = async (token: string) => {
 
 export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSchema>): ActionResponse => {
     const parsed = forgotPasswordSchema.safeParse(data);
-    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.errors);
+    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.issues);
 
     const { email } = parsed.data;
 
@@ -129,7 +129,7 @@ export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSc
 
 export const resetPasswordAction = async (data: z.infer<typeof resetPasswordSchema>): ActionResponse => {
     const parsed = resetPasswordSchema.safeParse(data);
-    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.errors);
+    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.issues);
 
     const { token, password } = parsed.data;
 

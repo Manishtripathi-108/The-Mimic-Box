@@ -10,7 +10,7 @@ import { createError, createValidationError } from '@/lib/utils/createResponse.u
 export async function getLyrics(params: T_LyricsQuery) {
     try {
         const parsedParams = LyricsQuerySchema.safeParse(params);
-        if (!parsedParams.success) return createValidationError(parsedParams.error.errors[0].message, parsedParams.error.errors);
+        if (!parsedParams.success) return createValidationError('Invalid data!', parsedParams.error.issues);
 
         const { id, q, trackName, artistName, albumName, duration } = parsedParams.data;
 

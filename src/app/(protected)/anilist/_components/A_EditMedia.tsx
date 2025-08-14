@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { z } from 'zod';
+import z from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
 import { Button } from '@/components/ui/Button';
@@ -40,7 +40,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
     });
 
     const onSubmit = async (values: z.infer<typeof validationSchema>) => {
-        if (!isDirty) return toast.success('No changes to save.'), closeModal(modalId);
+        if (!isDirty) return (toast.success('No changes to save.'), closeModal(modalId));
 
         const result = await updateMediaProgress(token, entry.media.type, entry.media.id, values.status, values.progress);
         toast[result.success ? 'success' : 'error'](result.message || 'Update failed.');

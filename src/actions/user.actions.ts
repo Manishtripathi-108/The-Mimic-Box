@@ -2,7 +2,7 @@
 
 import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
-import { z } from 'zod';
+import z from 'zod';
 
 import { auth } from '@/auth';
 import { generateEmailChangeEmail } from '@/components/emails/AuthEmailTemplate';
@@ -24,7 +24,7 @@ export const editProfileAction = async (
     if (session.user.provider !== 'credentials') return createForbidden('Cannot edit profile for social accounts');
 
     const parsed = profileSchema.safeParse(data);
-    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.errors);
+    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.issues);
 
     const { name, email, image } = parsed.data;
     const { id: userId, name: currentName, email: currentEmail, image: currentImage } = session.user;
