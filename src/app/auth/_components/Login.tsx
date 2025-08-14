@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 
@@ -18,6 +16,7 @@ import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
+import useToggle from '@/hooks/useToggle';
 import { loginSchema } from '@/lib/schema/auth.validations';
 
 const LoginInForm = () => {
@@ -25,7 +24,7 @@ const LoginInForm = () => {
     const searchParams = useSearchParams();
     const UrlError = searchParams.get('error') === 'OAuthAccountNotLinked';
     const callBackUrl = searchParams.get('callbackUrl');
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, { toggle: toggleShowPassword }] = useToggle();
 
     const {
         control,
@@ -69,6 +68,7 @@ const LoginInForm = () => {
                     <Input
                         name="email"
                         label="Email Address"
+                        autoComplete="email"
                         type="email"
                         placeholder="ie. example@themimicbox.com"
                         iconName="email"
@@ -79,10 +79,11 @@ const LoginInForm = () => {
                     <Input
                         name="password"
                         label="Password"
+                        autoComplete="current-password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="* * * * * * * *"
                         iconName={showPassword ? 'eye' : 'eyeClose'}
-                        onIconClick={() => setShowPassword((prev) => !prev)}
+                        onIconClick={() => () => toggleShowPassword()}
                         control={control}
                     />
 

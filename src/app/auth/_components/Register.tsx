@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -16,10 +14,11 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import useToggle from '@/hooks/useToggle';
 import { registerSchema } from '@/lib/schema/auth.validations';
 
 const RegisterForm = () => {
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, { toggle: toggleShowPassword }] = useToggle();
 
     const {
         handleSubmit,
@@ -67,23 +66,48 @@ const RegisterForm = () => {
                     <legend className="sr-only">Registration Form</legend>
 
                     {/* Full Name */}
-                    <Input name="fullName" label="Full Name" type="text" control={control} placeholder="ie. Gillion Ramirez" iconName="person" />
+                    <Input
+                        autoComplete="name"
+                        name="fullName"
+                        label="Full Name"
+                        type="text"
+                        control={control}
+                        placeholder="ie. Gillion Ramirez"
+                        iconName="person"
+                    />
 
                     {/* Email */}
-                    <Input name="email" label="Email" type="email" control={control} placeholder="ie. example@themimicbox.com" iconName="email" />
+                    <Input
+                        autoComplete="email"
+                        name="email"
+                        label="Email"
+                        type="email"
+                        control={control}
+                        placeholder="ie. example@themimicbox.com"
+                        iconName="email"
+                    />
 
                     {/* Password */}
-                    <Input name="password" label="Password" type="password" control={control} placeholder="* * * * * * * *" iconName="lock" />
+                    <Input
+                        autoComplete="new-password"
+                        name="password"
+                        label="Password"
+                        type="password"
+                        control={control}
+                        placeholder="* * * * * * * *"
+                        iconName="lock"
+                    />
 
                     {/* Confirm Password */}
                     <Input
+                        autoComplete="new-password"
                         name="confirmPassword"
                         label="Confirm Password"
                         control={control}
                         placeholder="* * * * * * * *"
                         type={showPassword ? 'text' : 'password'}
                         iconName={showPassword ? 'eye' : 'eyeClose'}
-                        onIconClick={() => setShowPassword((prev) => !prev)}
+                        onIconClick={() => toggleShowPassword()}
                     />
 
                     {/* Server Error Messages */}

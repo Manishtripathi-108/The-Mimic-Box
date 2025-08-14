@@ -16,6 +16,7 @@ const Input = <TFieldValues extends FieldValues>({
     iconPosition = 'left',
     onIconClick,
     classNames = {},
+    autoComplete,
     ...controllerProps
 }: InputProps<TFieldValues>) => {
     const {
@@ -43,8 +44,9 @@ const Input = <TFieldValues extends FieldValues>({
 
                 <input
                     id={controllerProps.name}
-                    autoComplete={controllerProps.name}
+                    autoComplete={autoComplete ?? 'on'}
                     type={type}
+                    inputMode={type === 'number' ? 'numeric' : 'text'}
                     {...field}
                     max={max}
                     min={min}

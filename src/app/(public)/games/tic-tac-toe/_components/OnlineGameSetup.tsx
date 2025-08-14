@@ -38,8 +38,16 @@ const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <Input name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
-            <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
+            <Input autoComplete="name" name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
+            <Input
+                autoComplete="name"
+                name="playerName"
+                label="Player Name"
+                type="text"
+                placeholder="Enter your name"
+                control={control}
+                disabled={isFetching}
+            />
             <Button type="submit" variant="highlight" className="mt-6 w-full" disabled={isFetching}>
                 {isFetching ? 'Joining Room...' : 'Join Room'}
             </Button>
@@ -62,7 +70,7 @@ const CreateRoomForm = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Select name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
-            <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
+            <Input autoComplete="name" name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
             <Button type="submit" variant="highlight" className="mt-6 w-full" disabled={isFetching}>
                 {isFetching ? 'Creating Room...' : 'Create Room'}
             </Button>

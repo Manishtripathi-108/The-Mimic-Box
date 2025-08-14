@@ -54,6 +54,7 @@ const ForgotPasswordForm = () => {
                         control={control}
                         name="email"
                         label="Enter your email"
+                        autoComplete='email'
                         type="email"
                         disabled={isSubmitting}
                         placeholder="ie. example@themimicbox.com"

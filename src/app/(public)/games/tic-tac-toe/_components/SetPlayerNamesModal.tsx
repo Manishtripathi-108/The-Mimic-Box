@@ -55,6 +55,7 @@ const SetPlayerNamesModal = () => {
                     type="text"
                     placeholder="Player 1 Name"
                     control={control}
+                    autoComplete='name'
                 />
 
                 {/* Player O Input */}
@@ -66,6 +67,7 @@ const SetPlayerNamesModal = () => {
                     type="text"
                     placeholder="Player 2 Name"
                     control={control}
+                    autoComplete='name'
                 />
 
                 {/* Submit Button */}

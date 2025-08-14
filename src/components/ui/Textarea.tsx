@@ -9,6 +9,7 @@ const Textarea = <TFieldValues extends FieldValues>({
     label,
     placeholder = '',
     rows = 4,
+    autoComplete,
     classNames = {},
     ...controllerProps
 }: TextareaProps<TFieldValues>) => {
@@ -27,7 +28,7 @@ const Textarea = <TFieldValues extends FieldValues>({
 
             <textarea
                 id={controllerProps.name}
-                autoComplete={controllerProps.name}
+                autoComplete={autoComplete ?? 'on'}
                 {...field}
                 placeholder={placeholder}
                 rows={rows}

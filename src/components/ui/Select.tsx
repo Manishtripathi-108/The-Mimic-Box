@@ -6,7 +6,14 @@ import { SelectProps } from '@/lib/types/client.types';
 import { getOptionData } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
-const Select = <T extends FieldValues>({ label, placeholder = 'Select an option', options, classNames = {}, ...controllerProps }: SelectProps<T>) => {
+const Select = <T extends FieldValues>({
+    label,
+    placeholder = 'Select an option',
+    autoComplete,
+    options,
+    classNames = {},
+    ...controllerProps
+}: SelectProps<T>) => {
     const {
         field,
         fieldState: { error },
@@ -22,7 +29,7 @@ const Select = <T extends FieldValues>({ label, placeholder = 'Select an option'
 
             <select
                 id={controllerProps.name}
-                autoComplete={controllerProps.name}
+                autoComplete={autoComplete ?? 'on'}
                 {...field}
                 className={cn('form-field', classNames.field)}
                 data-invalid={!!error}

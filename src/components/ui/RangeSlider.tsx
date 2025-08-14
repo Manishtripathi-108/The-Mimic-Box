@@ -45,7 +45,6 @@ const RangeSlider = <TFieldValues extends FieldValues>({
 
                 <Slider
                     id={controllerProps.name}
-                    autoComplete={controllerProps.name}
                     min={min}
                     max={max}
                     step={step}
