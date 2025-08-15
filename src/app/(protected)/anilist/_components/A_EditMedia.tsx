@@ -27,7 +27,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
     const validationSchema = z.object({
         status: AnilistMediaListStatusSchema,
-        progress: z.number().min(0).max(maxProgress),
+        progress: z.coerce.number().min(0).max(maxProgress),
     });
 
     const {
