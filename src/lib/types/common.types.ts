@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 import { AudioMetaTagsSchema, LyricsQuerySchema, audioAdvanceSettingsSchema } from '@/lib/schema/audio.validations';
 

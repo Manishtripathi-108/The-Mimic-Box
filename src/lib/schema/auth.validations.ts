@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 import { emailValidation, passwordValidation } from '@/lib/schema/common.validations';
 

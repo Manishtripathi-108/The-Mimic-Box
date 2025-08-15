@@ -1,6 +1,6 @@
 'use server';
 
-import z from 'zod';
+import { z } from 'zod';
 
 import saavnApi from '@/lib/services/saavn.service';
 import { createError, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';

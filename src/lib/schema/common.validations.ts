@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 import { MAX_FILE_SIZE } from '@/constants/common.constants';
 import { formatFileSize } from '@/lib/utils/file.utils';

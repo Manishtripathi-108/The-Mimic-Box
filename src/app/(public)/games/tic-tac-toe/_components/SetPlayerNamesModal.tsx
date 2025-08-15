@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
+import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
@@ -55,7 +55,7 @@ const SetPlayerNamesModal = () => {
                     type="text"
                     placeholder="Player 1 Name"
                     control={control}
-                    autoComplete='name'
+                    autoComplete="name"
                 />
 
                 {/* Player O Input */}
@@ -67,7 +67,7 @@ const SetPlayerNamesModal = () => {
                     type="text"
                     placeholder="Player 2 Name"
                     control={control}
-                    autoComplete='name'
+                    autoComplete="name"
                 />
 
                 {/* Submit Button */}

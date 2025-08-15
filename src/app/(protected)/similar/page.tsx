@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import stringSimilarity from 'string-similarity';
-import z from 'zod';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';

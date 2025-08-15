@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 import { MAX_FILE_SIZE } from '@/constants/common.constants';
 import { imageFileValidation } from '@/lib/schema/common.validations';

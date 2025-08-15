@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 import { ANILIST_GENRES } from '@/constants/client.constants';
 
@@ -21,5 +21,5 @@ export const AnilistFilterSchema = z.object({
             error: 'Invalid genre selected',
         })
         .transform((val) => ((val ?? []).length > 0 ? val : undefined))
-        .optional()
+        .optional(),
 });

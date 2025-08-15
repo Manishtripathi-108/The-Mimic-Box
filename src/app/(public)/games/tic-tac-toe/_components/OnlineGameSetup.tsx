@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
+import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
@@ -70,7 +70,15 @@ const CreateRoomForm = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Select name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
-            <Input autoComplete="name" name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
+            <Input
+                autoComplete="name"
+                name="playerName"
+                label="Player Name"
+                type="text"
+                placeholder="Enter your name"
+                control={control}
+                disabled={isFetching}
+            />
             <Button type="submit" variant="highlight" className="mt-6 w-full" disabled={isFetching}>
                 {isFetching ? 'Creating Room...' : 'Create Room'}
             </Button>

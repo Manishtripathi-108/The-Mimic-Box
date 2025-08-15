@@ -2,7 +2,7 @@
 
 import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
-import z from 'zod';
+import { z } from 'zod';
 
 import { signIn } from '@/auth';
 import { generateEmailVerificationEmail, generatePasswordResetEmail } from '@/components/emails/AuthEmailTemplate';
