@@ -39,8 +39,8 @@ export const audioAdvanceSettingsSchema = z.object({
 
 export const AudioMetaTagsSchema = z.object({
     cover: imageFileValidation.max(10 * 1024 * 1024, `Cover image file size must not exceed 10 MB`).optional(),
-    title: z.string().min(1, 'Title is required' ),
-    artist: z.string().min(1, 'Artist is required' ),
+    title: z.string().min(1, 'Title is required'),
+    artist: z.string().min(1, 'Artist is required'),
     album: z.string().optional(),
     album_artist: z.string().optional(),
     genre: z.string().optional(),
@@ -75,6 +75,6 @@ export const LyricsQuerySchema = z
         duration: z.coerce.number().optional(),
     })
     .refine((data) => data.id !== undefined || (data.q && data.q.trim() !== '') || (data.trackName && data.trackName.trim() !== ''), {
-        error: 'At least one of the following fields must be provided: track name, lyrics, or Lrclib ID.',
+        error: 'At least one of the following fields must be provided: track name, search query, or Lrclib ID.',
         path: ['q'],
     });
