@@ -140,7 +140,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                         )}
                     />
 
-                    {errors.cover && <p className="form-text mt-1 w-full text-center text-red-500">{errors.cover.message}</p>}
+                    <ErrorMessage message={errors.cover?.message?.toString()} className="absolute bottom-2 left-2" />
                 </div>
 
                 {/* Metadata Inputs */}
