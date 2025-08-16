@@ -8,7 +8,7 @@ import cn from '@/lib/utils/cn';
 
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'highlight' | 'accent' | 'danger' | 'outline' | 'ghost' | 'link' | 'transparent';
 
-type ButtonSize = 'sm' | 'md' | 'lg';
+type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 
 type CommonProps = {
     variant?: ButtonVariant;
@@ -52,18 +52,30 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
     sm: 'h-6 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 text-xs',
     md: 'h-8 rounded-lg px-4 py-2 has-[>svg]:px-3',
     lg: 'h-10 rounded-xl px-6 has-[>svg]:px-4 text-base',
+    xl: 'h-12 rounded-2xl px-8 has-[>svg]:px-5 text-lg',
+    '2xl': 'h-14 rounded-3xl px-10 has-[>svg]:px-6 text-xl',
+    '3xl': 'h-16 rounded-4xl px-12 has-[>svg]:px-7 text-2xl',
+    '4xl': 'h-20 rounded-5xl px-16 has-[>svg]:px-8 text-3xl',
 };
 
 const ICON_ONLY_SIZE_CLASSES: Record<ButtonSize, string> = {
     sm: 'size-6 p-1 rounded-full',
     md: 'size-8 p-1.5 rounded-full',
     lg: 'size-10 p-2 rounded-full',
+    xl: 'size-12 p-2.5 rounded-full',
+    '2xl': 'size-14 p-3 rounded-full',
+    '3xl': 'size-16 p-3.5 rounded-full',
+    '4xl': 'size-20 p-4 rounded-full',
 };
 
 const groupButtonStyles: Record<ButtonSize, string> = {
     sm: 'group-[.group]:rounded-none group-[.group]:first:rounded-l-md group-[.group]:last:rounded-r-md',
     md: 'group-[.group]:rounded-none group-[.group]:first:rounded-l-lg group-[.group]:last:rounded-r-lg',
     lg: 'group-[.group]:rounded-none group-[.group]:first:rounded-l-xl group-[.group]:last:rounded-r-xl',
+    xl: 'group-[.group]:rounded-none group-[.group]:first:rounded-l-2xl group-[.group]:last:rounded-r-2xl',
+    '2xl': 'group-[.group]:rounded-none group-[.group]:first:rounded-l-3xl group-[.group]:last:rounded-r-3xl',
+    '3xl': 'group-[.group]:rounded-none group-[.group]:first:rounded-l-4xl group-[.group]:last:rounded-r-4xl',
+    '4xl': 'group-[.group]:rounded-none group-[.group]:first:rounded-l-5xl group-[.group]:last:rounded-r-5xl',
 };
 
 export const Button = memo(
