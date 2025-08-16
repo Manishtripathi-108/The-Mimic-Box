@@ -45,7 +45,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
     return (
         <section
             aria-label="Music Player"
-            className={cn('bg-primary text-text-secondary fixed inset-0 z-70 mx-auto flex h-dvh w-full flex-col', className)}>
+            className={cn('bg-primary text-text-secondary fixed inset-0 z-100 sm:z-70 mx-auto flex h-dvh w-full flex-col', className)}>
             {/* Header */}
             <header className="bg-secondary flex items-center justify-between p-4 pb-10">
                 <Button className="rounded-xl" icon="leftArrow" aria-label="Go Back" onClick={onClose} />
