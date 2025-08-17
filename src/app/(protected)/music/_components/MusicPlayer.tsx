@@ -45,24 +45,29 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
     return (
         <section
             aria-label="Music Player"
-            className={cn('bg-primary text-text-secondary fixed inset-0 z-100 sm:z-70 mx-auto flex h-dvh w-full flex-col', className)}>
+            className={cn('bg-primary text-text-secondary fixed inset-0 z-100 mx-auto flex h-dvh w-full flex-col sm:z-70', className)}>
             {/* Header */}
-            <header className="bg-secondary flex items-center justify-between p-4 pb-10">
+            <header className="bg-secondary flex items-center justify-between p-4">
                 <Button className="rounded-xl" icon="leftArrow" aria-label="Go Back" onClick={onClose} />
                 <h1 className="text-lg font-medium">Now Playing</h1>
                 <Button className="rounded-xl" icon="info" aria-label="Track Info" />
             </header>
 
             {/* Album Art */}
-            <div className="-mt-8 flex flex-1 items-center justify-center">
-                <Image
-                    src={coverImage}
-                    width={300}
-                    height={300}
-                    className="shadow-floating-md size-72 rounded-xl border object-cover sm:size-108"
-                    alt={currentTrack?.title || 'Album Art'}
-                    priority
-                />
+            <div className="flex items-center justify-center py-4 sm:flex-1 sm:-mt-20">
+                {toggles.lyrics ? (
+                    <MusicLyricsCard contentOnly onClose={() => close('lyrics')} className="relative h-75 sm:h-[calc(100%-80px)] w-full bg-transparent shadow-none" />
+                ) : (
+                    <Image
+                        src={coverImage}
+                        width={300}
+                            height={300}
+                            onClick={() => toggle('lyrics')}
+                        className="shadow-floating-md aspect-square rounded-xl border object-cover sm:size-108 cursor-pointer"
+                        alt={currentTrack?.title || 'Album Art'}
+                        priority
+                    />
+                )}
             </div>
 
             {/* Song Info + Progress */}
@@ -73,7 +78,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                         alt={currentTrack?.title || 'Album Cover'}
                         width={40}
                         height={40}
-                        className="size-10 rounded-lg border object-cover"
+                        className="size-12 rounded-lg border object-cover"
                         priority
                     />
                     <div className="min-w-0">
@@ -88,8 +93,8 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
             </div>
 
             {/* Controls */}
-            <div className="bg-secondary mt-1 p-4 sm:hidden">
-                <div className="grid w-full grid-cols-4">
+            <div className="bg-secondary mt-1 flex p-4 items-center sm:hidden h-full">
+                <div className="flex w-full justify-around">
                     {/* Left column: Shuffle + Loop */}
                     <div className="flex flex-col items-center justify-between">
                         <Button
@@ -111,7 +116,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                     </div>
 
                     {/* Center: Play controls */}
-                    <div className="bg-tertiary relative col-span-2 grid aspect-square place-items-center rounded-full p-2">
+                    <div className="bg-tertiary relative grid aspect-square flex-1 max-w-60 place-items-center rounded-full p-2">
                         {/* Download */}
                         <Button
                             variant="ghost"
@@ -171,7 +176,6 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
 
             {/* Overlays */}
             {toggles.queue && <MusicQueue onClose={() => close('queue')} className="fixed inset-0 z-100" />}
-            {toggles.lyrics && <MusicLyricsCard onClose={() => close('lyrics')} className="fixed inset-0 z-100" />}
         </section>
     );
 };

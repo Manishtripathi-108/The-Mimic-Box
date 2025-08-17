@@ -15,6 +15,7 @@ import cn from '@/lib/utils/cn';
 type Props = {
     className?: string;
     onClose: () => void;
+    contentOnly?: boolean;
 };
 
 type LyricLine = {
@@ -36,7 +37,7 @@ const parseLyrics = (lyricsText: string): LyricLine[] => {
     return lines;
 };
 
-const MusicLyricsCard = ({ className, onClose }: Props) => {
+const MusicLyricsCard = ({ className, onClose, contentOnly = false }: Props) => {
     const { currentTrack, getAudioElement } = useAudioPlayerContext();
     const { isPending, makeApiCall, data } = useSafeApiCall<null, string>();
     const fetchLyrics = useCallback(() => {
@@ -110,15 +111,17 @@ const MusicLyricsCard = ({ className, onClose }: Props) => {
             aria-label="Music lyrics"
             className={cn('absolute inset-auto z-50 gap-4', className)}
             ref={lyricsContainerRef}>
-            <CardHeader className="p-4">
-                <CardTitle className="font-alegreya tracking-wide">Lyrics</CardTitle>
-                <CardDescription className="truncate text-xs">
-                    {currentTrack?.title} - {currentTrack?.artists}
-                </CardDescription>
-                <CardAction>
-                    <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
-                </CardAction>
-            </CardHeader>
+            {!contentOnly && (
+                <CardHeader className="p-4">
+                    <CardTitle className="font-alegreya tracking-wide">Lyrics</CardTitle>
+                    <CardDescription className="truncate text-xs">
+                        {currentTrack?.title} - {currentTrack?.artists}
+                    </CardDescription>
+                    <CardAction>
+                        <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
+                    </CardAction>
+                </CardHeader>
+            )}
 
             <CardContent className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto px-4 text-sm">
                 {isPending ? (
