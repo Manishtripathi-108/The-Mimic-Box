@@ -3,11 +3,13 @@
 import { memo, useCallback, useEffect, useRef } from 'react';
 
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
+import { usePageVisible } from '@/hooks/usePageVisible';
 import cn from '@/lib/utils/cn';
 import { formatTimeDuration } from '@/lib/utils/core.utils';
 
 const MusicDurationSlider = ({ className }: { className: string }) => {
     const { getAudioElement, seekTo } = useAudioPlayerContext();
+    const isVisible = usePageVisible();
     const audio = getAudioElement();
 
     const bufferedEndRef = useRef<HTMLDivElement>(null);
@@ -16,7 +18,7 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
     const isSeekingRef = useRef(false);
 
     const updatePlaybackTime = useCallback(() => {
-        if (!audio || isSeekingRef.current) return;
+        if (!audio || isSeekingRef.current || !isVisible) return;
 
         // Update slider position
         if (sliderRef.current) {
@@ -33,7 +35,7 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
         if (currentFormattedTimeRef.current) {
             currentFormattedTimeRef.current.textContent = formatTimeDuration(audio.currentTime * 1000, 'minutes');
         }
-    }, [audio]);
+    }, [audio, isVisible]);
 
     useEffect(() => {
         if (!audio) return;
@@ -44,6 +46,12 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
     if (!audio) return null;
 
     const duration = isNaN(audio.duration) ? 0 : audio.duration;
+
+    const handleSeek = (value: number) => {
+        if (currentFormattedTimeRef.current) {
+            currentFormattedTimeRef.current.textContent = formatTimeDuration(value * 1000, 'minutes');
+        }
+    };
 
     return (
         <div className={cn(className)}>
@@ -64,22 +72,27 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
                     step={0.1}
                     defaultValue={0}
                     max={duration}
-                    onChange={(e) => {
-                        if (currentFormattedTimeRef.current) {
-                            const value = parseFloat(e.target.value);
-                            currentFormattedTimeRef.current.textContent = formatTimeDuration(value * 1000, 'minutes');
-                        }
-                    }}
-                    onPointerDown={() => {
-                        isSeekingRef.current = true;
-                    }}
+                    onChange={(e) => handleSeek(parseFloat(e.target.value))}
+                    // Pointer events (mouse + touch on modern browsers)
+                    onPointerDown={() => (isSeekingRef.current = true)}
                     onPointerUp={(e) => {
                         isSeekingRef.current = false;
                         seekTo(parseFloat((e.target as HTMLInputElement).value));
                     }}
-                    onKeyDown={() => {
-                        isSeekingRef.current = true;
+                    onTouchStart={() => (isSeekingRef.current = true)}
+                    onTouchEnd={() => {
+                        isSeekingRef.current = false;
+                        if (sliderRef.current) {
+                            seekTo(parseFloat(sliderRef.current.value));
+                        }
                     }}
+                    onTouchMove={() => {
+                        if (sliderRef.current) {
+                            handleSeek(parseFloat(sliderRef.current.value));
+                        }
+                    }}
+                    // Keyboard support
+                    onKeyDown={() => (isSeekingRef.current = true)}
                     onKeyUp={() => {
                         isSeekingRef.current = false;
                         if (sliderRef.current) {

@@ -5,7 +5,7 @@ import React, { memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { AnilistMedia } from '@/lib/types/anilist.types';

@@ -22,7 +22,7 @@ const MusicTrackPlayBtn = ({ id, context }: { id: string; context: T_AudioSource
         const toastId = toast.loading('Loading tracks, please wait...');
         const tracks = await getPlayableTracks(context);
         if (!tracks?.length) {
-            toast.error('No valid tracks found for selected context', { id: toastId });
+            toast.error('No valid tracks found. Try Searching instead.', { id: toastId });
             return;
         }
 

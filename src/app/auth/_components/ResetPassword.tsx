@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,16 +8,17 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { resetPasswordAction } from '@/actions/auth.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
+import useToggle from '@/hooks/useToggle';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
 const ResetPasswordForm = () => {
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, { toggle: toggleShowPassword }] = useToggle();
 
     // Define the action function
     async function handleReset(data: z.infer<typeof resetPasswordSchema>) {
@@ -28,7 +27,7 @@ const ResetPasswordForm = () => {
         if (response.success) {
             toast.success(response.message || 'Password reset successfully.', { duration: 3000 });
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'token' | 'password' | 'confirmPassword', {
                     message: err.message,
                 });
@@ -62,8 +61,9 @@ const ResetPasswordForm = () => {
                     <form onSubmit={handleSubmit(handleReset)}>
                         <Input
                             name="password"
+                            autoComplete="new-password"
                             label="Enter your new password"
-                            type={showPassword ? 'text' : 'password'}
+                            type="password"
                             placeholder="* * * * * * * *"
                             iconName="lock"
                             control={control}
@@ -72,10 +72,11 @@ const ResetPasswordForm = () => {
 
                         <Input
                             name="confirmPassword"
+                            autoComplete="new-password"
                             label="Confirm your new password"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="* * * * * * * *"
-                            onIconClick={() => setShowPassword((prev) => !prev)}
+                            onIconClick={() => toggleShowPassword()}
                             iconName={showPassword ? 'eye' : 'eyeClose'}
                             control={control}
                             disabled={isSubmitting}

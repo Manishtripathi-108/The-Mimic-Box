@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 
 import useUploadProgress from '@/hooks/useUploadProgress';
-import { MakeApiCallType, SuccessResponseOutput } from '@/lib/types/response.types';
+import { T_MakeApiCall, T_SuccessResponseOutput } from '@/lib/types/response.types';
 import { isDev } from '@/lib/utils/core.utils';
 
 const ENABLE_DEBUG_LOGS = isDev;
@@ -26,7 +26,7 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
     }, []);
 
     const performRequestWithRetry = useCallback(
-        async (config: MakeApiCallType<TReq, TRes>) => {
+        async (config: T_MakeApiCall<TReq, TRes>) => {
             const {
                 onStart,
                 onSuccess,
@@ -68,11 +68,11 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
                             return { data: response.data as TRes, error: null };
                         }
 
-                        const successRes = response.data as SuccessResponseOutput<TRes>;
+                        const successRes = response.data as T_SuccessResponseOutput<TRes>;
 
                         if (successRes.success) {
                             setData(successRes.payload);
-                            (onSuccess as (data: TRes, res: AxiosResponse<SuccessResponseOutput<TRes>>) => void)?.(successRes.payload, response);
+                            (onSuccess as (data: TRes, res: AxiosResponse<T_SuccessResponseOutput<TRes>>) => void)?.(successRes.payload, response);
                             return { data: successRes.payload, error: null };
                         }
 
@@ -120,7 +120,7 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
     );
 
     const makeApiCall = useCallback(
-        async (config: MakeApiCallType<TReq, TRes>) => {
+        async (config: T_MakeApiCall<TReq, TRes>) => {
             setIsPending(true);
             setError(null);
             setData(null);
@@ -137,7 +137,7 @@ const useSafeApiCall = <TReq = unknown, TRes = unknown>(apiClient: typeof axios 
     );
 
     const makeParallelApiCalls = useCallback(
-        async (configs: Array<MakeApiCallType<TReq, TRes>>): Promise<TRes[]> => {
+        async (configs: Array<T_MakeApiCall<TReq, TRes>>): Promise<TRes[]> => {
             setIsPending(true);
             setError(null);
 

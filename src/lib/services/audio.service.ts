@@ -5,8 +5,8 @@ import { extname } from 'path';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import { uploadToCloud } from '@/lib/services/cloud-storage.service';
 import { T_AudioAdvanceSettings } from '@/lib/types/common.types';
-import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { T_ErrorResponseOutput, T_SuccessResponseOutput } from '@/lib/types/response.types';
+import { createError, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 import { createDirectoryIfNotExists, getTempPath } from '@/lib/utils/file-server-only.utils';
 
 const getMetadataFromFFprobe = (fileUrl: string): Promise<FfprobeData> => {
@@ -50,7 +50,7 @@ const getAudioDuration = (filePath: string): Promise<number> => {
 
 export const extractAudioMetaTags = async (
     fileUrl: string
-): Promise<SuccessResponseOutput<{ metaTags: FfprobeData['format']['tags']; coverImage: string }> | ErrorResponseOutput> => {
+): Promise<T_SuccessResponseOutput<{ metaTags: FfprobeData['format']['tags']; coverImage: string }> | T_ErrorResponseOutput> => {
     try {
         const coverImagePath = getTempPath('images', `cover_${Date.now()}.jpg`);
         await createDirectoryIfNotExists(getTempPath('images'));
@@ -82,12 +82,12 @@ export const extractAudioMetaTags = async (
             }
         }
 
-        return createSuccessReturn('Audio metadata extracted successfully', {
+        return createSuccess('Audio metadata extracted successfully', {
             metaTags: metadata.format.tags ?? {},
             coverImage,
         });
     } catch (error) {
-        return createErrorReturn('Failed to extract audio metadata', error instanceof Error ? error : new Error(String(error)));
+        return createError('Failed to extract audio metadata', { error });
     }
 };
 
@@ -95,9 +95,9 @@ export const editAudioMetadata = async (
     fileUrl: string,
     metadata: FfprobeData['format']['tags'],
     coverImagePath: string | null
-): Promise<SuccessResponseOutput<{ fileUrl: string }> | ErrorResponseOutput> => {
+): Promise<T_SuccessResponseOutput<{ fileUrl: string }> | T_ErrorResponseOutput> => {
     try {
-        if (!metadata) return createErrorReturn('No metadata provided');
+        if (!metadata) return createValidationError('No metadata provided');
 
         const outputFilePath = getTempPath('audio', `edited_${Date.now()}${extname(fileUrl)}`);
         await createDirectoryIfNotExists(getTempPath('audio'));
@@ -121,9 +121,9 @@ export const editAudioMetadata = async (
             command.outputOptions('-c', 'copy').save(outputFilePath).on('end', resolve).on('error', reject);
         });
 
-        return createSuccessReturn('Audio metadata edited successfully', { fileUrl: outputFilePath });
+        return createSuccess('Audio metadata edited successfully', { fileUrl: outputFilePath });
     } catch (error) {
-        return createErrorReturn('Failed to edit audio metadata', error instanceof Error ? error : new Error(String(error)));
+        return createError('Failed to edit audio metadata', { error });
     }
 };
 
@@ -131,7 +131,7 @@ export const convertAudioFormat = async (
     fileUrl: string,
     fileName: string,
     options: T_AudioAdvanceSettings
-): Promise<SuccessResponseOutput<{ fileUrl: string }> | ErrorResponseOutput> => {
+): Promise<T_SuccessResponseOutput<{ fileUrl: string }> | T_ErrorResponseOutput> => {
     try {
         const format = options.audio.format.toLowerCase();
         const outputFilePath = getTempPath('audio', `converted_${fileName.split('.')[0]}.${format}`);
@@ -184,8 +184,8 @@ export const convertAudioFormat = async (
             command.audioBitrate(options.audio.bitrate).save(outputFilePath).on('end', resolve).on('error', reject);
         });
 
-        return createSuccessReturn('Audio converted successfully', { fileUrl: outputFilePath });
+        return createSuccess('Audio converted successfully', { fileUrl: outputFilePath });
     } catch (error) {
-        return createErrorReturn('Failed to convert audio format', error instanceof Error ? error : new Error(String(error)));
+        return createError('Failed to convert audio format', { error });
     }
 };

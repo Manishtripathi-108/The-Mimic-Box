@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { T_UploadState } from '@/lib/types/client.types';

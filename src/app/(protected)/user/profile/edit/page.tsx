@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import * as z from 'zod';
 
 import { editProfileAction } from '@/actions/user.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { profileSchema } from '@/lib/schema/user.validations';
@@ -64,7 +64,7 @@ const Page = () => {
                 },
             });
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'name' | 'email' | 'image', {
                     message: err.message,
                 });

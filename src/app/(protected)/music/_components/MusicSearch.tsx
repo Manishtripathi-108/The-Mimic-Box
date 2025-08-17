@@ -1,17 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import debounce from 'lodash.debounce';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { saavnGlobalSearch } from '@/actions/saavn.actions';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
+import { useClickOutside } from '@/hooks/useClickOutside';
+import useDebouncedCallback from '@/hooks/useDebouncedCallback';
+import useToggle from '@/hooks/useToggle';
 import { T_SaavnSearchResponse } from '@/lib/types/saavn/search.types';
 
 const createLink = (id: string, type: string) => {
@@ -32,27 +34,38 @@ const createLink = (id: string, type: string) => {
 const MusicSearch = () => {
     const [search, setSearch] = useState('');
     const [results, setResults] = useState<T_SaavnSearchResponse | null>(null);
-    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+    const [isOpen, { setDefault: close, setAlternate: open }] = useToggle();
     const containerRef = useRef<HTMLDivElement>(null);
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
+    useClickOutside({
+        targets: [containerRef],
+        onClickOutside: () => {
+            if (isOpen) {
+                close();
+                setSearch('');
+                setResults(null);
+            }
+        },
+        disabled: !isOpen,
+    });
 
-    const debouncedSearch = useMemo(
-        () =>
-            debounce((query: string) => {
-                startTransition(async () => {
-                    const response = await saavnGlobalSearch(query);
-                    if (response.success) {
-                        setResults(response.payload);
-                        setIsOverlayOpen(true);
-                    } else {
-                        setResults(null);
-                        setIsOverlayOpen(false);
-                    }
-                });
-            }, 500),
-        []
-    );
+    const {
+        callback: debouncedSearch,
+        cancel: cancelDebounce,
+        flush: flushDebounce,
+    } = useDebouncedCallback((query: string) => {
+        startTransition(async () => {
+            const response = await saavnGlobalSearch(query);
+            if (response.success) {
+                setResults(response.payload);
+                open();
+            } else {
+                setResults(null);
+                close();
+            }
+        });
+    }, 500);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -60,8 +73,8 @@ const MusicSearch = () => {
 
         if (!value.trim()) {
             setResults(null);
-            setIsOverlayOpen(false);
-            debouncedSearch.cancel();
+            close();
+            cancelDebounce();
             return;
         }
 
@@ -70,27 +83,14 @@ const MusicSearch = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        flushDebounce();
         // Todo: make search page and uncomment this 😘
         return;
         if (!search.trim()) return;
 
-        setIsOverlayOpen(false);
+        close();
         router.push(APP_ROUTES.MUSIC.SEARCH(search.trim()));
     };
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-                setIsOverlayOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            debouncedSearch.cancel();
-        };
-    }, [debouncedSearch]);
 
     const nonEmptySections = results ? Object.entries(results).filter(([, section]) => section.results.length > 0) : [];
 
@@ -108,7 +108,7 @@ const MusicSearch = () => {
             </form>
 
             <AnimatePresence>
-                {isOverlayOpen && (
+                {isOpen && (
                     <motion.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -135,7 +135,7 @@ const MusicSearch = () => {
                                             <Link
                                                 href={createLink(item.id, item.type)}
                                                 key={i}
-                                                onClick={() => setIsOverlayOpen(false)}
+                                                onClick={() => close()}
                                                 className="group hover:bg-primary flex cursor-pointer items-center gap-3 rounded-lg p-2 transition">
                                                 <div className="relative size-10 shrink-0 overflow-hidden rounded-md">
                                                     <Image

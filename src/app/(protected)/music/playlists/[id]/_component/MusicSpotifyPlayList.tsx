@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useMemo, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 
 import Link from 'next/link';
 
 import toast from 'react-hot-toast';
+import { InView } from 'react-intersection-observer';
 
 import { spotifyGetByUrl } from '@/actions/spotify.actions';
 import MusicActionBtns from '@/app/(protected)/music/_components/MusicActionBtns';
@@ -12,7 +13,7 @@ import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHead
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
 import MusicTrackCardSkeleton from '@/app/(protected)/music/_components/skeletons/MusicTrackCardSkeleton';
 import APP_ROUTES from '@/constants/routes/app.routes';
-import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+import { T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack } from '@/lib/types/spotify.types';
 
 type Props = {
@@ -26,38 +27,45 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
     const [nextUrl, setNextUrl] = useState(initialTracks.next);
     const [isPending, startTransition] = useTransition();
 
+    // Track latest values to prevent stale closures
+    const nextUrlRef = useRef(nextUrl);
+    const isFetchingRef = useRef(false);
+
+    useEffect(() => {
+        nextUrlRef.current = nextUrl;
+    }, [nextUrl]);
+
     const fetchNextTracks = useCallback(() => {
+        const url = nextUrlRef.current;
+
+        if (!url || isFetchingRef.current) return;
+
+        isFetchingRef.current = true;
+
         startTransition(() => {
             (async () => {
-                if (!nextUrl || isPending) return;
+                try {
+                    const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(url);
+                    if (!res.success || !res.payload) {
+                        toast.error('Failed to fetch more tracks');
+                        return;
+                    }
 
-                const res = await spotifyGetByUrl<T_SpotifyPaging<T_SpotifyPlaylistTrack>>(nextUrl);
-                if (!res.success || !res.payload) {
-                    toast.error('Failed to fetch more tracks');
-                    return;
+                    setPlaylistTracks((prev) => [...prev, ...res.payload.items]);
+                    setNextUrl(res.payload.next);
+                } finally {
+                    isFetchingRef.current = false;
                 }
-
-                setPlaylistTracks((prev) => [...prev, ...res.payload.items]);
-                setNextUrl(res.payload.next);
             })();
         });
-    }, [nextUrl, isPending]);
-
-    const { observeRef } = useIntersectionObserver({
-        onEntry: () => {
-            if (nextUrl && !isPending) {
-                queueMicrotask(() => {
-                    fetchNextTracks();
-                });
-            }
-        },
-        threshold: 1,
-    });
+    }, []);
 
     const tracks = useMemo(
         () => playlistTracks.map(({ track }) => (track && !('show' in track) ? track : null)).filter((t) => t !== null),
         [playlistTracks]
     );
+
+    const context: T_AudioSourceContext = { id: playlist.id, type: 'playlist', source: 'spotify', snapshotId: playlist.snapshot_id };
 
     return (
         <>
@@ -70,7 +78,7 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
                 </>
             </MusicMediaHeader>
 
-            <MusicActionBtns context={{ id: playlist.id, type: 'playlist', source: 'spotify', snapshotId: playlist.snapshot_id }} className="mt-4" />
+            <MusicActionBtns context={context} className="mt-4" />
 
             <div className="mt-6 grid w-full gap-2">
                 {tracks.map((t, idx) => (
@@ -91,13 +99,19 @@ const MusicSpotifyPlaylist = ({ playlist }: Props) => {
                             name: t.album.name,
                             link: APP_ROUTES.MUSIC.ALBUMS(t.album.id),
                         }}
-                        context={{ id: playlist.id, type: 'playlist', source: 'spotify' }}
+                        context={context}
                     />
                 ))}
 
-                <div ref={observeRef} className="grid w-full gap-2">
+                <InView
+                    as="div"
+                    onChange={(inView) => {
+                        if (inView) fetchNextTracks();
+                    }}
+                    rootMargin="0px 0px 250px 0px"
+                    className="grid w-full gap-2">
                     {isPending && Array.from({ length: 5 }).map((_, idx) => <MusicTrackCardSkeleton key={`skeleton-${idx}`} />)}
-                </div>
+                </InView>
             </div>
         </>
     );

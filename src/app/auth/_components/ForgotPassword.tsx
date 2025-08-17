@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
@@ -29,7 +29,7 @@ const ForgotPasswordForm = () => {
         if (response.success) {
             toast.success(response.message || 'Check your inbox to reset your password.', { duration: 3000 });
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'email', {
                     message: err.message,
                 });
@@ -54,6 +54,7 @@ const ForgotPasswordForm = () => {
                         control={control}
                         name="email"
                         label="Enter your email"
+                        autoComplete="email"
                         type="email"
                         disabled={isSubmitting}
                         placeholder="ie. example@themimicbox.com"

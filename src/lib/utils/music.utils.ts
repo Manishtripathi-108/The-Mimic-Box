@@ -4,7 +4,7 @@ import stringSimilarity from 'string-similarity';
 import API_ROUTES from '@/constants/routes/api.routes';
 import { T_AudioFile, T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
-import { SuccessResponseOutput } from '@/lib/types/response.types';
+import { T_SuccessResponseOutput } from '@/lib/types/response.types';
 
 export const buildAudioCacheKey = (context: T_AudioSourceContext) => `${context.source}:${context.type}:${context.id}`;
 
@@ -27,9 +27,9 @@ export const buildAudioFileFromTrack = (track: T_AudioPlayerTrack, quality: stri
     };
 };
 
-export const getLyrics = async (musicTrack: { track: string; artist: string; album: string; duration: string | number }) => {
+export const getLyrics = async (musicTrack: { title: string; artist: string; album: string; duration: string | number }) => {
     try {
-        const res = await axios.get<SuccessResponseOutput<string>>(API_ROUTES.LYRICS.GET, {
+        const res = await axios.get<T_SuccessResponseOutput<string>>(API_ROUTES.LYRICS.GET, {
             params: {
                 ...musicTrack,
                 lyricsOnly: 'true',
@@ -43,9 +43,9 @@ export const getLyrics = async (musicTrack: { track: string; artist: string; alb
 
 export const searchMetadata = async (metadata: Record<string, string | number>): Promise<Record<string, string | number>> => {
     try {
-        const res = await axios.get<SuccessResponseOutput<T_ITunesTrack[]>>(API_ROUTES.ITUNES.SEARCH.TRACKS, {
+        const res = await axios.get<T_SuccessResponseOutput<T_ITunesTrack[]>>(API_ROUTES.ITUNES.SEARCH.TRACKS, {
             params: {
-                track: metadata.title,
+                title: metadata.title,
                 artist: metadata.artist,
                 album: metadata.album,
             },

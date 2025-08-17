@@ -8,7 +8,7 @@ import MatchResultModal from '@/app/(public)/games/tic-tac-toe/_components/Match
 import ScoreBoard from '@/app/(public)/games/tic-tac-toe/_components/ScoreBoard';
 import SetPlayerNamesModal from '@/app/(public)/games/tic-tac-toe/_components/SetPlayerNamesModal';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { ConfirmationModal, openModal } from '@/components/ui/Modals';
 import APP_ROUTES from '@/constants/routes/app.routes';
 

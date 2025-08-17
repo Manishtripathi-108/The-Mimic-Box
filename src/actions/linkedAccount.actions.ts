@@ -7,14 +7,14 @@ import { auth } from '@/auth';
 import ANILIST_ROUTES from '@/constants/external-routes/anilist.routes';
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import { db } from '@/lib/db';
-import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
-import { createAniListErrorReturn, createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { T_ErrorResponseOutput, T_RateLimitInfo, T_SuccessResponseOutput } from '@/lib/types/response.types';
+import { createAniListError, createError, createSuccess, createUnauthorized } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 export const removeLinkedAccount = async (provider: LinkedAccountProvider) => {
     const session = await auth();
     const userId = session?.user?.id;
-    if (!userId) return createErrorReturn('User not found');
+    if (!userId) return createError('User not found');
 
     const [error] = await safeAwait(
         db.linkedAccount.delete({
@@ -22,43 +22,66 @@ export const removeLinkedAccount = async (provider: LinkedAccountProvider) => {
         })
     );
 
-    return error ? createErrorReturn(`Failed to disconnect ${provider}`, error) : createSuccessReturn(`Successfully disconnected ${provider}`);
+    return error ? createError(`Failed to disconnect ${provider}`, { error }) : createSuccess(`Successfully disconnected ${provider}`);
 };
 
+/**
+ * Refreshes the token for a linked account.
+ */
 export const refreshToken = async (
     userId: string,
     refreshToken: string,
     provider: LinkedAccountProvider
 ): Promise<
-    | ErrorResponseOutput<{ retryAfterSeconds: number; remainingRateLimit: number } | undefined>
-    | SuccessResponseOutput<{
+    | T_ErrorResponseOutput<T_RateLimitInfo | undefined>
+    | T_SuccessResponseOutput<{
           accessToken: string;
           refreshToken: string;
           expiresAt: number;
       }>
 > => {
-    if (!refreshToken) return createErrorReturn('Unauthorized: Please log in again.');
+    // If there is no refresh token, return an unauthorized error.
+    if (!refreshToken) return createUnauthorized('Unauthorized: Please log in again.');
 
     try {
-        const dbProvider = await db.linkedAccount.findUnique({ where: { userId_provider: { userId, provider } } });
-        if (dbProvider && dbProvider.expires_at > Date.now())
-            return createSuccessReturn('Token is still valid', {
+        // Check if the token is still valid in the database.
+        const dbProvider = await db.linkedAccount.findUnique({
+            where: { userId_provider: { userId, provider } },
+        });
+
+        if (dbProvider && dbProvider.expires_at > Date.now()) {
+            // If the token is valid, return the token data.
+            return createSuccess('Token is still valid', {
                 accessToken: dbProvider.access_token,
                 refreshToken: dbProvider.refresh_token,
                 expiresAt: dbProvider.expires_at,
             });
+        }
 
+        // Get the request configuration for the provider.
         const requestConfig = getProviderConfig(provider, refreshToken);
-        if (!requestConfig) return createErrorReturn('Unauthorized: Please log in again.');
 
-        const response = await axios.post(requestConfig.url, requestConfig.data, { headers: requestConfig.headers });
+        // If there is no request configuration, return an unauthorized error.
+        if (!requestConfig) {
+            return createUnauthorized('Unauthorized: Please log in again.');
+        }
+
+        // Send a POST request to refresh the token.
+        const response = await axios.post(requestConfig.url, requestConfig.data, {
+            headers: requestConfig.headers,
+        });
 
         const { access_token, refresh_token: newRefreshToken, expires_in } = response.data;
-        if (!access_token) return createErrorReturn('Unauthorized: Please log in again.');
+
+        // If there is no access token, return an unauthorized error.
+        if (!access_token) {
+            return createUnauthorized('Unauthorized: Please log in again.');
+        }
 
         const updatedRefreshToken = newRefreshToken || refreshToken;
         const expiresAt = Math.floor(Date.now()) + expires_in * (provider === 'anilist' ? 1 : 1000);
 
+        // Update the token in the database.
         await safeAwait(
             db.linkedAccount.update({
                 where: { userId_provider: { userId, provider } },
@@ -66,17 +89,21 @@ export const refreshToken = async (
             })
         );
 
-        return createSuccessReturn(`Successfully refreshed ${provider} token`, {
+        // Return the success response with the new token data.
+        return createSuccess(`Successfully refreshed ${provider} token`, {
             accessToken: access_token,
             refreshToken: updatedRefreshToken,
             expiresAt,
         });
     } catch (error) {
+        // Handle different types of errors based on the provider.
         switch (provider) {
             case 'anilist':
-                return createAniListErrorReturn('Failed to refresh AniList token', error);
+                return createAniListError('Failed to refresh AniList token', { error });
+            case 'spotify':
+                return createError('Failed to refresh Spotify token', { error });
             default:
-                return createErrorReturn('Unauthorized: Please log in again.');
+                return createError('Unauthorized: Please log in again.');
         }
     }
 };

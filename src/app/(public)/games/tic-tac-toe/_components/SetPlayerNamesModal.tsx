@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal, { closeModal } from '@/components/ui/Modals';
 
@@ -55,6 +55,7 @@ const SetPlayerNamesModal = () => {
                     type="text"
                     placeholder="Player 1 Name"
                     control={control}
+                    autoComplete="name"
                 />
 
                 {/* Player O Input */}
@@ -66,6 +67,7 @@ const SetPlayerNamesModal = () => {
                     type="text"
                     placeholder="Player 2 Name"
                     control={control}
+                    autoComplete="name"
                 />
 
                 {/* Submit Button */}

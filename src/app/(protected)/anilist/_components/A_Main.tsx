@@ -8,7 +8,7 @@ import A_MediaCard from '@/app/(protected)/anilist/_components/A_MediaCard';
 import A_Toolbar from '@/app/(protected)/anilist/_components/A_Toolbar';
 import { NoDataCard } from '@/components/layout/NoDataCard';
 import Modal, { openModal } from '@/components/ui/Modals';
-import TabNavigation from '@/components/ui/TabNavigation';
+import TabSwitcher from '@/components/ui/TabSwitcher';
 import useAnilistFilteredData from '@/hooks/useAnilistFilteredData';
 import usePagination from '@/hooks/usePagination';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
@@ -80,7 +80,7 @@ const A_Main: React.FC<AnilistMainProps> = ({ mediaLists, type, token }) => {
             />
 
             {/* Tabs */}
-            <TabNavigation
+            <TabSwitcher
                 className="mb-6"
                 buttonClassName="capitalize"
                 tabs={type === 'favourites' ? FAVOURITE_TABS : MEDIA_TABS}

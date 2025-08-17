@@ -40,6 +40,7 @@ type BaseClassNames = {
 
 type BaseFormProps = {
     label?: string;
+    autoComplete?: string;
     classNames?: BaseClassNames;
 };
 
@@ -54,6 +55,7 @@ export type InputProps<T extends FieldValues = FieldValues> = {
     min?: number;
     max?: number;
     label?: string;
+    autoComplete?: string;
     iconName?: T_IconType;
     iconPosition?: 'left' | 'right';
     onIconClick?: () => void;

@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
@@ -21,7 +21,7 @@ const joinRoomSchema = z.object({
 });
 
 const createRoomSchema = z.object({
-    mode: z.enum(['classic', 'ultimate'], { required_error: 'Game Mode is required', message: 'Invalid Game Mode' }),
+    mode: z.enum(['classic', 'ultimate'], 'Game Mode is required'),
     playerName: z.string().min(1, 'Player Name is required').max(20, 'Player Name must not exceed 20 characters'),
 });
 
@@ -38,8 +38,16 @@ const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <Input name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
-            <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
+            <Input autoComplete="name" name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
+            <Input
+                autoComplete="name"
+                name="playerName"
+                label="Player Name"
+                type="text"
+                placeholder="Enter your name"
+                control={control}
+                disabled={isFetching}
+            />
             <Button type="submit" variant="highlight" className="mt-6 w-full" disabled={isFetching}>
                 {isFetching ? 'Joining Room...' : 'Join Room'}
             </Button>
@@ -62,7 +70,15 @@ const CreateRoomForm = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Select name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
-            <Input name="playerName" label="Player Name" type="text" placeholder="Enter your name" control={control} disabled={isFetching} />
+            <Input
+                autoComplete="name"
+                name="playerName"
+                label="Player Name"
+                type="text"
+                placeholder="Enter your name"
+                control={control}
+                disabled={isFetching}
+            />
             <Button type="submit" variant="highlight" className="mt-6 w-full" disabled={isFetching}>
                 {isFetching ? 'Creating Room...' : 'Create Room'}
             </Button>

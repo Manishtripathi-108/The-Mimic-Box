@@ -4,33 +4,30 @@ import React, { memo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { getLyrics } from '@/actions/lrclib.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Input from '@/components/ui/Input';
-import TabNavigation from '@/components/ui/TabNavigation';
+import { Tabs, TabsContent, TabsIndicator, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/Tabs';
+import { LYRICS_UNAVAILABLE_MESSAGES } from '@/constants/client.constants';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
+import { copyToClipboard } from '@/lib/utils/client.utils';
+import { formatTimeDuration } from '@/lib/utils/core.utils';
 
-type SearchLyricsProps = {
-    defaultParams?: Partial<T_LyricsQuery>;
-    onSelect?: (lyrics: string) => void;
-};
-
-type LyricsResultProps = {
-    lyric: T_LyricsRecord;
-    onSelect?: (lyrics: string) => void;
-};
-
-const TAB_OPTIONS = ['Plain Lyrics', 'Synced Lyrics'];
-
-const LyricsResult = memo(({ lyric, onSelect }: LyricsResultProps) => {
-    const [tab, setTab] = useState('Plain Lyrics');
-    const currentLyrics = tab === 'Plain Lyrics' ? lyric.plainLyrics : lyric.syncedLyrics;
-
+const LyricsResult = memo(({ lyric, onSelect }: { lyric: T_LyricsRecord; onSelect?: (lyrics: string) => void }) => {
     const badgeText = lyric.instrumental ? 'Instrumental' : lyric.syncedLyrics ? 'Synced' : 'Plain';
+
+    const handleCopy = (content: string) => {
+        if (onSelect) {
+            onSelect(content);
+        } else {
+            copyToClipboard(content);
+        }
+    };
+
+    const fallbackMessage = LYRICS_UNAVAILABLE_MESSAGES[Math.floor(Math.random() * LYRICS_UNAVAILABLE_MESSAGES.length)];
 
     return (
         <details className="shadow-raised-xs relative rounded-md border p-4">
@@ -41,34 +38,60 @@ const LyricsResult = memo(({ lyric, onSelect }: LyricsResultProps) => {
                     </span>
                     <span className="text-text-secondary shadow-pressed-xs w-fit rounded-md border px-2 text-sm">{badgeText}</span>
                     <p className="text-text-secondary text-sm">
-                        {lyric.albumName || 'Unknown'} • {lyric.duration || 'N/A'}s
+                        {lyric.albumName || 'Unknown'} • {formatTimeDuration(lyric.duration * 1000, 'minutes') || 'N/A'}s
                     </p>
                 </div>
             </summary>
 
             {!lyric.instrumental && (
                 <div className="mt-3 space-y-2">
-                    <div className="shadow-pressed-xs rounded-t-xl rounded-b-md border">
-                        <TabNavigation tabs={TAB_OPTIONS} className="w-full" buttonClassName="text-sm p-2" onTabChange={setTab} currentTab={tab} />
-                        <p className="text-text-secondary sm:scrollbar-thin h-80 overflow-y-scroll px-2 py-4 whitespace-pre-wrap">
-                            {currentLyrics || 'The lyric gods are on vacation... try again later!'}
-                        </p>
-                    </div>
+                    <Tabs defaultValue="synced">
+                        <TabsList className="w-full">
+                            <TabsTrigger value="synced" className="text-sm">
+                                Synced Lyrics
+                            </TabsTrigger>
+                            <TabsTrigger value="plain" className="text-sm">
+                                Plain Lyrics
+                            </TabsTrigger>
+                            <TabsIndicator />
+                        </TabsList>
 
-                    {onSelect && (
-                        <Button variant="highlight" onClick={() => onSelect(currentLyrics)} className="mx-auto mt-2">
-                            Select {tab}
-                        </Button>
-                    )}
+                        <TabsContent>
+                            <TabsPanel value="synced" className="p-0">
+                                <p className="shadow-pressed-xs text-text-secondary sm:scrollbar-thin max-h-80 overflow-y-scroll rounded-lg border p-2 whitespace-pre-wrap">
+                                    {lyric.syncedLyrics || fallbackMessage}
+                                </p>
+                                <Button
+                                    variant="highlight"
+                                    className="mx-auto mt-2 block h-auto"
+                                    disabled={!lyric.syncedLyrics}
+                                    onClick={() => handleCopy(lyric.syncedLyrics || fallbackMessage)}>
+                                    {onSelect ? 'Select' : 'Copy'} Synced Lyrics
+                                </Button>
+                            </TabsPanel>
+
+                            <TabsPanel value="plain" className="p-0">
+                                <p className="shadow-pressed-xs text-text-secondary sm:scrollbar-thin max-h-80 overflow-y-scroll rounded-lg border p-2 whitespace-pre-wrap">
+                                    {lyric.plainLyrics || fallbackMessage}
+                                </p>
+                                <Button
+                                    variant="highlight"
+                                    className="mx-auto mt-2 block h-auto"
+                                    disabled={!lyric.plainLyrics}
+                                    onClick={() => handleCopy(lyric.plainLyrics || fallbackMessage)}>
+                                    {onSelect ? 'Select' : 'Copy'} Plain Lyrics
+                                </Button>
+                            </TabsPanel>
+                        </TabsContent>
+                    </Tabs>
                 </div>
             )}
         </details>
     );
 });
-
 LyricsResult.displayName = 'LyricsResult';
 
-const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
+const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partial<T_LyricsQuery>; onSelect?: (lyrics: string) => void }) => {
     const [lyrics, setLyrics] = useState<T_LyricsRecord[] | null>(null);
     const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -78,7 +101,7 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
         control,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof LyricsQuerySchema>>({
+    } = useForm({
         resolver: zodResolver(LyricsQuerySchema),
         defaultValues: {
             q: '',
@@ -92,11 +115,16 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: SearchLyricsProps) => {
     const submitSearchLyrics = async (data: T_LyricsQuery) => {
         setLyrics(null);
         const res = await getLyrics(data);
-
         if (res.success) {
             const records = Array.isArray(res.payload) ? res.payload : [res.payload];
             setLyrics(records);
         } else {
+            res.data?.forEach((err) => {
+                setError(err.path[0] as 'q' | 'trackName' | 'artistName' | 'albumName' | 'duration', {
+                    message: err.message,
+                });
+            });
+
             setError('root', { message: res.message });
         }
     };

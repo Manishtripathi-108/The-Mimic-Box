@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import { closeModal } from '@/components/ui/Modals';
@@ -27,7 +27,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
     const validationSchema = z.object({
         status: AnilistMediaListStatusSchema,
-        progress: z.number().min(0).max(maxProgress),
+        progress: z.coerce.number().min(0).max(maxProgress),
     });
 
     const {
@@ -40,7 +40,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
     });
 
     const onSubmit = async (values: z.infer<typeof validationSchema>) => {
-        if (!isDirty) return toast.success('No changes to save.'), closeModal(modalId);
+        if (!isDirty) return (toast.success('No changes to save.'), closeModal(modalId));
 
         const result = await updateMediaProgress(token, entry.media.type, entry.media.id, values.status, values.progress);
         toast[result.success ? 'success' : 'error'](result.message || 'Update failed.');

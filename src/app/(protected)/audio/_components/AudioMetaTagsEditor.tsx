@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 
 import { handleEditMetaTags } from '@/actions/audio.actions';
 import SearchLyrics from '@/app/(protected)/audio/_components/SearchLyrics';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Input from '@/components/ui/Input';
@@ -56,7 +56,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
         setValue,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<T_AudioMetaTags>({
+    } = useForm({
         resolver: zodResolver(AudioMetaTagsSchema),
         defaultValues: { ...parsedMetadata, cover: undefined },
     });
@@ -140,7 +140,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                         )}
                     />
 
-                    {errors.cover && <p className="form-text mt-1 w-full text-center text-red-500">{errors.cover.message}</p>}
+                    <ErrorMessage message={errors.cover?.message?.toString()} className="absolute bottom-2 left-2" />
                 </div>
 
                 {/* Metadata Inputs */}

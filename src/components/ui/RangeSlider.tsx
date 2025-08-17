@@ -3,6 +3,7 @@
 import { FieldValues, useController } from 'react-hook-form';
 
 import Icon from '@/components/ui/Icon';
+import Slider, { SliderProps } from '@/components/ui/Slider';
 import { RangeSliderProps } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';
 
@@ -16,15 +17,13 @@ const RangeSlider = <TFieldValues extends FieldValues>({
     step = 1,
     onIconClick,
     classNames = {},
+    sliderProps,
     ...controllerProps
-}: RangeSliderProps<TFieldValues>) => {
+}: RangeSliderProps<TFieldValues> & { sliderProps?: SliderProps }) => {
     const {
         field,
         fieldState: { error },
     } = useController(controllerProps);
-
-    const value = !isNaN(field.value) ? field.value : min;
-    const percentage = ((value - min) / (max - min)) * 100;
 
     return (
         <div className={cn('form-group', classNames.container)}>
@@ -44,19 +43,17 @@ const RangeSlider = <TFieldValues extends FieldValues>({
                     />
                 )}
 
-                <input
+                <Slider
                     id={controllerProps.name}
-                    autoComplete={controllerProps.name}
-                    type="range"
                     min={min}
                     max={max}
                     step={step}
                     {...field}
-                    style={{ '--value-percentage': `${percentage}%` } as React.CSSProperties}
                     placeholder={placeholder}
-                    className={cn('form-field', classNames.field)}
+                    className={classNames.field}
                     aria-invalid={!!error}
                     data-invalid={!!error}
+                    {...sliderProps}
                 />
 
                 {iconName && iconPosition === 'right' && (

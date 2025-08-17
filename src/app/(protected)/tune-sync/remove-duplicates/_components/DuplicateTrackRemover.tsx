@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 
 import { deduplicatePlaylistItems } from '@/actions/tune-sync.actions';
 import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { T_DuplicateTrack, T_RemoveDuplicates, T_RemoveDuplicatesSource } from '@/lib/types/common.types';
 
 type T_FormData = {

@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 
@@ -12,12 +10,13 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { loginAction } from '@/actions/auth.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/Input';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
+import useToggle from '@/hooks/useToggle';
 import { loginSchema } from '@/lib/schema/auth.validations';
 
 const LoginInForm = () => {
@@ -25,7 +24,7 @@ const LoginInForm = () => {
     const searchParams = useSearchParams();
     const UrlError = searchParams.get('error') === 'OAuthAccountNotLinked';
     const callBackUrl = searchParams.get('callbackUrl');
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, { toggle: toggleShowPassword }] = useToggle();
 
     const {
         control,
@@ -42,7 +41,7 @@ const LoginInForm = () => {
             update();
             redirect(callBackUrl ? decodeURIComponent(callBackUrl) : DEFAULT_AUTH_REDIRECT);
         } else {
-            response?.extraData?.forEach((err) => {
+            response?.data?.forEach((err) => {
                 setError(err.path[0] as 'email' | 'password', {
                     message: err.message,
                 });
@@ -69,6 +68,7 @@ const LoginInForm = () => {
                     <Input
                         name="email"
                         label="Email Address"
+                        autoComplete="email"
                         type="email"
                         placeholder="ie. example@themimicbox.com"
                         iconName="email"
@@ -79,10 +79,11 @@ const LoginInForm = () => {
                     <Input
                         name="password"
                         label="Password"
+                        autoComplete="current-password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="* * * * * * * *"
                         iconName={showPassword ? 'eye' : 'eyeClose'}
-                        onIconClick={() => setShowPassword((prev) => !prev)}
+                        onIconClick={() => () => toggleShowPassword()}
                         control={control}
                     />
 

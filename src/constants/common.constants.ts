@@ -5,3 +5,10 @@ export const IMAGE_FALLBACKS = {
     NO_DATA: 'https://res.cloudinary.com/dra73suxl/image/upload/v1742810700/nodata_vyixzn.png',
     AUDIO_COVER: 'https://res.cloudinary.com/dra73suxl/image/upload/v1744229654/no_cover_image_fallback_jhsdj.png',
 };
+
+export const MAX_FILE_SIZE = {
+    image: 5 * 1024 * 1024, // 5MB
+    video: 50 * 1024 * 1024, // 50MB
+    audio: 50 * 1024 * 1024, // 50MB
+    document: 50 * 1024 * 1024, // 50MB
+} as const;

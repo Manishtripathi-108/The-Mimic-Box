@@ -1,12 +1,11 @@
 'use client';
 
 import { motion } from 'motion/react';
-import toast from 'react-hot-toast';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import APP_ROUTES from '@/constants/routes/app.routes';
-import { shareUrl } from '@/lib/utils/client.utils';
+import { copyToClipboard, shareUrl } from '@/lib/utils/client.utils';
 
 const WaitingRoom = () => {
     const { state, startMatch, leaveRoom } = useTicTacToeContext();
@@ -54,10 +53,7 @@ const WaitingRoom = () => {
                 <div className="mt-2 flex items-center justify-center gap-x-4">
                     <p
                         className="hover:text-highlight text-text-secondary cursor-pointer"
-                        onClick={() => {
-                            navigator.clipboard.writeText(gameRoomId!);
-                            toast.success('Room code copied to clipboard!');
-                        }}
+                        onClick={() => copyToClipboard(gameRoomId!)}
                         title="Click to copy"
                         aria-label={`Room code ${gameRoomId}`}>
                         {`Code: ${gameRoomId}`}

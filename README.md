@@ -21,7 +21,7 @@ The Mimic Box is a Next.js-based application designed to provide a seamless user
 - **State Management**: React Context API
 - **APIs**: Spotify, JioSaavn, Anilist
 - **Database**: Prisma ORM with PostgreSQL
-- **Utilities**: Axios, Zod, Lodash, Fluent-FFmpeg
+- **Utilities**: Axios, Zod, Fluent-FFmpeg
 
 ## Badges
 
@@ -34,7 +34,6 @@ Below are the icons representing the core technologies used in this project:
 - ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 - ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
 - ![Zod](https://img.shields.io/badge/Zod-4A90E2?style=for-the-badge&logo=zod&logoColor=white)
-- ![Lodash](https://img.shields.io/badge/Lodash-3498DB?style=for-the-badge&logo=lodash&logoColor=white)
 - ![Fluent-FFmpeg](https://img.shields.io/badge/Fluent--FFmpeg-FF0000?style=for-the-badge&logo=ffmpeg&logoColor=white)
 
 ## Prerequisites

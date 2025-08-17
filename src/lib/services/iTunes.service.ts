@@ -4,11 +4,13 @@ import ITUNES_ROUTES from '@/constants/external-routes/iTunes.routes';
 import iTunesConfig from '@/lib/config/iTunes.config';
 import { T_ITunesAlbumCollectionResponse, T_ITunesPayload, T_ITunesTrackResponse } from '@/lib/types/iTunes/api.types';
 import { ITunesMusicAlbumTracks, T_ITunesAlbum, T_ITunesTrack } from '@/lib/types/iTunes/normalized.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createNotFound, createSuccess } from '@/lib/utils/createResponse.utils';
 import { createITunesTrack, createItunesAlbum } from '@/lib/utils/iTunes.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
-/** Helper to fetch and validate data from iTunes */
+/**
+ * Generic helper to fetch and normalize iTunes data.
+ */
 const fetchITunesData = async <T, R>(
     url: string,
     params: AxiosRequestConfig['params'],
@@ -17,21 +19,29 @@ const fetchITunesData = async <T, R>(
 ) => {
     const [err, res] = await safeAwait(iTunesConfig.get<T_ITunesPayload<T>>(url, { params }));
 
-    if (err || !res) return createErrorReturn('Failed to fetch data');
+    if (err || !res) {
+        return createError('Failed to fetch data from iTunes', { error: err });
+    }
 
     const { results } = res.data;
 
-    if (!results.length) return createErrorReturn(notFoundMessage);
+    if (!results?.length) {
+        return createNotFound(notFoundMessage);
+    }
 
     const transformedData = transform(results);
-    if (!transformedData) return createErrorReturn(notFoundMessage);
+    if (!transformedData) {
+        return createNotFound(notFoundMessage);
+    }
 
-    return createSuccessReturn('Data fetched successfully', transformedData);
+    return createSuccess('Data fetched successfully', transformedData);
 };
 
-/** Search for iTunes tracks by query */
-export const searchTracks = async ({ track, artist, album, limit = 5 }: { track: string; artist?: string; album?: string; limit?: number }) => {
-    const term = [track, artist, album].filter(Boolean).join(' ');
+/**
+ * Search iTunes tracks using song title, artist, or album
+ */
+export const searchTracks = async ({ title, artist, album, limit = 5 }: { title: string; artist?: string; album?: string; limit?: number }) => {
+    const term = [title, artist, album].filter(Boolean).join(' ');
 
     return fetchITunesData<T_ITunesTrackResponse, T_ITunesTrack[]>(
         ITUNES_ROUTES.SEARCH,
@@ -41,7 +51,9 @@ export const searchTracks = async ({ track, artist, album, limit = 5 }: { track:
     );
 };
 
-/** Get iTunes albums by ID */
+/**
+ * Get album(s) by iTunes collection ID
+ */
 export const getAlbumsById = async (id: number | string, limit = 5) => {
     return fetchITunesData<T_ITunesAlbumCollectionResponse, T_ITunesAlbum[]>(
         ITUNES_ROUTES.LOOKUP,
@@ -51,7 +63,9 @@ export const getAlbumsById = async (id: number | string, limit = 5) => {
     );
 };
 
-/** Get album and its tracks by ID */
+/**
+ * Get a single album and its associated tracks by collection ID
+ */
 export const getAlbumTracksById = async (id: number | string, limit = 5) => {
     return fetchITunesData<T_ITunesAlbumCollectionResponse | T_ITunesTrackResponse, ITunesMusicAlbumTracks>(
         ITUNES_ROUTES.LOOKUP,
@@ -61,7 +75,7 @@ export const getAlbumTracksById = async (id: number | string, limit = 5) => {
             const rawAlbum = data.find((item) => item.wrapperType === 'collection');
             const rawTracks = data.filter((item) => item.wrapperType === 'track');
 
-            if (!rawAlbum || !rawTracks.length) return false;
+            if (!rawAlbum || rawTracks.length === 0) return false;
 
             const album = createItunesAlbum(rawAlbum);
             const songs = rawTracks.map(createITunesTrack);

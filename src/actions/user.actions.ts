@@ -11,26 +11,26 @@ import { db } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
 import { profileSchema } from '@/lib/schema/user.validations';
 import { uploadToCloud } from '@/lib/services/cloud-storage.service';
-import { ErrorResponseOutput, SuccessResponseOutput } from '@/lib/types/response.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { T_ErrorResponseOutput, T_SuccessResponseOutput } from '@/lib/types/response.types';
+import { createError, createForbidden, createSuccess, createUnauthorized, createValidationError } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 export const editProfileAction = async (
     data: z.infer<typeof profileSchema>
-): Promise<SuccessResponseOutput<{ name: string; image: string | null | undefined; email: string }> | ErrorResponseOutput<z.ZodIssue[]>> => {
+): Promise<T_SuccessResponseOutput<{ name: string; image: string | null | undefined; email: string }> | T_ErrorResponseOutput<z.ZodIssue[]>> => {
     const session = await auth();
-    if (!session?.user) return createErrorReturn('Unauthorized, please login');
+    if (!session?.user) return createUnauthorized('Unauthorized, please login');
 
-    if (session.user.provider !== 'credentials') return createErrorReturn('Cannot edit profile for social accounts');
+    if (session.user.provider !== 'credentials') return createForbidden('Cannot edit profile for social accounts');
 
     const parsed = profileSchema.safeParse(data);
-    if (!parsed.success) return createErrorReturn('Invalid data!', undefined, parsed.error.errors);
+    if (!parsed.success) return createValidationError('Invalid data!', parsed.error.issues);
 
     const { name, email, image } = parsed.data;
     const { id: userId, name: currentName, email: currentEmail, image: currentImage } = session.user;
 
     if (name === currentName && email === currentEmail && image === undefined) {
-        return createErrorReturn('No changes detected');
+        return createError('No changes detected');
     }
 
     let imageUrl = currentImage as string;
@@ -38,7 +38,7 @@ export const editProfileAction = async (
     if (image) {
         const imageBuffer = await image.arrayBuffer();
         const [error, buffer] = await safeAwait(sharp(imageBuffer).resize(640, 640).toFormat('jpg').toBuffer());
-        if (error) return createErrorReturn('Failed to process image', error);
+        if (error) return createError('Failed to process image', { error });
 
         const uploadResponse = await uploadToCloud({
             file: Buffer.from(buffer),
@@ -47,7 +47,7 @@ export const editProfileAction = async (
         });
 
         if (!uploadResponse.success) {
-            return createErrorReturn('Failed to upload image', uploadResponse.error);
+            return createError('Failed to upload image', uploadResponse);
         }
 
         imageUrl = uploadResponse.payload?.url || imageUrl;
@@ -56,7 +56,7 @@ export const editProfileAction = async (
     let emailResponse;
     if (currentEmail && email !== currentEmail) {
         emailResponse = await handleEmailChange(currentEmail, email);
-        if (!emailResponse.success) return createErrorReturn(emailResponse.message);
+        if (!emailResponse.success) return createError(emailResponse.message);
     }
 
     const [updateError] = await safeAwait(
@@ -66,9 +66,9 @@ export const editProfileAction = async (
         })
     );
 
-    if (updateError) return createErrorReturn('Failed to update profile', updateError);
+    if (updateError) return createError('Failed to update profile', { error: updateError });
 
-    return createSuccessReturn(emailResponse?.message || 'Profile updated successfully', { name, image: imageUrl, email: currentEmail as string });
+    return createSuccess(emailResponse?.message || 'Profile updated successfully', { name, image: imageUrl, email: currentEmail as string });
 };
 
 /**
@@ -77,8 +77,8 @@ export const editProfileAction = async (
 export const handleEmailChange = async (currentEmail: string, newEmail: string) => {
     const [existingEmailError, existingUser] = await safeAwait(db.user.findUnique({ where: { email: newEmail } }));
 
-    if (existingEmailError) return createErrorReturn('Failed to check email', existingEmailError);
-    if (existingUser) return createErrorReturn('Email already in use');
+    if (existingEmailError) return createError('Failed to check email', { error: existingEmailError });
+    if (existingUser) return createValidationError('Email already in use');
 
     const token = uuidV4();
     const expires = new Date(Date.now() + TOKEN_EXPIRY_MS);
@@ -91,13 +91,11 @@ export const handleEmailChange = async (currentEmail: string, newEmail: string) 
         })
     );
 
-    if (tokenError) return createErrorReturn('Failed to generate token', tokenError);
+    if (tokenError) return createError('Failed to generate token', { error: tokenError });
 
     const emailResponse = await sendEmail(newEmail, 'Change Your Email', generateEmailChangeEmail(token));
 
-    return emailResponse.success
-        ? createSuccessReturn('Email change initiated. Please check your inbox.')
-        : createErrorReturn('Failed to send change email verification');
+    return emailResponse.success ? createSuccess('Email change initiated. Please check your inbox.') : emailResponse;
 };
 
 export const verifyEmailChangeToken = async (token: string) => {
@@ -105,7 +103,7 @@ export const verifyEmailChangeToken = async (token: string) => {
         const response = await db.changeEmailToken.findUnique({ where: { token } });
 
         if (!response || response.expires < new Date()) {
-            return createErrorReturn('Invalid or expired verification link.');
+            return createValidationError('Invalid or expired verification link.');
         }
 
         const [updateError, responseS] = await safeAwait(
@@ -119,8 +117,8 @@ export const verifyEmailChangeToken = async (token: string) => {
 
         await db.changeEmailToken.delete({ where: { token } });
 
-        return createSuccessReturn('Email changed successfully.', { email: response.newEmail });
+        return createSuccess('Email changed successfully.', { email: response.newEmail });
     } catch {
-        return createErrorReturn('Verification failed. Try again later.');
+        return createError('Verification failed. Try again later.');
     }
 };

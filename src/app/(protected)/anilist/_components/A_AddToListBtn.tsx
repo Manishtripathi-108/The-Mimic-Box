@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { getUserMediaEntry, updateMediaProgress } from '@/actions/anilist.actions';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
 import { AnilistMediaListStatus, AnilistMediaType } from '@/lib/types/anilist.types';

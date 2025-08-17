@@ -1,22 +1,21 @@
 import { NextRequest } from 'next/server';
 
 import iTunesApi from '@/lib/services/iTunes.service';
-import { createErrorResponse, createSuccessResponse } from '@/lib/utils/createResponse.utils';
+import { createResponse, createValidationError } from '@/lib/utils/createResponse.utils';
+
+// Adjust the import path based on your actual structure
 
 export async function GET(req: NextRequest) {
-    const track = req.nextUrl.searchParams.get('track');
+    const title = req.nextUrl.searchParams.get('title');
     const artist = req.nextUrl.searchParams.get('artist') || undefined;
     const album = req.nextUrl.searchParams.get('album') || undefined;
     const limit = req.nextUrl.searchParams.get('limit') || '5';
 
-    if (!track) {
-        return createErrorResponse({ message: 'Missing required parameters', status: 400 });
+    if (!title) {
+        return createValidationError('Missing required parameters', { title: ['Title is required'] }, {}, true);
     }
 
-    const res = await iTunesApi.searchTracks({ track, artist, album, limit: parseInt(limit, 10) });
-    if (!res.success || !res.payload) {
-        return createErrorResponse({ message: !res.success ? res.message : 'Failed to fetch results', status: 500 });
-    }
+    const res = await iTunesApi.searchTracks({ title, artist, album, limit: parseInt(limit, 10) });
 
-    return createSuccessResponse({ message: 'Successfully fetched tracks!', payload: res.payload });
+    return createResponse(res);
 }

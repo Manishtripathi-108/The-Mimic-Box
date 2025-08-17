@@ -18,8 +18,8 @@ export const AnilistFilterSchema = z.object({
     genres: z
         .array(z.string())
         .refine((val) => val.every((g) => ANILIST_GENRES.includes(g)), {
-            message: 'Invalid genre selected',
+            error: 'Invalid genre selected',
         })
-        .optional()
-        .transform((val) => ((val ?? []).length > 0 ? val : undefined)),
+        .transform((val) => ((val ?? []).length > 0 ? val : undefined))
+        .optional(),
 });

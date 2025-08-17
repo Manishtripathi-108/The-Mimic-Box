@@ -3,13 +3,13 @@ import { NextRequest } from 'next/server';
 import { auth } from '@/auth';
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import API_ROUTES from '@/constants/routes/api.routes';
-import { createErrorResponse, createSuccessResponse } from '@/lib/utils/createResponse.utils';
+import { createSuccess, createUnauthorized } from '@/lib/utils/createResponse.utils';
 
 export async function GET(req: NextRequest) {
     const session = await auth();
 
     if (!session || !session.user?.id) {
-        return createErrorResponse({ message: 'Unauthorized, please login', status: 401 });
+        return createUnauthorized('User not authenticated.', {}, true);
     }
 
     const searchParams = req.nextUrl.searchParams;
@@ -21,5 +21,5 @@ export async function GET(req: NextRequest) {
         state: searchParams.get('callbackUrl') || '/',
     });
 
-    return createSuccessResponse({ message: 'Redirecting to Spotify', payload: `${spotifyApiRoutes.auth}?${params.toString()}` });
+    return createSuccess('Redirecting to Spotify', `${spotifyApiRoutes.auth}?${params.toString()}`, {}, true);
 }

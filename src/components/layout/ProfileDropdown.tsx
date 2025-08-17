@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,36 +8,31 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSession } from 'next-auth/react';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import LogoutButton from '@/components/ui/LogoutButton';
 import { IMAGE_FALLBACKS } from '@/constants/common.constants';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import useTheme from '@/hooks/useTheme';
+import useToggle from '@/hooks/useToggle';
 
 const ProfileDropdown = () => {
-    const [isOpen, setIsOpen] = useState(false);
     const { cycleTheme, nextTheme } = useTheme();
     const { data: session, status } = useSession();
+    const [isOpen, { setDefault: hide, toggle }] = useToggle(false, true, {
+        keybind: 'Escape',
+        toggleOnKeyTo: false,
+    });
     const dropdownRef = useRef<HTMLDivElement>(null);
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isOpen]);
+    useClickOutside({
+        targets: [dropdownRef],
+        onClickOutside: () => {
+            if (isOpen) hide();
+        },
+        disabled: !isOpen,
+    });
 
     // Show nothing until session is loaded to prevent flicker
     if (status === 'loading') return <Button className="cursor-wait" icon="loading" />;
@@ -57,10 +52,10 @@ const ProfileDropdown = () => {
     const { name, email, image } = session.user;
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative shrink-0" ref={dropdownRef}>
             {/* Profile Button */}
-            <Button onClick={() => setIsOpen(!isOpen)} className="aspect-square w-fit overflow-hidden rounded-full p-0.5">
-                <Image src={image || IMAGE_FALLBACKS.PROFILE} alt="Profile" width={32} height={32} className="size-8 rounded-full object-cover" />
+            <Button onClick={() => toggle()} className="ignore-onClickOutside mt-1 h-auto w-fit overflow-hidden rounded-full p-0.5">
+                <Image src={image || IMAGE_FALLBACKS.PROFILE} alt="Profile" width={28} height={28} className="size-7 rounded-full object-cover" />
             </Button>
 
             {/* Dropdown Menu */}
@@ -87,21 +82,21 @@ const ProfileDropdown = () => {
 
                         <div className="text-text-secondary">
                             <Link
-                                onClick={() => setIsOpen(false)}
+                                onClick={hide}
                                 href={APP_ROUTES.USER.PROFILE}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon="person" className="size-5" />
                                 <span>My Profile</span>
                             </Link>
                             <Link
-                                onClick={() => setIsOpen(false)}
+                                onClick={hide}
                                 href={APP_ROUTES.USER.LINKED_ACCOUNTS}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon="link" className="size-5" />
                                 <span>Linked Accounts</span>
                             </Link>
                             <Link
-                                onClick={() => setIsOpen(false)}
+                                onClick={hide}
                                 href={APP_ROUTES.USER.SETTINGS}
                                 className="hover:bg-primary hover:text-text-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                                 <Icon icon="settings" className="size-5" />

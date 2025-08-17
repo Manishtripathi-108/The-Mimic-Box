@@ -3,12 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import Modal, { closeModal } from '@/components/ui/Modals';
 import Select from '@/components/ui/Select';
-import TabNavigation from '@/components/ui/TabNavigation';
+import TabSwitcher from '@/components/ui/TabSwitcher';
 import { ANILIST_GENRES } from '@/constants/client.constants';
 import {
     AnilistFilterSchema,
@@ -31,7 +31,7 @@ const ResetFilters: AnilistMediaFilters = {
 };
 
 const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; setFilters: (filters: AnilistMediaFilters) => void }) => {
-    const { control, handleSubmit, setValue, reset, watch } = useForm<AnilistMediaFilters>({
+    const { control, handleSubmit, setValue, reset, watch } = useForm({
         defaultValues: { ...filters, genres: filters.genres ?? [] },
         resolver: zodResolver(AnilistFilterSchema),
     });
@@ -57,7 +57,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 {/* Format */}
                 <div className="form-group relative">
                     <p className="form-text text-text-primary font-alegreya text-base">Format:</p>
-                    <TabNavigation
+                    <TabSwitcher
                         tabs={AnilistMediaFormatTabs}
                         currentTab={watch('format')?.toLowerCase().replace('_', ' ')}
                         className="w-full text-nowrap"
@@ -85,7 +85,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 {/* Status */}
                 <div className="form-group relative">
                     <p className="form-text text-text-primary font-alegreya text-base">Status:</p>
-                    <TabNavigation
+                    <TabSwitcher
                         tabs={AnilistMediaStatusTabs}
                         currentTab={watch('status')?.toLowerCase().replaceAll('_', ' ')}
                         className="w-full text-nowrap"

@@ -1,28 +1,34 @@
 import { NextRequest } from 'next/server';
 
 import lrclib from '@/lib/services/lrclib.service';
-import { createErrorResponse, createSuccessResponse } from '@/lib/utils/createResponse.utils';
+import { createNotFound, createResponse, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 
 export async function GET(req: NextRequest) {
-    const track = req.nextUrl.searchParams.get('track');
+    const title = req.nextUrl.searchParams.get('title');
     const artist = req.nextUrl.searchParams.get('artist');
     const album = req.nextUrl.searchParams.get('album');
     const duration = req.nextUrl.searchParams.get('duration') ? parseInt(req.nextUrl.searchParams.get('duration')!) : undefined;
 
     const lyricsOnly = req.nextUrl.searchParams.get('lyricsOnly') === 'true';
 
-    if (!track || !artist || !album || !duration) {
-        return createErrorResponse({ message: 'Missing required parameters', status: 400 });
+    if (!title || !artist || !album || !duration) {
+        return createValidationError(
+            'Missing required parameters',
+            { title: ['Title is required'], artist: ['Artist is required'], album: ['Album is required'], duration: ['Duration is required'] },
+            {},
+            true
+        );
     }
 
-    const response = await lrclib.getLyricsByMetadata(track, artist, album, duration);
+    const response = await lrclib.getLyricsByMetadata(title, artist, album, duration);
 
     if (!response.success || !response.payload) {
-        return createErrorResponse({ message: 'Failed to fetch results', status: 500 });
+        return createResponse(response);
     }
 
-    return createSuccessResponse({
-        message: 'Success',
-        payload: lyricsOnly ? response.payload.syncedLyrics || response.payload.plainLyrics : response.payload,
-    });
+    if (lyricsOnly && !response.payload.syncedLyrics && !response.payload.plainLyrics) {
+        return createNotFound('Failed to find lyrics for specified track', {}, true);
+    }
+
+    return createSuccess('Success', lyricsOnly ? response.payload.syncedLyrics || response.payload.plainLyrics : response.payload, {}, true);
 }

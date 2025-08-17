@@ -5,7 +5,10 @@ const ErrorMessage = ({ message, className }: { message?: string | null; classNa
     if (!message) return null;
 
     return (
-        <p role="alert" aria-live="assertive" className={cn('flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500', className)}>
+        <p
+            role="alert"
+            aria-live="assertive"
+            className={cn('my-1 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500', className)}>
             <Icon icon="error" className="mr-1 size-5 shrink-0" />
             {message}
         </p>

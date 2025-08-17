@@ -3,13 +3,14 @@
 import { memo, useCallback, useRef, useState } from 'react';
 
 import { AnimatePresence, motion } from 'motion/react';
+import { InView } from 'react-intersection-observer';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import DownloadItem from '@/components/ui/DownloadItem';
 import Icon from '@/components/ui/Icon';
 import { useAudioDownload } from '@/contexts/AudioDownload.context';
-import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import useToggle from '@/hooks/useToggle';
 import cn from '@/lib/utils/cn';
 
@@ -23,7 +24,6 @@ const DownloadModal = ({ className }: { className?: string }) => {
     }, [total, visibleCount]);
 
     const rootRef = useRef<HTMLDivElement>(null);
-    const { observeRef } = useIntersectionObserver({ onEntry: loadMoreItems, root: rootRef });
 
     const [open, { setAlternate: openModal, setDefault: closeModal }] = useToggle(false, true, {
         onChange: (value) => {
@@ -33,6 +33,12 @@ const DownloadModal = ({ className }: { className?: string }) => {
         toggleOnKeyTo: false,
     });
 
+    useClickOutside({
+        targets: [rootRef],
+        onClickOutside: closeModal,
+        disabled: !open,
+    });
+
     if (!total) return null;
 
     return (
@@ -40,7 +46,9 @@ const DownloadModal = ({ className }: { className?: string }) => {
             className={cn(
                 'fixed z-50',
                 className,
-                open ? 'inset-0 h-dvh sm:inset-auto sm:top-24 sm:right-10 sm:max-h-[60vh] sm:w-full sm:max-w-sm' : 'top-24 right-10'
+                open
+                    ? 'ignore-onClickOutside inset-0 h-dvh sm:inset-auto sm:top-24 sm:right-10 sm:max-h-[60vh] sm:w-full sm:max-w-sm'
+                    : 'top-24 right-10'
             )}
             aria-modal="true"
             role="dialog"
@@ -80,13 +88,19 @@ const DownloadModal = ({ className }: { className?: string }) => {
                                     ))}
 
                                     {visibleCount < total && (
-                                        <div
-                                            ref={observeRef}
+                                        <InView
+                                            as="div"
+                                            onChange={(inView) => {
+                                                if (inView) loadMoreItems();
+                                            }}
+                                            threshold={0.5}
                                             role="status"
+                                            id="loading-more-queue-tracks"
                                             aria-live="polite"
                                             className="text-text-secondary flex items-center justify-center gap-2 py-2 text-center text-sm">
                                             <Icon icon="loading" className="text-accent size-8" />
-                                        </div>
+                                            <span className="sr-only">Loading more tracks...</span>
+                                        </InView>
                                     )}
                                 </div>
                             </CardContent>

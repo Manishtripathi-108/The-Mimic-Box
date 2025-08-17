@@ -1,4 +1,6 @@
+import API_ROUTES from '@/constants/routes/api.routes';
 import APP_ROUTES from '@/constants/routes/app.routes';
+import { isDev } from '@/lib/utils/core.utils';
 
 /**
  * Public routes that do not require authentication.
@@ -17,4 +19,5 @@ export const PUBLIC_ROUTES: string[] = [
     '/download/ffmpeg-core.js',
     '/download/ffmpeg-core.wasm',
     '/download/ffmpeg-core.worker.js',
+    ...(isDev ? [API_ROUTES.ITUNES.SEARCH.TRACKS, API_ROUTES.LYRICS.GET, API_ROUTES.LYRICS.SEARCH] : []),
 ];

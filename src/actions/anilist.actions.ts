@@ -13,7 +13,7 @@ import {
     AnilistUser,
     AnilistUserFavourites,
 } from '@/lib/types/anilist.types';
-import { createAniListErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createAniListError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { fetchAniListData } from '@/lib/utils/server.utils';
 
 const mediaQuery = (additional = '') => `{
@@ -83,9 +83,9 @@ export const getFilteredMediaList = async ({ search, type = 'ANIME', page, perPa
         status,
     });
 
-    if (error || !response) return createAniListErrorReturn('Error fetching search results', error);
+    if (error || !response) return createAniListError('Error fetching search results', { error });
 
-    return createSuccessReturn('Search results fetched successfully', response.Page);
+    return createSuccess('Search results fetched successfully', response.Page);
 };
 
 export const getMediaDetailsWithRecommendations = async (type: AnilistMediaType, id: number) => {
@@ -103,8 +103,8 @@ export const getMediaDetailsWithRecommendations = async (type: AnilistMediaType,
     `;
 
     const [error, response] = await fetchAniListData<{ Media: AnilistMediaWithRecommendations }>(null, query, { mediaId: id, type });
-    if (error || !response) return createAniListErrorReturn('Error fetching media data', error);
-    return createSuccessReturn('Media data fetched successfully', response.Media);
+    if (error || !response) return createAniListError('Error fetching media data', { error });
+    return createSuccess('Media data fetched successfully', response.Media);
 };
 
 /* ------------------------- User Profile & Media ------------------------- */
@@ -173,10 +173,10 @@ export const getUserMediaCollections = async (token: string, userId: string, med
     });
 
     if (error || !mediaListCollection) {
-        return createAniListErrorReturn(`Failed to load ${mediaType.toLowerCase()}. Try again later!`, error);
+        return createAniListError(`Failed to load ${mediaType.toLowerCase()}. Try again later!`, { error });
     }
 
-    return createSuccessReturn('User media fetched successfully', mediaListCollection.MediaListCollection.lists);
+    return createSuccess('User media fetched successfully', mediaListCollection.MediaListCollection.lists);
 };
 
 export const getUserMediaEntry = async (token: string, userId: string, mediaId: number, mediaType: AnilistMediaType) => {
@@ -196,10 +196,10 @@ export const getUserMediaEntry = async (token: string, userId: string, mediaId: 
     );
 
     if (error || !response) {
-        return createAniListErrorReturn('Error fetching user data', error);
+        return createAniListError('Error fetching user data', { error });
     }
 
-    return createSuccessReturn('User data fetched successfully', response.MediaList);
+    return createSuccess('User data fetched successfully', response.MediaList);
 };
 
 /**
@@ -224,10 +224,10 @@ export const getUserFavourites = async (token: string, userId: string) => {
     const [error, response] = await fetchAniListData<AnilistUserFavourites>(token, query, { userId });
 
     if (error || !response) {
-        return createAniListErrorReturn('Error fetching user favourites', error);
+        return createAniListError('Error fetching user favourites', { error });
     }
 
-    return createSuccessReturn('User favourites fetched successfully', response.User.favourites);
+    return createSuccess('User favourites fetched successfully', response.User.favourites);
 };
 
 /* ------------------------- Media Actions ------------------------- */
@@ -258,10 +258,10 @@ export const updateMediaProgress = async (
     });
 
     if (error || !response) {
-        return createAniListErrorReturn('Error saving media entry', error);
+        return createAniListError('Error saving media entry', { error });
     }
 
-    return createSuccessReturn('Media entry saved successfully', response.SaveMediaListEntry);
+    return createSuccess('Media entry saved successfully', response.SaveMediaListEntry);
 };
 
 /**
@@ -285,13 +285,13 @@ export const toggleMediaFavouriteStatus = async (token: string, mediaId: number,
     });
 
     if (error || !response) {
-        return createAniListErrorReturn('Error toggling favourite status', error);
+        return createAniListError('Error toggling favourite status', { error });
     }
 
     const favouriteNodes = response.ToggleFavourite[mediaType.toLowerCase()]?.nodes || [];
     const isFavouriteNow = favouriteNodes.some((node) => node.id === mediaId);
 
-    return createSuccessReturn(isFavouriteNow ? 'Favourite added successfully' : 'Favourite remove successfully', { isFavourite: isFavouriteNow });
+    return createSuccess(isFavouriteNow ? 'Favourite added successfully' : 'Favourite remove successfully', { isFavourite: isFavouriteNow });
 };
 
 /**
@@ -309,10 +309,10 @@ export const removeMediaFromList = async (token: string, entryId: number) => {
     const [error, response] = await fetchAniListData<{ DeleteMediaListEntry: { deleted: boolean } }>(token, mutation, { entryId });
 
     if (error || !response) {
-        return createAniListErrorReturn('Error deleting media entry', error);
+        return createAniListError('Error deleting media entry', { error });
     }
 
-    return createSuccessReturn('Media entry deleted successfully', { deleted: response.DeleteMediaListEntry.deleted });
+    return createSuccess('Media entry deleted successfully', { deleted: response.DeleteMediaListEntry.deleted });
 };
 
 /* --------------------------- External ID Mapping -------------------------- */
@@ -334,8 +334,8 @@ export const getAniListIdsByMalIds = async (token: string, malIds: number[], med
     const [error, response] = await fetchAniListData<AnilistMediaIds>(token, query, { idMals: malIds, type: mediaType });
 
     if (error || !response) {
-        return createAniListErrorReturn('Error fetching Anilist IDs', error);
+        return createAniListError('Error fetching Anilist IDs', { error });
     }
 
-    return createSuccessReturn('Anilist IDs fetched successfully', response.Page.media);
+    return createSuccess('Anilist IDs fetched successfully', response.Page.media);
 };

@@ -1,13 +1,6 @@
 import { FileTypesMap } from '@/lib/types/client.types';
 import { T_AudioAdvanceSettings, T_AudioMetaTagsRecords } from '@/lib/types/common.types';
 
-export const MAX_FILE_SIZE = {
-    image: 5 * 1024 * 1024, // 5MB
-    video: 50 * 1024 * 1024, // 50MB
-    audio: 50 * 1024 * 1024, // 50MB
-    document: 50 * 1024 * 1024, // 50MB
-} as const;
-
 export const FILE_TYPES_MAP: FileTypesMap = {
     // Audio
     mp3: 'audio',
@@ -287,3 +280,16 @@ export const META_TAGS: T_AudioMetaTagsRecords = {
         placeholder: 'e.g. https://themimicbox.com',
     },
 };
+
+/* --------------------------------- lyrics --------------------------------- */
+export const LYRICS_UNAVAILABLE_MESSAGES = [
+    'The lyric gods are on vacation… probably sipping margaritas on a beach 🎵🏖️',
+    'Oops! The lyrics went to get milk and joined a rock band instead 🥛🎸',
+    'Lyrics went on a coffee break and forgot to clock back in ☕😅',
+    "These lyrics are playing hide and seek… and they're *really* good at it 🙈",
+    'Someone forgot to feed the lyrics hamster. Again. 🐹💨',
+    "Aliens abducted the lyrics. We hope they're enjoying space karaoke 👽🎤",
+    "The lyrics ghosted us… we're left on read 👻📱",
+    'The lyrics are currently binge-watching Netflix and ignoring responsibilities 📺🍿',
+    'We had the lyrics, but then someone played Free Bird 🕊️🎵',
+];

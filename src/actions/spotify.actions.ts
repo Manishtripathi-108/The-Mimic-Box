@@ -3,7 +3,7 @@
 import { auth } from '@/auth';
 import spotifyServices from '@/lib/services/spotify/index.spotify.services';
 import { T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess, createUnauthorized, createValidationError } from '@/lib/utils/createResponse.utils';
 import { extractRecentPlaylists } from '@/lib/utils/server.utils';
 
 // Wrapper for checking Spotify auth token
@@ -12,7 +12,7 @@ const withSpotifyAuth = async <T>(callback: (accessToken: string) => Promise<T>)
     const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
 
     if (!accessToken) {
-        return createErrorReturn('Spotify access token not found');
+        return createUnauthorized('Spotify access token not found');
     }
 
     return callback(accessToken);
@@ -31,9 +31,7 @@ export const spotifyGetRecentTracks = async (limit = 50) => withSpotifyAuth((tok
 export const spotifyGetRecentPlaylists = async () =>
     withSpotifyAuth(async (token) => {
         const res = await spotifyServices.player.getRecentTracks(token);
-        if (!res.success) {
-            return createErrorReturn(res.message || 'Failed to fetch recently played tracks', res.error);
-        }
+        if (!res.success) return res;
 
         const playlistIds = extractRecentPlaylists(res.payload.items);
         const playlists = await Promise.all(
@@ -43,16 +41,14 @@ export const spotifyGetRecentPlaylists = async () =>
             })
         );
 
-        return createSuccessReturn('Recently played playlists fetched!', playlists.filter(Boolean));
+        return createSuccess('Recently played playlists fetched!', playlists.filter(Boolean));
     });
 
 /* -------------------------- Playlist -------------------------- */
 export const spotifyGetPlaylist = async (playlistId: string) =>
     withSpotifyAuth(async (token) => {
         const res = await spotifyServices.playlists.getPlaylist(token, playlistId);
-        return res.success
-            ? createSuccessReturn('Playlist fetched!', res.payload)
-            : createErrorReturn(res.message || 'Failed to fetch playlist', res.error);
+        return res.success ? createSuccess('Playlist fetched!', res.payload) : res;
     });
 
 /* -------------------------- Album -------------------------- */
@@ -76,7 +72,7 @@ export const spotifyGetArtistAlbums = async (artistId: string, limit = 10) =>
 export const spotifyGetByUrl = async <T>(url: string) =>
     withSpotifyAuth(async (token) => {
         const [error, res] = await spotifyServices.fetchSpotifyData<T>({ token, url });
-        return error ? createErrorReturn('Failed to fetch Spotify data', error) : createSuccessReturn('Data fetched!', res);
+        return error ? createError('Failed to fetch Spotify data', { error }) : createSuccess('Data fetched!', res);
     });
 
 /* ------------------ Paginated Fetching --------------------- */
@@ -98,8 +94,8 @@ export const spotifyGetPaginatedItems = async <T>(token: string, initialPage: T_
 export const spotifyGetEntityTracks = async (id: string, type: 'album' | 'playlist' | 'track' | 'artist') => {
     const token = await auth().then((session) => session?.user?.linkedAccounts?.spotify?.accessToken);
 
-    if (!token) return createErrorReturn('Spotify access token not found');
-    if (!id || !type) return createErrorReturn('Invalid parameters');
+    if (!token) return createUnauthorized('Spotify access token not found');
+    if (!id || !type) return createValidationError('Invalid parameters');
 
     try {
         let tracks: T_SpotifySimplifiedTrack[] = [];
@@ -136,9 +132,9 @@ export const spotifyGetEntityTracks = async (id: string, type: 'album' | 'playli
 
         if (!tracks.length) throw new Error('No valid tracks found');
 
-        return createSuccessReturn('Tracks fetched!', tracks);
+        return createSuccess('Tracks fetched!', tracks);
     } catch (err) {
         const message = err instanceof Error ? err.message : 'Unexpected error fetching entity tracks';
-        return createErrorReturn(message, { error: err });
+        return createError(message, { error: err });
     }
 };

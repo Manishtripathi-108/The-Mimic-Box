@@ -70,8 +70,20 @@ export type T_MultiToggleActions<T> = {
 };
 
 /**
- * A flexible multi-toggle state hook.
- * Supports individual toggles by key, with customizable defaults and keybinds.
+ * Creates a state hook that manages a record of toggled values.
+ * Each key in the record is associated with a boolean value that can be toggled.
+ * The hook returns an object with the current state and an object of actions.
+ *
+ * @param defaultVal The default value for each key in the record.
+ * @param alternateVal The alternate value for each key in the record.
+ * If not provided, the alternate value is the opposite of the default value.
+ * @param options Options for the hook.
+ * @returns An object with the current state and an object of actions.
+ *
+ * @example
+ * const [state, { toggle }] = useMultiToggle<{ foo: boolean }>(false);
+ * toggle('foo'); // toggles the value at the key 'foo'
+ *
  */
 const useMultiToggle = <T = boolean>(
     defaultVal: T = false as unknown as T,

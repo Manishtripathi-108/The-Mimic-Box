@@ -1,6 +1,6 @@
 import { $Enums } from '@prisma/client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
 

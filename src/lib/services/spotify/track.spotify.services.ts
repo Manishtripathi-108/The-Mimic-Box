@@ -2,7 +2,7 @@ import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
 import { T_SpotifyTrack } from '@/lib/types/spotify.types';
 import { chunkArray } from '@/lib/utils/core.utils';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import { withAuthHeader } from '@/lib/utils/server.utils';
 
@@ -15,8 +15,8 @@ export const getTrack = async (accessToken: string, trackId: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch track details', error)
-        : createSuccessReturn('Track details fetched successfully!', response.data);
+        ? createError('Failed to fetch track details', { error })
+        : createSuccess('Track details fetched successfully!', response.data);
 };
 
 /**
@@ -28,8 +28,8 @@ export const getTracks = async (accessToken: string, trackIds: string[]) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch multiple track details', error)
-        : createSuccessReturn('Multiple track details fetched successfully!', response.data.tracks);
+        ? createError('Failed to fetch multiple track details', { error })
+        : createSuccess('Multiple track details fetched successfully!', response.data.tracks);
 };
 
 /**
@@ -44,8 +44,8 @@ export const getMyTracks = async (accessToken: string, limit?: number, offset?: 
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch saved tracks', error)
-        : createSuccessReturn(
+        ? createError('Failed to fetch saved tracks', { error })
+        : createSuccess(
               'Saved tracks fetched successfully!',
               response.data.items.map((item) => item.track)
           );
@@ -63,17 +63,17 @@ export const saveTracks = async (accessToken: string, trackIds: string[]) => {
         );
 
         if (error || !response) {
-            return createErrorReturn('Failed to save tracks', error);
+            return createError('Failed to save tracks', { error });
         }
     });
 
     const results = await Promise.all(promises);
 
     if (results.some((result) => result?.error)) {
-        return createErrorReturn('Failed to save tracks', results.find((result) => result?.error)?.error);
+        return createError('Failed to save tracks', { error: results.find((result) => result?.error)?.error });
     }
 
-    return createSuccessReturn('Tracks saved successfully!');
+    return createSuccess('Tracks saved successfully!');
 };
 
 /**
@@ -88,19 +88,19 @@ export const removeTracks = async (accessToken: string, trackIds: string[]) => {
         );
 
         if (error || !response) {
-            return createErrorReturn('Failed to remove tracks', error);
+            return createError('Failed to remove tracks', { error });
         }
 
-        return createSuccessReturn('Tracks removed successfully!');
+        return createSuccess('Tracks removed successfully!');
     });
 
     const results = await Promise.all(promises);
 
     if (results.some((result) => !result?.success)) {
-        return createErrorReturn('Failed to remove tracks', results.find((result) => !result?.success)?.error);
+        return createError('Failed to remove tracks', { error: results.find((result) => !result?.success)?.error });
     }
 
-    return createSuccessReturn('Tracks removed successfully!');
+    return createSuccess('Tracks removed successfully!');
 };
 
 /**
@@ -115,19 +115,19 @@ export const checkSavedTracks = async (accessToken: string, trackIds: string[]) 
         );
 
         if (error || !response) {
-            return createErrorReturn<Error | Record<string, unknown>>('Failed to check saved tracks', error);
+            return createError<Error | Record<string, unknown>>('Failed to check saved tracks', { error });
         }
 
-        return createSuccessReturn('Saved tracks checked successfully!', response.data);
+        return createSuccess('Saved tracks checked successfully!', response.data);
     });
 
     const results = await Promise.all(promises);
 
     if (results.some((result) => !result?.success)) {
-        return createErrorReturn('Failed to check saved tracks', results.find((result) => !result?.success)?.error);
+        return createError('Failed to check saved tracks', { error: results.find((result) => !result?.success)?.error });
     }
 
-    return createSuccessReturn(
+    return createSuccess(
         'All checks completed successfully!',
         results.flatMap((result) => result.success && result.payload)
     );

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 
 import Link from 'next/link';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import InstallPWAButton from '@/components/ui/InstallPWAButton';
 
@@ -72,9 +72,7 @@ const Header = () => {
 
                 <InstallPWAButton className="shrink-0" />
 
-                <div className="shrink-0">
-                    <ProfileDropdown />
-                </div>
+                <ProfileDropdown />
             </header>
 
             <Sidebar />

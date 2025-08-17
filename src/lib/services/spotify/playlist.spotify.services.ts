@@ -3,7 +3,7 @@ import spotifyConfig from '@/lib/config/spotify.config';
 import { T_SpotifyRemove } from '@/lib/types/common.types';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack, T_SpotifySimplifiedPlaylist } from '@/lib/types/spotify.types';
 import { chunkArray } from '@/lib/utils/core.utils';
-import { createErrorReturn, createSuccessReturn } from '@/lib/utils/createResponse.utils';
+import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 import { withAuthHeader } from '@/lib/utils/server.utils';
 
@@ -16,8 +16,8 @@ export const getPlaylist = async (accessToken: string, playlistId: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch playlist details', error)
-        : createSuccessReturn('Playlist details fetched successfully!', response.data);
+        ? createError('Failed to fetch playlist details', { error })
+        : createSuccess('Playlist details fetched successfully!', response.data);
 };
 
 /**
@@ -31,9 +31,7 @@ export const getPlaylistItems = async (accessToken: string, playlistId: string, 
         })
     );
 
-    return error
-        ? createErrorReturn('Failed to fetch playlist tracks', error)
-        : createSuccessReturn('Playlist tracks fetched successfully!', response.data);
+    return error ? createError('Failed to fetch playlist tracks', { error }) : createSuccess('Playlist tracks fetched successfully!', response.data);
 };
 
 /**
@@ -47,8 +45,8 @@ export const getUserPlaylists = async (accessToken: string, userId: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch user playlists', error)
-        : createSuccessReturn('User playlists fetched successfully!', response.data);
+        ? createError('Failed to fetch user playlists', { error })
+        : createSuccess('User playlists fetched successfully!', response.data);
 };
 
 /**
@@ -62,8 +60,8 @@ export const getMyPlaylists = async (accessToken: string) => {
     );
 
     return error || !response
-        ? createErrorReturn('Failed to fetch current user playlists', error)
-        : createSuccessReturn('Current user playlists fetched successfully!', response.data);
+        ? createError('Failed to fetch current user playlists', { error })
+        : createSuccess('Current user playlists fetched successfully!', response.data);
 };
 
 /**
@@ -86,8 +84,8 @@ export const changeDetails = async (
     );
 
     return error || !response
-        ? createErrorReturn('Failed to change playlist details', error)
-        : createSuccessReturn('Playlist details changed successfully!', response.data);
+        ? createError('Failed to change playlist details', { error })
+        : createSuccess('Playlist details changed successfully!', response.data);
 };
 
 /**
@@ -105,7 +103,7 @@ export const replaceItems = async (
     }
 ) => {
     if (!data.uris || data.uris.length === 0) {
-        return createErrorReturn('No URIs provided to replace playlist items.');
+        return createError('No URIs provided to replace playlist items.');
     }
 
     const chunks = chunkArray(data.uris, 100);
@@ -119,19 +117,19 @@ export const replaceItems = async (
         );
 
         if (error || !response) {
-            return createErrorReturn('Failed to replace playlist items', error);
+            return createError('Failed to replace playlist items', { error });
         }
 
-        return createSuccessReturn('Playlist items replaced successfully!', response.data);
+        return createSuccess('Playlist items replaced successfully!', response.data);
     });
 
     const results = await Promise.all(promises);
 
     if (results.some((result) => !result?.success)) {
-        return createErrorReturn('Failed to replace playlist items', results.find((result) => !result?.success)?.error);
+        return createError('Failed to replace playlist items', { error: results.find((result) => !result?.success)?.error });
     }
 
-    return createSuccessReturn('Playlist items replaced successfully!');
+    return createSuccess('Playlist items replaced successfully!');
 };
 
 /**
@@ -139,7 +137,7 @@ export const replaceItems = async (
  */
 export const addItems = async (accessToken: string, playlistId: string, data: { uris: string[]; position?: number }) => {
     if (!data.uris || data.uris.length === 0) {
-        return createErrorReturn('No URIs provided to add to playlist.');
+        return createError('No URIs provided to add to playlist.');
     }
 
     const chunks = chunkArray(data.uris, 100);
@@ -152,16 +150,16 @@ export const addItems = async (accessToken: string, playlistId: string, data: { 
             })
         );
         if (error || !response) {
-            return createErrorReturn('Failed to add items to playlist', error);
+            return createError('Failed to add items to playlist', { error });
         }
-        return createSuccessReturn('Items added to playlist successfully!', response.data);
+        return createSuccess('Items added to playlist successfully!', response.data);
     });
 
     const results = await Promise.all(promises);
     if (results.some((result) => !result?.success)) {
-        return createErrorReturn('Failed to add items to playlist', results.find((result) => !result?.success)?.error);
+        return createError('Failed to add items to playlist', { error: results.find((result) => !result?.success)?.error });
     }
-    return createSuccessReturn('Items added to playlist successfully!');
+    return createSuccess('Items added to playlist successfully!');
 };
 
 /**
@@ -169,7 +167,7 @@ export const addItems = async (accessToken: string, playlistId: string, data: { 
  */
 export const removeItems = async (accessToken: string, playlistId: string, data: T_SpotifyRemove['data']) => {
     if (!data.tracks || data.tracks.length === 0) {
-        return createErrorReturn('No tracks provided to remove from playlist.');
+        return createError('No tracks provided to remove from playlist.');
     }
     const chunks = chunkArray(data.tracks, 100);
 
@@ -182,18 +180,18 @@ export const removeItems = async (accessToken: string, playlistId: string, data:
         );
 
         if (error || !response) {
-            return createErrorReturn('Failed to remove items from playlist', error);
+            return createError('Failed to remove items from playlist', { error });
         }
 
-        return createSuccessReturn('Items removed from playlist successfully!', response.data);
+        return createSuccess('Items removed from playlist successfully!', response.data);
     });
 
     const results = await Promise.all(promises);
     if (results.some((result) => !result?.success)) {
-        return createErrorReturn('Failed to remove items from playlist', results.find((result) => !result?.success)?.error);
+        return createError('Failed to remove items from playlist', { error: results.find((result) => !result?.success)?.error });
     }
 
-    return createSuccessReturn('Items removed from playlist successfully!');
+    return createSuccess('Items removed from playlist successfully!');
 };
 
 /**
@@ -209,9 +207,7 @@ export const createPlaylist = async (
             headers: withAuthHeader(accessToken),
         })
     );
-    return error || !response
-        ? createErrorReturn('Failed to create playlist', error)
-        : createSuccessReturn('Playlist created successfully!', response.data);
+    return error || !response ? createError('Failed to create playlist', { error }) : createSuccess('Playlist created successfully!', response.data);
 };
 
 /**
