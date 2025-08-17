@@ -46,7 +46,7 @@ const MusicMiniPlayer = () => {
 
     return (
         <>
-            {true && <MusicPlayer onClose={() => close('musicPlayer')} />}
+            {toggles.musicPlayer && <MusicPlayer onClose={() => close('musicPlayer')} />}
 
             <footer className="@container fixed bottom-2 left-1/2 z-80 w-full -translate-x-1/2">
                 <section className="from-secondary to-tertiary shadow-floating-sm text-text-secondary flex w-full flex-wrap items-center justify-between gap-2 rounded-full bg-linear-150 from-15% to-85% p-2 @md:px-4">

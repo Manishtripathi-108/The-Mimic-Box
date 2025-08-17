@@ -47,6 +47,12 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
 
     const duration = isNaN(audio.duration) ? 0 : audio.duration;
 
+    const handleSeek = (value: number) => {
+        if (currentFormattedTimeRef.current) {
+            currentFormattedTimeRef.current.textContent = formatTimeDuration(value * 1000, 'minutes');
+        }
+    };
+
     return (
         <div className={cn(className)}>
             <span ref={currentFormattedTimeRef} className="tabular-nums">
@@ -66,22 +72,27 @@ const MusicDurationSlider = ({ className }: { className: string }) => {
                     step={0.1}
                     defaultValue={0}
                     max={duration}
-                    onChange={(e) => {
-                        if (currentFormattedTimeRef.current) {
-                            const value = parseFloat(e.target.value);
-                            currentFormattedTimeRef.current.textContent = formatTimeDuration(value * 1000, 'minutes');
-                        }
-                    }}
-                    onPointerDown={() => {
-                        isSeekingRef.current = true;
-                    }}
+                    onChange={(e) => handleSeek(parseFloat(e.target.value))}
+                    // Pointer events (mouse + touch on modern browsers)
+                    onPointerDown={() => (isSeekingRef.current = true)}
                     onPointerUp={(e) => {
                         isSeekingRef.current = false;
                         seekTo(parseFloat((e.target as HTMLInputElement).value));
                     }}
-                    onKeyDown={() => {
-                        isSeekingRef.current = true;
+                    onTouchStart={() => (isSeekingRef.current = true)}
+                    onTouchEnd={() => {
+                        isSeekingRef.current = false;
+                        if (sliderRef.current) {
+                            seekTo(parseFloat(sliderRef.current.value));
+                        }
                     }}
+                    onTouchMove={() => {
+                        if (sliderRef.current) {
+                            handleSeek(parseFloat(sliderRef.current.value));
+                        }
+                    }}
+                    // Keyboard support
+                    onKeyDown={() => (isSeekingRef.current = true)}
                     onKeyUp={() => {
                         isSeekingRef.current = false;
                         if (sliderRef.current) {
