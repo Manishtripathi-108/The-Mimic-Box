@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -16,6 +16,7 @@ type Props = {
     className?: string;
     onClose: () => void;
     contentOnly?: boolean;
+    disableClickOutside?: boolean;
 };
 
 type LyricLine = {
@@ -37,9 +38,11 @@ const parseLyrics = (lyricsText: string): LyricLine[] => {
     return lines;
 };
 
-const MusicLyricsCard = ({ className, onClose, contentOnly = false }: Props) => {
+const MusicLyricsCard = ({ className, onClose, contentOnly = false, disableClickOutside = false }: Props) => {
     const { currentTrack, getAudioElement } = useAudioPlayerContext();
     const { isPending, makeApiCall, data } = useSafeApiCall<null, string>();
+    const [textSize, setTextSize] = useState(1);
+
     const fetchLyrics = useCallback(() => {
         if (!currentTrack) return;
 
@@ -68,7 +71,7 @@ const MusicLyricsCard = ({ className, onClose, contentOnly = false }: Props) => 
         if (!audio || !isSynced) return;
 
         const currentTime = audio.currentTime;
-        let newIndex = parsedLyrics.findIndex((line, i) => i === parsedLyrics.length - 1 || currentTime < parsedLyrics[i + 1].time);
+        let newIndex = parsedLyrics.findIndex((_, i) => i === parsedLyrics.length - 1 || currentTime < parsedLyrics[i + 1].time);
 
         if (newIndex === -1) newIndex = parsedLyrics.length - 1;
 
@@ -76,13 +79,13 @@ const MusicLyricsCard = ({ className, onClose, contentOnly = false }: Props) => 
             // Clear previous highlight
             if (activeIndexRef.current !== null) {
                 const prevEl = lineRefs.current[activeIndexRef.current];
-                prevEl?.classList.remove('text-highlight', 'text-lg', 'font-semibold');
+                prevEl?.classList.remove('text-highlight', 'text-[calc(0.25rem+var(--lyric-font-size))]', 'font-semibold');
             }
 
             // Add highlight to current
             const currentEl = lineRefs.current[newIndex];
             currentEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            currentEl?.classList.add('text-highlight', 'text-lg', 'font-semibold');
+            currentEl?.classList.add('text-highlight', 'text-[calc(0.25rem+var(--lyric-font-size))]', 'font-semibold');
 
             activeIndexRef.current = newIndex;
         }
@@ -102,7 +105,16 @@ const MusicLyricsCard = ({ className, onClose, contentOnly = false }: Props) => 
     useClickOutside({
         targets: [lyricsContainerRef],
         onClickOutside: onClose,
+        disabled: disableClickOutside,
     });
+
+    const changeTextSize = () => {
+        setTextSize((prev) => {
+            if (prev >= 4) return 0.5;
+            if (prev === 0.5) return 1;
+            return prev + 1;
+        });
+    };
 
     return (
         <Card
@@ -111,7 +123,7 @@ const MusicLyricsCard = ({ className, onClose, contentOnly = false }: Props) => 
             aria-label="Music lyrics"
             className={cn('absolute inset-auto z-50 gap-4', className)}
             ref={lyricsContainerRef}>
-            {!contentOnly && (
+            {!contentOnly ? (
                 <CardHeader className="p-4">
                     <CardTitle className="font-alegreya tracking-wide">Lyrics</CardTitle>
                     <CardDescription className="truncate text-xs">
@@ -119,11 +131,22 @@ const MusicLyricsCard = ({ className, onClose, contentOnly = false }: Props) => 
                     </CardDescription>
                     <CardAction>
                         <Button icon="close" title="Close lyrics" aria-label="Close lyrics" onClick={onClose} />
+                        <Button aria-label="Change text size" onClick={changeTextSize}>
+                            {textSize}
+                        </Button>
                     </CardAction>
                 </CardHeader>
+            ) : (
+                <Button className="absolute top-6 right-4 z-80" aria-label="Change text size" onClick={changeTextSize}>
+                    {textSize}
+                </Button>
             )}
 
-            <CardContent className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto px-4 text-sm">
+            <CardContent
+                style={{ '--lyric-font-size': `${0.5 + textSize * 0.5}rem`, '--lyric-line-height': `${textSize * 0.5}rem` } as React.CSSProperties}
+                className={cn(
+                    'sm:scrollbar-thin relative h-full flex-1 space-y-(--lyric-line-height) overflow-y-auto px-4 py-8 text-(length:--lyric-font-size)'
+                )}>
                 {isPending ? (
                     <Icon icon="loading" className="text-highlight mx-auto size-20 shrink-0" />
                 ) : data ? (

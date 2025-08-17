@@ -31,7 +31,7 @@ export const CardDescription = ({ className, ...props }: React.ComponentProps<'d
 );
 
 export const CardAction = ({ className, ...props }: React.ComponentProps<'div'>) => (
-    <div data-slot="card-action" className={cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', className)} {...props} />
+    <div data-slot="card-action" className={cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end flex gap-2', className)} {...props} />
 );
 
 export const CardContent = ({ className, ...props }: React.ComponentProps<'div'>) => (

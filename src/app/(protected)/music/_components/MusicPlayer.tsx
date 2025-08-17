@@ -54,16 +54,21 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
             </header>
 
             {/* Album Art */}
-            <div className="flex items-center justify-center py-4 sm:flex-1 sm:-mt-20">
+            <div className="flex items-center justify-center py-4 sm:-mt-20 sm:flex-1">
                 {toggles.lyrics ? (
-                    <MusicLyricsCard contentOnly onClose={() => close('lyrics')} className="relative h-75 sm:h-[calc(100%-80px)] w-full bg-transparent shadow-none" />
+                    <MusicLyricsCard
+                        contentOnly
+                        disableClickOutside
+                        onClose={() => close('lyrics')}
+                        className="relative h-75 w-full bg-transparent p-0 shadow-none sm:h-[calc(100%-100px)]"
+                    />
                 ) : (
                     <Image
                         src={coverImage}
                         width={300}
-                            height={300}
-                            onClick={() => toggle('lyrics')}
-                        className="shadow-floating-md aspect-square rounded-xl border object-cover sm:size-108 cursor-pointer"
+                        height={300}
+                        onClick={() => toggle('lyrics')}
+                        className="shadow-floating-md aspect-square cursor-pointer rounded-xl border object-cover sm:size-108"
                         alt={currentTrack?.title || 'Album Art'}
                         priority
                     />
@@ -93,12 +98,13 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
             </div>
 
             {/* Controls */}
-            <div className="bg-secondary mt-1 flex p-4 items-center sm:hidden h-full">
+            <div className="bg-secondary mt-1 flex h-full items-center p-4 sm:hidden">
                 <div className="flex w-full justify-around">
                     {/* Left column: Shuffle + Loop */}
                     <div className="flex flex-col items-center justify-between">
                         <Button
                             size="xl"
+                            active={isShuffled}
                             onClick={toggleShuffle}
                             aria-pressed={isShuffled}
                             aria-label="Toggle Shuffle"
@@ -107,6 +113,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                         />
                         <Button
                             size="xl"
+                            active={loop}
                             onClick={toggleLoop}
                             aria-pressed={loop}
                             aria-label="Toggle Loop"
@@ -116,7 +123,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                     </div>
 
                     {/* Center: Play controls */}
-                    <div className="bg-tertiary relative grid aspect-square flex-1 max-w-60 place-items-center rounded-full p-2">
+                    <div className="bg-tertiary relative grid aspect-square max-w-60 flex-1 place-items-center rounded-full p-2">
                         {/* Download */}
                         <Button
                             variant="ghost"
@@ -149,6 +156,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                             onClick={toggleMute}
                             aria-label={muted || volume === 0 ? 'Unmute' : 'Mute'}
                             icon={muted || volume === 0 ? 'volumeOff' : 'volumeLoud'}
+                            className={muted || volume === 0 ? 'text-highlight' : ''}
                         />
                     </div>
 
@@ -168,7 +176,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                             aria-label="Open Lyrics"
                             icon="lyrics"
                             active={toggles.lyrics}
-                            className="ignore-onClickOutside"
+                            className={`ignore-onClickOutside ${toggles.lyrics ? 'text-highlight' : ''}`}
                         />
                     </div>
                 </div>
