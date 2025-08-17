@@ -60,7 +60,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                         contentOnly
                         disableClickOutside
                         onClose={() => close('lyrics')}
-                        className="relative h-75 w-full bg-transparent p-0 shadow-none sm:h-[calc(100%-100px)]"
+                        className="relative h-75 w-full bg-transparent p-0 shadow-none sm:h-150 border"
                     />
                 ) : (
                     <Image
