@@ -83,7 +83,7 @@ const LoginInForm = () => {
                         type={showPassword ? 'text' : 'password'}
                         placeholder="* * * * * * * *"
                         iconName={showPassword ? 'eye' : 'eyeClose'}
-                        onIconClick={() => () => toggleShowPassword()}
+                        onIconClick={() => toggleShowPassword()}
                         control={control}
                     />
 

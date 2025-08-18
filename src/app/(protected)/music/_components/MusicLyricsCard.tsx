@@ -137,7 +137,7 @@ const MusicLyricsCard = ({ className, onClose, contentOnly = false, disableClick
                     </CardAction>
                 </CardHeader>
             ) : (
-                <Button className="absolute top-6 right-4 z-80" aria-label="Change text size" onClick={changeTextSize}>
+                <Button size='sm' className="absolute top-4 sm:top-6 right-4 z-80" aria-label="Change text size" onClick={changeTextSize}>
                     {textSize}
                 </Button>
             )}
