@@ -67,7 +67,8 @@ const Checkbox = ({
                 defaultChecked={defaultChecked}
                 disabled={disabled}
                 className={cn(
-                    "peer checked:shadow-pressed-xs shrink-0 cursor-pointer appearance-none overflow-hidden rounded-sm border transition-[shadow_color] duration-300 ease-in-out checked:after:flex checked:after:size-full checked:after:items-center checked:after:justify-center checked:after:font-bold checked:after:content-['\\2713']",
+                    'peer checked:shadow-pressed-xs shrink-0 cursor-pointer appearance-none overflow-hidden rounded-sm border transition-[shadow,color] ease-in-out',
+                    `checked:after:flex checked:after:size-full checked:after:items-center checked:after:justify-center checked:after:font-bold checked:after:content-['✓']`,
                     sizeStyles[size],
                     colorStyles[color],
                     DISABLED,
@@ -81,7 +82,7 @@ const Checkbox = ({
             {children && (
                 <span
                     className={cn(
-                        'peer-checked:text-highlight group-hover:text-highlight peer-focus:text-highlight text-text-secondary transition-[transform_colors]',
+                        'peer-checked:text-highlight group-hover:text-highlight peer-focus:text-highlight text-text-secondary transition-[transform,colors]',
                         position === 'left'
                             ? 'group-hover:-translate-x-1 peer-checked:-translate-x-1 peer-focus:-translate-x-1'
                             : 'group-hover:translate-x-1 peer-checked:translate-x-1 peer-focus:translate-x-1'
