@@ -3,6 +3,8 @@ import { Metadata } from 'next';
 import { spotifyGetEntityTracks } from '@/actions/spotify.actions';
 import DuplicateTracks from '@/app/(protected)/tune-sync/remove-duplicates/_components/DuplicateTracks';
 import ErrorCard from '@/components/layout/ErrorCard';
+import { IMAGE_FALLBACKS } from '@/constants/common.constants';
+import { T_TrackBase } from '@/lib/types/common.types';
 import { T_SpotifyTrack } from '@/lib/types/spotify.types';
 
 export const metadata: Metadata = {
@@ -18,9 +20,26 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         return <ErrorCard message={res.message || 'Failed to fetch playlist'} />;
     }
 
-    const tracks = res.payload.map((track) => (track && !('show' in track) ? track : null)).filter((t) => t !== null);
+    const mappedTracks = res.payload.flatMap<T_TrackBase>((track, i) => {
+        if (!track || 'show' in track) return [];
 
-    return <DuplicateTracks tracks={tracks as T_SpotifyTrack[]} playlistId={id} />;
+        const t = track as T_SpotifyTrack;
+
+        return [
+            {
+                id: t.id,
+                title: t.name,
+                album: t.album.name,
+                artist: t.artists.map((a) => a.name).join(', '),
+                cover: t.album.images[0]?.url ?? IMAGE_FALLBACKS.AUDIO_COVER,
+                position: i,
+            },
+        ];
+    });
+
+    if (mappedTracks.length === 0) return <ErrorCard message="Playlist is empty" />;
+
+    return <DuplicateTracks tracks={mappedTracks} playlistId={id} />;
 };
 
 export default Page;

@@ -72,7 +72,7 @@ export const viewport: Viewport = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <html lang="en" suppressHydrationWarning className="scroll-smooth">
+        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className="scroll-smooth">
             <head>
                 {/* <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" async /> */}
                 <meta name="google-site-verification" content="D12BQGTOqvlZdSNhlyOAbpAjZNHzdS7LPaJCn8ucgpg" />

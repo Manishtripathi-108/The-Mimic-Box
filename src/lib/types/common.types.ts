@@ -29,22 +29,23 @@ export type T_LyricsError = {
     message: string;
 };
 
-export type T_DuplicateTrack = {
+export type T_TrackBase = {
     id: string;
-    title: string;
     artist: string;
     album: string;
+    title: string;
     cover: string;
-    position?: number;
-    duplicates: {
-        reason: 'same-id' | 'same-name-artist';
-        id: string;
-        title: string;
-        artist: string;
-        album: string;
-        cover: string;
-        position?: number;
-    }[];
+    position: number;
+};
+
+export type T_DuplicateReason = 'same-id' | 'same-name-artist';
+
+export type T_DuplicateEntry = T_TrackBase & {
+    reason: T_DuplicateReason;
+};
+
+export type T_DuplicateTrack = T_TrackBase & {
+    duplicates: T_DuplicateEntry[];
 };
 
 export type T_RemoveDuplicatesSource = 'spotify' | 'saavn';

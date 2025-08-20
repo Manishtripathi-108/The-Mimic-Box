@@ -18,7 +18,7 @@ const MusicQueue = dynamic(() => import('@/app/(protected)/music/_components/Mus
 const MusicLyricsCard = dynamic(() => import('@/app/(protected)/music/_components/MusicLyricsCard'), { ssr: false });
 
 const MusicMiniPlayer = () => {
-    const [toggles, { setDefault: close, toggle }] = useMultiToggle(false, true, {
+    const [show, { setDefault: close, toggle }] = useMultiToggle(false, true, {
         keybinds: { global: 'Escape' },
         toggleOnKeyTo: false,
     });
@@ -46,7 +46,7 @@ const MusicMiniPlayer = () => {
 
     return (
         <>
-            {toggles.musicPlayer && <MusicPlayer onClose={() => close('musicPlayer')} />}
+            {show.musicPlayer && <MusicPlayer onClose={() => close('musicPlayer')} />}
 
             <footer className="@container fixed bottom-2 left-1/2 z-80 w-full -translate-x-1/2">
                 <section className="from-secondary to-tertiary shadow-floating-sm text-text-secondary flex w-full flex-wrap items-center justify-between gap-2 rounded-full bg-linear-150 from-15% to-85% p-2 @md:px-4">
@@ -79,10 +79,10 @@ const MusicMiniPlayer = () => {
                                     onClick={() => toggle('lyrics')}
                                     aria-label="Open Lyrics"
                                     icon="lyrics"
-                                    active={toggles.lyrics}
+                                    active={show.lyrics}
                                     className="ignore-onClickOutside"
                                 />
-                                {toggles.lyrics && (
+                                {show.lyrics && (
                                     <MusicLyricsCard
                                         onClose={() => close('lyrics')}
                                         className="right-1/2 bottom-full z-60 mb-6 max-h-[60vh] w-sm translate-x-1/2"
@@ -123,7 +123,7 @@ const MusicMiniPlayer = () => {
 
                             {/* Download */}
                             <div className="relative hidden items-center @md:flex" id="download-popover-container">
-                                {toggles.download && (
+                                {show.download && (
                                     <MusicDownloadPopover
                                         onClose={() => close('download')}
                                         downloadCurrent
@@ -136,7 +136,7 @@ const MusicMiniPlayer = () => {
                                     variant="ghost"
                                     aria-label="Download"
                                     icon="download"
-                                    active={toggles.download}
+                                    active={show.download}
                                     className="ignore-onClickOutside"
                                 />
                             </div>
@@ -178,10 +178,10 @@ const MusicMiniPlayer = () => {
                                 aria-label="Open Queue"
                                 onClick={() => toggle('queue')}
                                 icon="musicQueue"
-                                active={toggles.queue}
+                                active={show.queue}
                                 className="ignore-onClickOutside"
                             />
-                            {toggles.queue && (
+                            {show.queue && (
                                 <MusicQueue
                                     onClose={() => close('queue')}
                                     className="right-0 bottom-full z-60 mb-8 max-h-[60vh] w-sm origin-bottom-right"
@@ -203,7 +203,7 @@ const MusicMiniPlayer = () => {
                         {/* Full Screen */}
                         <Button
                             onClick={() => {
-                                if (toggles.musicPlayer || document.fullscreenElement) {
+                                if (show.musicPlayer || document.fullscreenElement) {
                                     document.exitFullscreen();
                                 } else {
                                     document.documentElement.requestFullscreen();
@@ -211,9 +211,9 @@ const MusicMiniPlayer = () => {
                                 toggle('musicPlayer');
                             }}
                             variant="ghost"
-                            title="Enter Full Screen"
-                            aria-label="Enter Full Screen"
-                            icon={toggles.musicPlayer ? 'quitFullscreen' : 'fullscreen'}
+                            title={show.musicPlayer ? 'Exit Full Screen' : 'Enter Full Screen'}
+                            aria-label={show.musicPlayer ? 'Exit Full Screen' : 'Enter Full Screen'}
+                            icon={show.musicPlayer ? 'quitFullscreen' : 'fullscreen'}
                         />
                     </div>
                 </section>
