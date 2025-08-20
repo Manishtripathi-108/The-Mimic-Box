@@ -43,7 +43,6 @@ const AnimatedCircularProgressBar = ({
                 if (!el) return;
 
                 const percent = getPercent(val);
-                console.log('🪵 > AnimatedCircularProgressBar.tsx:46 > AnimatedCircularProgressBar > percent:', percent);
 
                 // Update CSS variable & dataset
                 el.style.setProperty('--percent', String(percent));

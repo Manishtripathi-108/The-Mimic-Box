@@ -208,8 +208,6 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
 
     const setQueue: T_AudioPlayerContext['setQueue'] = useCallback(
         (tracks, context = null, autoPlay = false) => {
-            console.log('Setting queue:', tracks);
-
             dispatch({ type: 'SET_QUEUE', payload: { tracks, context } });
             if (autoPlay) setTimeout(play, 500);
         },
