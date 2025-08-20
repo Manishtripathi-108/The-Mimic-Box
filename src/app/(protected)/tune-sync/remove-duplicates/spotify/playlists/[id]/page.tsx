@@ -27,7 +27,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
         return [
             {
-                id: t.id,
+                id: t.uri,
                 title: t.name,
                 album: t.album.name,
                 artist: t.artists.map((a) => a.name).join(', '),
