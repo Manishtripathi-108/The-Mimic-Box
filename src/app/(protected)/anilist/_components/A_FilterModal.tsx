@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
 import FormCheckboxGroup from '@/components/ui/FormCheckboxGroup';
-import FromInput from '@/components/ui/FormInput';
+import FormInput from '@/components/ui/FormInput';
 import FormSelect from '@/components/ui/FormSelect';
 import Modal, { closeModal } from '@/components/ui/Modals';
 import TabSwitcher from '@/components/ui/TabSwitcher';
@@ -45,7 +45,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
         <Modal modalId="modal-anilist-filters">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg bg-inherit p-6 shadow-lg">
                 {/* Search */}
-                <FromInput
+                <FormInput
                     name="search"
                     label="Search"
                     type="text"
@@ -122,7 +122,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                     />
 
                     {/* Year */}
-                    <FromInput
+                    <FormInput
                         label="Year"
                         name="year"
                         type="number"

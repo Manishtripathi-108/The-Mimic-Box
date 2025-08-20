@@ -13,7 +13,7 @@ import SearchLyrics from '@/app/(protected)/audio/_components/SearchLyrics';
 import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import FromInput from '@/components/ui/FormInput';
+import FormInput from '@/components/ui/FormInput';
 import FromTextarea from '@/components/ui/FromTextarea';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import { META_TAGS } from '@/constants/client.constants';
@@ -166,7 +166,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                                 />
                             </div>
                         ) : (
-                            <FromInput
+                            <FormInput
                                 key={key}
                                 label={key.replace('_', ' ')}
                                 control={control}

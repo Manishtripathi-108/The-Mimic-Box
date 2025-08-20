@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
-import FromInput from '@/components/ui/FormInput';
+import FormInput from '@/components/ui/FormInput';
 import FormSelect from '@/components/ui/FormSelect';
 import { Tabs, TabsContent, TabsIndicator, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/Tabs';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_CHANNEL_OPTIONS } from '@/constants/client.constants';
@@ -65,12 +65,12 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                             options={AudioSampleRatesSchema.options}
                             control={control}
                         />
-                        <FromInput label="Volume" type="number" max={500} min={0} name="audio.volume" control={control} />{' '}
+                        <FormInput label="Volume" type="number" max={500} min={0} name="audio.volume" control={control} />{' '}
                     </TabsPanel>
                     <TabsPanel value="Effects" className="grid w-full grid-cols-2 gap-4 p-0">
-                        <FromInput type="number" max={10} min={0} label="Fade In (seconds)" name="effects.fadeIn" control={control} />
-                        <FromInput type="number" max={10} min={0} label="Fade Out (seconds)" name="effects.fadeOut" control={control} />
-                        <FromInput type="number" max={12} min={-12} label="Pitch Shift" name="effects.pitchShift" control={control} />
+                        <FormInput type="number" max={10} min={0} label="Fade In (seconds)" name="effects.fadeIn" control={control} />
+                        <FormInput type="number" max={10} min={0} label="Fade Out (seconds)" name="effects.fadeOut" control={control} />
+                        <FormInput type="number" max={12} min={-12} label="Pitch Shift" name="effects.pitchShift" control={control} />
                         <FormSelect
                             label="Playback Speed"
                             name="effects.playbackSpeed"
@@ -85,8 +85,8 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                         </div>
                     </TabsPanel>
                     <TabsPanel value="Trim" className="grid w-full grid-cols-2 gap-4 p-0">
-                        <FromInput label="Trim Start" name="trim.trimStart" control={control} />
-                        <FromInput label="Trim End" name="trim.trimEnd" control={control} />
+                        <FormInput label="Trim Start" name="trim.trimStart" control={control} />
+                        <FormInput label="Trim End" name="trim.trimEnd" control={control} />
                     </TabsPanel>
                 </TabsContent>
             </Tabs>

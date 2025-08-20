@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
 import { Button } from '@/components/ui/Button';
-import FromInput from '@/components/ui/FormInput';
+import FormInput from '@/components/ui/FormInput';
 import FormSelect from '@/components/ui/FormSelect';
 import Icon from '@/components/ui/Icon';
 import { closeModal } from '@/components/ui/Modals';
@@ -106,7 +106,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
                         disabled={isToggling || isSubmitting}
                     />
 
-                    <FromInput
+                    <FormInput
                         name="progress"
                         label="Episode Progress"
                         type="number"

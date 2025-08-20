@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
-import FromInput from '@/components/ui/FromInput';
+import FormInput from '@/components/ui/FormInput';
 import Modal, { closeModal } from '@/components/ui/Modals';
 
 const playerNameSchema = z
@@ -46,8 +46,8 @@ const SetPlayerNamesModal = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="p-6">
                 <h2 className="text-highlight font-alegreya mb-4 text-center text-xl font-bold tracking-wide">Set Player Names</h2>
 
-                {/* Player X FromInput */}
-                <FromInput
+                {/* Player X FormInput */}
+                <FormInput
                     name="playerX"
                     iconName="close"
                     iconPosition="right"
@@ -58,8 +58,8 @@ const SetPlayerNamesModal = () => {
                     autoComplete="name"
                 />
 
-                {/* Player O FromInput */}
-                <FromInput
+                {/* Player O FormInput */}
+                <FormInput
                     name="playerO"
                     label="Player O"
                     iconPosition="right"

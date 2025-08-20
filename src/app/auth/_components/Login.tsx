@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { loginAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import FromInput from '@/components/ui/FormInput';
+import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
@@ -65,7 +65,7 @@ const LoginInForm = () => {
                     <legend className="sr-only">Login Form</legend>
 
                     {/* Email Field */}
-                    <FromInput
+                    <FormInput
                         name="email"
                         label="Email Address"
                         autoComplete="email"
@@ -76,7 +76,7 @@ const LoginInForm = () => {
                     />
 
                     {/* Password Field */}
-                    <FromInput
+                    <FormInput
                         name="password"
                         label="Password"
                         autoComplete="current-password"

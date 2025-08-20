@@ -11,11 +11,11 @@ import { z } from 'zod';
 import { registerAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import useToggle from '@/hooks/useToggle';
 import { registerSchema } from '@/lib/schema/auth.validations';
-import FromInput from '@/components/ui/FormInput';
 
 const RegisterForm = () => {
     const [showPassword, { toggle: toggleShowPassword }] = useToggle();
@@ -66,7 +66,7 @@ const RegisterForm = () => {
                     <legend className="sr-only">Registration Form</legend>
 
                     {/* Full Name */}
-                    <FromInput
+                    <FormInput
                         autoComplete="name"
                         name="fullName"
                         label="Full Name"
@@ -77,7 +77,7 @@ const RegisterForm = () => {
                     />
 
                     {/* Email */}
-                    <FromInput
+                    <FormInput
                         autoComplete="email"
                         name="email"
                         label="Email"
@@ -88,7 +88,7 @@ const RegisterForm = () => {
                     />
 
                     {/* Password */}
-                    <FromInput
+                    <FormInput
                         autoComplete="new-password"
                         name="password"
                         label="Password"
@@ -99,7 +99,7 @@ const RegisterForm = () => {
                     />
 
                     {/* Confirm Password */}
-                    <FromInput
+                    <FormInput
                         autoComplete="new-password"
                         name="confirmPassword"
                         label="Confirm Password"

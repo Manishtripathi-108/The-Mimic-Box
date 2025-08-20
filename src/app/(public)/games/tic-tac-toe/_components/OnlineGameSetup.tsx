@@ -10,9 +10,9 @@ import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
+import FormInput from '@/components/ui/FormInput';
 import FormSelect from '@/components/ui/FormSelect';
 import Icon from '@/components/ui/Icon';
-import FromInput from '@/components/ui/FormInput';
 
 // Define Zod schemas
 const joinRoomSchema = z.object({
@@ -38,8 +38,8 @@ const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <FromInput autoComplete="name" name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
-            <FromInput
+            <FormInput autoComplete="name" name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
+            <FormInput
                 autoComplete="name"
                 name="playerName"
                 label="Player Name"
@@ -70,7 +70,7 @@ const CreateRoomForm = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <FormSelect name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
-            <FromInput
+            <FormInput
                 autoComplete="name"
                 name="playerName"
                 label="Player Name"

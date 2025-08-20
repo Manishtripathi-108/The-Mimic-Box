@@ -6,7 +6,7 @@ import Icon from '@/components/ui/Icon';
 import { T_FormInputProps } from '@/lib/types/form.types';
 import cn from '@/lib/utils/cn';
 
-const FromInput = <TFieldValues extends FieldValues>({
+const FormInput = <TFieldValues extends FieldValues>({
     label,
     placeholder = '',
     type = 'text',
@@ -75,4 +75,4 @@ const FromInput = <TFieldValues extends FieldValues>({
     );
 };
 
-export default FromInput;
+export default FormInput;
