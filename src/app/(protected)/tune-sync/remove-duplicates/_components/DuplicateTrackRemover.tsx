@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import Image from 'next/image';
 
@@ -15,19 +15,16 @@ import Checkbox from '@/components/ui/Checkbox';
 import { T_DuplicateTrack, T_RemoveDuplicates, T_RemoveDuplicatesSource } from '@/lib/types/common.types';
 
 type T_FormData = {
-    selectAll?: boolean;
     trackId: string[];
 };
 
-export default function DuplicateTrackRemover({
-    duplicates,
-    source,
-    playlistId,
-}: {
+type DuplicateTrackRemoverProps = {
     duplicates: T_DuplicateTrack[];
     source: T_RemoveDuplicatesSource;
     playlistId: string;
-}) {
+};
+
+export default function DuplicateTrackRemover({ duplicates, source, playlistId }: DuplicateTrackRemoverProps) {
     const {
         handleSubmit,
         setValue,
@@ -35,33 +32,23 @@ export default function DuplicateTrackRemover({
         register,
         formState: { isSubmitting },
     } = useForm<T_FormData>({
-        defaultValues: { trackId: [], selectAll: false },
+        defaultValues: { trackId: [] },
     });
 
     const selectedTrackIds = useWatch({ control, name: 'trackId' });
-    const isAllSelected = useWatch({ control, name: 'selectAll' });
 
+    // Flatten all duplicate IDs + positions for easy selection tracking
     const allTrackIds = useMemo(
         () => duplicates.flatMap((group) => group.duplicates.map((t) => JSON.stringify({ id: t.id, position: t.position }))),
         [duplicates]
     );
 
-    // 🔹 Sync selectAll → trackId
-    useEffect(() => {
-        if (isAllSelected) {
-            setValue('trackId', allTrackIds, { shouldValidate: true });
-        } else {
-            setValue('trackId', [], { shouldValidate: true });
-        }
-    }, [isAllSelected, allTrackIds, setValue]);
+    const isAllSelected = selectedTrackIds.length === allTrackIds.length && allTrackIds.length > 0;
 
-    // 🔹 Keep selectAll updated when trackId changes manually
-    useEffect(() => {
-        const allSelected = selectedTrackIds.length === allTrackIds.length && allTrackIds.length > 0;
-        if (isAllSelected !== allSelected) {
-            setValue('selectAll', allSelected);
-        }
-    }, [selectedTrackIds, allTrackIds, isAllSelected, setValue]);
+    // Toggle handler for Select All
+    const toggleSelectAll = () => {
+        setValue('trackId', isAllSelected ? [] : allTrackIds, { shouldValidate: true });
+    };
 
     const onSubmit = async ({ trackId }: T_FormData) => {
         const trackMap = new Map<string, number[]>();
@@ -90,19 +77,10 @@ export default function DuplicateTrackRemover({
 
             if (source === 'spotify') {
                 const tracksToRemove = Array.from(trackMap.entries()).map(([id, positions]) => ({ uri: id, positions }));
-                args = {
-                    playlistId: playlistId,
-                    data: { tracks: tracksToRemove },
-                    source: 'spotify',
-                };
+                args = { playlistId, data: { tracks: tracksToRemove }, source: 'spotify' };
             } else {
-                const tracksToRemove = Array.from(trackMap.entries()).map(([id]) => id);
-
-                args = {
-                    playlistId: playlistId,
-                    data: tracksToRemove,
-                    source: 'saavn',
-                };
+                const tracksToRemove = Array.from(trackMap.keys());
+                args = { playlistId, data: tracksToRemove, source: 'saavn' };
             }
 
             const result = await deduplicatePlaylistItems(args);
@@ -114,7 +92,7 @@ export default function DuplicateTrackRemover({
 
             toast.success(`${trackMap.size} duplicate${trackMap.size > 1 ? 's' : ''} deleted.`, { id: toastId });
         } catch (error) {
-            console.error('🪵 Error deleting duplicates:', error);
+            console.error('Error deleting duplicates:', error);
             toast.error('Failed to delete duplicates. Please try again.', { id: toastId });
         }
     };
@@ -122,13 +100,15 @@ export default function DuplicateTrackRemover({
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4">
             <fieldset disabled={isSubmitting} className="mx-auto max-w-6xl space-y-6">
+                {/* Header */}
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                    <h2 className="text-highlight text-lg font-semibold">Duplicate Tracks</h2>
-                    <Checkbox color="danger" {...register('selectAll')}>
+                    <h2 className="text-text-secondary text-lg font-semibold">Duplicate Tracks</h2>
+                    <Checkbox color="danger" checked={isAllSelected} onChange={toggleSelectAll}>
                         Select All Duplicates
                     </Checkbox>
                 </div>
 
+                {/* Duplicate Groups */}
                 <div className="space-y-4">
                     {duplicates.map((group, idx) => (
                         <motion.div
@@ -153,15 +133,15 @@ export default function DuplicateTrackRemover({
                                 </div>
                             </Checkbox>
 
-                            {/* Duplicates */}
+                            {/* Duplicate Tracks */}
                             <div className="flex w-full flex-col gap-2 md:w-1/2">
                                 {group.duplicates.map((track, i) => (
                                     <Checkbox
                                         key={`${track.id}-${i}`}
                                         {...register('trackId')}
                                         color="danger"
-                                        className={{ label: 'items-start', field: 'mt-2.5' }}
-                                        value={JSON.stringify({ id: track.id, position: track.position })}>
+                                        value={JSON.stringify({ id: track.id, position: track.position })}
+                                        className={{ label: 'items-start', field: 'mt-2.5' }}>
                                         <div className="flex items-start gap-2">
                                             <Image src={track.cover} alt="cover" width={40} height={40} className="h-10 w-10 rounded" />
                                             <div className="flex-1 space-y-0.5 text-sm">
@@ -181,7 +161,7 @@ export default function DuplicateTrackRemover({
                     ))}
                 </div>
 
-                {/* Submit button */}
+                {/* Submit */}
                 <Button
                     icon="trash"
                     size="lg"

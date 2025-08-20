@@ -13,9 +13,8 @@ export const deduplicatePlaylistItems = async ({ playlistId, data, source }: T_R
 
     switch (source) {
         case 'spotify':
-            if (!session.user.linkedAccounts?.spotify?.accessToken) {
-                return createUnauthorized('Spotify access token not found.');
-            }
+            if (!session.user.linkedAccounts?.spotify?.accessToken) return createUnauthorized('Spotify access token not found.');
+
             return await removeItems(session.user.linkedAccounts.spotify.accessToken, playlistId, data);
 
         default:
