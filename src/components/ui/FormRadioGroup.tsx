@@ -2,11 +2,11 @@
 
 import { FieldValues, useController } from 'react-hook-form';
 
-import { T_FormFieldWithOptionsProps } from '@/lib/types/client.types';
+import { T_FormFieldWithOptionsProps } from '@/lib/types/form.types';
 import { getOptionData } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
-const RadioGroup = <T extends FieldValues>({ label, options, classNames = {}, ...controllerProps }: T_FormFieldWithOptionsProps<T>) => {
+const FormRadioGroup = <T extends FieldValues>({ label, options, classNames = {}, ...controllerProps }: T_FormFieldWithOptionsProps<T>) => {
     const {
         field,
         fieldState: { error },
@@ -45,4 +45,4 @@ const RadioGroup = <T extends FieldValues>({ label, options, classNames = {}, ..
     );
 };
 
-export default RadioGroup;
+export default FormRadioGroup;
