@@ -33,7 +33,7 @@ const Page = async () => {
                             {isLinked ? (
                                 <>
                                     <DisconnectAccount
-                                        className="w-20 cursor-pointer text-center text-red-500 disabled:text-red-600"
+                                        className="text-danger w-20 cursor-pointer text-center disabled:text-red-600"
                                         account={account}>
                                         Disconnect
                                     </DisconnectAccount>
@@ -42,7 +42,7 @@ const Page = async () => {
                                 <>
                                     <ConnectAccount
                                         callBackUrl={APP_ROUTES.USER.LINKED_ACCOUNTS}
-                                        className="w-20 cursor-pointer text-center text-green-500 capitalize disabled:text-green-600"
+                                        className="text-success w-20 cursor-pointer text-center capitalize disabled:text-green-600"
                                         account={account}>
                                         Connect
                                     </ConnectAccount>

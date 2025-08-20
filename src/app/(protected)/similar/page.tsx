@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
-import Input from '@/components/ui/Input';
+import FromInput from '@/components/ui/FormInput';
 
 const validateStrings = z.object({
     string1: z.string().min(1, 'String 1 is required'),
@@ -33,8 +33,8 @@ const Page = () => {
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Find String Similar Score</h1>
             <CardContainer className="w-full max-w-xl">
                 <form onSubmit={handleSubmit(onSubmit)} className="mx-auto flex w-full flex-col gap-2">
-                    <Input name="string1" label="String 1" type="text" placeholder="String 1" control={control} />
-                    <Input name="string2" label="String 2" type="text" placeholder="String 2" control={control} />
+                    <FromInput name="string1" label="String 1" type="text" placeholder="String 1" control={control} />
+                    <FromInput name="string2" label="String 2" type="text" placeholder="String 2" control={control} />
 
                     <Button variant="highlight" type="submit" className="mt-4">
                         Compare

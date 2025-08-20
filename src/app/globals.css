@@ -13,11 +13,18 @@
     --color-theme-primary: #dfdfdf;
     --color-theme-secondary: #efefef;
     --color-theme-tertiary: #ffffff;
+
+    /* Status colors */
+    --color-theme-danger: #b91c1c;
+    --color-theme-warning: #d97706;
+    --color-theme-success: #15803d;
+
+    /* Text colors */
     --color-theme-text-primary: #1d1d1f;
     --color-theme-text-secondary: #666666;
-    --color-theme-border: #bbbbbb;
 
     /* Accent colors */
+    --color-theme-border: #bbbbbb;
     --color-theme-accent: #e1102c;
     --color-theme-highlight: #005a5e;
 
@@ -247,11 +254,18 @@
     --color-theme-primary: #292929;
     --color-theme-secondary: #1c1c1c;
     --color-theme-tertiary: #101010;
+
+    /* Status colors */
+    --color-theme-warning: #ffcc00;
+    --color-theme-success: #4caf50;
+    --color-theme-danger: #fb2c36;
+
+    /* Text colors */
     --color-theme-text-primary: #ffffff;
     --color-theme-text-secondary: #b3b3b3;
-    --color-theme-border: #505050;
 
     /* Accent colors */
+    --color-theme-border: #505050;
     --color-theme-accent: #ff7043;
     --color-theme-highlight: #4db6ac;
 
@@ -264,11 +278,22 @@
     --font-karla: var(--font-karla), serif;
     --font-aladin: var(--font-aladin), serif;
     --font-alegreya: var(--font-alegreya), serif;
+
+    /* Color */
     --color-primary: var(--color-theme-primary);
     --color-secondary: var(--color-theme-secondary);
     --color-tertiary: var(--color-theme-tertiary);
+
+    /* Status colors */
+    --color-warning: var(--color-theme-warning);
+    --color-success: var(--color-theme-success);
+    --color-danger: var(--color-theme-danger);
+
+    /* Text colors */
     --color-text-primary: var(--color-theme-text-primary);
     --color-text-secondary: var(--color-theme-text-secondary);
+
+    /* Accent colors */
     --color-border: var(--color-theme-border);
     --color-accent: var(--color-theme-accent);
     --color-highlight: var(--color-theme-highlight);
@@ -411,7 +436,7 @@
 
     &:user-invalid,
     &[data-invalid='true'] {
-        @apply border border-red-500 text-red-500 dark:border-red-500;
+        @apply border-danger text-danger border;
     }
 }
 
@@ -449,7 +474,7 @@
 
     &:has(.form-field:user-invalid),
     &:has(.form-field[data-invalid='true']) {
-        @apply text-red-500;
+        @apply text-danger;
     }
 }
 

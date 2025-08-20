@@ -88,10 +88,10 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                         <Toaster
                             toastOptions={{
                                 success: {
-                                    icon: <Icon icon="success" className="size-6 shrink-0 text-green-500" />,
+                                    icon: <Icon icon="success" className="text-success size-6 shrink-0" />,
                                 },
                                 error: {
-                                    icon: <Icon icon="error" className="size-7 shrink-0 text-red-500" />,
+                                    icon: <Icon icon="error" className="text-danger size-7 shrink-0" />,
                                 },
                                 loading: {
                                     icon: <Icon icon="loading" className="text-highlight size-5 shrink-0" />,

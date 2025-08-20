@@ -1,18 +1,20 @@
 'use client';
 
+import { memo } from 'react';
+
 import { FieldValues, useController } from 'react-hook-form';
 
-import { TextareaProps } from '@/lib/types/client.types';
+import { T_FormTextareaProps } from '@/lib/types/form.types';
 import cn from '@/lib/utils/cn';
 
-const Textarea = <TFieldValues extends FieldValues>({
+const FromTextarea = <TFieldValues extends FieldValues>({
     label,
     placeholder = '',
     rows = 4,
     autoComplete,
     classNames = {},
     ...controllerProps
-}: TextareaProps<TFieldValues>) => {
+}: T_FormTextareaProps<TFieldValues>) => {
     const {
         field,
         fieldState: { error },
@@ -38,7 +40,7 @@ const Textarea = <TFieldValues extends FieldValues>({
             />
 
             {error?.message && (
-                <p className="text-xs text-red-500" role="alert" aria-live="assertive">
+                <p className="text-danger text-xs" role="alert" aria-live="assertive">
                     {error.message}
                 </p>
             )}
@@ -46,4 +48,4 @@ const Textarea = <TFieldValues extends FieldValues>({
     );
 };
 
-export default Textarea;
+export default memo(FromTextarea);

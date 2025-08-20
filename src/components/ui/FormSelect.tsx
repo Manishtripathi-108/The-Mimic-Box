@@ -2,7 +2,7 @@
 
 import { FieldValues, useController } from 'react-hook-form';
 
-import { SelectProps } from '@/lib/types/client.types';
+import { T_FormSelectProps } from '@/lib/types/form.types';
 import { getOptionData } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
 
@@ -13,7 +13,7 @@ const Select = <T extends FieldValues>({
     options,
     classNames = {},
     ...controllerProps
-}: SelectProps<T>) => {
+}: T_FormSelectProps<T>) => {
     const {
         field,
         fieldState: { error },
@@ -51,7 +51,7 @@ const Select = <T extends FieldValues>({
             </select>
 
             {error?.message && (
-                <p className="text-xs text-red-500" role="alert" aria-live="assertive">
+                <p className="text-danger text-xs" role="alert" aria-live="assertive">
                     {error.message}
                 </p>
             )}

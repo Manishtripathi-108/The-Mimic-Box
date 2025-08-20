@@ -148,7 +148,7 @@ const Sidebar = () => {
                                 onClick={() => closeSidebar()}>
                                 <Icon icon={item.icon as T_IconType} className="size-5" />
                                 <span className="flex-1">{item.title}</span>
-                                {item.badge && <span className="ml-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">{item.badge}</span>}
+                                {item.badge && <span className="bg-danger ml-2 rounded-full px-2 py-1 text-xs text-white">{item.badge}</span>}
                             </Link>
                         ) : (
                             <button
@@ -236,7 +236,7 @@ const Sidebar = () => {
                     <span>Settings</span>
                 </Link>
 
-                <LogoutButton className="hover:bg-secondary flex w-full cursor-pointer items-center gap-2 rounded-lg p-2.5 text-red-500 transition">
+                <LogoutButton className="hover:bg-secondary text-danger flex w-full cursor-pointer items-center gap-2 rounded-lg p-2.5 transition">
                     <Icon icon="logout" className="size-5" />
                     <span>Log Out</span>
                 </LogoutButton>

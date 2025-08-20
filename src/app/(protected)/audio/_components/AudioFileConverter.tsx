@@ -13,9 +13,9 @@ import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUpload from '@/components/ui/FileUpload';
 import FileUploadItem from '@/components/ui/FileUploadItem';
+import FormRangeSlider from '@/components/ui/FormRangeSlider';
+import FormSelect from '@/components/ui/FormSelect';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
-import RangeSlider from '@/components/ui/RangeSlider';
-import Select from '@/components/ui/Select';
 import TabSwitcher from '@/components/ui/TabSwitcher';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
@@ -209,7 +209,7 @@ const AudioFileConverter = () => {
                                     <FileUploadItem key={`${file.name}-${index}`} file={file} onRemove={() => handleRemoveFile(file, index)}>
                                         {!useGlobalSettings && files.length > 1 && (
                                             <div className="flex w-full items-center justify-between space-x-4 sm:w-auto">
-                                                <Select
+                                                <FormSelect
                                                     name={`fileSettings.${index}.audio.format`}
                                                     control={control}
                                                     options={AudioFormatsSchema.options}
@@ -257,7 +257,7 @@ const AudioFileConverter = () => {
                                         onTabChange={(tab) => setValue('global.audio.format', tab)}
                                     />
                                     <div className="mt-4">
-                                        <RangeSlider
+                                        <FormRangeSlider
                                             label="Quality:"
                                             control={control}
                                             name="global.audio.bitrate"

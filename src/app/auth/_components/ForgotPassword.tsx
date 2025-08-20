@@ -10,8 +10,8 @@ import { z } from 'zod';
 import { forgotPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import FromInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
-import Input from '@/components/ui/Input';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
 
@@ -50,7 +50,7 @@ const ForgotPasswordForm = () => {
                 </header>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-                    <Input
+                    <FromInput
                         control={control}
                         name="email"
                         label="Enter your email"

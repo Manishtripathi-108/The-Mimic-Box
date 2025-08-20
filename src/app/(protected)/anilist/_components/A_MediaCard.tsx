@@ -132,15 +132,15 @@ const A_MediaCard = ({
                     {/* Stats */}
                     <footer className="flex items-center justify-between border-t pt-4 text-sm *:flex *:items-center *:gap-1">
                         <div>
-                            <Icon icon="smile" className="size-4 text-green-500" />
+                            <Icon icon="smile" className="text-success size-4" />
                             <span>{media.averageScore}%</span>
                         </div>
                         <div>
-                            <Icon icon="heart" className="size-4 text-red-500" />
+                            <Icon icon="heart" className="text-danger size-4" />
                             <span>{media.favourites}</span>
                         </div>
                         <div>
-                            <Icon icon="eye" className="size-4 text-blue-400" />
+                            <Icon icon="eye" className="text-highlight size-4" />
                             <span>{media.popularity}</span>
                         </div>
                     </footer>

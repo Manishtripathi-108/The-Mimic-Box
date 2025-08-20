@@ -41,7 +41,7 @@ const FileUploadItem = ({ file, error, onRemove, children, className }: FileUplo
                     <p className="text-text-secondary mt-0.5 text-start text-xs">{`${fileExt} — ${formatFileSize(file.size)}`}</p>
 
                     {error && (
-                        <p className="mt-0.5 text-xs text-red-500" role="alert" aria-live="assertive">
+                        <p className="text-danger mt-0.5 text-xs" role="alert" aria-live="assertive">
                             {error}
                         </p>
                     )}
@@ -55,7 +55,7 @@ const FileUploadItem = ({ file, error, onRemove, children, className }: FileUplo
                 title="Remove file"
                 aria-label="Remove uploaded file"
                 onClick={onRemove}
-                className="sm:bg-primary sm:shadow-floating-xs absolute top-4 right-3 size-5 shrink-0 bg-transparent p-0 text-red-500 shadow-none sm:relative sm:top-0 sm:right-0 sm:size-8 sm:rounded-xl sm:p-1.5 dark:text-red-500"
+                className="sm:bg-primary sm:shadow-floating-xs text-danger dark:text-danger absolute top-4 right-3 size-5 shrink-0 bg-transparent p-0 shadow-none sm:relative sm:top-0 sm:right-0 sm:size-8 sm:rounded-xl sm:p-1.5"
                 icon="closeAnimated"
             />
         </section>

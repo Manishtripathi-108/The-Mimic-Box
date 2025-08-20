@@ -50,7 +50,6 @@ export function useTrackDuplicates({ ref }: UseTrackDuplicatesProps) {
     const runDuplicateCheck = useCallback((tracks: T_TrackBase[]) => {
         setIsProcessing(true);
         setInput(tracks);
-        console.log('🪵 > useTrackDuplicates.ts:53 > useTrackDuplicates > tracks:', tracks.length);
     }, []);
 
     return {

@@ -113,7 +113,7 @@ export const ConfirmationModal = ({
     return (
         <Modal modalId={modalId} shouldClose={shouldClose} className="max-w-md" onClose={onClose} {...props}>
             <div className="relative max-h-full w-full max-w-md p-8 text-center md:p-10">
-                <Icon icon={icon} className={cn('mx-auto mb-4 size-12 text-red-500', iconClassName)} />
+                <Icon icon={icon} className={cn('text-danger mx-auto mb-4 size-12', iconClassName)} />
                 <h3 className="text-text-primary mb-5 text-lg font-normal">{children}</h3>
                 <Button onClick={handleConfirmClick} title={confirmText} variant={isConfirmDanger ? 'danger' : 'primary'} className="mt-4">
                     {confirmText}

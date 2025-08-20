@@ -80,9 +80,9 @@ const VerifyEmail = ({ type }: { type: 'verify' | 'change' }) => {
                     </div>
                 ) : (
                     <div className="p-6">
-                        <Icon icon={token ? 'error' : 'notFound'} className="mb-2 inline-block size-16 text-red-500" />
+                        <Icon icon={token ? 'error' : 'notFound'} className="text-danger mb-2 inline-block size-16" />
                         <h1 className="text-text-primary text-2xl font-bold">{token ? 'Invalid Token!' : 'Token Missing!'}</h1>
-                        <p className="mt-2 text-red-500">
+                        <p className="text-danger mt-2">
                             {token
                                 ? state?.message || 'The token is invalid or expired. Please request a new one.'
                                 : 'The token is missing. Please request a new one.'}

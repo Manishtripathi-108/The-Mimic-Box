@@ -10,8 +10,8 @@ import { z } from 'zod';
 import { resetPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import FromInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
-import Input from '@/components/ui/Input';
 import useToggle from '@/hooks/useToggle';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
@@ -59,7 +59,7 @@ const ResetPasswordForm = () => {
 
                 <div className="p-6">
                     <form onSubmit={handleSubmit(handleReset)}>
-                        <Input
+                        <FromInput
                             name="password"
                             autoComplete="new-password"
                             label="Enter your new password"
@@ -70,7 +70,7 @@ const ResetPasswordForm = () => {
                             disabled={isSubmitting}
                         />
 
-                        <Input
+                        <FromInput
                             name="confirmPassword"
                             autoComplete="new-password"
                             label="Confirm your new password"

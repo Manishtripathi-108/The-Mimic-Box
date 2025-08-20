@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { getLyrics } from '@/actions/lrclib.actions';
 import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import Input from '@/components/ui/Input';
+import FromInput from '@/components/ui/FromInput';
 import { Tabs, TabsContent, TabsIndicator, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/Tabs';
 import { LYRICS_UNAVAILABLE_MESSAGES } from '@/constants/client.constants';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
@@ -136,7 +136,7 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
             </h3>
 
             <form onSubmit={handleSubmit(submitSearchLyrics)} className={`space-y-2 ${isSubmitting ? 'pointer-events-none animate-pulse' : ''}`}>
-                <Input
+                <FromInput
                     control={control}
                     name="q"
                     label="Search here..."
@@ -153,16 +153,22 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
 
                 {showAdvanced && (
                     <div className="grid gap-2 sm:grid-cols-2">
-                        <Input control={control} name="trackName" label="Track Name" placeholder="e.g. Departure Lane" disabled={isSubmitting} />
-                        <Input
+                        <FromInput control={control} name="trackName" label="Track Name" placeholder="e.g. Departure Lane" disabled={isSubmitting} />
+                        <FromInput
                             control={control}
                             name="artistName"
                             label="Artist Name"
                             placeholder="e.g. Umair & Talha Anjum"
                             disabled={isSubmitting}
                         />
-                        <Input control={control} name="albumName" label="Album Name" placeholder="e.g. My Terrible Mind" disabled={isSubmitting} />
-                        <Input
+                        <FromInput
+                            control={control}
+                            name="albumName"
+                            label="Album Name"
+                            placeholder="e.g. My Terrible Mind"
+                            disabled={isSubmitting}
+                        />
+                        <FromInput
                             control={control}
                             name="duration"
                             label="Duration (sec)"

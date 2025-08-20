@@ -16,7 +16,7 @@ const platforms: {
         name: 'Spotify',
         icon: 'spotify',
         route: APP_ROUTES.TUNE_SYNC.REMOVE_DUPLICATES.SPOTIFY,
-        color: 'text-green-500',
+        color: 'text-success',
     },
     {
         name: 'JioSaavn',

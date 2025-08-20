@@ -32,6 +32,8 @@ async function* identifyDuplicates(tracks: T_TrackBase[]) {
 
         if (seenIds.has(track.id)) {
             reason = 'same-id';
+            const seenTrack = seenTracks.find((t) => t.id === track.id);
+            if (seenTrack) original = seenTrack;
         } else {
             for (const prev of seenTracks) {
                 if (isDuplicate(track, prev)) {

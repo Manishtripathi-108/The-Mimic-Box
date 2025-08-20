@@ -112,7 +112,7 @@ const ProfileDropdown = () => {
 
                         <hr className="my-2" />
 
-                        <LogoutButton className="hover:bg-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2 text-red-500">
+                        <LogoutButton className="hover:bg-primary text-danger flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                             <Icon icon="logout" className="size-5" />
                             <span>Logout</span>
                         </LogoutButton>

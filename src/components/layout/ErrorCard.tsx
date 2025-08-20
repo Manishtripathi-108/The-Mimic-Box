@@ -29,7 +29,7 @@ const ErrorCard = ({
                 <Icon icon="error" className="mb-2 size-28" />
 
                 <div className="mb-6 w-full text-center">
-                    <h1 className="font-bold tracking-wider text-red-500">Error!</h1>
+                    <h1 className="text-danger font-bold tracking-wider">Error!</h1>
                     <p className="text-sm tracking-wide text-gray-500">{message || 'Oh no, something went wrong.'}</p>
                 </div>
 

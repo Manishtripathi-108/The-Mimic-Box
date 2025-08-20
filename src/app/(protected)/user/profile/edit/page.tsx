@@ -106,7 +106,7 @@ const Page = () => {
                                 aria-invalid={!!errors.name}
                             />
                         </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="name" aria-live="polite" />
+                        <ErrorMessage as="p" className="text-danger text-xs" errors={errors} name="name" aria-live="polite" />
                     </div>
 
                     {/* Email Field (Read-only) */}
@@ -126,7 +126,7 @@ const Page = () => {
                                 aria-invalid={!!errors.email}
                             />
                         </div>
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="email" aria-live="polite" />
+                        <ErrorMessage as="p" className="text-danger text-xs" errors={errors} name="email" aria-live="polite" />
                     </div>
 
                     {/* Profile Image Upload */}
@@ -143,14 +143,14 @@ const Page = () => {
                                 />
                                 <button
                                     type="button"
-                                    className="text-sm text-red-500 hover:underline"
+                                    className="text-danger text-sm hover:underline"
                                     onClick={() => setPreviewImage(session?.user?.image || null)}>
                                     Remove
                                 </button>
                             </div>
                         )}
                         <input type="file" onChange={handleImageChange} className="form-field" />
-                        <ErrorMessage as="p" className="text-xs text-red-500" errors={errors} name="image" aria-live="polite" />
+                        <ErrorMessage as="p" className="text-danger text-xs" errors={errors} name="image" aria-live="polite" />
                     </div>
 
                     <ErrorMessage
@@ -158,7 +158,7 @@ const Page = () => {
                         errors={errors}
                         name="root.serverError"
                         render={({ message }) => (
-                            <p aria-live="polite" className="mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs text-red-500">
+                            <p aria-live="polite" className="text-danger mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs">
                                 <Icon icon="error" className="size-7 shrink-0" />
                                 {message}
                             </p>
