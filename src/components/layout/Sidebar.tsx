@@ -76,6 +76,11 @@ const sidebarMenuItems: T_Sidebar[] = [
             { name: 'Playlists', link: APP_ROUTES.MUSIC.PLAYLISTS },
         ],
     },
+    {
+        title: 'Tune Sync',
+        icon: 'settings',
+        children: [{ name: 'Remove Duplicates', link: APP_ROUTES.TUNE_SYNC.REMOVE_DUPLICATES.ROOT }],
+    },
 
     {
         title: 'Dev',
