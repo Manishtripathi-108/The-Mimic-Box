@@ -65,7 +65,7 @@ const ProfileDropdown = () => {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="from-secondary to-tertiary shadow-floating-xs absolute right-2 z-50 mt-5 w-72 rounded-3xl border bg-linear-150 from-15% to-85% p-2">
+                        className="shadow-floating-xs bg-gradient-secondary-to-tertiary absolute right-2 z-50 mt-5 w-72 rounded-3xl border p-2">
                         <div className="shadow-pressed-xs mb-2 flex aspect-[4/3] w-full flex-col items-center justify-center rounded-2xl border">
                             <div className="shadow-floating-xs mb-2 flex items-center justify-center rounded-3xl border p-2">
                                 <Image
@@ -112,7 +112,7 @@ const ProfileDropdown = () => {
 
                         <hr className="my-2" />
 
-                        <LogoutButton className="hover:bg-primary flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2 text-red-500">
+                        <LogoutButton className="hover:bg-primary text-danger flex w-full cursor-pointer items-center gap-x-3 rounded-lg px-3 py-2">
                             <Icon icon="logout" className="size-5" />
                             <span>Logout</span>
                         </LogoutButton>

@@ -51,7 +51,7 @@ const A_MediaGrid: React.FC<AnilistMediaGridProps> = ({ type, category, showDeta
                 </Link>
             </div>
             {error ? (
-                <p className="text-center text-red-500">{error}</p>
+                <p className="text-danger text-center">{error}</p>
             ) : (
                 <section
                     className={`mx-auto grid gap-4 ${showDetails ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'} `}>

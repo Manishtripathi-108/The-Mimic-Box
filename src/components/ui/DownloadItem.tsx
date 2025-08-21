@@ -7,7 +7,7 @@ const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel:
     const statusMap: Record<T_AudioDownloadFile['status'], { icon: T_IconType; className: string; label: string }> = {
         pending: {
             icon: 'pending',
-            className: 'text-yellow-500',
+            className: 'text-warning',
             label: 'Pending',
         },
         processing: {
@@ -22,17 +22,17 @@ const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel:
         },
         ready: {
             icon: 'success',
-            className: 'text-green-600',
+            className: 'text-success',
             label: 'Ready',
         },
         failed: {
             icon: 'error',
-            className: 'text-red-500',
+            className: 'text-danger',
             label: 'Failed',
         },
         cancelled: {
             icon: 'error',
-            className: 'text-red-500',
+            className: 'text-danger',
             label: 'Cancelled',
         },
     };
@@ -41,7 +41,7 @@ const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel:
     const isCancelable = ['pending', 'processing', 'downloading'].includes(file.status);
 
     return (
-        <div className="from-secondary to-tertiary shadow-floating-xs relative w-full rounded-xl bg-linear-150 p-3">
+        <div className="shadow-floating-xs bg-gradient-secondary-to-tertiary relative w-full rounded-xl p-3">
             <div className="flex items-center justify-between">
                 {/* Title and Progress */}
                 <div className="min-w-0 flex-1">
@@ -68,7 +68,7 @@ const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel:
 
                     {/* error msg  */}
                     {file.error && (
-                        <div className="mt-1 text-xs text-red-500" title={`Error: ${file.error}`}>
+                        <div className="text-danger mt-1 text-xs" title={`Error: ${file.error}`}>
                             {file.error}
                         </div>
                     )}
@@ -80,7 +80,7 @@ const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel:
                         type="button"
                         onClick={onCancel}
                         title={`Cancel download of ${file.title}`}
-                        className="ml-2 size-5 shrink-0 cursor-pointer rounded-full text-red-500 hover:text-red-600"
+                        className="text-danger ml-2 size-5 shrink-0 cursor-pointer rounded-full hover:text-red-600"
                         aria-label={`Cancel download of ${file.title}`}>
                         <Icon icon="close" />
                     </button>

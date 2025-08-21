@@ -54,13 +54,13 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
             </header>
 
             {/* Album Art */}
-            <div className="flex items-center justify-center py-4 sm:-mt-20 sm:flex-1">
+            <div className="flex items-center justify-center py-4 sm:flex-1">
                 {toggles.lyrics ? (
                     <MusicLyricsCard
                         contentOnly
                         disableClickOutside
                         onClose={() => close('lyrics')}
-                        className="relative h-75 w-full bg-transparent p-0 shadow-none sm:h-150"
+                        className="relative h-75 w-full bg-transparent p-0 shadow-none sm:-mt-20 sm:h-150"
                     />
                 ) : (
                     <Image

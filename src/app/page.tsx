@@ -52,7 +52,7 @@ const Page = () => {
 
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-2">
                     {features.map((section) => (
-                        <div key={section.category} className="from-secondary to-tertiary shadow-floating-sm rounded-2xl bg-linear-150 p-6">
+                        <div key={section.category} className="shadow-floating-sm bg-gradient-secondary-to-tertiary rounded-2xl p-6">
                             <h2 className="text-highlight mb-4 text-2xl font-semibold">{section.category}</h2>
                             <ul className="space-y-3">
                                 {section.items.map((item) => (

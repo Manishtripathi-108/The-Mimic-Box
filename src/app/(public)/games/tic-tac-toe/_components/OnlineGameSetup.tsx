@@ -10,9 +10,9 @@ import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
+import FormInput from '@/components/ui/FormInput';
+import FormSelect from '@/components/ui/FormSelect';
 import Icon from '@/components/ui/Icon';
-import Input from '@/components/ui/Input';
-import Select from '@/components/ui/Select';
 
 // Define Zod schemas
 const joinRoomSchema = z.object({
@@ -38,8 +38,8 @@ const JoinRoomForm = ({ roomId }: { roomId?: string }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <Input autoComplete="name" name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
-            <Input
+            <FormInput autoComplete="name" name="roomId" label="Room ID" type="text" placeholder="Room ID" control={control} disabled={isFetching} />
+            <FormInput
                 autoComplete="name"
                 name="playerName"
                 label="Player Name"
@@ -69,8 +69,8 @@ const CreateRoomForm = () => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <Select name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
-            <Input
+            <FormSelect name="mode" label="Game Mode" options={createRoomSchema.shape.mode.options} control={control} disabled={isFetching} />
+            <FormInput
                 autoComplete="name"
                 name="playerName"
                 label="Player Name"
@@ -93,8 +93,8 @@ const OnlineGameSetup = () => {
 
     return (
         <div className="h-calc-full-height flex items-center justify-center">
-            <div className="from-secondary shadow-floating-sm to-tertiary relative max-h-full w-full max-w-md rounded-2xl bg-linear-150 from-15% to-85% p-8 md:p-10">
-                <Icon icon="gamepadTurbo" className="mx-auto mb-4 h-12 w-12 text-red-500" />
+            <div className="shadow-floating-sm bg-gradient-secondary-to-tertiary relative max-h-full w-full max-w-md rounded-2xl p-8 md:p-10">
+                <Icon icon="gamepadTurbo" className="text-danger mx-auto mb-4 h-12 w-12" />
                 <h2 className="text-highlight font-aladin mb-3 text-center text-4xl font-bold tracking-widest">Play Online</h2>
                 <h3 className="text-text-primary mb-5 text-center font-normal tracking-wider">Join a room or create a new one to start playing</h3>
 

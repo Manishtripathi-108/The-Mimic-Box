@@ -11,10 +11,10 @@ import { z } from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
 import { Button } from '@/components/ui/Button';
+import FormInput from '@/components/ui/FormInput';
+import FormSelect from '@/components/ui/FormSelect';
 import Icon from '@/components/ui/Icon';
-import Input from '@/components/ui/Input';
 import { closeModal } from '@/components/ui/Modals';
-import Select from '@/components/ui/Select';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
 import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
@@ -89,7 +89,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
             <Button
                 icon="heart"
-                className={`absolute top-2/4 right-8 rounded-full p-2 ${isLiked ? 'text-red-500 dark:text-red-500' : ''}`}
+                className={`absolute top-2/4 right-8 rounded-full p-2 ${isLiked ? 'text-danger' : ''}`}
                 active={isLiked}
                 onClick={toggleLike}
                 disabled={isToggling}
@@ -97,7 +97,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
             <form onSubmit={handleSubmit(onSubmit)} className="px-4 pb-4">
                 <div className="grid grid-cols-2 place-items-center gap-4">
-                    <Select
+                    <FormSelect
                         name="status"
                         label="Status:"
                         options={AnilistMediaListStatusSchema.options.map((option) => ({ value: option, label: option.toLowerCase() }))}
@@ -106,7 +106,7 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
                         disabled={isToggling || isSubmitting}
                     />
 
-                    <Input
+                    <FormInput
                         name="progress"
                         label="Episode Progress"
                         type="number"

@@ -11,8 +11,8 @@ import { z } from 'zod';
 import { registerAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
-import Input from '@/components/ui/Input';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import useToggle from '@/hooks/useToggle';
 import { registerSchema } from '@/lib/schema/auth.validations';
@@ -66,7 +66,7 @@ const RegisterForm = () => {
                     <legend className="sr-only">Registration Form</legend>
 
                     {/* Full Name */}
-                    <Input
+                    <FormInput
                         autoComplete="name"
                         name="fullName"
                         label="Full Name"
@@ -77,7 +77,7 @@ const RegisterForm = () => {
                     />
 
                     {/* Email */}
-                    <Input
+                    <FormInput
                         autoComplete="email"
                         name="email"
                         label="Email"
@@ -88,7 +88,7 @@ const RegisterForm = () => {
                     />
 
                     {/* Password */}
-                    <Input
+                    <FormInput
                         autoComplete="new-password"
                         name="password"
                         label="Password"
@@ -99,7 +99,7 @@ const RegisterForm = () => {
                     />
 
                     {/* Confirm Password */}
-                    <Input
+                    <FormInput
                         autoComplete="new-password"
                         name="confirmPassword"
                         label="Confirm Password"

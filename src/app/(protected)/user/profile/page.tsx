@@ -23,11 +23,11 @@ const Page = async () => {
     return (
         <div className="grid place-items-center">
             <div className="w-full max-w-xl">
-                <div className="from-secondary to-tertiary shadow-floating-xs rounded-2xl bg-linear-150 from-15% to-85% p-3 sm:p-6">
+                <div className="shadow-floating-xs bg-gradient-secondary-to-tertiary rounded-2xl p-3 sm:p-6">
                     <div className="rounded-xl border p-3 sm:p-6">
-                        <div className="from-secondary to-tertiary shadow-pressed-xs -mt-20 size-32 rounded-full border bg-linear-150 from-15% to-85% p-2 sm:-mt-24 sm:size-44">
+                        <div className="shadow-pressed-xs bg-gradient-secondary-to-tertiary -mt-20 size-32 rounded-full border p-2 sm:-mt-24 sm:size-44">
                             <Image
-                                className="shadow-floating-xs from-secondary to-tertiary rounded-full border bg-linear-150 from-15% to-85% object-cover p-3"
+                                className="shadow-floating-xs bg-gradient-secondary-to-tertiary rounded-full border object-cover p-3"
                                 src={image || IMAGE_FALLBACKS.PROFILE}
                                 alt="Avatar"
                                 width={200}

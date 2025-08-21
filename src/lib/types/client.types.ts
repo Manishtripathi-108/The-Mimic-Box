@@ -1,5 +1,4 @@
 import { AxiosProgressEvent } from 'axios';
-import { FieldValues, UseControllerProps } from 'react-hook-form';
 
 import IconSet from '@/constants/icons.constants';
 
@@ -26,57 +25,6 @@ export type FileTypesMap = Record<
 >;
 
 export type T_IconType = keyof typeof IconSet;
-
-/* -------------------------------------------------------------------------- */
-/*                                 Form Types                                 */
-/* -------------------------------------------------------------------------- */
-export type FormOption = string | { label: string; value: string };
-
-type BaseClassNames = {
-    container?: string;
-    label?: string;
-    field?: string;
-};
-
-type BaseFormProps = {
-    label?: string;
-    autoComplete?: string;
-    classNames?: BaseClassNames;
-};
-
-export type FormFieldWithOptionsProps<T extends FieldValues> = {
-    options: FormOption[];
-} & BaseFormProps &
-    UseControllerProps<T>;
-
-export type InputProps<T extends FieldValues = FieldValues> = {
-    placeholder?: string;
-    type?: string;
-    min?: number;
-    max?: number;
-    label?: string;
-    autoComplete?: string;
-    iconName?: T_IconType;
-    iconPosition?: 'left' | 'right';
-    onIconClick?: () => void;
-    classNames?: BaseClassNames & {
-        icon?: string;
-    };
-} & UseControllerProps<T>;
-
-export type RangeSliderProps<T extends FieldValues> = {
-    step?: number;
-} & InputProps<T>;
-
-export type SelectProps<T extends FieldValues> = {
-    placeholder?: string;
-} & FormFieldWithOptionsProps<T>;
-
-export type TextareaProps<T extends FieldValues> = {
-    rows?: number;
-    placeholder?: string;
-} & BaseFormProps &
-    UseControllerProps<T>;
 
 export type T_UploadState = {
     formattedLoaded: string;

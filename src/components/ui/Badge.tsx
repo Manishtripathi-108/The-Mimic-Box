@@ -15,9 +15,9 @@ const baseBadgeClasses =
 const variantClasses: Record<BadgeVariant, string> = {
     primary: 'border-transparent bg-primary text-text-primary hover:bg-primary/90',
     secondary: 'border-transparent bg-secondary text-text-secondary hover:bg-secondary/90',
-    danger: 'border-transparent bg-red-100 text-red-700 hover:bg-red-200 focus-visible:ring-red-300',
+    danger: 'border-transparent bg-red-100 text-danger hover:bg-red-200 focus-visible:ring-danger/300',
     outline: 'text-text-secondary',
-    success: 'border-transparent bg-green-100 text-green-700 hover:bg-green-200 focus-visible:ring-green-500/20',
+    success: 'border-transparent bg-green-100 text-success hover:bg-green-200 focus-visible:ring-success/20',
 };
 
 const Badge = ({ className, variant = 'primary', asChild = false, children, ...props }: BadgeProps) => {

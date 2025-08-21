@@ -3,23 +3,22 @@
 import { FieldValues, useController } from 'react-hook-form';
 
 import Icon from '@/components/ui/Icon';
-import Slider, { SliderProps } from '@/components/ui/Slider';
-import { RangeSliderProps } from '@/lib/types/client.types';
+import { T_FormInputProps } from '@/lib/types/form.types';
 import cn from '@/lib/utils/cn';
 
-const RangeSlider = <TFieldValues extends FieldValues>({
+const FormInput = <TFieldValues extends FieldValues>({
     label,
     placeholder = '',
+    type = 'text',
     iconName,
+    max,
+    min,
     iconPosition = 'left',
-    min = 0,
-    max = 100,
-    step = 1,
     onIconClick,
     classNames = {},
-    sliderProps,
+    autoComplete,
     ...controllerProps
-}: RangeSliderProps<TFieldValues> & { sliderProps?: SliderProps }) => {
+}: T_FormInputProps<TFieldValues>) => {
     const {
         field,
         fieldState: { error },
@@ -43,17 +42,18 @@ const RangeSlider = <TFieldValues extends FieldValues>({
                     />
                 )}
 
-                <Slider
+                <input
                     id={controllerProps.name}
-                    min={min}
-                    max={max}
-                    step={step}
+                    autoComplete={autoComplete ?? 'on'}
+                    type={type}
+                    inputMode={type === 'number' ? 'numeric' : 'text'}
                     {...field}
+                    max={max}
+                    min={min}
                     placeholder={placeholder}
-                    className={classNames.field}
+                    className={cn('form-field', classNames.field)}
                     aria-invalid={!!error}
                     data-invalid={!!error}
-                    {...sliderProps}
                 />
 
                 {iconName && iconPosition === 'right' && (
@@ -67,7 +67,7 @@ const RangeSlider = <TFieldValues extends FieldValues>({
             </div>
 
             {error?.message && (
-                <p className="text-xs text-red-500" role="alert" aria-live="assertive">
+                <p className="text-danger text-xs" role="alert" aria-live="assertive">
                     {error.message}
                 </p>
             )}
@@ -75,4 +75,4 @@ const RangeSlider = <TFieldValues extends FieldValues>({
     );
 };
 
-export default RangeSlider;
+export default FormInput;

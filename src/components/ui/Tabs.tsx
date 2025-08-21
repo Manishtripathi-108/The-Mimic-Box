@@ -43,7 +43,6 @@ export const Tabs = ({
     orientation = 'horizontal',
     loopFocus = true,
     className,
-    children,
     lazyMount = false,
     unmountOnExit = false,
     ...props
@@ -56,11 +55,9 @@ export const Tabs = ({
     activation?: TabsActivation;
     orientation?: TabsOrientation;
     loopFocus?: boolean;
-    className?: string;
-    children: ReactNode;
     lazyMount?: boolean;
     unmountOnExit?: boolean;
-} & React.HTMLAttributes<HTMLElement>) => {
+} & React.ComponentProps<'div'>) => {
     const isControlled = value !== undefined;
     const [internalTab, setInternalTab] = useState(defaultValue);
     const [triggerOrder, setTriggerOrder] = useState<string[]>([]);
@@ -150,23 +147,19 @@ export const Tabs = ({
                 data-part="root"
                 data-orientation={orientation}
                 className={cn('flex gap-2', orientation === 'vertical' ? 'flex-row' : 'flex-col', className)}
-                {...props}>
-                {children}
-            </Component>
+                {...props}
+            />
         </TabsContext.Provider>
     );
 };
 
 export const TabsList = ({
     className,
-    children,
     asChild,
     ...props
 }: {
-    className?: string;
-    children: ReactNode;
     asChild?: boolean;
-} & React.HTMLAttributes<HTMLElement>) => {
+} & React.ComponentProps<'div'>) => {
     const ctx = useTabsContext('TabsList');
 
     const Component = asChild ? Slot : 'div';
@@ -177,13 +170,12 @@ export const TabsList = ({
             data-part="list"
             data-orientation={ctx.orientation}
             className={cn(
-                'shadow-floating-xs from-secondary to-tertiary relative inline-flex w-fit flex-wrap items-center justify-center gap-1 rounded-xl bg-linear-150 from-15% to-85% p-[3px]',
+                'shadow-floating-xs bg-gradient-secondary-to-tertiary relative inline-flex w-fit flex-wrap items-center justify-center gap-1 rounded-xl p-[3px]',
                 ctx.orientation === 'vertical' && 'flex-col',
                 className
             )}
-            {...props}>
-            {children}
-        </Component>
+            {...props}
+        />
     );
 };
 
@@ -191,7 +183,6 @@ export const TabsTrigger = ({
     value,
     disabled = false,
     className,
-    children,
     asChild = false,
     ...props
 }: {
@@ -262,16 +253,14 @@ export const TabsTrigger = ({
             )}
             onClick={() => !disabled && ctx.setActiveTab(value)}
             onKeyDown={handleKeyDown}
-            {...props}>
-            {children}
-        </Component>
+            {...props}
+        />
     );
 };
 
 export const TabsIndicator = ({
     className,
     style,
-    children,
     asChild = false,
 }: {
     className?: string;
@@ -290,14 +279,12 @@ export const TabsIndicator = ({
                 'bg-primary shadow-pressed-xs ease-out-circ absolute bottom-1 z-10 h-[calc(100%-0.5rem)] rounded-lg border transition-all duration-500',
                 className
             )}
-            style={{ ...ctx.indicatorStyle, ...style }}>
-            {children}
-        </Component>
+            style={{ ...ctx.indicatorStyle, ...style }}
+        />
     );
 };
 
 export const TabsContent = ({
-    children,
     className,
     asChild = false,
     ...props
@@ -307,16 +294,11 @@ export const TabsContent = ({
     asChild?: boolean;
 } & React.HTMLAttributes<HTMLElement>) => {
     const Component = asChild ? Slot : 'div';
-    return (
-        <Component className={cn('relative flex-1', className)} {...props}>
-            {children}
-        </Component>
-    );
+    return <Component className={cn('relative flex-1', className)} {...props} />;
 };
 
 export const TabsPanel = ({
     value,
-    children,
     className,
     asChild = false,
     lazyMount = false,
@@ -354,8 +336,7 @@ export const TabsPanel = ({
             hidden={!isActive}
             data-part="panel"
             className={cn('p-4 outline-none', className)}
-            {...props}>
-            {children}
-        </Component>
+            {...props}
+        />
     );
 };

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const Page = () => {
     return (
         <main className="h-calc-full-height bg-primary flex flex-col items-center justify-center p-6">
-            <div className="shadow-floating-sm from-secondary to-tertiary text-text-primary w-full max-w-lg rounded-2xl border bg-linear-150 from-15% to-85% p-6">
+            <div className="shadow-floating-sm text-text-primary bg-gradient-secondary-to-tertiary w-full max-w-lg rounded-2xl border p-6">
                 {/* Header */}
                 <h1 className="text-highlight font-alegreya mb-6 flex items-center justify-center gap-3 text-3xl font-medium tracking-wide">
                     <Icon icon="gamepad" className="size-8" /> Select Your Game Mode

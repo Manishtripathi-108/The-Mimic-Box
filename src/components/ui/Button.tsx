@@ -41,7 +41,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
     tertiary: 'bg-tertiary text-text-secondary hover:text-text-primary hover:bg-tertiary/80',
     highlight: 'from-highlight bg-linear-150 from-25% to-[#003032] to-75% text-gray-100 hover:text-white dark:to-[#1a676a]',
     accent: 'from-accent bg-linear-150 from-25% to-[#af1e32] to-75% text-gray-100 hover:text-white hover:text-gray-200 dark:to-[#ff0022]',
-    danger: 'bg-linear-150 from-red-500 from-25% to-red-900 to-75% text-gray-100 hover:text-white dark:to-[#ff0022]',
+    danger: 'bg-linear-150 from-danger from-25% to-red-900 to-75% text-gray-100 hover:text-white dark:to-[#ff0022]',
     outline: 'shadow-none border text-text-secondary hover:text-text-primary hover:border-text-primary',
     ghost: 'shadow-none text-text-secondary hover:text-text-primary hover:shadow-floating-xs hover:bg-secondary',
     transparent: 'shadow-none hover:text-text-primary text-text-secondary',

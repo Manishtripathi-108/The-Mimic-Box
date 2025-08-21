@@ -38,7 +38,10 @@ const TicTacToeBoard = ({ mode }: { mode: GameMode }) => {
     return (
         <div
             ref={boardRef}
-            className={`animate-zoom-in shadow-floating-md from-secondary to-tertiary relative aspect-square ${mode === 'classic' ? 'max-w-md' : 'grid max-w-xl grid-cols-3 gap-2'} w-[min(90vw,90vh)] rounded-xl border bg-linear-150 p-2`}>
+            className={cn(
+                'animate-zoom-in shadow-floating-md bg-gradient-secondary-to-tertiary relative aspect-square w-[min(90vw,90vh)] rounded-xl border p-2',
+                mode === 'classic' ? 'max-w-md' : 'grid max-w-xl grid-cols-3 gap-2'
+            )}>
             {mode === 'classic' ? (
                 <div className="shadow-pressed-sm rounded-lg border p-3">
                     <div tabIndex={0} className="grid grid-cols-3 gap-3 outline-hidden">

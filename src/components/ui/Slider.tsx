@@ -53,11 +53,11 @@ const SLIDER_VARIANT_COLORS: Record<
         thumbDark: '#af1e32',
     },
     danger: {
-        fill: '#ef4444',
+        fill: 'var(--color-theme-danger)',
         fillAlt: '#dc2626',
         track: 'var(--color-theme-primary)',
         trackAlt: 'var(--color-theme-tertiary)',
-        thumb: '#ef4444',
+        thumb: 'var(--color-theme-danger)',
         thumbAlt: '#dc2626',
         thumbDark: '#b91c1c',
     },

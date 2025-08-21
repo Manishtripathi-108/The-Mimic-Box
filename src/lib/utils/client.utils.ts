@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast';
 
-import { FormOption } from '@/lib/types/client.types';
+import { T_FormOption } from '@/lib/types/form.types';
 
 export const getMonthName = (monthNumber: number) => {
     if (!(monthNumber >= 1 && monthNumber <= 12)) return '...';
@@ -16,7 +16,7 @@ export const getPageNumbers = (currentPage: number, totalPages: number, maxVisib
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 };
 
-export const getOptionData = (option: FormOption) => (typeof option === 'string' ? { label: option, value: option } : option);
+export const getOptionData = (option: T_FormOption) => (typeof option === 'string' ? { label: option, value: option } : option);
 
 export const shareUrl = async ({ url, title, text, fallback = true }: { url: string; title?: string; text?: string; fallback?: boolean }) => {
     try {

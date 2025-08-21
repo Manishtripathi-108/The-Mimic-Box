@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HTMLAttributes, ReactNode, cloneElement, isValidElement } from 'react';
+import { cloneElement, isValidElement } from 'react';
 
 import cn from '@/lib/utils/cn';
 
-type SlotProps = {
-    children: ReactNode;
-    className?: string;
-} & Omit<HTMLAttributes<HTMLElement>, 'children'>;
-
-const Slot = ({ children, className, ...props }: SlotProps) => {
+const Slot = <T extends React.ElementType>({ children, className, ...props }: React.ComponentProps<T>) => {
     const validChild = Array.isArray(children) ? children.find((c) => isValidElement(c)) : isValidElement(children) ? children : null;
 
     if (validChild) {

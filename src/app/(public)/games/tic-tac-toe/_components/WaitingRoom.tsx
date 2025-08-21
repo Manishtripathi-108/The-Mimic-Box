@@ -22,13 +22,13 @@ const WaitingRoom = () => {
 
     // Reusable Player Block Component
     const PlayerBlock = ({ playerName, Symbol }: { playerName: string; Symbol: string }) => (
-        <div className="shadow-pressed-md from-secondary to-tertiary w-full max-w-sm shrink-0 rounded-2xl border bg-linear-150 from-15% to-85% p-3 text-center">
+        <div className="shadow-pressed-md bg-gradient-secondary-to-tertiary w-full max-w-sm shrink-0 rounded-2xl border p-3 text-center">
             <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
                 // transition={{ type: 'spring', stiffness: 100 }}
-                className="shadow-floating-md from-secondary to-tertiary rounded-xl bg-linear-150 from-15% to-85% p-6">
+                className="shadow-floating-md bg-gradient-secondary-to-tertiary rounded-xl p-6">
                 <div
                     className={`shadow-pressed-md mx-auto flex size-20 items-center justify-center rounded-full border border-inherit p-4 text-6xl md:size-44 md:text-8xl ${
                         playerName ? 'text-highlight' : 'text-text-secondary animate-blob'

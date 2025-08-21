@@ -4,7 +4,7 @@ const Loading = () => {
             <div className="bg-secondary relative h-60 w-full" />
 
             <div className="mx-auto -mt-32 max-w-6xl px-4 sm:px-8">
-                <div className="from-secondary to-tertiary shadow-floating-md relative z-10 rounded-xl bg-linear-150 from-15% to-85% p-6 sm:p-10">
+                <div className="shadow-floating-md bg-gradient-secondary-to-tertiary relative z-10 rounded-xl p-6 sm:p-10">
                     <div className="flex flex-col items-center gap-6 sm:flex-row">
                         <div className="bg-primary aspect-[5/7] w-52 rounded-md" />
                         <div className="space-y-2">

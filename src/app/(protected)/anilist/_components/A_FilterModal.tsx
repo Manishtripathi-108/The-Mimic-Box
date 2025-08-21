@@ -4,10 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
-import Checkbox from '@/components/ui/Checkbox';
-import Input from '@/components/ui/Input';
+import FormCheckboxGroup from '@/components/ui/FormCheckboxGroup';
+import FormInput from '@/components/ui/FormInput';
+import FormSelect from '@/components/ui/FormSelect';
 import Modal, { closeModal } from '@/components/ui/Modals';
-import Select from '@/components/ui/Select';
 import TabSwitcher from '@/components/ui/TabSwitcher';
 import { ANILIST_GENRES } from '@/constants/client.constants';
 import {
@@ -45,7 +45,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
         <Modal modalId="modal-anilist-filters">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg bg-inherit p-6 shadow-lg">
                 {/* Search */}
-                <Input
+                <FormInput
                     name="search"
                     label="Search"
                     type="text"
@@ -74,7 +74,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 </div>
 
                 {/* Genres */}
-                <Checkbox
+                <FormCheckboxGroup
                     options={ANILIST_GENRES}
                     label="Genres:"
                     classNames={{ container: 'mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3', label: ' text-text-primary font-alegreya text-base' }}
@@ -104,7 +104,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 {/* Sort & Year */}
                 <div className="flex gap-4">
                     {/* Sort By */}
-                    <Select
+                    <FormSelect
                         control={control}
                         name="sort"
                         label="Sort By:"
@@ -113,7 +113,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                     />
 
                     {/* Season */}
-                    <Select
+                    <FormSelect
                         control={control}
                         label="Season:"
                         name="season"
@@ -122,7 +122,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                     />
 
                     {/* Year */}
-                    <Input
+                    <FormInput
                         label="Year"
                         name="year"
                         type="number"

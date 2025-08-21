@@ -72,7 +72,7 @@ export const viewport: Viewport = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <html lang="en" suppressHydrationWarning className="scroll-smooth">
+        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className="scroll-smooth">
             <head>
                 {/* <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" async /> */}
                 <meta name="google-site-verification" content="D12BQGTOqvlZdSNhlyOAbpAjZNHzdS7LPaJCn8ucgpg" />
@@ -88,10 +88,10 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                         <Toaster
                             toastOptions={{
                                 success: {
-                                    icon: <Icon icon="success" className="size-6 shrink-0 text-green-500" />,
+                                    icon: <Icon icon="success" className="text-success size-6 shrink-0" />,
                                 },
                                 error: {
-                                    icon: <Icon icon="error" className="size-7 shrink-0 text-red-500" />,
+                                    icon: <Icon icon="error" className="text-danger size-7 shrink-0" />,
                                 },
                                 loading: {
                                     icon: <Icon icon="loading" className="text-highlight size-5 shrink-0" />,

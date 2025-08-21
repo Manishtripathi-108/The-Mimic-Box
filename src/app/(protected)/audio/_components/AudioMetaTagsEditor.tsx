@@ -13,9 +13,9 @@ import SearchLyrics from '@/app/(protected)/audio/_components/SearchLyrics';
 import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import Input from '@/components/ui/Input';
+import FormInput from '@/components/ui/FormInput';
+import FromTextarea from '@/components/ui/FromTextarea';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
-import Textarea from '@/components/ui/Textarea';
 import { META_TAGS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -148,7 +148,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                     {tagsToRender.map(([key, config]) =>
                         config.type === 'textarea' ? (
                             <div key={key} className={`relative ${config.className} flex w-full items-center justify-center`}>
-                                <Textarea
+                                <FromTextarea
                                     label={key}
                                     control={control}
                                     name={key as keyof T_AudioMetaTags}
@@ -166,7 +166,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                                 />
                             </div>
                         ) : (
-                            <Input
+                            <FormInput
                                 key={key}
                                 label={key.replace('_', ' ')}
                                 control={control}
