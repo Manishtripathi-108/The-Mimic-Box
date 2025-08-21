@@ -19,7 +19,7 @@ type Props = {
     context?: T_AudioSourceContext;
     downloadCurrent?: boolean;
     onClose: () => void;
-} & React.HTMLAttributes<HTMLDivElement>;
+} & React.ComponentProps<'div'>;
 
 const MusicDownloadPopover = ({ className, context, downloadCurrent = false, onClose, ...props }: Props) => {
     const { currentTrack, playbackContext, queue } = useAudioPlayerContext();

@@ -13,8 +13,7 @@ type NoDataCardProps = {
 
 export const NoDataCard = ({ message = 'Nothing to show here yet.', children, className }: NoDataCardProps) => {
     return (
-        <section
-            className={cn('shadow-floating-xs from-secondary to-tertiary gap-5 rounded-xl bg-linear-150 from-15% to-85% p-6 text-center', className)}>
+        <section className={cn('shadow-floating-xs bg-gradient-secondary-to-tertiary gap-6 rounded-xl p-6 text-center', className)}>
             <Image src={IMAGE_FALLBACKS.NO_DATA} alt="No data available" className="mx-auto" width={250} height={250} />
             <h2 className="text-text-primary font-alegreya text-xl font-semibold tracking-wide">{message}</h2>
 

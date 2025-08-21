@@ -1,6 +1,6 @@
 const MusicTrackCardSkeleton = () => {
     return (
-        <div className="from-secondary to-tertiary shadow-floating-xs @container flex w-full items-center justify-between gap-4 rounded-2xl bg-linear-150 from-15% to-85% p-3 pr-5 *:animate-pulse">
+        <div className="shadow-floating-xs bg-gradient-secondary-to-tertiary @container flex w-full items-center justify-between gap-4 rounded-2xl p-3 pr-5 *:animate-pulse">
             <div className="flex w-full items-center gap-3">
                 <div className="bg-primary size-7 shrink-0 rounded-full" />
 

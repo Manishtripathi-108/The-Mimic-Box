@@ -2,9 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import DuplicateTrackRemover from '@/app/(protected)/tune-sync/remove-duplicates/_components/DuplicateTrackRemover';
 import ErrorCard from '@/components/layout/ErrorCard';
+import { NoDataCard } from '@/components/layout/NoDataCard';
 import AnimatedCircularProgressBar, { AnimatedCircularProgressBarHandle } from '@/components/ui/AnimatedCircularProgressBar';
+import { Button } from '@/components/ui/Button';
 import useTrackDuplicates from '@/hooks/useTrackDuplicates';
 import { T_TrackBase } from '@/lib/types/common.types';
 
@@ -16,6 +20,7 @@ type Props = {
 const DuplicateTracks = ({ tracks, playlistId }: Props) => {
     const ref = useRef<AnimatedCircularProgressBarHandle>(null);
     const { runDuplicateCheck, isProcessing, duplicates, duplicateCount, error } = useTrackDuplicates({ ref });
+    const router = useRouter();
 
     useEffect(() => {
         if (tracks.length > 0) runDuplicateCheck(tracks);
@@ -26,7 +31,7 @@ const DuplicateTracks = ({ tracks, playlistId }: Props) => {
     }
 
     return (
-        <main className="p-6">
+        <main className="min-h-calc-full-height p-6">
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Duplicate Tracks</h1>
 
             {isProcessing ? (
@@ -36,7 +41,9 @@ const DuplicateTracks = ({ tracks, playlistId }: Props) => {
                     <p className="text-text-secondary mt-2 text-sm">{duplicateCount} duplicates found.</p>
                 </div>
             ) : !duplicates || duplicates.length === 0 ? (
-                <div className="text-text-secondary mt-8 text-center text-lg">No duplicate tracks found.</div>
+                <NoDataCard message="No duplicate tracks found." className="mx-auto w-full max-w-md">
+                    <Button onClick={() => router.back()}>Go Back</Button>
+                </NoDataCard>
             ) : (
                 <DuplicateTrackRemover duplicates={duplicates} source="spotify" playlistId={playlistId} />
             )}

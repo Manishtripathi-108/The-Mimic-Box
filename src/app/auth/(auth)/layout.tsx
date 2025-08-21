@@ -32,7 +32,7 @@ const AuthLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <section className="bg-primary h-calc-full-height flex items-center justify-center px-4">
-            <div className="shadow-floating-sm from-secondary to-tertiary w-full max-w-md rounded-2xl bg-linear-150 from-15% to-85% p-6">
+            <div className="shadow-floating-sm bg-gradient-secondary-to-tertiary w-full max-w-md rounded-2xl p-6">
                 <Suspense fallback={<Icon icon="loading" className="size-20" />}>{children}</Suspense>
 
                 {/* Divider */}

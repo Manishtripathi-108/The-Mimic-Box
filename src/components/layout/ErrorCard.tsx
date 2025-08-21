@@ -20,7 +20,7 @@ const ErrorCard = ({
 
     return (
         <div className="bg-primary h-calc-full-height grid place-items-center rounded-lg p-2 text-center sm:p-6">
-            <div className="to-tertiary shadow-floating-xs from-secondary flex w-full max-w-md flex-col items-center justify-start rounded-2xl bg-linear-150 p-4">
+            <div className="shadow-floating-xs bg-gradient-secondary-to-tertiary flex w-full max-w-md flex-col items-center justify-start rounded-2xl p-4">
                 <div className="flex w-full items-start justify-end gap-1.5">
                     <div className="size-2 rounded-full bg-white hover:bg-gray-200"></div>
                     <div className="size-2 rounded-full bg-white opacity-50"></div>

@@ -45,6 +45,7 @@ export type T_DuplicateEntry = T_TrackBase & {
 };
 
 export type T_DuplicateTrack = T_TrackBase & {
+    isSameId: boolean;
     duplicates: T_DuplicateEntry[];
 };
 
@@ -53,6 +54,7 @@ export type T_RemoveDuplicatesSource = 'spotify' | 'saavn';
 export type T_TrackToRemove = {
     uri: string;
     positions: number[];
+    isSameId?: boolean;
 };
 
 export type T_SpotifyRemove = {

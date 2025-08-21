@@ -18,14 +18,14 @@ const withSpotifyAuth = async <T>(callback: (accessToken: string) => Promise<T>)
     return callback(accessToken);
 };
 
-/* --------------------------- User --------------------------- */
+/* ---------------------------------- User ---------------------------------- */
 export const spotifyGetUserPlaylists = async () => withSpotifyAuth((token) => spotifyServices.playlists.getMyPlaylists(token));
 
 export const spotifyGetUserTopArtists = async (limit = 50) => withSpotifyAuth((token) => spotifyServices.users.getTopArtists(token, limit));
 
 export const spotifyGetUserTopTracks = async (limit = 50) => withSpotifyAuth((token) => spotifyServices.users.getTopTracks(token, limit));
 
-/* -------------------------- Player -------------------------- */
+/* --------------------------------- Player --------------------------------- */
 export const spotifyGetRecentTracks = async (limit = 50) => withSpotifyAuth((token) => spotifyServices.player.getRecentTracks(token, limit));
 
 export const spotifyGetRecentPlaylists = async () =>
@@ -44,22 +44,28 @@ export const spotifyGetRecentPlaylists = async () =>
         return createSuccess('Recently played playlists fetched!', playlists.filter(Boolean));
     });
 
-/* -------------------------- Playlist -------------------------- */
+/* -------------------------------- Playlist -------------------------------- */
 export const spotifyGetPlaylist = async (playlistId: string) =>
     withSpotifyAuth(async (token) => {
         const res = await spotifyServices.playlists.getPlaylist(token, playlistId);
         return res.success ? createSuccess('Playlist fetched!', res.payload) : res;
     });
 
-/* -------------------------- Album -------------------------- */
+export const spotifyAddToPlaylist = async (playlistId: string, tracks: { uris: string[]; position?: number }) =>
+    withSpotifyAuth(async (token) => {
+        const res = await spotifyServices.playlists.addItems(token, playlistId, tracks);
+        return res.success ? createSuccess('Tracks added to playlist!', res.payload) : res;
+    });
+
+/* ---------------------------------- Album --------------------------------- */
 export const spotifyGetAlbum = async (albumId: string) => withSpotifyAuth((token) => spotifyServices.albums.getAlbum(token, albumId));
 
-/* -------------------------- Track -------------------------- */
+/* ---------------------------------- Track --------------------------------- */
 export const spotifyGetTrack = async (trackId: string) => withSpotifyAuth((token) => spotifyServices.tracks.getTrack(token, trackId));
 
 export const spotifyGetTracks = async (ids: string[]) => withSpotifyAuth((token) => spotifyServices.tracks.getTracks(token, ids));
 
-/* -------------------------- Artist -------------------------- */
+/* --------------------------------- Artist --------------------------------- */
 export const spotifyGetArtist = async (artistId: string) => withSpotifyAuth((token) => spotifyServices.artists.getArtist(token, artistId));
 
 export const spotifyGetArtistTopTracks = async (artistId: string) =>
@@ -68,14 +74,14 @@ export const spotifyGetArtistTopTracks = async (artistId: string) =>
 export const spotifyGetArtistAlbums = async (artistId: string, limit = 10) =>
     withSpotifyAuth((token) => spotifyServices.artists.getArtistAlbums(token, artistId, limit));
 
-/* ---------------------- Generic Fetch ----------------------- */
+/* ------------------------------ Generic Fetch ----------------------------- */
 export const spotifyGetByUrl = async <T>(url: string) =>
     withSpotifyAuth(async (token) => {
         const [error, res] = await spotifyServices.fetchSpotifyData<T>({ token, url });
         return error ? createError('Failed to fetch Spotify data', { error }) : createSuccess('Data fetched!', res);
     });
 
-/* ------------------ Paginated Fetching --------------------- */
+/* --------------------------- Paginated Fetching --------------------------- */
 export const spotifyGetPaginatedItems = async <T>(token: string, initialPage: T_SpotifyPaging<T>): Promise<T[]> => {
     const items: T[] = [...initialPage.items];
     let nextUrl: string | null = initialPage.next;
@@ -90,7 +96,7 @@ export const spotifyGetPaginatedItems = async <T>(token: string, initialPage: T_
     return items;
 };
 
-/* ----------------- Tracks from Any Entity ------------------ */
+/* ------------------------- Tracks from Any Entity ------------------------- */
 export const spotifyGetEntityTracks = async (id: string, type: 'album' | 'playlist' | 'track' | 'artist') => {
     const token = await auth().then((session) => session?.user?.linkedAccounts?.spotify?.accessToken);
 

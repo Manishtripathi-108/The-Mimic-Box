@@ -46,7 +46,7 @@ const Checkbox = ({
     size = 'md',
     color = 'primary',
     ...props
-}: CheckboxProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'className'>) => {
+}: CheckboxProps & Omit<React.ComponentProps<'input'>, 'size' | 'className'>) => {
     const checkboxId = useId();
 
     return (
@@ -82,7 +82,7 @@ const Checkbox = ({
             {children && (
                 <span
                     className={cn(
-                        'peer-checked:text-highlight group-hover:text-highlight peer-focus:text-highlight text-text-secondary transition-[transform,colors]',
+                        'peer-checked:text-highlight group-hover:text-highlight peer-focus:text-highlight text-text-secondary transition-[transform,colors] duration-500',
                         position === 'left'
                             ? 'group-hover:-translate-x-1 peer-checked:-translate-x-1 peer-focus:-translate-x-1'
                             : 'group-hover:translate-x-1 peer-checked:translate-x-1 peer-focus:translate-x-1'

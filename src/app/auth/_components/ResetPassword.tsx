@@ -49,7 +49,7 @@ const ResetPasswordForm = () => {
 
     return (
         <main className="bg-primary h-calc-full-height flex items-center justify-center">
-            <article className="shadow-floating-sm from-secondary to-tertiary w-full max-w-md overflow-hidden rounded-2xl bg-linear-150 from-15% to-85%">
+            <article className="shadow-floating-sm bg-gradient-secondary-to-tertiary w-full max-w-md overflow-hidden rounded-2xl">
                 <header className="shadow-raised-xs text-highlight flex items-center justify-center gap-2 border-b p-4">
                     <div className="shadow-floating-xs flex size-12 items-center justify-center rounded-full border">
                         <Icon icon="appLogo" className="size-6" />

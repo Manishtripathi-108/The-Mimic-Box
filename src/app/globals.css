@@ -32,6 +32,7 @@
     --lower-shadow: #0000003a;
     --upper-shadow: #ffffffea;
 
+    --background-image-gradient-secondary-to-tertiary: linear-gradient(150deg, var(--color-theme-secondary) 15%, var(--color-theme-tertiary) 85%);
     /* -------------------------------------------------------------------------- */
     /*                                   Shadows                                  */
     /* -------------------------------------------------------------------------- */

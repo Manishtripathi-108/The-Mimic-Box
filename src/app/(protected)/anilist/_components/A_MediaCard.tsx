@@ -26,7 +26,7 @@ const A_MediaCard = ({
     return (
         <section
             className={cn(
-                'shadow-floating-xs from-secondary text-text-secondary to-tertiary relative w-full overflow-hidden bg-linear-150 from-15% to-85% transition-all duration-300',
+                'shadow-floating-xs text-text-secondary bg-gradient-secondary-to-tertiary relative w-full overflow-hidden transition-all duration-300',
                 detailed ? 'grid grid-cols-10 rounded-2xl' : 'aspect-[5/7] rounded-md'
             )}
             aria-labelledby={`media-title-${media.id}`}>

@@ -41,7 +41,7 @@ const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel:
     const isCancelable = ['pending', 'processing', 'downloading'].includes(file.status);
 
     return (
-        <div className="from-secondary to-tertiary shadow-floating-xs relative w-full rounded-xl bg-linear-150 p-3">
+        <div className="shadow-floating-xs bg-gradient-secondary-to-tertiary relative w-full rounded-xl p-3">
             <div className="flex items-center justify-between">
                 {/* Title and Progress */}
                 <div className="min-w-0 flex-1">

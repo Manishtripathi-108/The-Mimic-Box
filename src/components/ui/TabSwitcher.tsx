@@ -42,10 +42,7 @@ const TabSwitcher = <T extends string>({
         <nav
             role="tablist"
             aria-label="Navigation Tabs"
-            className={cn(
-                'from-secondary to-tertiary shadow-floating-xs relative flex w-fit flex-wrap gap-1 rounded-xl bg-linear-150 from-15% to-85% p-1',
-                className
-            )}>
+            className={cn('shadow-floating-xs bg-gradient-secondary-to-tertiary relative flex w-fit flex-wrap gap-1 rounded-xl p-1', className)}>
             {tabs.map((tab, index) => (
                 <button
                     key={index}

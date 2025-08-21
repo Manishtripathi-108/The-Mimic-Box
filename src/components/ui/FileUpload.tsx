@@ -39,8 +39,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
     return (
         <>
-            <div
-                className={cn('from-secondary to-tertiary shadow-floating-sm mt-10 rounded-2xl bg-linear-150 from-15% to-85% p-2 sm:p-6', className)}>
+            <div className={cn('bg-gradient-secondary-to-tertiary shadow-floating-sm mt-10 rounded-2xl p-2 sm:p-6', className)}>
                 <div
                     className={cn(
                         'border-highlight flex cursor-pointer flex-col items-center space-y-4 rounded-lg border-2 border-dashed p-6',

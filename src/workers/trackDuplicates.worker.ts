@@ -49,9 +49,11 @@ async function* identifyDuplicates(tracks: T_TrackBase[]) {
             const duplicateEntry = { ...track, reason };
 
             if (duplicateMap.has(key)) {
-                duplicateMap.get(key)!.duplicates.push(duplicateEntry);
+                const entry = duplicateMap.get(key)!;
+                entry.duplicates.push(duplicateEntry);
+                entry.isSameId ||= duplicateEntry.reason === 'same-id';
             } else {
-                duplicateMap.set(key, { ...original, duplicates: [duplicateEntry] });
+                duplicateMap.set(key, { ...original, duplicates: [duplicateEntry], isSameId: duplicateEntry.reason === 'same-id' });
             }
         } else {
             seenIds.add(track.id);
