@@ -27,7 +27,7 @@ const DuplicateTracks = ({ tracks, playlistId }: Props) => {
     }, [tracks, runDuplicateCheck]);
 
     if (error) {
-        <ErrorCard message={error} />;
+        return <ErrorCard message={error} />;
     }
 
     return (

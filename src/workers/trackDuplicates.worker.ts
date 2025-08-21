@@ -1,5 +1,3 @@
-'use client';
-
 import { exposeWorker } from 'react-hooks-worker';
 import stringSimilarity from 'string-similarity';
 
