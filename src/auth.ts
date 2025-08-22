@@ -45,7 +45,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 for (const [provider, account] of Object.entries(token.linkedAccounts)) {
                     if (!account) continue;
 
-                    if (account.expiresAt < Date.now()) {
+                    if (account.expiresAt.getTime() < Date.now()) {
                         const tokens = await refreshToken(token.sub!, account.refreshToken, provider as LinkedAccountProvider);
 
                         if (tokens.success) {
