@@ -44,7 +44,7 @@ next-env.d.ts
 .vscode
 
 # prisma generated files
-src/generated/prisma-client
+/src/lib/generated/prisma
 
 # storage folder
 /storage

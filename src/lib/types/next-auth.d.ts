@@ -11,7 +11,7 @@ export interface LinkedAccount {
     tokenType: string;
     accessToken: string;
     refreshToken: string;
-    expiresAt: number;
+    expiresAt: Date;
 }
 
 // Extend NextAuth types to support only the allowed linked account providers

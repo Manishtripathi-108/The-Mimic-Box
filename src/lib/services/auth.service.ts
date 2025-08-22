@@ -58,7 +58,7 @@ export const getLinkedAccounts = async (userId: string | undefined) => {
             tokenType: account.token_type ?? 'Bearer',
             accessToken: account.access_token ?? '',
             refreshToken: account.refresh_token ?? '',
-            expiresAt: account.expires_at ?? 0,
+            expiresAt: account.expires_at ?? new Date(0),
         };
         return map;
     }, {});
