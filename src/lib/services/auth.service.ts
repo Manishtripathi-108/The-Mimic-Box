@@ -1,8 +1,8 @@
+import { $Enums } from '@prisma/client';
 import { v4 as uuidV4 } from 'uuid';
 
 import { TOKEN_EXPIRY_MS } from '@/constants/server.constants';
 import { db } from '@/lib/db';
-import { $Enums } from '@/lib/generated/prisma';
 import { LinkedAccount } from '@/lib/types/next-auth';
 
 // Generate Verification Token

@@ -4,13 +4,13 @@ import React, { useCallback, useTransition } from 'react';
 
 import { usePathname } from 'next/navigation';
 
+import { LinkedAccountProvider } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { removeLinkedAccount } from '@/actions/linkedAccount.actions';
 import API_ROUTES from '@/constants/routes/api.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
-import { LinkedAccountProvider } from '@/lib/generated/prisma';
 import cn from '@/lib/utils/cn';
 
 export const ConnectAccount = ({

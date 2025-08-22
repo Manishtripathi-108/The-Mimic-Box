@@ -1,8 +1,8 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { LinkedAccountProvider } from '@prisma/client';
 import NextAuth from 'next-auth';
 
 import { refreshToken } from '@/actions/linkedAccount.actions';
-import { LinkedAccountProvider } from '@/lib/generated/prisma';
 import { getLinkedAccounts } from '@/lib/services/auth.service';
 
 import authConfig from './auth.config';

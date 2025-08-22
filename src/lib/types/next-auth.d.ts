@@ -1,7 +1,6 @@
+import { LinkedAccountProvider } from '@prisma/client';
 import 'next-auth';
 import 'next-auth/jwt';
-
-import { LinkedAccountProvider } from '@/lib/generated/prisma';
 
 export interface LinkedAccount {
     id: string;

@@ -1,4 +1,5 @@
-import { LinkedAccountProvider } from '@/lib/generated/prisma';
+import { LinkedAccountProvider } from '@prisma/client';
+
 import { AnilistSearchCategories } from '@/lib/types/anilist.types';
 import { T_ErrorCode } from '@/lib/types/response.types';
 

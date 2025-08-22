@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { LinkedAccountProvider } from '@/lib/generated/prisma';
+import { LinkedAccountProvider } from '@prisma/client';
 
 import ErrorCard from '@/components/layout/ErrorCard';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';

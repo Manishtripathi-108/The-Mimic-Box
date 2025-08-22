@@ -1,7 +1,8 @@
+import { $Enums } from '@prisma/client';
+
 import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
-import { $Enums } from '@/lib/generated/prisma';
 
 const AccountLinkCTA = ({ account, callBackUrl, message }: { account: $Enums.LinkedAccountProvider; callBackUrl?: string; message?: string }) => {
     message = message || `Link your ${account.toLowerCase()} account to view and manage your collection.`;
