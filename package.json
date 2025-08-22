@@ -12,7 +12,7 @@
         "postinstall": "prisma generate && prisma migrate deploy",
         "db:generate": "prisma generate",
         "db:studio": "prisma studio",
-        "db:mig:dev": "prisma migrate dev --name init",
+        "db:mig:dev": "prisma migrate dev --name",
         "db:mig:deploy": "prisma migrate deploy",
         "db:mig:reset": "prisma migrate reset",
         "db:push": "prisma db push",

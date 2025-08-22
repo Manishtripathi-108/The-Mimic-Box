@@ -1,8 +1,8 @@
-import { $Enums } from '@prisma/client';
 import { v4 as uuidV4 } from 'uuid';
 
 import { TOKEN_EXPIRY_MS } from '@/constants/server.constants';
 import { db } from '@/lib/db';
+import { $Enums } from '@/lib/generated/prisma';
 import { LinkedAccount } from '@/lib/types/next-auth';
 
 // Generate Verification Token
@@ -58,7 +58,7 @@ export const getLinkedAccounts = async (userId: string | undefined) => {
             tokenType: account.token_type ?? 'Bearer',
             accessToken: account.access_token ?? '',
             refreshToken: account.refresh_token ?? '',
-            expiresAt: account.expires_at ?? 0,
+            expiresAt: account.expires_at ?? new Date(0),
         };
         return map;
     }, {});

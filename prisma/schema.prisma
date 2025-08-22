@@ -91,7 +91,7 @@ model LinkedAccount {
   providerAccountId String
   refresh_token     String
   access_token      String
-  expires_at        Int
+  expires_at        DateTime
   token_type        String? // bearer
   scope             String?
   displayName       String?

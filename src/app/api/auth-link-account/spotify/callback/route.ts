@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
         token_type: tokens.token_type,
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
-        expires_at: Date.now() + tokens.expires_in * 1000,
+        expires_at: new Date(Date.now() + tokens.expires_in * 1000),
     };
 
     const [dbErr] = await safeAwait(

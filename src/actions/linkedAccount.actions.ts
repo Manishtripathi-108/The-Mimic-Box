@@ -1,12 +1,12 @@
 'use server';
 
-import { LinkedAccountProvider } from '@prisma/client';
 import axios from 'axios';
 
 import { auth } from '@/auth';
 import ANILIST_ROUTES from '@/constants/external-routes/anilist.routes';
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import { db } from '@/lib/db';
+import { LinkedAccountProvider } from '@/lib/generated/prisma';
 import { T_ErrorResponseOutput, T_RateLimitInfo, T_SuccessResponseOutput } from '@/lib/types/response.types';
 import { createAniListError, createError, createSuccess, createUnauthorized } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
@@ -37,7 +37,7 @@ export const refreshToken = async (
     | T_SuccessResponseOutput<{
           accessToken: string;
           refreshToken: string;
-          expiresAt: number;
+          expiresAt: Date;
       }>
 > => {
     // If there is no refresh token, return an unauthorized error.
@@ -49,7 +49,7 @@ export const refreshToken = async (
             where: { userId_provider: { userId, provider } },
         });
 
-        if (dbProvider && dbProvider.expires_at > Date.now()) {
+        if (dbProvider && dbProvider.expires_at.getTime() > Date.now()) {
             // If the token is valid, return the token data.
             return createSuccess('Token is still valid', {
                 accessToken: dbProvider.access_token,
@@ -79,7 +79,7 @@ export const refreshToken = async (
         }
 
         const updatedRefreshToken = newRefreshToken || refreshToken;
-        const expiresAt = Math.floor(Date.now()) + expires_in * (provider === 'anilist' ? 1 : 1000);
+        const expiresAt: Date = new Date(Date.now() + expires_in * (provider === 'anilist' ? 1 : 1000));
 
         // Update the token in the database.
         await safeAwait(
