@@ -1,9 +1,10 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/lib/generated/prisma"
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -14,7 +15,7 @@ enum LinkedAccountProvider {
 }
 
 model User {
-  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  id             String          @id @default(cuid())
   name           String?
   email          String?         @unique
   emailVerified  DateTime?
@@ -29,17 +30,17 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
+  id                String  @id @default(cuid())
+  userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.String
+  id_token          String?
   session_state     String?
 
   createdAt DateTime @default(now())
@@ -51,13 +52,13 @@ model Account {
 }
 
 model LinkedAccount {
-  id                String                @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String                @db.ObjectId
+  id                String                @id @default(cuid())
+  userId            String
   type              String // oauth, oidc
   provider          LinkedAccountProvider
   providerAccountId String
-  refresh_token     String                @db.String
-  access_token      String                @db.String
+  refresh_token     String
+  access_token      String
   expires_at        Int
   token_type        String? // bearer
   scope             String?
@@ -75,9 +76,9 @@ model LinkedAccount {
 }
 
 model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       String   @db.ObjectId
+  userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -86,21 +87,21 @@ model Session {
 }
 
 model VerificationToken {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  id      String   @id @default(cuid())
   email   String   @unique
   token   String   @unique
   expires DateTime
 }
 
 model ForgotPasswordToken {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  id      String   @id @default(cuid())
   email   String   @unique
   token   String   @unique
   expires DateTime
 }
 
-model changeEmailToken {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+model ChangeEmailToken {
+  id           String   @id @default(cuid())
   currentEmail String   @unique
   newEmail     String   @unique
   token        String   @unique
