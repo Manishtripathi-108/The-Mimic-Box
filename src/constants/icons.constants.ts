@@ -115,7 +115,7 @@ enum IconSet {
     repeatOne = 'solar:repeat-one-bold',
 
     /* ------------------------------------ S ----------------------------------- */
-    saavn = 'custom:jioSaavn',
+    jiosaavn = 'custom:jioSaavn',
     script = 'proicons:script',
     shuffle = 'fluent:arrow-shuffle-32-regular',
     shuffleOff = 'fluent:arrow-shuffle-off-32-regular',

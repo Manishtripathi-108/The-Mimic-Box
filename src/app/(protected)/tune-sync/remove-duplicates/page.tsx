@@ -20,7 +20,7 @@ const platforms: {
     },
     {
         name: 'JioSaavn',
-        icon: 'saavn',
+        icon: 'jiosaavn',
         route: APP_ROUTES.TUNE_SYNC.REMOVE_DUPLICATES.SAAVN,
         color: 'text-blue-500',
     },

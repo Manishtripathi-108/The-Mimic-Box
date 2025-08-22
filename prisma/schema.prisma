@@ -12,10 +12,10 @@ datasource db {
 enum LinkedAccountProvider {
   spotify
   jiosaavn
-  youtube_music
-  amazon_music
-  itunes
-  apple_music
+  // youtube_music
+  // amazon_music
+  // itunes
+  // apple_music
   anilist
   myanimelist
 }
