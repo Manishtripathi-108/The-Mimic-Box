@@ -21,7 +21,7 @@ const ForgotPasswordForm = () => {
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof forgotPasswordSchema>>({ resolver: zodResolver(forgotPasswordSchema), defaultValues: { email: '' } });
+    } = useForm({ resolver: zodResolver(forgotPasswordSchema), defaultValues: { email: '' } });
 
     async function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
         const response = await forgotPasswordAction(data);

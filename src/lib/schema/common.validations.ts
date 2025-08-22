@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { MAX_FILE_SIZE } from '@/constants/common.constants';
 import { formatFileSize } from '@/lib/utils/file.utils';
 
-export const emailValidation = z.email().toLowerCase();
+export const emailValidation = z.email('Email is invalid').toLowerCase();
 
 export const passwordValidation = z
     .string()

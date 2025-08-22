@@ -37,7 +37,7 @@ export const refreshToken = async (
     | T_SuccessResponseOutput<{
           accessToken: string;
           refreshToken: string;
-          expiresAt: number;
+          expiresAt: Date;
       }>
 > => {
     // If there is no refresh token, return an unauthorized error.
@@ -49,7 +49,7 @@ export const refreshToken = async (
             where: { userId_provider: { userId, provider } },
         });
 
-        if (dbProvider && dbProvider.expires_at > Date.now()) {
+        if (dbProvider && dbProvider.expires_at.getTime() > Date.now()) {
             // If the token is valid, return the token data.
             return createSuccess('Token is still valid', {
                 accessToken: dbProvider.access_token,
@@ -79,7 +79,7 @@ export const refreshToken = async (
         }
 
         const updatedRefreshToken = newRefreshToken || refreshToken;
-        const expiresAt = Math.floor(Date.now()) + expires_in * (provider === 'anilist' ? 1 : 1000);
+        const expiresAt: Date = new Date(Date.now() + expires_in * (provider === 'anilist' ? 1 : 1000));
 
         // Update the token in the database.
         await safeAwait(
