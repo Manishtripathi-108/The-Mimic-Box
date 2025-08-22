@@ -10,9 +10,14 @@
         "lint": "next lint",
         "format": "prettier --write .",
         "postinstall": "prisma generate && prisma migrate deploy",
-        "migrate:dev": "prisma migrate dev --name init",
-        "migrate:deploy": "prisma migrate deploy",
-        "studio": "prisma studio"
+        "db:generate": "prisma generate",
+        "db:studio": "prisma studio",
+        "db:mig:dev": "prisma migrate dev --name init",
+        "db:mig:deploy": "prisma migrate deploy",
+        "db:mig:reset": "prisma migrate reset",
+        "db:push": "prisma db push",
+        "db:pull": "prisma db pull",
+        "db:seed": "prisma db seed"
     },
     "dependencies": {
         "@auth/prisma-adapter": "^2.10.0",

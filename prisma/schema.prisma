@@ -8,12 +8,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ------------------------------ ENUMS ----------------------------------
 enum LinkedAccountProvider {
   spotify
+  jiosaavn
+  youtube_music
+  amazon_music
+  itunes
+  apple_music
   anilist
   myanimelist
 }
 
+enum PlaylistVisibility {
+  public
+  private
+  unlisted
+}
+
+enum TrackQuality {
+  low // 96kbps
+  medium // 128kbps
+  high // 320kbps
+}
+
+enum AlbumType {
+  album
+  single
+  ep
+  compilation
+}
+
+// ----------------------------- USER MANAGEMENT ----------------------------
 model User {
   id             String          @id @default(cuid())
   name           String?
@@ -24,6 +50,12 @@ model User {
   accounts       Account[]
   linkedAccounts LinkedAccount[]
   sessions       Session[]
+
+  // Music-related relations
+  playlists       Playlist[]
+  likedTracks     UserLikedTrack[]
+  followedArtists UserFollowedArtist[]
+  followedAlbums  UserFollowedAlbum[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -106,4 +138,262 @@ model ChangeEmailToken {
   newEmail     String   @unique
   token        String   @unique
   expires      DateTime
+}
+
+// --------------------------- MUSIC CORE ENTITIES --------------------------
+model Image {
+  id String @id @default(cuid())
+
+  sm String @default("https://res.cloudinary.com/dra73suxl/image/upload/w_50,h_50,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png")
+  md String @default("https://res.cloudinary.com/dra73suxl/image/upload/w_150,h_150,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png")
+  lg String @default("https://res.cloudinary.com/dra73suxl/image/upload/w_500,h_500,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png")
+
+  // Relations
+  artist   Artist?
+  album    Album?
+  track    Track?
+  playlist Playlist?
+}
+
+model Artist {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  popularity  Int     @default(0)
+
+  // Provider-specific IDs
+  spotifyId  String? @unique
+  jiosaavnId String? @unique
+  itunesId   String? @unique
+  youtubeId  String? @unique
+
+  genres    ArtistGenre[]
+  albums    Album[]
+  tracks    Track[]
+  followers UserFollowedArtist[]
+
+  // Image relation
+  imageId String? @unique
+  image   Image?  @relation(fields: [imageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([popularity])
+}
+
+model Album {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  releaseDate DateTime?
+  albumType   AlbumType @default(album)
+  description String?
+  totalTracks Int       @default(0)
+  popularity  Int       @default(0)
+
+  // Provider-specific IDs
+  spotifyId  String? @unique
+  jiosaavnId String? @unique
+  itunesId   String? @unique
+  youtubeId  String? @unique
+
+  // Relations
+  artistId  String
+  artist    Artist              @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  tracks    Track[]
+  genres    AlbumGenre[]
+  followers UserFollowedAlbum[]
+
+  // Image relation
+  imageId String? @unique
+  image   Image?  @relation(fields: [imageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([title])
+  @@index([releaseDate])
+  @@index([artistId])
+  @@index([popularity])
+}
+
+model Track {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  duration_ms Int?
+  trackNumber Int?
+  discNumber  Int     @default(1)
+  explicit    Boolean @default(false)
+  previewUrl  String?
+  popularity  Int     @default(0)
+  isrc        String? @unique
+
+  // Provider-specific IDs
+  spotifyId  String? @unique
+  jiosaavnId String? @unique
+  itunesId   String? @unique
+  youtubeId  String? @unique
+
+  // Relations
+  artistId String
+  albumId  String?
+  artist   Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  album    Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
+
+  playlistTracks PlaylistTrack[]
+  likedBy        UserLikedTrack[]
+  genres         TrackGenre[]
+
+  // Image relation
+  imageId String? @unique
+  image   Image?  @relation(fields: [imageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([title])
+  @@index([artistId])
+  @@index([albumId])
+  @@index([popularity])
+}
+
+model Playlist {
+  id              String             @id @default(cuid())
+  name            String
+  description     String?
+  visibility      PlaylistVisibility @default(private)
+  collaborative   Boolean            @default(false)
+  totalTracks     Int                @default(0)
+  totalDurationMs Int                @default(0)
+
+  // Provider sync info
+  spotifyId  String? @unique
+  jiosaavnId String? @unique
+
+  // Relations
+  userId String
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tracks PlaylistTrack[]
+
+  // Image relation
+  imageId String? @unique
+  image   Image?  @relation(fields: [imageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([visibility])
+  @@index([name])
+}
+
+model PlaylistTrack {
+  id       String   @id @default(cuid())
+  position Int
+  addedAt  DateTime @default(now())
+
+  playlistId String
+  trackId    String
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, trackId])
+  @@index([playlistId, position])
+}
+
+// ---------------------------- USER INTERACTIONS ---------------------------
+model UserLikedTrack {
+  id      String   @id @default(cuid())
+  userId  String
+  trackId String
+  likedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackId])
+  @@index([userId])
+  @@index([likedAt])
+}
+
+model UserFollowedArtist {
+  id         String   @id @default(cuid())
+  userId     String
+  artistId   String
+  followedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, artistId])
+  @@index([userId])
+  @@index([followedAt])
+}
+
+model UserFollowedAlbum {
+  id         String   @id @default(cuid())
+  userId     String
+  albumId    String
+  followedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, albumId])
+  @@index([userId])
+  @@index([followedAt])
+}
+
+// --------------------------------- GENRES ---------------------------------
+model Genre {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+
+  artists ArtistGenre[]
+  albums  AlbumGenre[]
+  tracks  TrackGenre[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model ArtistGenre {
+  id       String @id @default(cuid())
+  artistId String
+  genreId  String
+
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  genre  Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([artistId, genreId])
+}
+
+model AlbumGenre {
+  id      String @id @default(cuid())
+  albumId String
+  genreId String
+
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([albumId, genreId])
+}
+
+model TrackGenre {
+  id      String @id @default(cuid())
+  trackId String
+  genreId String
+
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([trackId, genreId])
 }

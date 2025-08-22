@@ -74,8 +74,8 @@ export const registerAction = async (data: z.infer<typeof registerSchema>): Acti
         return response.success
             ? createSuccess('Account created! Check your inbox for verification link.')
             : createError('Failed to send verification email.');
-    } catch {
-        return createError('Registration failed. Try again later.');
+    } catch (error){
+        return createError('Registration failed. Try again later.',{error});
     }
 };
 
