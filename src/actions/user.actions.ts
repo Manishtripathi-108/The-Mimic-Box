@@ -6,35 +6,40 @@ import { z } from 'zod';
 
 import { auth } from '@/auth';
 import { generateEmailChangeEmail } from '@/components/emails/AuthEmailTemplate';
-import { TOKEN_EXPIRY_MS } from '@/constants/server.constants';
+import { DAY_MS, EMAIL_CHANGE_COOLDOWN_MS, TOKEN_EXPIRY_MS } from '@/constants/time.constants';
 import { db } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
-import { profileSchema } from '@/lib/schema/user.validations';
+import { changeEmailSchema, profileSchema } from '@/lib/schema/user.validations';
 import { uploadToCloud } from '@/lib/services/cloud-storage.service';
 import { T_ErrorResponseOutput, T_SuccessResponseOutput } from '@/lib/types/response.types';
 import { createError, createForbidden, createSuccess, createUnauthorized, createValidationError } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
+/**
+ * Updates the user's profile (name, email, profile image).
+ * Handles image upload to cloud storage and email change verification.
+ */
 export const editProfileAction = async (
     data: z.infer<typeof profileSchema>
 ): Promise<T_SuccessResponseOutput<{ name: string; image: string | null | undefined; email: string }> | T_ErrorResponseOutput<z.ZodIssue[]>> => {
     const session = await auth();
     if (!session?.user) return createUnauthorized('Unauthorized, please login');
-
     if (session.user.provider !== 'credentials') return createForbidden('Cannot edit profile for social accounts');
 
+    // Validate input data
     const parsed = profileSchema.safeParse(data);
     if (!parsed.success) return createValidationError('Invalid data!', parsed.error.issues);
 
     const { name, email, image } = parsed.data;
     const { id: userId, name: currentName, email: currentEmail, image: currentImage } = session.user;
 
+    // No changes
     if (name === currentName && email === currentEmail && image === undefined) {
         return createError('No changes detected');
     }
 
+    // Handle profile image upload
     let imageUrl = currentImage as string;
-
     if (image) {
         const imageBuffer = await image.arrayBuffer();
         const [error, buffer] = await safeAwait(sharp(imageBuffer).resize(640, 640).toFormat('jpg').toBuffer());
@@ -53,12 +58,14 @@ export const editProfileAction = async (
         imageUrl = uploadResponse.payload?.url || imageUrl;
     }
 
+    // Handle email change if requested
     let emailResponse;
     if (currentEmail && email !== currentEmail) {
         emailResponse = await handleEmailChange(currentEmail, email);
         if (!emailResponse.success) return createError(emailResponse.message);
     }
 
+    // Update user profile in DB
     const [updateError] = await safeAwait(
         db.user.update({
             where: { id: userId },
@@ -72,52 +79,86 @@ export const editProfileAction = async (
 };
 
 /**
- * Handles email change process, ensuring uniqueness and sending verification.
+ * Handles email change request:
+ * - Validates request
+ * - Enforces cooldown (30 days)
+ * - Ensures new email is unique
+ * - Generates verification token
+ * - Sends confirmation email
  */
 export const handleEmailChange = async (currentEmail: string, newEmail: string) => {
-    const [existingEmailError, existingUser] = await safeAwait(db.user.findUnique({ where: { email: newEmail } }));
+    const parsed = changeEmailSchema.safeParse({ currentEmail, newEmail });
+    if (!parsed.success) return createValidationError('Invalid email data!', parsed.error.issues);
 
-    if (existingEmailError) return createError('Failed to check email', { error: existingEmailError });
+    // Find user
+    const [userError, user] = await safeAwait(
+        db.user.findUnique({
+            where: { email: currentEmail },
+            select: { id: true, emailChangedOn: true },
+        })
+    );
+    if (userError) return createError('Failed to check user', { error: userError });
+    if (!user) return createError('User not found');
+
+    // Enforce cooldown
+    if (user.emailChangedOn) {
+        const nextAllowed = user.emailChangedOn.getTime() + EMAIL_CHANGE_COOLDOWN_MS;
+        if (Date.now() < nextAllowed) {
+            const remainingDays = Math.ceil((nextAllowed - Date.now()) / DAY_MS);
+            return createValidationError(`You cannot change your email yet. Please wait ${remainingDays} more day${remainingDays > 1 ? 's' : ''}.`);
+        }
+    }
+
+    // Ensure new email is unique
+    const [existingError, existingUser] = await safeAwait(db.user.findUnique({ where: { email: newEmail } }));
+    if (existingError) return createError('Failed to check email', { error: existingError });
     if (existingUser) return createValidationError('Email already in use');
 
+    // Generate verification token
     const token = uuidV4();
-    const expires = new Date(Date.now() + TOKEN_EXPIRY_MS);
+    const expires_at = new Date(Date.now() + TOKEN_EXPIRY_MS);
 
     const [tokenError] = await safeAwait(
         db.changeEmailToken.upsert({
-            where: { currentEmail },
-            create: { currentEmail, newEmail, token, expires },
-            update: { newEmail, token, expires },
+            where: { userId: user.id },
+            update: { newEmail, token, expires_at },
+            create: { newEmail, token, expires_at, user: { connect: { id: user.id } } },
         })
     );
-
     if (tokenError) return createError('Failed to generate token', { error: tokenError });
 
+    // Send confirmation email
     const emailResponse = await sendEmail(newEmail, 'Change Your Email', generateEmailChangeEmail(token));
 
     return emailResponse.success ? createSuccess('Email change initiated. Please check your inbox.') : emailResponse;
 };
 
+/**
+ * Verifies the email change token:
+ * - Ensures token is valid & not expired
+ * - Updates user email
+ * - Deletes used token
+ */
 export const verifyEmailChangeToken = async (token: string) => {
     try {
         const response = await db.changeEmailToken.findUnique({ where: { token } });
-
-        if (!response || response.expires < new Date()) {
+        if (!response || response.expires_at < new Date()) {
             return createValidationError('Invalid or expired verification link.');
         }
 
-        const [updateError, responseS] = await safeAwait(
+        const [updateError, updatedUser] = await safeAwait(
             db.user.update({
-                where: { email: response.currentEmail },
-                data: { email: response.newEmail },
+                where: { id: response.userId },
+                data: { email: response.newEmail, emailChangedOn: new Date() },
             })
         );
-
-        if (updateError || !responseS) throw new Error('Failed to update email');
+        if (updateError || !updatedUser) throw new Error('Failed to update email');
 
         await db.changeEmailToken.delete({ where: { token } });
 
-        return createSuccess('Email changed successfully.', { email: response.newEmail });
+        return createSuccess('Email changed successfully.', {
+            email: response.newEmail,
+        });
     } catch {
         return createError('Verification failed. Try again later.');
     }

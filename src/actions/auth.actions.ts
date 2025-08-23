@@ -23,12 +23,12 @@ export const loginAction = async (data: z.infer<typeof loginSchema>): ActionResp
     const { email, password } = parsed.data;
 
     try {
-        const user = await db.user.findUnique({ where: { email } });
+        const user = await db.user.findUnique({ where: { email }, select: { id: true, emailVerified: true } });
 
         if (!user) return createValidationError('No account found with this email.');
 
         if (!user?.emailVerified) {
-            const token = await generateVerificationToken(email);
+            const token = await generateVerificationToken(user.id);
             const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
             return response.success
@@ -74,8 +74,8 @@ export const registerAction = async (data: z.infer<typeof registerSchema>): Acti
         return response.success
             ? createSuccess('Account created! Check your inbox for verification link.')
             : createError('Failed to send verification email.');
-    } catch (error){
-        return createError('Registration failed. Try again later.',{error});
+    } catch (error) {
+        return createError('Registration failed. Try again later.', { error });
     }
 };
 
@@ -83,12 +83,12 @@ export const verifyEmailToken = async (token: string) => {
     try {
         const response = await db.verificationToken.findUnique({ where: { token } });
 
-        if (!response || response.expires < new Date()) {
+        if (!response || response.expires_at < new Date()) {
             return createValidationError('Invalid or expired verification link.');
         }
 
         await db.user.update({
-            where: { email: response.email },
+            where: { id: response.userId },
             data: { emailVerified: new Date() },
         });
 
@@ -136,14 +136,14 @@ export const resetPasswordAction = async (data: z.infer<typeof resetPasswordSche
     try {
         const response = await db.forgotPasswordToken.findUnique({ where: { token } });
 
-        if (!response || response.expires < new Date()) {
+        if (!response || response.expires_at < new Date()) {
             return createValidationError('Invalid or expired reset token.');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await db.user.update({
-            where: { email: response.email },
+            where: { id: response.userId },
             data: { password: hashedPassword },
         });
 

@@ -46,9 +46,15 @@ model User {
   emailVerified  DateTime?
   image          String          @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
   password       String?
+  emailChangedOn DateTime?
   accounts       Account[]
   linkedAccounts LinkedAccount[]
   sessions       Session[]
+
+  // Tokens (one-to-one)
+  verificationToken   VerificationToken?
+  forgotPasswordToken ForgotPasswordToken?
+  changeEmailToken    ChangeEmailToken?
 
   // Music-related relations
   playlists       Playlist[]
@@ -119,24 +125,30 @@ model Session {
 
 model VerificationToken {
   id      String   @id @default(cuid())
-  email   String   @unique
   token   String   @unique
-  expires DateTime
+  expires_at DateTime
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ForgotPasswordToken {
   id      String   @id @default(cuid())
-  email   String   @unique
   token   String   @unique
-  expires DateTime
+  expires_at DateTime
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ChangeEmailToken {
-  id           String   @id @default(cuid())
-  currentEmail String   @unique
-  newEmail     String   @unique
-  token        String   @unique
-  expires      DateTime
+  id       String   @id @default(cuid())
+  newEmail String   @unique
+  token    String   @unique
+  expires_at  DateTime
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // --------------------------- MUSIC CORE ENTITIES --------------------------
