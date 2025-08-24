@@ -31,7 +31,7 @@ const LoginInForm = () => {
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } });
+    } = useForm({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } });
 
     async function onSubmit(data: z.infer<typeof loginSchema>) {
         const response = await loginAction(data);

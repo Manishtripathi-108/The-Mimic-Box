@@ -1,15 +1,12 @@
 import { redirect } from 'next/navigation';
 import { NextRequest } from 'next/server';
 
-import axios from 'axios';
-
 import { getUserProfile } from '@/actions/anilist.actions';
 import { auth } from '@/auth';
-import ANILIST_ROUTES from '@/constants/external-routes/anilist.routes';
-import API_ROUTES from '@/constants/routes/api.routes';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { db } from '@/lib/db';
+import { exchangeCodeForTokens } from '@/lib/services/linked-account.service';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
 
 export async function GET(req: NextRequest) {
@@ -27,25 +24,12 @@ export async function GET(req: NextRequest) {
         return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('anilist', 'missing_parameters', 'Authorization code is required.'));
     }
 
-    const [exchError, exchResponse] = await safeAwait(
-        axios.post(ANILIST_ROUTES.TOKEN, {
-            grant_type: 'authorization_code',
-            client_id: process.env.AUTH_ANILIST_ID,
-            client_secret: process.env.AUTH_ANILIST_SECRET,
-            redirect_uri: `${process.env.NEXT_PUBLIC_URL}${API_ROUTES.AUTH_LA_ANILIST_CALLBACK}`,
-            code,
-        })
-    );
-
-    if (exchError || !exchResponse?.data) {
-        const errorCode = axios.isAxiosError(exchError) ? exchError.response?.data?.error || 'invalid_grant' : 'server_error';
-
-        console.error('[AniList Link] Token exchange failed', exchError);
-        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('anilist', errorCode, 'Failed to exchange token.'));
+    const tokens = await exchangeCodeForTokens('anilist', code);
+    if (!tokens) {
+        return redirect(APP_ROUTES.AUTH.LINK_ACCOUNT_ERROR('anilist', 'invalid_grant', 'Failed to exchange code for tokens.'));
     }
 
-    const tokens = exchResponse.data;
-    const userProfile = await getUserProfile(tokens.access_token);
+    const userProfile = await getUserProfile(tokens.accessToken);
 
     if (!userProfile) {
         console.error('[AniList Link] Failed to fetch user profile', userProfile);
@@ -55,14 +39,10 @@ export async function GET(req: NextRequest) {
     const userId = session.user.id;
     const anilistData = {
         providerAccountId: userProfile?.Viewer.id?.toString(),
-        imageUrl: userProfile?.Viewer.avatar?.large || undefined,
-        bannerUrl: userProfile?.Viewer.bannerImage || undefined,
+        image: userProfile?.Viewer.avatar?.large || undefined,
+        banner: userProfile?.Viewer.bannerImage || undefined,
         displayName: userProfile?.Viewer.name,
-        scope: tokens.scope,
-        token_type: tokens.token_type,
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-        expires_at: new Date(Date.now() + tokens.expires_in * 1000),
+        ...tokens,
     };
 
     const [dbError] = await safeAwait(

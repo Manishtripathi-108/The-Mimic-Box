@@ -9,7 +9,7 @@ import { generateEmailVerificationEmail, generatePasswordResetEmail } from '@/co
 import { db } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
 import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '@/lib/schema/auth.validations';
-import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/auth.service';
+import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/token.service';
 import { T_ErrorResponseOutput, T_SuccessResponseOutput } from '@/lib/types/response.types';
 import { createError, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 
@@ -66,9 +66,9 @@ export const registerAction = async (data: z.infer<typeof registerSchema>): Acti
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await db.user.create({ data: { email, name: fullName, password: hashedPassword } });
+        const user = await db.user.create({ data: { email, name: fullName, password: hashedPassword }, select: { id: true } });
 
-        const token = await generateVerificationToken(email);
+        const token = await generateVerificationToken(user.id);
         const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
         return response.success
@@ -83,7 +83,7 @@ export const verifyEmailToken = async (token: string) => {
     try {
         const response = await db.verificationToken.findUnique({ where: { token } });
 
-        if (!response || response.expires_at < new Date()) {
+        if (!response || response.expires < new Date()) {
             return createValidationError('Invalid or expired verification link.');
         }
 
@@ -136,7 +136,7 @@ export const resetPasswordAction = async (data: z.infer<typeof resetPasswordSche
     try {
         const response = await db.forgotPasswordToken.findUnique({ where: { token } });
 
-        if (!response || response.expires_at < new Date()) {
+        if (!response || response.expires < new Date()) {
             return createValidationError('Invalid or expired reset token.');
         }
 

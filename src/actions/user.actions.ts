@@ -1,16 +1,16 @@
 'use server';
 
 import sharp from 'sharp';
-import { v4 as uuidV4 } from 'uuid';
 import { z } from 'zod';
 
 import { auth } from '@/auth';
 import { generateEmailChangeEmail } from '@/components/emails/AuthEmailTemplate';
-import { DAY_MS, EMAIL_CHANGE_COOLDOWN_MS, TOKEN_EXPIRY_MS } from '@/constants/time.constants';
+import { DAY_MS, EMAIL_CHANGE_COOLDOWN_MS } from '@/constants/time.constants';
 import { db } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
 import { changeEmailSchema, profileSchema } from '@/lib/schema/user.validations';
 import { uploadToCloud } from '@/lib/services/cloud-storage.service';
+import { generateChangeEmailToken } from '@/lib/services/token.service';
 import { T_ErrorResponseOutput, T_SuccessResponseOutput } from '@/lib/types/response.types';
 import { createError, createForbidden, createSuccess, createUnauthorized, createValidationError } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
@@ -114,21 +114,12 @@ export const handleEmailChange = async (currentEmail: string, newEmail: string) 
     if (existingError) return createError('Failed to check email', { error: existingError });
     if (existingUser) return createValidationError('Email already in use');
 
-    // Generate verification token
-    const token = uuidV4();
-    const expires_at = new Date(Date.now() + TOKEN_EXPIRY_MS);
+    const [generateErr, generate] = await safeAwait(generateChangeEmailToken(user.id, newEmail));
 
-    const [tokenError] = await safeAwait(
-        db.changeEmailToken.upsert({
-            where: { userId: user.id },
-            update: { newEmail, token, expires_at },
-            create: { newEmail, token, expires_at, user: { connect: { id: user.id } } },
-        })
-    );
-    if (tokenError) return createError('Failed to generate token', { error: tokenError });
+    if (!generate || generateErr) return createError('Failed to generate token', { error: generateErr });
 
     // Send confirmation email
-    const emailResponse = await sendEmail(newEmail, 'Change Your Email', generateEmailChangeEmail(token));
+    const emailResponse = await sendEmail(newEmail, 'Change Your Email', generateEmailChangeEmail(generate.token));
 
     return emailResponse.success ? createSuccess('Email change initiated. Please check your inbox.') : emailResponse;
 };
@@ -142,7 +133,7 @@ export const handleEmailChange = async (currentEmail: string, newEmail: string) 
 export const verifyEmailChangeToken = async (token: string) => {
     try {
         const response = await db.changeEmailToken.findUnique({ where: { token } });
-        if (!response || response.expires_at < new Date()) {
+        if (!response || response.expires < new Date()) {
             return createValidationError('Invalid or expired verification link.');
         }
 

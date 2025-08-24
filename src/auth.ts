@@ -2,8 +2,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { LinkedAccountProvider } from '@prisma/client';
 import NextAuth from 'next-auth';
 
-import { refreshToken } from '@/actions/linkedAccount.actions';
-import { getLinkedAccounts } from '@/lib/services/auth.service';
+import { getLinkedAccounts, getOrRefreshToken } from '@/lib/services/linked-account.service';
 
 import authConfig from './auth.config';
 import { db } from './lib/db';
@@ -45,8 +44,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 for (const [provider, account] of Object.entries(token.linkedAccounts)) {
                     if (!account) continue;
 
-                    if (new Date(account.expiresAt).getTime() < Date.now()) {
-                        const tokens = await refreshToken(token.sub!, account.refreshToken, provider as LinkedAccountProvider);
+                    if (new Date(account.expires) < new Date()) {
+                        const tokens = await getOrRefreshToken(token.sub!, account.refreshToken, provider as LinkedAccountProvider);
 
                         if (tokens.success) {
                             token.linkedAccounts[provider as LinkedAccountProvider] = {
