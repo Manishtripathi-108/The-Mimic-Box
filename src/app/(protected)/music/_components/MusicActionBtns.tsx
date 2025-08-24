@@ -52,7 +52,7 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
 
             <Button
                 onClick={handlePlay}
-                icon={isPending ? 'loading' : isContextPlaying ? 'pauseToPlay' : 'playToPause'}
+                icon={isPending ? 'loading' : isContextPlaying ? 'play' : 'pause'}
                 aria-label={isContextPlaying ? 'Pause' : 'Play'}
                 title={isContextPlaying ? 'Pause' : 'Play'}
                 variant="highlight"

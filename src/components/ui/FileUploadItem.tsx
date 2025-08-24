@@ -56,7 +56,7 @@ const FileUploadItem = ({ file, error, onRemove, children, className }: FileUplo
                 aria-label="Remove uploaded file"
                 onClick={onRemove}
                 className="sm:bg-primary sm:shadow-floating-xs text-danger dark:text-danger absolute top-4 right-3 size-5 shrink-0 bg-transparent p-0 shadow-none sm:relative sm:top-0 sm:right-0 sm:size-8 sm:rounded-xl sm:p-1.5"
-                icon="closeAnimated"
+                icon="close"
             />
         </section>
     );

@@ -110,15 +110,15 @@ export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSc
 
         if (!user) return createValidationError('No account found with this email.');
 
-        if (!user?.emailVerified) {
+        if (!user.emailVerified) {
             return createValidationError('Email not verified. Verify your email first.');
         }
 
-        if (!user?.password) {
+        if (!user.password) {
             return createValidationError('No password set for this account.');
         }
 
-        const token = await generateForgotPasswordToken(email);
+        const token = await generateForgotPasswordToken(user.id);
         const response = await sendEmail(email, 'Reset Your Password', generatePasswordResetEmail(token.token));
 
         return response.success ? createSuccess('Check your inbox to reset your password.') : createError('Failed to send reset token email.');

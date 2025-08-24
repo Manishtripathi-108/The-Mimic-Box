@@ -21,7 +21,7 @@ export type FileTypesMap = Record<
     | '3d'
     | 'script'
     | 'text'
-    | 'disk image'
+    | 'diskImage'
 >;
 
 export type T_IconType = keyof typeof IconSet;

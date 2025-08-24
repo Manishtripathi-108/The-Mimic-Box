@@ -119,9 +119,9 @@ export const FILE_TYPES_MAP: FileTypesMap = {
     ini: 'text',
 
     // Disk Images
-    iso: 'disk image',
-    dmg: 'disk image',
-    bin: 'disk image',
+    iso: 'diskImage',
+    dmg: 'diskImage',
+    bin: 'diskImage',
 };
 
 /* --------------------------------- Anilist -------------------------------- */

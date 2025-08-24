@@ -11,7 +11,7 @@ enum IconSet {
     arrowOpenLeft = 'line-md:arrow-open-left',
     arrowOpenRight = 'line-md:arrow-open-right',
     audio = 'solar:headphones-round-bold-duotone',
-    archive = 'solar:zip-file-linear',
+    archive = 'solar:zip-file-bold',
 
     /* ------------------------------------ B ----------------------------------- */
     broom = 'game-icons:broom',
@@ -20,24 +20,24 @@ enum IconSet {
     card = 'material-symbols:cards-outline-rounded',
     circle = 'ci:circle',
     close = 'iconamoon:close',
-    closeAnimated = 'line-md:close-small',
-    code = 'solar:code-file-linear',
+    code = 'solar:code-file-outline',
     copy = 'solar:copy-outline',
 
     /* ------------------------------------ D ----------------------------------- */
-    database = 'solar:database-linear',
-    'disk image' = 'solar:diskette-linear',
+    database = 'solar:database-outline',
+    diskImage = 'solar:diskette-outline',
     desktop = 'noto:desktop-computer',
-    document = 'solar:document-text-linear',
-    down = 'formkit:down',
-    download = 'line-md:download-loop',
+    document = 'solar:document-text-outline',
+    down = 'solar:alt-arrow-down-outline',
+    download = 'solar:download-bold',
     downloading = 'line-md:downloading-loop',
     draw = 'fa-solid:handshake',
 
     /* ------------------------------------ E ----------------------------------- */
-    edit = 'hugeicons:pencil-edit-02',
+    edit = 'solar:pen-new-square-outline',
+    editImage = 'solar:gallery-edit-outlined',
     editProfile = 'fluent:person-edit-24-filled',
-    email = 'line-md:email-alt-filled',
+    email = 'solar:letter-bold',
     error = 'custom:error',
     executable = 'carbon:executable-program',
     eye = 'line-md:watch-loop',
@@ -45,41 +45,47 @@ enum IconSet {
 
     /* ------------------------------------ F ----------------------------------- */
     filePlus = 'line-md:file-plus-filled',
-    filter = 'line-md:filter-filled',
+    filter = 'solar:filter-bold',
     font = 'hugeicons:tiff-02',
     fullscreen = 'solar:full-screen-bold',
 
     /* ------------------------------------ G ----------------------------------- */
+    game = 'solar:gameboy-bold',
     gamepad = 'emojione-monotone:video-game',
-    gamepadTurbo = 'arcticons:gameturbo',
     google = 'logos:google-icon',
     github = 'line-md:github-loop',
 
     /* ------------------------------------ H ----------------------------------- */
-    heart = 'icomoon-free:heart',
+    heart = 'solar:heart-angle-bold',
+    heartShine = 'solar:heart-shine-bold',
 
     /* ------------------------------------ I ----------------------------------- */
-    image = 'line-md:image-filled',
-    info = 'ic:round-info',
-    infoOutlined = 'carbon:information',
+    image = 'solar:gallery-bold',
+    info = 'solar:info-circle-bold',
+    infoOutlined = 'solar:info-circle-outline',
+
+    /* ------------------------------------ J ----------------------------------- */
+    jiosaavn = 'custom:jioSaavn',
 
     /* ------------------------------------ L ----------------------------------- */
-    left = 'formkit:left',
-    leftArrow = 'line-md:arrow-left',
-    link = 'line-md:link',
+    left = 'solar:alt-arrow-left-outline',
+    leftArrow = 'solar:arrow-left-bold',
+    link = 'solar:link-outline',
     list = 'tabler:list',
     loading = 'line-md:loading-loop',
     lock = 'solar:lock-password-bold',
-    login = 'majesticons:login',
-    logout = 'majesticons:logout',
-    lyrics = 'solar:microphone-bold',
+    login = 'solar:login-2-outline',
+    logout = 'solar:logout-2-outline',
+    lyrics = 'solar:microphone-3-bold',
 
     /* ------------------------------------ M ----------------------------------- */
     markup = 'garden:markup-stroke-12',
     menu = 'hugeicons:menu-02',
+    mic = 'solar:microphone-2-bold',
     minus = 'line-md:minus',
     moon = 'meteocons:clear-night-fill',
     moreDots = 'pepicons-pop:dots-y',
+    mouse = 'solar:mouse-minimalistic-bold',
     myanimelist = 'simple-icons:myanimelist',
     musicQueue = 'mdi:queue-music',
 
@@ -91,37 +97,36 @@ enum IconSet {
     open = 'majesticons:open',
 
     /* ------------------------------------ P ----------------------------------- */
-    pause = 'line-md:pause',
-    pauseToPlay = 'line-md:play-filled-to-pause-transition',
-    pending = 'solar:clock-circle-linear',
-    person = 'line-md:person-filled',
-    personAdd = 'line-md:person-add-filled',
-    play = 'line-md:play-filled',
-    playToPause = 'line-md:pause-to-play-filled-transition',
+    pause = 'solar:pause-bold',
+    pending = 'solar:clock-circle-outline',
+    person = 'solar:user-bold',
+    personAdd = 'solar:user-plus-bold',
+    play = 'solar:play-bold',
+    playlist = 'solar:playlist-minimalistic-2-bold',
     player = 'game-icons:centurion-helmet',
     plus = 'line-md:plus',
     presentation = 'hugeicons:presentation-bar-chart-02',
     previous = 'solar:skip-previous-bold',
     processing = 'line-md:cog-loop',
+    power = 'solar:power-bold',
 
     /* ------------------------------------ Q ----------------------------------- */
     quitFullscreen = 'solar:quit-full-screen-bold',
 
     /* ------------------------------------ R ----------------------------------- */
-    right = 'formkit:right',
-    rightArrow = 'line-md:arrow-right',
-    refresh = 'grommet-icons:power-reset',
+    right = 'solar:alt-arrow-right-linear',
+    rightArrow = 'solar:arrow-right-bold',
+    refresh = 'solar:refresh-bold',
     repeat = 'solar:repeat-bold',
     repeatOne = 'solar:repeat-one-bold',
+    reset = 'solar:restart-bold',
 
     /* ------------------------------------ S ----------------------------------- */
-    jiosaavn = 'custom:jioSaavn',
     script = 'proicons:script',
     shuffle = 'fluent:arrow-shuffle-32-regular',
     shuffleOff = 'fluent:arrow-shuffle-off-32-regular',
     search = 'line-md:search',
     settings = 'solar:settings-bold',
-    settingsOutlined = 'solar:settings-outline',
     share = 'solar:share-bold-duotone',
     smile = 'line-md:emoji-smile',
     spotify = 'line-md:spotify-filled',
@@ -130,17 +135,17 @@ enum IconSet {
     sun = 'meteocons:clear-day-fill',
 
     /* ------------------------------------ T ----------------------------------- */
-    text = 'solar:file-text-linear',
-    trash = 'entypo:trash',
+    text = 'solar:file-text-outline',
+    trash = 'solar:trash-bin-trash-bold',
 
     /* ------------------------------------ U ----------------------------------- */
-    up = 'formkit:up',
+    up = 'solar:alt-arrow-up-outline',
     unlink = 'octicon:unlink-16',
-    upload = 'line-md:cloud-alt-upload-filled-loop',
+    upload = 'solar:cloud-upload-bold',
     uploading = 'line-md:uploading-loop',
 
     /* ------------------------------------ V ----------------------------------- */
-    video = 'tabler:video-filled',
+    video = 'solar:videocamera-bold',
     volumeLoud = 'solar:volume-loud-bold',
     volumeSmall = 'solar:volume-small-bold',
     volumeOff = 'solar:volume-cross-bold',
