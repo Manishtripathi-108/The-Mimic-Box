@@ -9,3 +9,13 @@ export const profileSchema = z.object({
     email: emailField,
     image: imageFileValidation.optional(),
 });
+
+export const changeEmailSchema = z
+    .object({
+        currentEmail: emailField,
+        newEmail: emailField,
+    })
+    .refine((data) => data.currentEmail !== data.newEmail, {
+        message: 'New email cannot be the same as current email',
+        path: ['newEmail'],
+    });

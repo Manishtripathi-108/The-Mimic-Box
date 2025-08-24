@@ -16,7 +16,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
     return (
         <>
-            <A_Header bannerUrl={anilist.bannerUrl} displayName={anilist.displayName || 'Anilist User'} imageUrl={anilist.imageUrl} />
+            <A_Header bannerUrl={anilist.banner} displayName={anilist.displayName || 'Anilist User'} imageUrl={anilist.image} />
             {children}
         </>
     );

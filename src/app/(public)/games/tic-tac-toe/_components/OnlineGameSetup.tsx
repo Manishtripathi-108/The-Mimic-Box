@@ -94,7 +94,7 @@ const OnlineGameSetup = () => {
     return (
         <div className="h-calc-full-height flex items-center justify-center">
             <div className="shadow-floating-sm bg-gradient-secondary-to-tertiary relative max-h-full w-full max-w-md rounded-2xl p-8 md:p-10">
-                <Icon icon="gamepadTurbo" className="text-danger mx-auto mb-4 h-12 w-12" />
+                <Icon icon="game" className="text-danger mx-auto mb-4 h-12 w-12" />
                 <h2 className="text-highlight font-aladin mb-3 text-center text-4xl font-bold tracking-widest">Play Online</h2>
                 <h3 className="text-text-primary mb-5 text-center font-normal tracking-wider">Join a room or create a new one to start playing</h3>
 

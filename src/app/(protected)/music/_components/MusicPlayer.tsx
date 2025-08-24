@@ -144,7 +144,7 @@ const MusicPlayer = ({ className, onClose }: { className?: string; onClose: () =
                                     variant="highlight"
                                     size="3xl"
                                     aria-label={playing ? 'Pause' : 'Play'}
-                                    icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'}
+                                    icon={loading ? 'loading' : playing ? 'play' : 'pause'}
                                 />
                             </div>
                             <Button onClick={playNext} variant="ghost" aria-label="Next Track" icon="next" />

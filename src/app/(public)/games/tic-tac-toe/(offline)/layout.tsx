@@ -65,7 +65,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Controls */}
             <footer className="mt-5 grid grid-cols-2 gap-4">
-                <Button onClick={restartGame} icon="gamepad">
+                <Button onClick={restartGame} icon="refresh">
                     Start Over
                 </Button>
                 <Button icon="player" onClick={() => openModal('SetPlayerNamesModal')}>

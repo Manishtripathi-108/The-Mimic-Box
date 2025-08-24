@@ -9,7 +9,7 @@ import { generateEmailVerificationEmail, generatePasswordResetEmail } from '@/co
 import { db } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
 import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '@/lib/schema/auth.validations';
-import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/auth.service';
+import { generateForgotPasswordToken, generateVerificationToken } from '@/lib/services/token.service';
 import { T_ErrorResponseOutput, T_SuccessResponseOutput } from '@/lib/types/response.types';
 import { createError, createSuccess, createValidationError } from '@/lib/utils/createResponse.utils';
 
@@ -23,12 +23,12 @@ export const loginAction = async (data: z.infer<typeof loginSchema>): ActionResp
     const { email, password } = parsed.data;
 
     try {
-        const user = await db.user.findUnique({ where: { email } });
+        const user = await db.user.findUnique({ where: { email }, select: { id: true, emailVerified: true } });
 
         if (!user) return createValidationError('No account found with this email.');
 
         if (!user?.emailVerified) {
-            const token = await generateVerificationToken(email);
+            const token = await generateVerificationToken(user.id);
             const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
             return response.success
@@ -66,16 +66,16 @@ export const registerAction = async (data: z.infer<typeof registerSchema>): Acti
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await db.user.create({ data: { email, name: fullName, password: hashedPassword } });
+        const user = await db.user.create({ data: { email, name: fullName, password: hashedPassword }, select: { id: true } });
 
-        const token = await generateVerificationToken(email);
+        const token = await generateVerificationToken(user.id);
         const response = await sendEmail(email, 'Verify Your Email', generateEmailVerificationEmail(token.token));
 
         return response.success
             ? createSuccess('Account created! Check your inbox for verification link.')
             : createError('Failed to send verification email.');
-    } catch (error){
-        return createError('Registration failed. Try again later.',{error});
+    } catch (error) {
+        return createError('Registration failed. Try again later.', { error });
     }
 };
 
@@ -88,7 +88,7 @@ export const verifyEmailToken = async (token: string) => {
         }
 
         await db.user.update({
-            where: { email: response.email },
+            where: { id: response.userId },
             data: { emailVerified: new Date() },
         });
 
@@ -110,15 +110,15 @@ export const forgotPasswordAction = async (data: z.infer<typeof forgotPasswordSc
 
         if (!user) return createValidationError('No account found with this email.');
 
-        if (!user?.emailVerified) {
+        if (!user.emailVerified) {
             return createValidationError('Email not verified. Verify your email first.');
         }
 
-        if (!user?.password) {
+        if (!user.password) {
             return createValidationError('No password set for this account.');
         }
 
-        const token = await generateForgotPasswordToken(email);
+        const token = await generateForgotPasswordToken(user.id);
         const response = await sendEmail(email, 'Reset Your Password', generatePasswordResetEmail(token.token));
 
         return response.success ? createSuccess('Check your inbox to reset your password.') : createError('Failed to send reset token email.');
@@ -143,7 +143,7 @@ export const resetPasswordAction = async (data: z.infer<typeof resetPasswordSche
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await db.user.update({
-            where: { email: response.email },
+            where: { id: response.userId },
             data: { password: hashedPassword },
         });
 

@@ -107,7 +107,7 @@ const MusicMiniPlayer = () => {
                                 variant="highlight"
                                 title={playing ? 'Pause' : 'Play'}
                                 aria-label={playing ? 'Pause' : 'Play'}
-                                icon={loading ? 'loading' : playing ? 'pauseToPlay' : 'playToPause'}
+                                icon={loading ? 'loading' : playing ? 'play' : 'pause'}
                             />
                             <Button title="Next Track" onClick={playNext} variant="ghost" aria-label="Next Track" icon="next" />
 

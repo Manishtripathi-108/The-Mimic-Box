@@ -7,7 +7,9 @@ import { useSearchParams } from 'next/navigation';
 import { LinkedAccountProvider } from '@prisma/client';
 
 import ErrorCard from '@/components/layout/ErrorCard';
+import { Button } from '@/components/ui/Button';
 import { ConnectAccount } from '@/components/ui/LinkedAccountButtons';
+import APP_ROUTES from '@/constants/routes/app.routes';
 import ErrorHandler from '@/lib/utils/ErrorHandler.utils';
 
 const Page = () => {
@@ -29,7 +31,11 @@ const LinkAccountError = () => {
 
     return (
         <ErrorCard message={errorDescription || errorMessage}>
-            {linkAccountType && <ConnectAccount className="button" account={linkAccountType as LinkedAccountProvider} />}
+            {linkAccountType && (
+                <Button asChild>
+                    <ConnectAccount className="button" account={linkAccountType as LinkedAccountProvider} callBackUrl={APP_ROUTES.ROOT} />
+                </Button>
+            )}
         </ErrorCard>
     );
 };

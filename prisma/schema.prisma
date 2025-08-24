@@ -8,6 +8,7 @@ datasource db {
 }
 
 // ------------------------------ ENUMS ----------------------------------
+
 enum LinkedAccountProvider {
   spotify
   jiosaavn
@@ -25,121 +26,304 @@ enum PlaylistVisibility {
   unlisted
 }
 
-enum TrackQuality {
-  low // 96kbps
-  medium // 128kbps
-  high // 320kbps
-}
+// ------------------------------ MODELS --------------------------------
 
-enum AlbumType {
-  album
-  single
-  ep
-  compilation
-}
-
-// ----------------------------- USER MANAGEMENT ----------------------------
 model User {
-  id             String          @id @default(cuid())
-  name           String?
-  email          String?         @unique
-  emailVerified  DateTime?
-  image          String          @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
-  password       String?
-  accounts       Account[]
-  linkedAccounts LinkedAccount[]
-  sessions       Session[]
+  id String @id @default(cuid())
 
-  // Music-related relations
-  playlists       Playlist[]
-  likedTracks     UserLikedTrack[]
-  followedArtists UserFollowedArtist[]
-  followedAlbums  UserFollowedAlbum[]
+  name     String?
+  email    String? @unique
+  password String?
+  image    String  @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  emailVerified  DateTime? @map("email_verified")
+  emailChangedOn DateTime? @map("email_changed_on")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  accounts            Account[]
+  linkedAccounts      LinkedAccount[]
+  sessions            Session[]
+  verificationToken   VerificationToken?
+  forgotPasswordToken ForgotPasswordToken?
+  changeEmailToken    ChangeEmailToken?
+  playlists           Playlist[]
+  likedTracks         UserLikedTrack[]
+  followedArtists     UserFollowedArtist[]
+  followedAlbums      UserFollowedAlbum[]
+  PlaylistFollower    PlaylistFollower[]
+
+  @@map("users")
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
+  userId String @map("user_id")
+
   type              String
   provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
+  providerAccountId String @map("provider_account_id")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  scope         String?
+  token_type    String?
+  id_token      String?
+  session_state String?
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model LinkedAccount {
-  id                String                @id @default(cuid())
-  userId            String
-  type              String // oauth, oidc
-  provider          LinkedAccountProvider
-  providerAccountId String
-  refresh_token     String
-  access_token      String
-  expires_at        DateTime
-  token_type        String? // bearer
-  scope             String?
-  displayName       String?
-  username          String?
-  imageUrl          String                @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
-  bannerUrl         String                @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742811780/scene-night-tree_raa1zn.jpg")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, provider])
+  @@id([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id String @id @default(cuid())
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId String @map("user_id")
+
+  sessionToken String   @unique @map("session_token")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model LinkedAccount {
+  userId String @map("user_id")
+
+  displayName String? @map("display_name")
+  username    String? @map("user_name")
+
+  type              String
+  provider          LinkedAccountProvider
+  providerAccountId String                @map("provider_account_id")
+
+  scope        String?
+  expires      DateTime
+  refreshToken String   @map("refresh_token")
+  accessToken  String   @map("access_token")
+  tokenType    String?  @map("token_type")
+
+  image  String @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742410227/profile_nes8vp.png")
+  banner String @default("https://res.cloudinary.com/dra73suxl/image/upload/v1742811780/scene-night-tree_raa1zn.jpg")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, provider])
+  @@map("linked_accounts")
 }
 
 model VerificationToken {
-  id      String   @id @default(cuid())
-  email   String   @unique
+  id String @id @default(cuid())
+
+  userId String @unique @map("user_id")
+
   token   String   @unique
   expires DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_tokens")
 }
 
 model ForgotPasswordToken {
-  id      String   @id @default(cuid())
-  email   String   @unique
+  id String @id @default(cuid())
+
+  userId String @unique @map("user_id")
+
   token   String   @unique
   expires DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("forgot_password_tokens")
 }
 
 model ChangeEmailToken {
-  id           String   @id @default(cuid())
-  currentEmail String   @unique
-  newEmail     String   @unique
-  token        String   @unique
-  expires      DateTime
+  id String @id @default(cuid())
+
+  userId String @unique @map("user_id")
+
+  token    String   @unique
+  newEmail String   @unique @map("new_email")
+  expires  DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("change_email_tokens")
 }
 
-// --------------------------- MUSIC CORE ENTITIES --------------------------
+model Playlist {
+  id String @id @default(cuid())
+
+  userId String @map("user_id")
+
+  title String
+  slug  String @unique
+
+  description   String?
+  visibility    PlaylistVisibility @default(public)
+  collaborative Boolean            @default(false)
+  lastSyncedAt  DateTime           @default(now()) @map("last_synced_at")
+
+  spotifyId String? @unique @map("spotify_id")
+
+  image String @default("https://res.cloudinary.com/dra73suxl/image/upload/w_500,h_500,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlistTracks PlaylistTrack[]
+  followers      PlaylistFollower[]
+
+  @@map("playlists")
+}
+
+model PlaylistTrack {
+  id String @id @default(cuid())
+
+  playlistId String @map("playlist_id")
+  trackId    String @map("track_id")
+
+  addedAt DateTime @default(now()) @map("added_at")
+
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  track    Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, trackId])
+  @@map("playlist_tracks")
+}
+
+model PlaylistFollower {
+  id String @id @default(cuid())
+
+  playlistId String @map("playlist_id")
+  userId     String @map("user_id")
+
+  followedAt DateTime @default(now()) @map("followed_at")
+
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, userId])
+  @@map("playlist_followers")
+}
+
+model Track {
+  id String @id @default(cuid())
+
+  artistId String  @map("artist_id")
+  albumId  String? @map("album_id")
+  imageId  String? @unique @map("image_id")
+
+  title String
+  slug  String  @unique
+  isrc  String? @unique
+
+  durationMs  Int?    @map("duration_ms")
+  trackNumber Int?    @map("track_number")
+  discNumber  Int     @default(1) @map("disc_number")
+  explicit    Boolean @default(false)
+  previewUrl  String? @map("preview_url")
+  popularity  Int     @default(0)
+
+  spotifyId  String? @unique @map("spotify_id")
+  jiosaavnId String? @unique @map("jiosaavn_id")
+  itunesId   String? @unique @map("itunes_id")
+  youtubeId  String? @unique @map("youtube_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  playlistTracks PlaylistTrack[]
+  likedBy        UserLikedTrack[]
+  genres         Genre[]
+
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  album  Album? @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  image  Image? @relation(fields: [imageId], references: [id])
+
+  @@index([title])
+  @@index([artistId])
+  @@index([albumId])
+  @@index([popularity])
+  @@map("tracks")
+}
+
+model Artist {
+  id String @id @default(cuid())
+
+  imageId String? @unique @map("image_id")
+
+  name String
+  slug String @unique
+
+  popularity Int @default(0)
+
+  spotifyId  String? @unique @map("spotify_id")
+  jiosaavnId String? @unique @map("jiosaavn_id")
+  itunesId   String? @unique @map("itunes_id")
+  youtubeId  String? @unique @map("youtube_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tracks    Track[]
+  albums    Album[]
+  genres    Genre[]
+  followers UserFollowedArtist[]
+
+  image Image? @relation(fields: [imageId], references: [id])
+
+  @@index([name])
+  @@index([popularity])
+  @@map("artists")
+}
+
+model Album {
+  id String @id @default(cuid())
+
+  artistId String  @map("artist_id")
+  imageId  String? @unique @map("image_id")
+
+  title String
+  slug  String @unique
+
+  releaseDate DateTime? @map("release_date")
+  totalTracks Int?      @map("total_tracks")
+  popularity  Int       @default(0)
+
+  spotifyId  String? @unique @map("spotify_id")
+  jiosaavnId String? @unique @map("jiosaavn_id")
+  itunesId   String? @unique @map("itunes_id")
+  youtubeId  String? @unique @map("youtube_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tracks    Track[]
+  genres    Genre[]
+  followers UserFollowedAlbum[]
+
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  image  Image? @relation(fields: [imageId], references: [id])
+
+  @@index([title])
+  @@index([artistId])
+  @@index([popularity])
+  @@map("albums")
+}
+
 model Image {
   id String @id @default(cuid())
 
@@ -147,252 +331,67 @@ model Image {
   md String @default("https://res.cloudinary.com/dra73suxl/image/upload/w_150,h_150,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png")
   lg String @default("https://res.cloudinary.com/dra73suxl/image/upload/w_500,h_500,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png")
 
-  // Relations
-  artist   Artist?
-  album    Album?
-  track    Track?
-  playlist Playlist?
+  Track  Track?
+  Artist Artist?
+  Album  Album?
+
+  @@map("images")
 }
 
-model Artist {
-  id          String  @id @default(cuid())
-  name        String
-  slug        String  @unique
-  description String?
-  popularity  Int     @default(0)
+model Genre {
+  id String @id @default(cuid())
 
-  // Provider-specific IDs
-  spotifyId  String? @unique
-  jiosaavnId String? @unique
-  itunesId   String? @unique
-  youtubeId  String? @unique
+  name String @unique
+  slug String @unique
 
-  genres    ArtistGenre[]
-  albums    Album[]
-  tracks    Track[]
-  followers UserFollowedArtist[]
+  tracks  Track[]
+  artists Artist[]
+  albums  Album[]
 
-  // Image relation
-  imageId String? @unique
-  image   Image?  @relation(fields: [imageId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([name])
-  @@index([popularity])
+  @@map("genres")
 }
 
-model Album {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  releaseDate DateTime?
-  albumType   AlbumType @default(album)
-  description String?
-  totalTracks Int       @default(0)
-  popularity  Int       @default(0)
-
-  // Provider-specific IDs
-  spotifyId  String? @unique
-  jiosaavnId String? @unique
-  itunesId   String? @unique
-  youtubeId  String? @unique
-
-  // Relations
-  artistId  String
-  artist    Artist              @relation(fields: [artistId], references: [id], onDelete: Cascade)
-  tracks    Track[]
-  genres    AlbumGenre[]
-  followers UserFollowedAlbum[]
-
-  // Image relation
-  imageId String? @unique
-  image   Image?  @relation(fields: [imageId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([title])
-  @@index([releaseDate])
-  @@index([artistId])
-  @@index([popularity])
-}
-
-model Track {
-  id          String  @id @default(cuid())
-  title       String
-  slug        String  @unique
-  duration_ms Int?
-  trackNumber Int?
-  discNumber  Int     @default(1)
-  explicit    Boolean @default(false)
-  previewUrl  String?
-  popularity  Int     @default(0)
-  isrc        String? @unique
-
-  // Provider-specific IDs
-  spotifyId  String? @unique
-  jiosaavnId String? @unique
-  itunesId   String? @unique
-  youtubeId  String? @unique
-
-  // Relations
-  artistId String
-  albumId  String?
-  artist   Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
-  album    Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
-
-  playlistTracks PlaylistTrack[]
-  likedBy        UserLikedTrack[]
-  genres         TrackGenre[]
-
-  // Image relation
-  imageId String? @unique
-  image   Image?  @relation(fields: [imageId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([title])
-  @@index([artistId])
-  @@index([albumId])
-  @@index([popularity])
-}
-
-model Playlist {
-  id              String             @id @default(cuid())
-  name            String
-  description     String?
-  visibility      PlaylistVisibility @default(private)
-  collaborative   Boolean            @default(false)
-  totalTracks     Int                @default(0)
-  totalDurationMs Int                @default(0)
-
-  // Provider sync info
-  spotifyId  String? @unique
-  jiosaavnId String? @unique
-
-  // Relations
-  userId String
-  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tracks PlaylistTrack[]
-
-  // Image relation
-  imageId String? @unique
-  image   Image?  @relation(fields: [imageId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@index([visibility])
-  @@index([name])
-}
-
-model PlaylistTrack {
-  id       String   @id @default(cuid())
-  position Int
-  addedAt  DateTime @default(now())
-
-  playlistId String
-  trackId    String
-  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
-
-  @@unique([playlistId, trackId])
-  @@index([playlistId, position])
-}
-
-// ---------------------------- USER INTERACTIONS ---------------------------
 model UserLikedTrack {
-  id      String   @id @default(cuid())
-  userId  String
-  trackId String
-  likedAt DateTime @default(now())
+  id String @id @default(cuid())
+
+  userId  String @map("user_id")
+  trackId String @map("track_id")
+
+  likedAt DateTime @default(now()) @map("liked_at")
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
   @@unique([userId, trackId])
-  @@index([userId])
-  @@index([likedAt])
+  @@map("user_liked_tracks")
 }
 
 model UserFollowedArtist {
-  id         String   @id @default(cuid())
-  userId     String
-  artistId   String
-  followedAt DateTime @default(now())
+  id String @id @default(cuid())
+
+  userId   String @map("user_id")
+  artistId String @map("artist_id")
+
+  followedAt DateTime @default(now()) @map("followed_at")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
   @@unique([userId, artistId])
-  @@index([userId])
-  @@index([followedAt])
+  @@map("user_followed_artists")
 }
 
 model UserFollowedAlbum {
-  id         String   @id @default(cuid())
-  userId     String
-  albumId    String
-  followedAt DateTime @default(now())
+  id String @id @default(cuid())
+
+  userId  String @map("user_id")
+  albumId String @map("album_id")
+
+  followedAt DateTime @default(now()) @map("followed_at")
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   @@unique([userId, albumId])
-  @@index([userId])
-  @@index([followedAt])
-}
-
-// --------------------------------- GENRES ---------------------------------
-model Genre {
-  id          String  @id @default(cuid())
-  name        String  @unique
-  slug        String  @unique
-  description String?
-
-  artists ArtistGenre[]
-  albums  AlbumGenre[]
-  tracks  TrackGenre[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([name])
-}
-
-model ArtistGenre {
-  id       String @id @default(cuid())
-  artistId String
-  genreId  String
-
-  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
-  genre  Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
-
-  @@unique([artistId, genreId])
-}
-
-model AlbumGenre {
-  id      String @id @default(cuid())
-  albumId String
-  genreId String
-
-  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
-  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
-
-  @@unique([albumId, genreId])
-}
-
-model TrackGenre {
-  id      String @id @default(cuid())
-  trackId String
-  genreId String
-
-  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
-  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
-
-  @@unique([trackId, genreId])
+  @@map("user_followed_albums")
 }

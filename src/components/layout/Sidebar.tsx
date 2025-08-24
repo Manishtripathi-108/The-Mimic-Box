@@ -47,7 +47,7 @@ const sidebarMenuItems: T_Sidebar[] = [
     },
     {
         title: 'Games',
-        icon: 'gamepad',
+        icon: 'game',
         children: [
             {
                 name: 'Tic Tac Toe',
