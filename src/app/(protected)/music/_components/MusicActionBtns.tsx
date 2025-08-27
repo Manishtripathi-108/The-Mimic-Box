@@ -9,9 +9,9 @@ import { Button } from '@/components/ui/Button';
 import { useAudioPlayerContext } from '@/contexts/AudioPlayer.context';
 import useAudioSourceTrackMapper from '@/hooks/useAudioSourceTrackMapper';
 import { T_AudioSourceContext } from '@/lib/types/client.types';
+import { buildAudioCacheKey } from '@/lib/utils/audio.cleint.utils';
 import { shareUrl } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
-import { buildAudioCacheKey } from '@/lib/utils/music.utils';
 
 const MusicActionBtns = ({ className, context }: { className?: string; context: T_AudioSourceContext }) => {
     const { setQueue, toggleFadePlay, playbackContext, playing } = useAudioPlayerContext();
@@ -52,11 +52,11 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
 
             <Button
                 onClick={handlePlay}
-                icon={isPending ? 'loading' : isContextPlaying ? 'play' : 'pause'}
+                icon={isPending ? 'loading' : isContextPlaying ? 'pause' : 'play'}
                 aria-label={isContextPlaying ? 'Pause' : 'Play'}
                 title={isContextPlaying ? 'Pause' : 'Play'}
                 variant="highlight"
-                className="size-14"
+                size="2xl"
                 disabled={isPending}
             />
 
