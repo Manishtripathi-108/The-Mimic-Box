@@ -42,9 +42,9 @@ const MusicTrackPlayBtn = ({ id, context }: { id: string; context: T_AudioSource
         <button
             type="button"
             onClick={handlePlayPause}
-            className="hover:text-text-primary size-7 shrink-0 cursor-pointer transition-colors"
+            className="hover:text-text-primary size-5 shrink-0 cursor-pointer transition-colors"
             aria-label={isPlaying ? 'Pause' : 'Play'}>
-            <Icon icon={isPlaying ? 'play' : 'pause'} />
+            <Icon icon={isPlaying ? 'pause' : 'play'} />
         </button>
     );
 };

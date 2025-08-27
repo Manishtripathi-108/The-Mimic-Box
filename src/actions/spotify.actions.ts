@@ -1,6 +1,7 @@
 'use server';
 
 import { auth } from '@/auth';
+import { addTracks } from '@/lib/services/music/tracks.music.services';
 import spotifyServices from '@/lib/services/spotify/index.spotify.services';
 import { T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 import { createError, createSuccess, createUnauthorized, createValidationError } from '@/lib/utils/createResponse.utils';
@@ -137,6 +138,8 @@ export const spotifyGetEntityTracks = async (id: string, type: 'album' | 'playli
         }
 
         if (!tracks.length) throw new Error('No valid tracks found');
+
+        await addTracks({ type: 'spotify', tracks });
 
         return createSuccess('Tracks fetched!', tracks);
     } catch (err) {
