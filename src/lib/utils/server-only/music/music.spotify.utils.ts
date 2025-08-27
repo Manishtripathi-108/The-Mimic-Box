@@ -1,7 +1,8 @@
+import { Prisma } from '@prisma/client';
+
 import {
     T_SpotifyAlbum,
     T_SpotifyArtist,
-    T_SpotifyEpisode,
     T_SpotifyImage,
     T_SpotifySimplifiedAlbum,
     T_SpotifySimplifiedArtist,
@@ -9,92 +10,30 @@ import {
     T_SpotifyTrack,
 } from '@/lib/types/spotify.types';
 
-type NormalizedTrack = {
-    title: string;
-    durationMs: number;
-    trackNumber: number;
-    discNumber: number;
-    explicit: boolean;
-    spotifyId: string;
-};
+// ---------------- Helpers ----------------
+const IMAGE_SIZE_MAP = { 160: 'sm', 320: 'md', 640: 'lg' } as const;
 
-type NormalizedAlbum = {
-    title: string;
-    releaseDate: Date;
-    totalTracks: number;
-    popularity: number;
-    spotifyId: string;
-};
-
-type NormalizedArtist = {
-    name: string;
-    spotifyId: string;
-    popularity: number;
-};
-
-type ImageSizes = {
-    sm?: string;
-    md?: string;
-    lg?: string;
-};
-
-type NormalizedTrackResult =
-    | (NormalizedTrack & {
-          album?: NormalizedAlbumResult;
-          artists?: NormalizedArtistResult[];
-      })
-    | null;
-
-type NormalizedAlbumResult =
-    | (NormalizedAlbum & {
-          artists?: NormalizedArtistResult[];
-          tracks?: NormalizedTrackResult[];
-          image?: ImageSizes | null;
-      })
-    | null;
-
-type NormalizedArtistResult =
-    | (NormalizedArtist & {
-          image?: ImageSizes | null;
-      })
-    | null;
-
-const IMAGE_SIZE_MAP = {
-    160: 'sm',
-    320: 'md',
-    640: 'lg',
+const FALLBACK_IMAGE = {
+    sm: 'https://res.cloudinary.com/dra73suxl/image/upload/w_50,h_50,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png',
+    md: 'https://res.cloudinary.com/dra73suxl/image/upload/w_150,h_150,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png',
+    lg: 'https://res.cloudinary.com/dra73suxl/image/upload/w_500,h_500,c_fill/v1744229654/no_cover_image_fallback_jhsdj.png',
 } as const;
 
-// ---------------- Normalizers ----------------
+const normalizeSpotifyImage = (images: T_SpotifyImage[] = []) =>
+    images.reduce<Record<keyof typeof FALLBACK_IMAGE, string>>(
+        (acc, img) => {
+            const sizeKey = IMAGE_SIZE_MAP[img.width as keyof typeof IMAGE_SIZE_MAP];
+            if (sizeKey && !acc[sizeKey]) acc[sizeKey] = img.url;
+            return acc;
+        },
+        { ...FALLBACK_IMAGE }
+    );
 
-/**
- *  Normalize Spotify Images → Prisma-compatible shape
- */
-export const normalizeSpotifyImage = (images: T_SpotifyImage[]): ImageSizes | null => {
-    if (!images?.length) return null;
+const normalizeDate = (date?: string) => (date ? new Date(date) : new Date());
 
-    const result: ImageSizes = {};
-
-    for (const image of images) {
-        const sizeKey = IMAGE_SIZE_MAP[image.width as keyof typeof IMAGE_SIZE_MAP];
-        if (sizeKey && !result[sizeKey]) {
-            result[sizeKey] = image.url;
-        }
-    }
-
-    return Object.keys(result).length ? result : null;
-};
-
-/**
- *  Normalize Spotify Track → Prisma-compatible shape
- */
-export const normalizeSpotifyTrack = (
-    track: T_SpotifySimplifiedTrack | T_SpotifyTrack | T_SpotifyEpisode,
-    options = { withAlbum: true }
-): NormalizedTrackResult => {
-    if (!track || track.type === 'episode') return null;
-
-    const normalized: NormalizedTrack = {
+// ---------------- TRACK ----------------
+export const normalizeSpotifyTrackLight = (track: T_SpotifySimplifiedTrack, opts = { skipArtists: false }) => {
+    const normalized = {
         title: track.name,
         durationMs: track.duration_ms,
         explicit: track.explicit,
@@ -103,55 +42,160 @@ export const normalizeSpotifyTrack = (
         trackNumber: track.track_number,
     };
 
-    const album = options.withAlbum && 'album' in track ? normalizeSpotifyAlbum(track.album, { withTracks: false }) : undefined;
-    const artists = track.artists?.length
-        ? track.artists.map((a) => normalizeSpotifyArtist(a)).filter((a): a is NonNullable<typeof a> => !!a)
-        : undefined;
+    const artists = !opts.skipArtists ? (track.artists?.map(normalizeSpotifyArtistLight) ?? []) : [];
 
-    return { ...normalized, album, artists };
+    return {
+        ...normalized,
+        artists,
+        _create: {
+            ...normalized,
+            ...(artists.length && {
+                artists: {
+                    connectOrCreate: artists.map((artist) => ({
+                        where: { spotifyId: artist.spotifyId },
+                        create: artist._create,
+                    })),
+                },
+            }),
+        } satisfies Prisma.TrackCreateInput,
+        _update: {},
+    };
 };
 
-/**
- *  Normalize Spotify Album → Prisma-compatible shape
- */
-export const normalizeSpotifyAlbum = (album: T_SpotifyAlbum | T_SpotifySimplifiedAlbum, options = { withTracks: true }): NormalizedAlbumResult => {
-    if (!album) return null;
+export const normalizeSpotifyTrackFull = (track: T_SpotifyTrack) => {
+    const base = normalizeSpotifyTrackLight(track, { skipArtists: true });
+    const artists = track.artists.map(normalizeSpotifyArtistFull);
+    const album = normalizeSpotifyAlbumLight(track.album);
 
-    const normalized: NormalizedAlbum = {
+    return {
+        ...base,
+        popularity: track.popularity,
+        isrc: track.external_ids.isrc,
+        album,
+        artists,
+        _create: {
+            ...base._create,
+            popularity: track.popularity,
+            isrc: track.external_ids.isrc,
+            artists: {
+                connectOrCreate: artists.map((artist) => ({
+                    where: { spotifyId: artist.spotifyId },
+                    create: artist._create,
+                })),
+            },
+            album: {
+                connectOrCreate: {
+                    where: { spotifyId: album.spotifyId },
+                    create: album._create,
+                },
+            },
+        } satisfies Prisma.TrackCreateInput,
+        _update: {
+            popularity: track.popularity,
+            isrc: track.external_ids.isrc,
+            artists: {
+                connectOrCreate: artists.map((artist) => ({
+                    where: { spotifyId: artist.spotifyId },
+                    create: artist._create,
+                })),
+            },
+            album: {
+                connectOrCreate: {
+                    where: { spotifyId: album.spotifyId },
+                    create: album._create,
+                },
+            },
+        },
+    };
+};
+
+// ---------------- ALBUM ----------------
+export const normalizeSpotifyAlbumLight = (album: Omit<T_SpotifySimplifiedAlbum, 'album_group'>) => {
+    const normalized = {
         title: album.name,
-        releaseDate: new Date(album.release_date ?? Date.now()),
+        releaseDate: normalizeDate(album.release_date),
         totalTracks: album.total_tracks,
         spotifyId: album.id,
-        popularity: 'popularity' in album ? album.popularity : 0,
     };
 
-    let tracks: NormalizedTrackResult[] | undefined;
-    if (options.withTracks && 'tracks' in album) {
-        tracks = album.tracks.items.map((t) => normalizeSpotifyTrack(t, { withAlbum: false })).filter((t): t is NonNullable<typeof t> => !!t);
-    }
+    const artists = album.artists?.map(normalizeSpotifyArtistLight) ?? [];
+    const image = normalizeSpotifyImage(album.images);
 
-    const artists = album.artists?.length
-        ? album.artists.map((a) => normalizeSpotifyArtist(a)).filter((a): a is NonNullable<typeof a> => !!a)
-        : undefined;
-
-    const image = 'images' in album ? normalizeSpotifyImage(album.images) : undefined;
-
-    return { ...normalized, tracks, artists, image };
+    return {
+        ...normalized,
+        artists,
+        image,
+        _create: {
+            ...normalized,
+            ...(artists.length && {
+                artists: {
+                    connectOrCreate: artists.map((artist) => ({
+                        where: { spotifyId: artist.spotifyId },
+                        create: artist._create,
+                    })),
+                },
+            }),
+            image: { create: image },
+        } satisfies Prisma.AlbumCreateInput,
+        _update: {},
+    };
 };
 
-/**
- *  Normalize Spotify Artist → Prisma-compatible shape
- */
-export const normalizeSpotifyArtist = (artist: T_SpotifyArtist | T_SpotifySimplifiedArtist): NormalizedArtistResult => {
-    if (!artist) return null;
+export const normalizeSpotifyAlbumFull = (album: T_SpotifyAlbum) => {
+    const base = normalizeSpotifyAlbumLight(album);
+    const tracks = album.tracks.items.map((t) => normalizeSpotifyTrackLight(t));
 
-    const normalized: NormalizedArtist = {
+    return {
+        ...base,
+        tracks,
+        _create: {
+            ...base._create,
+            popularity: album.popularity,
+            tracks: {
+                connectOrCreate: tracks.map(({ _create }) => ({
+                    where: { spotifyId: _create.spotifyId },
+                    create: _create,
+                })),
+            },
+        } satisfies Prisma.AlbumCreateInput,
+        _update: {
+            popularity: album.popularity,
+            tracks: {
+                connectOrCreate: tracks.map(({ _create }) => ({
+                    where: { spotifyId: _create.spotifyId },
+                    create: _create,
+                })),
+            },
+        },
+    };
+};
+
+// ---------------- ARTIST ----------------
+export const normalizeSpotifyArtistLight = (artist: T_SpotifySimplifiedArtist) => ({
+    name: artist.name,
+    spotifyId: artist.id,
+    _create: {
         name: artist.name,
         spotifyId: artist.id,
-        popularity: 'popularity' in artist ? artist.popularity : 0,
+    } satisfies Prisma.ArtistCreateInput,
+    _update: {},
+});
+
+export const normalizeSpotifyArtistFull = (artist: T_SpotifyArtist) => {
+    const base = normalizeSpotifyArtistLight(artist);
+    const image = normalizeSpotifyImage(artist.images);
+    return {
+        ...base,
+        image: { create: image },
+        popularity: artist.popularity,
+        _create: {
+            ...base._create,
+            image: { create: image },
+            popularity: artist.popularity,
+        },
+        _update: {
+            image: { create: image },
+            popularity: artist.popularity,
+        },
     };
-
-    const image = 'images' in artist ? normalizeSpotifyImage(artist.images) : undefined;
-
-    return { ...normalized, image };
 };
