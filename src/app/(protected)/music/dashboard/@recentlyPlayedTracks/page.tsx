@@ -1,6 +1,6 @@
 import { spotifyGetRecentTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
-import ErrorMessage from '@/components/ui/ErrorMessage';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async () => {

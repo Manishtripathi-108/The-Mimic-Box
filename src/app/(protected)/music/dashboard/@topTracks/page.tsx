@@ -1,7 +1,7 @@
 import { spotifyGetUserTopTracks } from '@/actions/spotify.actions';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
 import LinkCard from '@/components/ui/LinkCard';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async () => {

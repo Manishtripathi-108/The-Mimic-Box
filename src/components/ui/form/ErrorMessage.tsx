@@ -8,11 +8,13 @@ const ErrorMessage = ({ message, className }: { message?: string | null; classNa
         <p
             role="alert"
             aria-live="assertive"
+            data-component="form"
+            data-element="error"
             className={cn('text-danger bg-danger/20 my-2 flex items-center rounded-lg px-3 py-1 text-xs', className)}>
             <Icon icon="error" className="mr-1 size-5 shrink-0" />
             {message}
         </p>
     );
-};
+}
 
 export default ErrorMessage;

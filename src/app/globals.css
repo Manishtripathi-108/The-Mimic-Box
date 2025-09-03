@@ -61,6 +61,8 @@
     --ease-out-back: cubic-bezier(0.18, 0.89, 0.32, 1.27);
     --ease-out-circ: cubic-bezier(0.08, 0.82, 0.17, 1);
 
+    --default-transition-timing-function: var(--ease-in-out-circ);
+
     /* -------------------------------------------------------------------------- */
     /*                                  Animation                                 */
     /* -------------------------------------------------------------------------- */
@@ -512,31 +514,6 @@
     }
 
     &:hover .radio-field:not(:disabled, :checked) ~ .form-text {
-        @apply text-text-primary translate-x-2;
-    }
-}
-
-/* -------------------------------- Checkbox -------------------------------- */
-@utility form-checkbox {
-    @apply inline-flex cursor-pointer items-center;
-
-    .form-text {
-        @apply ml-2 cursor-pointer;
-    }
-
-    .checkbox-field {
-        @apply bg-primary checked:shadow-pressed-xs disabled:bg-secondary checked:text-text-primary border-tertiary flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center overflow-hidden rounded-sm border text-center text-xs transition-shadow duration-300 ease-in-out checked:after:size-full checked:after:font-bold checked:after:content-['\2713'];
-
-        &:checked ~ .form-text {
-            @apply text-highlight translate-x-2;
-        }
-
-        &:not(:disabled, :checked):focus ~ .form-text {
-            @apply text-text-primary translate-x-2;
-        }
-    }
-
-    &:hover .checkbox-field:not(:disabled, :checked) ~ .form-text {
         @apply text-text-primary translate-x-2;
     }
 }

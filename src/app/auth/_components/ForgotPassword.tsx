@@ -9,9 +9,9 @@ import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
 

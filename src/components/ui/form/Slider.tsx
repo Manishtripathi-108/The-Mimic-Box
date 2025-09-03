@@ -90,7 +90,7 @@ const SLIDER_VARIANT_COLORS: Record<
     },
 };
 
-export type SliderProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> & {
+export type SliderProps = Omit<React.ComponentProps<'input'>, 'size' | 'type'> & {
     min?: number;
     max?: number;
     step?: number;
@@ -141,6 +141,9 @@ const Slider: React.FC<SliderProps> = ({
             aria-valuemin={min}
             aria-valuemax={max}
             aria-valuenow={value ?? defaultValue}
+            data-component="form"
+            data-element="field"
+            data-field-type="slider"
             style={
                 {
                     '--slider-height': sliderHeight,

@@ -12,8 +12,6 @@ export type CheckboxProps = {
     children?: React.ReactNode;
     className?: { label?: string; field?: string };
     position?: 'left' | 'right';
-
-    /** Theme options */
     size?: 'sm' | 'md' | 'lg';
     color?: 'primary' | 'secondary' | 'accent' | 'danger' | 'warning' | 'success' | 'highlight';
 };
@@ -58,7 +56,6 @@ const Checkbox = ({
                 position === 'left' && 'flex-row-reverse justify-between',
                 className?.label
             )}>
-            {/* Native Input */}
             <input
                 id={id || checkboxId}
                 name={name}
@@ -66,6 +63,9 @@ const Checkbox = ({
                 value={value}
                 defaultChecked={defaultChecked}
                 disabled={disabled}
+                data-component="form"
+                data-element="field"
+                data-field-type="checkbox"
                 className={cn(
                     'peer checked:shadow-pressed-xs shrink-0 cursor-pointer appearance-none overflow-hidden rounded-sm border transition-[shadow,color] ease-in-out',
                     `checked:after:flex checked:after:size-full checked:after:items-center checked:after:justify-center checked:after:font-bold checked:after:content-['✓']`,
@@ -78,7 +78,6 @@ const Checkbox = ({
                 {...props}
             />
 
-            {/* Label Content */}
             {children && (
                 <span
                     className={cn(

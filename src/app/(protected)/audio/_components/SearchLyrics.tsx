@@ -7,9 +7,9 @@ import { useForm } from 'react-hook-form';
 
 import { getLyrics } from '@/actions/lrclib.actions';
 import { Button } from '@/components/ui/Button';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import FormInput from '@/components/ui/FormInput';
 import { Tabs, TabsContent, TabsIndicator, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/Tabs';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import { LYRICS_UNAVAILABLE_MESSAGES } from '@/constants/client.constants';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';

@@ -10,13 +10,14 @@ import AudioAdvancedSettings from '@/app/(protected)/audio/_components/AudioAdva
 import UploadProgressCard from '@/components/layout/UploadProgressCard';
 import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUpload from '@/components/ui/FileUpload';
 import FileUploadItem from '@/components/ui/FileUploadItem';
 import FormRangeSlider from '@/components/ui/FormRangeSlider';
 import FormSelect from '@/components/ui/FormSelect';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import TabSwitcher from '@/components/ui/TabSwitcher';
+import Checkbox from '@/components/ui/form/Checkbox';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -233,10 +234,7 @@ const AudioFileConverter = () => {
 
                             {files.length > 1 && (
                                 <div className="mr-2 flex items-center justify-end">
-                                    <label htmlFor="useGlobalSettings" className="form-checkbox">
-                                        <input id="useGlobalSettings" className="checkbox-field" type="checkbox" {...register('useGlobalSettings')} />
-                                        <span className="form-text select-none">Use the same format and quality for all files</span>
-                                    </label>
+                                    <Checkbox {...register('useGlobalSettings')}>Use the same format and quality for all files</Checkbox>
                                 </div>
                             )}
 

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 import { spotifyGetArtist } from '@/actions/spotify.actions';
 import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHeader';
-import ErrorMessage from '@/components/ui/ErrorMessage';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
     const { id } = await params;

@@ -1,9 +1,9 @@
 'use client';
 
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import FileUploadItem from '@/components/ui/FileUploadItem';
 import Icon from '@/components/ui/Icon';
 import Waves from '@/components/ui/Waves';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import cn from '@/lib/utils/cn';
 

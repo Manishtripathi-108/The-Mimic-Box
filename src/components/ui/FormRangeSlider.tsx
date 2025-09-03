@@ -3,7 +3,7 @@
 import { FieldValues, useController } from 'react-hook-form';
 
 import Icon from '@/components/ui/Icon';
-import Slider, { SliderProps } from '@/components/ui/Slider';
+import Slider, { SliderProps } from '@/components/ui/form/Slider';
 import { T_FormRangeSliderProps } from '@/lib/types/form.types';
 import cn from '@/lib/utils/cn';
 

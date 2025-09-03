@@ -1,6 +1,6 @@
 import { spotifyGetArtistAlbums } from '@/actions/spotify.actions';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import LinkCard from '@/components/ui/LinkCard';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {

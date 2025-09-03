@@ -14,7 +14,7 @@ import { NoDataCard } from '@/components/layout/NoDataCard';
 import Badge from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import Checkbox from '@/components/ui/Checkbox';
+import Checkbox from '@/components/ui/form/Checkbox';
 import { T_DuplicateTrack, T_RemoveDuplicates, T_RemoveDuplicatesSource } from '@/lib/types/common.types';
 
 type T_FormData = {

@@ -12,4 +12,4 @@ export const DISABLED = 'disabled:pointer-events-none disabled:opacity-60 disabl
 
 // Data invalid styles
 export const DATA_INVALID =
-    'invalid:border invalid:border-danger invalid:text-danger invalid:ring-red-300 data-[invalid=true]:border data-[invalid=true]:border-danger data-[invalid=true]:text-danger data-[invalid=true]:ring-red-300 aria-[invalid=true]:border aria-[invalid=true]:border-danger aria-[invalid=true]:text-danger aria-[invalid=true]:ring-red-300';
+    'user-invalid:border user-invalid:border-danger user-invalid:text-danger user-invalid:ring-red-300 data-[invalid=true]:border data-[invalid=true]:border-danger data-[invalid=true]:text-danger data-[invalid=true]:ring-red-300 aria-[invalid=true]:border aria-[invalid=true]:border-danger aria-[invalid=true]:text-danger aria-[invalid=true]:ring-red-300';

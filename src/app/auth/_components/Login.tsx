@@ -11,9 +11,9 @@ import { z } from 'zod';
 
 import { loginAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
 import useToggle from '@/hooks/useToggle';

@@ -9,9 +9,9 @@ import { z } from 'zod';
 
 import { resetPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
+import ErrorMessage from '@/components/ui/form/ErrorMessage';
 import useToggle from '@/hooks/useToggle';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 

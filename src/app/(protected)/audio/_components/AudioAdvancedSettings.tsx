@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
 import FormSelect from '@/components/ui/FormSelect';
 import { Tabs, TabsContent, TabsIndicator, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/Tabs';
+import Checkbox from '@/components/ui/form/Checkbox';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_CHANNEL_OPTIONS } from '@/constants/client.constants';
 import {
     AudioBitrateSchema,
@@ -78,10 +79,7 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
                             control={control}
                         />
                         <div className="col-span-2 flex justify-end">
-                            <label htmlFor="normalize" className="form-checkbox">
-                                <input id="normalize" className="checkbox-field" type="checkbox" {...register('effects.normalize')} />
-                                <span className="form-text text-base select-none">Normalize Audio</span>
-                            </label>
+                            <Checkbox {...register('effects.normalize')}>Normalize Audio</Checkbox>
                         </div>
                     </TabsPanel>
                     <TabsPanel value="Trim" className="grid w-full grid-cols-2 gap-4 p-0">

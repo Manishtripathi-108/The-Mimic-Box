@@ -2,7 +2,7 @@
 
 import { FieldValues, useController } from 'react-hook-form';
 
-import Checkbox from '@/components/ui/Checkbox';
+import Checkbox from '@/components/ui/form/Checkbox';
 import { T_FormFieldWithOptionsProps } from '@/lib/types/form.types';
 import { getOptionData } from '@/lib/utils/client.utils';
 import cn from '@/lib/utils/cn';
