@@ -84,6 +84,23 @@ export const normalizeSpotifyTrackFull = (track: T_SpotifyTrack) => {
         },
     };
 
+    const data = {
+        ...base,
+        popularity: track.popularity,
+        isrc: track.external_ids.isrc,
+        album,
+        artists,
+        _create: {
+            ...base._create,
+            ...update,
+        } satisfies Prisma.TrackCreateInput,
+        _update: update,
+    };
+
+    console.log(`🪵 > music.spotify.utils.ts:87 > normalizeSpotifyTrackFull:`, data);
+
+    return data;
+
     return {
         ...base,
         popularity: track.popularity,
