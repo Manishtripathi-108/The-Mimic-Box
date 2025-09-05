@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
-import { ErrorAlert } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -15,6 +14,8 @@ import * as z from 'zod';
 import { editProfileAction } from '@/actions/user.actions';
 import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import ErrorText from '@/components/ui/form/ErrorText';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { profileSchema } from '@/lib/schema/user.validations';
 
@@ -106,7 +107,7 @@ const Page = () => {
                                 aria-invalid={!!errors.name}
                             />
                         </div>
-                        <ErrorAlert as="p" className="text-danger text-xs" errors={errors} name="name" aria-live="polite" />
+                        <ErrorText text={errors.name?.message} />
                     </div>
 
                     {/* Email Field (Read-only) */}
@@ -126,7 +127,7 @@ const Page = () => {
                                 aria-invalid={!!errors.email}
                             />
                         </div>
-                        <ErrorAlert as="p" className="text-danger text-xs" errors={errors} name="email" aria-live="polite" />
+                        <ErrorText text={errors.email?.message} />
                     </div>
 
                     {/* Profile Image Upload */}
@@ -150,20 +151,10 @@ const Page = () => {
                             </div>
                         )}
                         <input type="file" onChange={handleImageChange} className="form-field" />
-                        <ErrorAlert as="p" className="text-danger text-xs" errors={errors} name="image" aria-live="polite" />
+                        <ErrorText text={errors.image?.message} />
                     </div>
 
-                    <ErrorAlert
-                        as="p"
-                        errors={errors}
-                        name="root.serverError"
-                        render={({ message }) => (
-                            <p aria-live="polite" className="text-danger mt-3 flex items-center rounded-lg bg-red-400/10 px-3 py-1 text-xs">
-                                <Icon icon="error" className="size-7 shrink-0" />
-                                {message}
-                            </p>
-                        )}
-                    />
+                    <ErrorAlert text={errors.root?.serverError?.message} />
 
                     <hr className="my-5" />
 
