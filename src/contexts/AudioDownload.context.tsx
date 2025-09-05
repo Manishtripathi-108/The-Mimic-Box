@@ -8,9 +8,9 @@ import toast from 'react-hot-toast';
 
 import { useFFmpeg } from '@/hooks/useFFmpeg.hook';
 import { T_AudioDownloadFile, T_AudioFile, T_AudioPlayerTrack } from '@/lib/types/client.types';
+import { buildAudioFileFromTrack, getLyrics, searchMetadata } from '@/lib/utils/audio.cleint.utils';
 import { sleep } from '@/lib/utils/core.utils';
 import { downloadFile, sanitizeFilename } from '@/lib/utils/file.utils';
-import { buildAudioFileFromTrack, getLyrics, searchMetadata } from '@/lib/utils/music.utils';
 
 type DownloadContextType = {
     downloads: T_AudioDownloadFile[];

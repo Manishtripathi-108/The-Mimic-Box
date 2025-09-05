@@ -10,8 +10,8 @@ import useSafeApiCall from '@/hooks/useSafeApiCall';
 import { T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { T_SaavnSong } from '@/lib/types/saavn/song.types';
 import { T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
+import { buildAudioCacheKey } from '@/lib/utils/audio.cleint.utils';
 import { chunkArray } from '@/lib/utils/core.utils';
-import { buildAudioCacheKey } from '@/lib/utils/music.utils';
 
 const CACHE_DURATION_MS = 15 * 24 * 60 * 60 * 1000; // 15 days
 
