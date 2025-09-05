@@ -4,11 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
-import FormCheckboxGroup from '@/components/ui/FormCheckboxGroup';
-import FormInput from '@/components/ui/FormInput';
-import FormSelect from '@/components/ui/FormSelect';
 import Modal, { closeModal } from '@/components/ui/Modals';
 import TabSwitcher from '@/components/ui/TabSwitcher';
+import Checkbox from '@/components/ui/form/Checkbox';
+import FormField from '@/components/ui/form/FormField';
+import IconInput from '@/components/ui/form/IconInput';
+import Select from '@/components/ui/form/Select';
 import { ANILIST_GENRES } from '@/constants/client.constants';
 import {
     AnilistFilterSchema,
@@ -31,7 +32,14 @@ const ResetFilters: AnilistMediaFilters = {
 };
 
 const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; setFilters: (filters: AnilistMediaFilters) => void }) => {
-    const { control, handleSubmit, setValue, reset, watch } = useForm({
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        reset,
+        watch,
+        formState: { errors },
+    } = useForm({
         defaultValues: { ...filters, genres: filters.genres ?? [] },
         resolver: zodResolver(AnilistFilterSchema),
     });
@@ -43,20 +51,15 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
 
     return (
         <Modal modalId="modal-anilist-filters">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg bg-inherit p-6 shadow-lg">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-lg bg-inherit p-6 shadow-lg">
                 {/* Search */}
-                <FormInput
-                    name="search"
-                    label="Search"
-                    type="text"
-                    placeholder="eg. Naruto"
-                    control={control}
-                    classNames={{ label: 'font-alegreya text-base' }}
-                />
+                <FormField label="Search" error={errors.search?.message} labelClassName="font-alegreya text-base">
+                    <IconInput icon="search" placeholder="eg. Naruto" type="search" {...register('search')} />
+                </FormField>
 
                 {/* Format */}
                 <div className="form-group relative">
-                    <p className="form-text text-text-primary font-alegreya text-base">Format:</p>
+                    <p className="form-text text-text-primary font-alegreya mb-2 text-base">Format:</p>
                     <TabSwitcher
                         tabs={AnilistMediaFormatTabs}
                         currentTab={watch('format')?.toLowerCase().replace('_', ' ')}
@@ -66,7 +69,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                     />
                     <button
                         type="button"
-                        className="text-text-secondary hover:text-text-primary absolute -top-2 right-4 cursor-pointer text-2xl"
+                        className="text-text-secondary hover:text-text-primary absolute -top-3 right-4 cursor-pointer text-xl"
                         onClick={() => setValue('format', undefined)}
                         title="Clear">
                         x
@@ -74,17 +77,20 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 </div>
 
                 {/* Genres */}
-                <FormCheckboxGroup
-                    options={ANILIST_GENRES}
-                    label="Genres:"
-                    classNames={{ container: 'mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3', label: ' text-text-primary font-alegreya text-base' }}
-                    name="genres"
-                    control={control}
-                />
+                <FormField error={errors.genres?.message}>
+                    <p className="text-text-primary font-alegreya text-base">Genres:</p>
+                    <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {ANILIST_GENRES.map((g) => (
+                            <Checkbox key={g} value={g} {...register('genres')}>
+                                {g}
+                            </Checkbox>
+                        ))}
+                    </div>
+                </FormField>
 
                 {/* Status */}
                 <div className="form-group relative">
-                    <p className="form-text text-text-primary font-alegreya text-base">Status:</p>
+                    <p className="form-text text-text-primary font-alegreya mb-2 text-base">Status:</p>
                     <TabSwitcher
                         tabs={AnilistMediaStatusTabs}
                         currentTab={watch('status')?.toLowerCase().replaceAll('_', ' ')}
@@ -94,7 +100,7 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                     />
                     <button
                         type="button"
-                        className="text-text-secondary hover:text-text-primary absolute -top-2 right-4 cursor-pointer text-2xl"
+                        className="text-text-secondary hover:text-text-primary absolute -top-3 right-4 cursor-pointer text-xl"
                         onClick={() => setValue('status', undefined)}
                         title="Clear">
                         x
@@ -104,33 +110,38 @@ const A_FilterModal = ({ filters, setFilters }: { filters: AnilistMediaFilters; 
                 {/* Sort & Year */}
                 <div className="flex gap-4">
                     {/* Sort By */}
-                    <FormSelect
-                        control={control}
-                        name="sort"
-                        label="Sort By:"
-                        classNames={{ label: 'font-alegreya text-base' }}
-                        options={AnilistMediaSortOptionsSchema.options}
-                    />
+                    <FormField label="Sort By:" error={errors.status?.message} labelClassName="font-alegreya text-base">
+                        <Select {...register('sort')} className="capitalize *:capitalize">
+                            {AnilistMediaSortOptionsSchema.options.map((o) => (
+                                <option key={o} value={o}>
+                                    {o.toLowerCase()}
+                                </option>
+                            ))}
+                        </Select>
+                    </FormField>
 
                     {/* Season */}
-                    <FormSelect
-                        control={control}
-                        label="Season:"
-                        name="season"
-                        classNames={{ label: 'font-alegreya text-base' }}
-                        options={AnilistFilterSchema.shape.season.options}
-                    />
+
+                    <FormField label="Season:" error={errors.season?.message} labelClassName="font-alegreya text-base">
+                        <Select {...register('season')} className="capitalize *:capitalize">
+                            {AnilistFilterSchema.shape.season.options.map((o) => (
+                                <option key={o} value={o}>
+                                    {o.toLowerCase()}
+                                </option>
+                            ))}
+                        </Select>
+                    </FormField>
 
                     {/* Year */}
-                    <FormInput
-                        label="Year"
-                        name="year"
-                        type="number"
-                        placeholder="ie., 2022"
-                        control={control}
-                        classNames={{ label: 'font-alegreya text-base' }}
-                        rules={{ min: 1900, max: new Date().getFullYear() }}
-                    />
+
+                    <FormField label="Year:" error={errors.year?.message} labelClassName="font-alegreya text-base">
+                        <IconInput
+                            icon="calendar"
+                            placeholder="ie., 2022"
+                            type="number"
+                            {...register('year', { min: 1900, max: new Date().getFullYear() })}
+                        />
+                    </FormField>
                 </div>
 
                 <div className="flex items-center justify-end gap-4">

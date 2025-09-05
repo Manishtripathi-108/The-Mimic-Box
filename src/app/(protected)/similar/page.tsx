@@ -9,7 +9,8 @@ import { z } from 'zod';
 
 import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
-import FormInput from '@/components/ui/FormInput';
+import FormField from '@/components/ui/form/FormField';
+import Input from '@/components/ui/form/Input';
 
 const validateStrings = z.object({
     string1: z.string().min(1, 'String 1 is required'),
@@ -17,7 +18,11 @@ const validateStrings = z.object({
 });
 
 const Page = () => {
-    const { handleSubmit, control } = useForm<{ string1: string; string2: string }>({
+    const {
+        handleSubmit,
+        register,
+        formState: { errors },
+    } = useForm<{ string1: string; string2: string }>({
         defaultValues: { string1: '', string2: '' },
         resolver: zodResolver(validateStrings),
     });
@@ -33,13 +38,17 @@ const Page = () => {
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Find String Similar Score</h1>
             <CardContainer className="w-full max-w-xl">
                 <form onSubmit={handleSubmit(onSubmit)} className="mx-auto flex w-full flex-col gap-2">
-                    <FormInput name="string1" label="String 1" type="text" placeholder="String 1" control={control} />
-                    <FormInput name="string2" label="String 2" type="text" placeholder="String 2" control={control} />
-
+                    <FormField label="String 1" error={errors.string1?.message}>
+                        <Input placeholder="String 1" type="text" {...register('string1')} />
+                    </FormField>
+                    <FormField label="String 2" error={errors.string2?.message}>
+                        <Input placeholder="String 2" type="text" {...register('string2')} />
+                    </FormField>
                     <Button variant="highlight" type="submit" className="mt-4">
                         Compare
                     </Button>
                 </form>
+
                 {score !== null && (
                     <div className="mt-6 text-center">
                         <span className="text-lg font-bold">Similarity Score: </span>

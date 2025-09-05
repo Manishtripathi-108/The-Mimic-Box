@@ -11,9 +11,10 @@ import { z } from 'zod';
 
 import { loginAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
 import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import FormField from '@/components/ui/form/FormField';
+import IconInput from '@/components/ui/form/IconInput';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
 import useToggle from '@/hooks/useToggle';
@@ -27,13 +28,14 @@ const LoginInForm = () => {
     const [showPassword, { toggle: toggleShowPassword }] = useToggle();
 
     const {
-        control,
+        register,
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
     } = useForm({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } });
 
     async function onSubmit(data: z.infer<typeof loginSchema>) {
+        if (isSubmitting) return;
         const response = await loginAction(data);
 
         if (response.success) {
@@ -65,36 +67,37 @@ const LoginInForm = () => {
                     <legend className="sr-only">Login Form</legend>
 
                     {/* Email Field */}
-                    <FormInput
-                        name="email"
-                        label="Email Address"
-                        autoComplete="email"
-                        type="email"
-                        placeholder="ie. example@themimicbox.com"
-                        iconName="email"
-                        control={control}
-                    />
+                    <FormField label="Email" error={errors.email?.message}>
+                        <IconInput
+                            icon="email"
+                            placeholder="ie. example@themimicbox.com"
+                            type="email"
+                            autoComplete="email"
+                            {...register('email')}
+                            required
+                        />
+                    </FormField>
 
                     {/* Password Field */}
-                    <FormInput
-                        name="password"
-                        label="Password"
-                        autoComplete="current-password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="* * * * * * * *"
-                        iconName={showPassword ? 'eye' : 'eyeClose'}
-                        onIconClick={() => toggleShowPassword()}
-                        control={control}
-                    />
+                    <FormField label="Password" error={errors.password?.message}>
+                        <IconInput
+                            icon={showPassword ? 'eye' : 'eyeClose'}
+                            placeholder="* * * * * * * *"
+                            type={showPassword ? 'text' : 'password'}
+                            autoComplete="current-password"
+                            onIconClick={() => toggleShowPassword()}
+                            {...register('password')}
+                            required
+                        />
+                    </FormField>
 
                     {/* Forgot Password Link */}
                     <Link href={APP_ROUTES.AUTH.FORGOT_PASSWORD} className="text-highlight mt-2 block text-right text-xs hover:underline">
                         Forgot password?
                     </Link>
-
                     {/* Server Error Messages */}
                     <ErrorAlert
-                        message={
+                        text={
                             errors.root?.message
                                 ? errors.root.message
                                 : UrlError
@@ -102,7 +105,6 @@ const LoginInForm = () => {
                                   : null
                         }
                     />
-
                     <hr className="my-5" />
                     {/* Submit Button */}
                     <Button type="submit" variant="highlight" className="w-full" disabled={isSubmitting}>

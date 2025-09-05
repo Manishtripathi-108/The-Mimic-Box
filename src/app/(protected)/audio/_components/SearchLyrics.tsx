@@ -7,9 +7,11 @@ import { useForm } from 'react-hook-form';
 
 import { getLyrics } from '@/actions/lrclib.actions';
 import { Button } from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
 import { Tabs, TabsContent, TabsIndicator, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/Tabs';
 import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import FormField from '@/components/ui/form/FormField';
+import IconInput from '@/components/ui/form/IconInput';
+import Input from '@/components/ui/form/Input';
 import { LYRICS_UNAVAILABLE_MESSAGES } from '@/constants/client.constants';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
@@ -98,7 +100,7 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
     const {
         handleSubmit,
         setError,
-        control,
+        register,
         reset,
         formState: { errors, isSubmitting },
     } = useForm({
@@ -113,6 +115,8 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
     });
 
     const submitSearchLyrics = async (data: T_LyricsQuery) => {
+        if (isSubmitting) return;
+
         setLyrics(null);
         const res = await getLyrics(data);
         if (res.success) {
@@ -136,14 +140,15 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
             </h3>
 
             <form onSubmit={handleSubmit(submitSearchLyrics)} className={`space-y-2 ${isSubmitting ? 'pointer-events-none animate-pulse' : ''}`}>
-                <FormInput
-                    control={control}
-                    name="q"
-                    label="Search here..."
-                    iconName="search"
-                    placeholder="e.g. Departure Lane Umair & Talha Anjum"
-                    disabled={isSubmitting}
-                />
+                <FormField label="Search here..." error={errors.q?.message}>
+                    <IconInput
+                        icon="search"
+                        type="search"
+                        placeholder="e.g. Departure Lane Umair & Talha Anjum"
+                        disabled={isSubmitting}
+                        {...register('q')}
+                    />
+                </FormField>
 
                 <div className="flex items-center justify-end">
                     <Button onClick={() => setShowAdvanced((prev) => !prev)} variant="transparent" size="sm">
@@ -153,29 +158,21 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
 
                 {showAdvanced && (
                     <div className="grid gap-2 sm:grid-cols-2">
-                        <FormInput control={control} name="trackName" label="Track Name" placeholder="e.g. Departure Lane" disabled={isSubmitting} />
-                        <FormInput
-                            control={control}
-                            name="artistName"
-                            label="Artist Name"
-                            placeholder="e.g. Umair & Talha Anjum"
-                            disabled={isSubmitting}
-                        />
-                        <FormInput
-                            control={control}
-                            name="albumName"
-                            label="Album Name"
-                            placeholder="e.g. My Terrible Mind"
-                            disabled={isSubmitting}
-                        />
-                        <FormInput
-                            control={control}
-                            name="duration"
-                            label="Duration (sec)"
-                            placeholder="e.g. 167"
-                            type="number"
-                            disabled={isSubmitting}
-                        />
+                        <FormField label="Track Name" error={errors.trackName?.message}>
+                            <Input placeholder="e.g. Departure Lane" disabled={isSubmitting} {...register('trackName')} />
+                        </FormField>
+
+                        <FormField label="Artist Name" error={errors.artistName?.message}>
+                            <Input placeholder="e.g. Umair & Talha Anjum" disabled={isSubmitting} {...register('artistName')} />
+                        </FormField>
+
+                        <FormField label="Album Name" error={errors.albumName?.message}>
+                            <Input placeholder="e.g. My Terrible Mind" disabled={isSubmitting} {...register('albumName')} />
+                        </FormField>
+
+                        <FormField label="Duration (sec)" error={errors.duration?.message}>
+                            <Input placeholder="e.g. 167" type="number" disabled={isSubmitting} {...register('duration')} />
+                        </FormField>
                     </div>
                 )}
 

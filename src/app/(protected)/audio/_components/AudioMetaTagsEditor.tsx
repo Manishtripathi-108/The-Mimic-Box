@@ -12,10 +12,11 @@ import { handleEditMetaTags } from '@/actions/audio.actions';
 import SearchLyrics from '@/app/(protected)/audio/_components/SearchLyrics';
 import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
-import FormInput from '@/components/ui/FormInput';
-import FromTextarea from '@/components/ui/FromTextarea';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import FormField from '@/components/ui/form/FormField';
+import Input from '@/components/ui/form/Input';
+import Textarea from '@/components/ui/form/Textarea';
 import { META_TAGS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -42,15 +43,16 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
 
         return Object.keys(META_TAGS).reduce(
             (acc, key) => {
-                acc[key] = metaTags[key] || '';
+                acc[key] = metaTags[key] || undefined;
                 return acc;
             },
-            {} as Record<string, string | number>
+            {} as Record<string, string | number | undefined>
         );
     }, [metaTags]);
 
     const {
         control,
+        register,
         handleSubmit,
         setError,
         setValue,
@@ -148,14 +150,9 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                     {tagsToRender.map(([key, config]) =>
                         config.type === 'textarea' ? (
                             <div key={key} className={`relative ${config.className} flex w-full items-center justify-center`}>
-                                <FromTextarea
-                                    label={key}
-                                    control={control}
-                                    name={key as keyof T_AudioMetaTags}
-                                    placeholder={config.placeholder}
-                                    classNames={{ container: config.className }}
-                                    disabled={isSubmitting}
-                                />
+                                <FormField label={key} error={errors[key as keyof T_AudioMetaTags]?.message} className={config.className}>
+                                    <Textarea placeholder={config.placeholder} {...register(key as keyof T_AudioMetaTags)} />
+                                </FormField>
 
                                 <Button
                                     title="search lyrics"
@@ -166,16 +163,13 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                                 />
                             </div>
                         ) : (
-                            <FormInput
+                            <FormField
                                 key={key}
                                 label={key.replace('_', ' ')}
-                                control={control}
-                                name={key as keyof T_AudioMetaTags}
-                                type={config.type}
-                                placeholder={config.placeholder}
-                                classNames={{ container: config.className }}
-                                disabled={isSubmitting}
-                            />
+                                error={errors[key as keyof T_AudioMetaTags]?.message}
+                                className={config.className}>
+                                <Input type={config.type} placeholder={config.placeholder} {...register(key as keyof T_AudioMetaTags)} />
+                            </FormField>
                         )
                     )}
 

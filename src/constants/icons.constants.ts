@@ -17,6 +17,7 @@ enum IconSet {
     broom = 'game-icons:broom',
 
     /* ------------------------------------ C ----------------------------------- */
+    calendar = 'solar:calendar-bold',
     card = 'material-symbols:cards-outline-rounded',
     circle = 'ci:circle',
     close = 'iconamoon:close',

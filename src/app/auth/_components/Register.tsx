@@ -10,9 +10,10 @@ import { z } from 'zod';
 
 import { registerAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
 import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import FormField from '@/components/ui/form/FormField';
+import IconInput from '@/components/ui/form/IconInput';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import useToggle from '@/hooks/useToggle';
 import { registerSchema } from '@/lib/schema/auth.validations';
@@ -22,7 +23,7 @@ const RegisterForm = () => {
 
     const {
         handleSubmit,
-        control,
+        register,
         setError,
         formState: { errors, isSubmitting },
     } = useForm<z.infer<typeof registerSchema>>({
@@ -36,6 +37,7 @@ const RegisterForm = () => {
     });
 
     async function onSubmit(data: z.infer<typeof registerSchema>) {
+        if (isSubmitting) return;
         const response = await registerAction(data);
 
         if (response.success) {
@@ -66,49 +68,53 @@ const RegisterForm = () => {
                     <legend className="sr-only">Registration Form</legend>
 
                     {/* Full Name */}
-                    <FormInput
-                        autoComplete="name"
-                        name="fullName"
-                        label="Full Name"
-                        type="text"
-                        control={control}
-                        placeholder="ie. Gillion Ramirez"
-                        iconName="person"
-                    />
+                    <FormField label="Name" error={errors.fullName?.message}>
+                        <IconInput
+                            icon="person"
+                            type="text"
+                            autoComplete="name"
+                            {...register('fullName')}
+                            placeholder="ie. Gillion Ramirez"
+                            required
+                        />
+                    </FormField>
 
                     {/* Email */}
-                    <FormInput
-                        autoComplete="email"
-                        name="email"
-                        label="Email"
-                        type="email"
-                        control={control}
-                        placeholder="ie. example@themimicbox.com"
-                        iconName="email"
-                    />
+                    <FormField label="Email" error={errors.email?.message}>
+                        <IconInput
+                            icon="email"
+                            type="email"
+                            autoComplete="email"
+                            {...register('email')}
+                            placeholder="ie. example@themimicbox.com"
+                            required
+                        />
+                    </FormField>
 
                     {/* Password */}
-                    <FormInput
-                        autoComplete="new-password"
-                        name="password"
-                        label="Password"
-                        type="password"
-                        control={control}
-                        placeholder="* * * * * * * *"
-                        iconName="lock"
-                    />
+                    <FormField label="Password" error={errors.password?.message}>
+                        <IconInput
+                            autoComplete="new-password"
+                            placeholder="* * * * * * * *"
+                            icon="lock"
+                            type="password"
+                            {...register('password')}
+                            required
+                        />
+                    </FormField>
 
                     {/* Confirm Password */}
-                    <FormInput
-                        autoComplete="new-password"
-                        name="confirmPassword"
-                        label="Confirm Password"
-                        control={control}
-                        placeholder="* * * * * * * *"
-                        type={showPassword ? 'text' : 'password'}
-                        iconName={showPassword ? 'eye' : 'eyeClose'}
-                        onIconClick={() => toggleShowPassword()}
-                    />
+                    <FormField label="Confirm Password" error={errors.confirmPassword?.message}>
+                        <IconInput
+                            autoComplete="new-password"
+                            placeholder="* * * * * * * *"
+                            icon={showPassword ? 'eye' : 'eyeClose'}
+                            type={showPassword ? 'text' : 'password'}
+                            onIconClick={() => toggleShowPassword()}
+                            {...register('confirmPassword')}
+                            required
+                        />
+                    </FormField>
 
                     {/* Server Error Messages */}
                     <ErrorAlert text={errors.root?.message} />

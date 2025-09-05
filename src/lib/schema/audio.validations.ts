@@ -44,8 +44,16 @@ export const AudioMetaTagsSchema = z.object({
     album: z.string().optional(),
     album_artist: z.string().optional(),
     genre: z.string().optional(),
-    date: z.coerce.number().min(1700).max(new Date().getFullYear()).default(new Date().getFullYear()),
-    track: z.coerce.number().min(1).default(1),
+    date: z.coerce
+        .number('Invalid year')
+        .gt(1700, { error: 'Year must be between 1700 and current year' })
+        .max(new Date().getFullYear())
+        .default(new Date().getFullYear()),
+    track: z.coerce
+        .number('Invalid track number')
+        .transform((val) => (val === 0 ? 1 : val))
+        .refine((val) => val > 0, { error: 'Track number must be greater than 0' })
+        .default(1),
 
     composer: z.string().optional(),
     lyricist: z.string().optional(),

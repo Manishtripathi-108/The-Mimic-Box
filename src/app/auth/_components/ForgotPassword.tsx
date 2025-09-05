@@ -9,21 +9,23 @@ import { z } from 'zod';
 
 import { forgotPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
 import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import FormField from '@/components/ui/form/FormField';
+import Input from '@/components/ui/form/Input';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { forgotPasswordSchema } from '@/lib/schema/auth.validations';
 
 const ForgotPasswordForm = () => {
     const {
-        control,
+        register,
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
     } = useForm({ resolver: zodResolver(forgotPasswordSchema), defaultValues: { email: '' } });
 
     async function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
+        if (isSubmitting) return;
         const response = await forgotPasswordAction(data);
 
         if (response.success) {
@@ -50,17 +52,15 @@ const ForgotPasswordForm = () => {
                 </header>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-                    <FormInput
-                        control={control}
-                        name="email"
-                        label="Enter your email"
-                        autoComplete="email"
-                        type="email"
-                        disabled={isSubmitting}
-                        placeholder="ie. example@themimicbox.com"
-                        iconName="email"
-                        rules={{ required: 'Email is required' }}
-                    />
+                    <FormField label="Email" error={errors.email?.message}>
+                        <Input
+                            placeholder="ie. example@themimicbox.com"
+                            type="email"
+                            autoComplete="email"
+                            {...register('email', { required: 'Email is required' })}
+                            required
+                        />
+                    </FormField>
 
                     <ErrorAlert text={errors.root?.message} />
 

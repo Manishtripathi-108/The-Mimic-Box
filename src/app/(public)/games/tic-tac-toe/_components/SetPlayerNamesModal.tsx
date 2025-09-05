@@ -6,8 +6,9 @@ import { z } from 'zod';
 
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
 import Modal, { closeModal } from '@/components/ui/Modals';
+import FormField from '@/components/ui/form/FormField';
+import Input from '@/components/ui/form/Input';
 
 const playerNameSchema = z
     .string()
@@ -27,7 +28,11 @@ const SetPlayerNamesModal = () => {
     const { state, setPlayers } = useTicTacToeContext();
     const { playerXData, playerOData } = state;
 
-    const { control, handleSubmit } = useForm<PlayerFormValues>({
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<PlayerFormValues>({
         resolver: zodResolver(playerFormSchema),
         defaultValues: {
             playerX: playerXData.name || '',
@@ -46,31 +51,14 @@ const SetPlayerNamesModal = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="p-6">
                 <h2 className="text-highlight font-alegreya mb-4 text-center text-xl font-bold tracking-wide">Set Player Names</h2>
 
-                {/* Player X FormInput */}
-                <FormInput
-                    name="playerX"
-                    iconName="close"
-                    iconPosition="right"
-                    label="Player X"
-                    type="text"
-                    placeholder="Player 1 Name"
-                    control={control}
-                    autoComplete="name"
-                />
+                <FormField label="Player X" error={errors.playerX?.message}>
+                    <Input placeholder="Player X Name" type="text" autoComplete="name" autoCapitalize="words" {...register('playerX')} required />
+                </FormField>
 
-                {/* Player O FormInput */}
-                <FormInput
-                    name="playerO"
-                    label="Player O"
-                    iconPosition="right"
-                    iconName="circle"
-                    type="text"
-                    placeholder="Player 2 Name"
-                    control={control}
-                    autoComplete="name"
-                />
+                <FormField label="Player O" error={errors.playerO?.message}>
+                    <Input placeholder="Player O Name" type="text" autoComplete="name" autoCapitalize="words" {...register('playerO')} required />
+                </FormField>
 
-                {/* Submit Button */}
                 <Button id="submitBtn" type="submit" variant="highlight" className="mt-6 w-full">
                     <span className="text-sm font-semibold">Save</span>
                 </Button>

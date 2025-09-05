@@ -1,3 +1,5 @@
+'use client';
+
 import Icon from '@/components/ui/Icon';
 import Input from '@/components/ui/form/Input';
 import { T_IconType } from '@/lib/types/client.types';
@@ -6,9 +8,10 @@ import cn from '@/lib/utils/cn';
 type InputWithIconProps = React.ComponentProps<'input'> & {
     icon: T_IconType;
     iconPosition?: 'left' | 'right';
+    onIconClick?: () => void;
 };
 
-const InputWithIcon = ({ icon, iconPosition = 'left', className, ...props }: InputWithIconProps) => {
+const IconInput = ({ icon, iconPosition = 'left', className, onIconClick, ...props }: InputWithIconProps) => {
     return (
         <div data-component="form" data-element="field" data-field-type="input" className="relative w-full">
             <Input {...props} className={cn('peer', iconPosition === 'left' ? 'pl-10' : 'pr-10', className)} />
@@ -22,10 +25,10 @@ const InputWithIcon = ({ icon, iconPosition = 'left', className, ...props }: Inp
                     'peer-placeholder-shown:text-text-secondary peer-[not(:placeholder-shown)]:text-text-primary',
                     'peer-disabled:opacity-50'
                 )}>
-                <Icon icon={icon} className="size-5" />
+                <Icon icon={icon} className="size-5" onClick={onIconClick} />
             </span>
         </div>
     );
 };
 
-export default InputWithIcon;
+export default IconInput;

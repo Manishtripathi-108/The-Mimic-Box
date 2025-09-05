@@ -9,9 +9,10 @@ import { z } from 'zod';
 
 import { resetPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
 import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import FormField from '@/components/ui/form/FormField';
+import IconInput from '@/components/ui/form/IconInput';
 import useToggle from '@/hooks/useToggle';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
@@ -22,6 +23,7 @@ const ResetPasswordForm = () => {
 
     // Define the action function
     async function handleReset(data: z.infer<typeof resetPasswordSchema>) {
+        if (isSubmitting) return;
         const response = await resetPasswordAction(data);
 
         if (response.success) {
@@ -38,7 +40,7 @@ const ResetPasswordForm = () => {
     }
 
     const {
-        control,
+        register,
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
@@ -59,28 +61,30 @@ const ResetPasswordForm = () => {
 
                 <div className="p-6">
                     <form onSubmit={handleSubmit(handleReset)}>
-                        <FormInput
-                            name="password"
-                            autoComplete="new-password"
-                            label="Enter your new password"
-                            type="password"
-                            placeholder="* * * * * * * *"
-                            iconName="lock"
-                            control={control}
-                            disabled={isSubmitting}
-                        />
+                        {/* Password */}
+                        <FormField label="Enter your new password" error={errors.password?.message}>
+                            <IconInput
+                                autoComplete="new-password"
+                                placeholder="* * * * * * * *"
+                                icon="lock"
+                                type="password"
+                                {...register('password')}
+                                required
+                            />
+                        </FormField>
 
-                        <FormInput
-                            name="confirmPassword"
-                            autoComplete="new-password"
-                            label="Confirm your new password"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="* * * * * * * *"
-                            onIconClick={() => toggleShowPassword()}
-                            iconName={showPassword ? 'eye' : 'eyeClose'}
-                            control={control}
-                            disabled={isSubmitting}
-                        />
+                        {/* Confirm Password */}
+                        <FormField label="Confirm your new password" error={errors.confirmPassword?.message}>
+                            <IconInput
+                                autoComplete="new-password"
+                                placeholder="* * * * * * * *"
+                                icon={showPassword ? 'eye' : 'eyeClose'}
+                                type={showPassword ? 'text' : 'password'}
+                                onIconClick={() => toggleShowPassword()}
+                                {...register('confirmPassword')}
+                                required
+                            />
+                        </FormField>
 
                         <ErrorAlert text={errors.root?.message || errors.token?.message} />
 

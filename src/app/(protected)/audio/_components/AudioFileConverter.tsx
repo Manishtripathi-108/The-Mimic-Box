@@ -12,12 +12,13 @@ import { Button } from '@/components/ui/Button';
 import CardContainer from '@/components/ui/CardContainer';
 import FileUpload from '@/components/ui/FileUpload';
 import FileUploadItem from '@/components/ui/FileUploadItem';
-import FormRangeSlider from '@/components/ui/FormRangeSlider';
-import FormSelect from '@/components/ui/FormSelect';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import TabSwitcher from '@/components/ui/TabSwitcher';
 import Checkbox from '@/components/ui/form/Checkbox';
 import ErrorAlert from '@/components/ui/form/ErrorAlert';
+import FormField from '@/components/ui/form/FormField';
+import Select from '@/components/ui/form/Select';
+import Slider from '@/components/ui/form/Slider';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -119,6 +120,8 @@ const AudioFileConverter = () => {
     };
 
     const submitAudioConvert = async (values: T_FormValues) => {
+        if (isSubmitting) return;
+
         if (process.env.NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL) {
             makeApiCall({
                 url: AUDIO_ROUTES.CONVERTER,
@@ -210,16 +213,19 @@ const AudioFileConverter = () => {
                                     <FileUploadItem key={`${file.name}-${index}`} file={file} onRemove={() => handleRemoveFile(file, index)}>
                                         {!useGlobalSettings && files.length > 1 && (
                                             <div className="flex w-full items-center justify-between space-x-4 sm:w-auto">
-                                                <FormSelect
-                                                    name={`fileSettings.${index}.audio.format`}
-                                                    control={control}
-                                                    options={AudioFormatsSchema.options}
-                                                    disabled={useGlobalSettings}
-                                                    classNames={{
-                                                        container: 'w-full',
-                                                        label: 'font-alegreya text-base tracking-wide',
-                                                    }}
-                                                />
+                                                <FormField
+                                                    className="w-full"
+                                                    error={errors.fileSettings?.[index]?.audio?.format?.message}
+                                                    label="Format:">
+                                                    <Select {...register(`fileSettings.${index}.audio.format`)} disabled={useGlobalSettings}>
+                                                        {AudioFormatsSchema.options.map((option) => (
+                                                            <option key={option} value={option}>
+                                                                {option.toUpperCase()}
+                                                            </option>
+                                                        ))}
+                                                    </Select>
+                                                </FormField>
+
                                                 <Button
                                                     title="Settings"
                                                     className="sm:bg-primary sm:shadow-floating-xs size-5 shrink-0 bg-transparent p-0 shadow-none sm:size-8 sm:p-1.5"
@@ -255,16 +261,12 @@ const AudioFileConverter = () => {
                                         onTabChange={(tab) => setValue('global.audio.format', tab)}
                                     />
                                     <div className="mt-4">
-                                        <FormRangeSlider
-                                            label="Quality:"
-                                            control={control}
-                                            name="global.audio.bitrate"
-                                            min={64}
-                                            max={320}
-                                            step={64}
-                                            sliderProps={{ margin: 0.5 }}
-                                            classNames={{ field: 'border mt-1 w-full', label: 'font-alegreya text-base  tracking-wide' }}
-                                        />
+                                        <FormField
+                                            label="Quality (kbps):"
+                                            labelClassName="font-alegreya text-base  tracking-wide"
+                                            error={errors.global?.audio?.bitrate?.message}>
+                                            <Slider {...register('global.audio.bitrate')} step={64} min={64} max={320} className="margin: 0.5" />
+                                        </FormField>
                                         <div className="mt-2 flex justify-between text-sm">
                                             {AUDIO_BITRATE_OPTIONS.map(({ label, value }) => (
                                                 <button

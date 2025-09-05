@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import Image from 'next/image';
 
@@ -11,10 +11,11 @@ import { z } from 'zod';
 
 import { removeMediaFromList, toggleMediaFavouriteStatus, updateMediaProgress } from '@/actions/anilist.actions';
 import { Button } from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
-import FormSelect from '@/components/ui/FormSelect';
 import Icon from '@/components/ui/Icon';
 import { closeModal } from '@/components/ui/Modals';
+import FormField from '@/components/ui/form/FormField';
+import Input from '@/components/ui/form/Input';
+import Select from '@/components/ui/form/Select';
 import { AnilistMediaListStatusSchema } from '@/lib/schema/anilist.validations';
 import { AnilistMediaEntry } from '@/lib/types/anilist.types';
 
@@ -31,9 +32,9 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
     });
 
     const {
-        control,
+        register,
         handleSubmit,
-        formState: { isSubmitting, isDirty },
+        formState: { isSubmitting, isDirty, errors },
     } = useForm({
         resolver: zodResolver(validationSchema),
         defaultValues: { status: entry.status, progress: entry.progress || 0 },
@@ -97,30 +98,26 @@ const A_EditMedia = ({ token, entry }: { token: string; entry: AnilistMediaEntry
 
             <form onSubmit={handleSubmit(onSubmit)} className="px-4 pb-4">
                 <div className="grid grid-cols-2 place-items-center gap-4">
-                    <FormSelect
-                        name="status"
-                        label="Status:"
-                        options={AnilistMediaListStatusSchema.options.map((option) => ({ value: option, label: option.toLowerCase() }))}
-                        control={control}
-                        classNames={{ field: 'capitalize' }}
-                        disabled={isToggling || isSubmitting}
-                    />
+                    <FormField label="Status" error={errors.status?.message}>
+                        <Select disabled={isToggling || isSubmitting} {...register('status')} className="capitalize *:capitalize">
+                            {AnilistMediaListStatusSchema.options.map((o) => (
+                                <option key={o} value={o}>
+                                    {o.toLowerCase()}
+                                </option>
+                            ))}
+                        </Select>
+                    </FormField>
 
-                    <FormInput
-                        name="progress"
-                        label="Episode Progress"
-                        type="number"
-                        disabled={isToggling || isSubmitting}
-                        classNames={{ label: 'font-alegreya text-base' }}
-                        control={control}
-                    />
+                    <FormField label="Status" error={errors.progress?.message}>
+                        <Input type="number" disabled={isToggling || isSubmitting} {...register('progress')} />
+                    </FormField>
                 </div>
 
                 <div className="mt-8 flex justify-end space-x-2">
-                    <Button variant="danger" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
+                    <Button variant="danger" type="button" onClick={deleteEntry} disabled={isToggling || isSubmitting}>
                         {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Remove'}
                     </Button>
-                    <Button type="submit" disabled={isToggling || isSubmitting}>
+                    <Button variant="success" type="submit" disabled={isToggling || isSubmitting}>
                         {isToggling || isSubmitting ? <Icon icon="loading" className="size-5" /> : 'Save'}
                     </Button>
                 </div>
