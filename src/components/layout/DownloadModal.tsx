@@ -121,7 +121,7 @@ const DownloadModal = ({ className }: { className?: string }) => {
                                 animate={{ scale: 1 }}
                                 transition={{ type: 'spring', stiffness: 300 }}
                                 className="bg-accent before:bg-accent absolute -top-2 -right-2 size-5 rounded-full before:absolute before:inset-0 before:animate-ping before:rounded-full">
-                                <span className="text-text-primary absolute inset-0 flex items-center justify-center text-xs font-bold">{total}</span>
+                                <span className="text-on-accent absolute inset-0 flex items-center justify-center text-xs font-bold">{total}</span>
                             </motion.div>
                         )}
                     </Button>

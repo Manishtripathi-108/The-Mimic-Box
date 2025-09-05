@@ -11,7 +11,7 @@ import { resetPasswordAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import useToggle from '@/hooks/useToggle';
 import { resetPasswordSchema } from '@/lib/schema/auth.validations';
 
@@ -82,7 +82,7 @@ const ResetPasswordForm = () => {
                             disabled={isSubmitting}
                         />
 
-                        <ErrorMessage message={errors.root?.message || errors.token?.message} />
+                        <ErrorAlert text={errors.root?.message || errors.token?.message} />
 
                         <Button type="submit" disabled={isSubmitting} variant="highlight" className="mt-4 w-full">
                             {isSubmitting ? 'Please wait...' : 'Reset Password'}

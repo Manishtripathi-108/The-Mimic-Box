@@ -1,6 +1,7 @@
 import { memo } from 'react';
 
 import Icon from '@/components/ui/Icon';
+import ErrorText from '@/components/ui/form/ErrorText';
 import { T_AudioDownloadFile, T_IconType } from '@/lib/types/client.types';
 
 const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel: () => void }) => {
@@ -67,11 +68,7 @@ const DownloadItem = ({ file, onCancel }: { file: T_AudioDownloadFile; onCancel:
                     )}
 
                     {/* error msg  */}
-                    {file.error && (
-                        <div className="text-danger mt-1 text-xs" title={`Error: ${file.error}`}>
-                            {file.error}
-                        </div>
-                    )}
+                    <ErrorText text={file.error} className="mt-1" />
                 </div>
 
                 {/* Cancel Button */}

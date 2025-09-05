@@ -25,11 +25,11 @@ const sizeStyles: Record<NonNullable<CheckboxProps['size']>, string> = {
 const colorStyles: Record<NonNullable<CheckboxProps['color']>, string> = {
     primary: 'text-text-primary checked:bg-primary',
     secondary: 'text-text-primary checked:bg-secondary',
-    accent: 'text-white checked:bg-accent [--lower-shadow:#a90c21] [--upper-shadow:#ff1437]',
-    danger: 'text-white checked:bg-danger [--lower-shadow:#941616] [--upper-shadow:#de2222]',
-    warning: 'text-white checked:bg-warning [--lower-shadow:#a35905] [--upper-shadow:#ff9508]',
-    success: 'text-white checked:bg-success [--lower-shadow:#10602e] [--upper-shadow:#1aa04c]',
-    highlight: 'text-white checked:bg-highlight [--lower-shadow:#004447] [--upper-shadow:#007176]',
+    accent: 'text-on-accent checked:bg-accent [--lower-shadow:#a90c21] [--upper-shadow:#ff1437]',
+    danger: 'text-on-danger checked:bg-danger [--lower-shadow:#941616] [--upper-shadow:#de2222]',
+    warning: 'text-on-warning checked:bg-warning [--lower-shadow:#a35905] [--upper-shadow:#ff9508]',
+    success: 'text-on-success checked:bg-success [--lower-shadow:#10602e] [--upper-shadow:#1aa04c]',
+    highlight: 'text-on-highlight checked:bg-highlight [--lower-shadow:#004447] [--upper-shadow:#007176]',
 };
 
 const Checkbox = ({
@@ -40,11 +40,12 @@ const Checkbox = ({
     disabled,
     children,
     className,
+    autoComplete = 'on',
     position = 'right',
     size = 'md',
     color = 'primary',
     ...props
-}: CheckboxProps & Omit<React.ComponentProps<'input'>, 'size' | 'className'>) => {
+}: CheckboxProps & Omit<React.ComponentProps<'input'>, 'size' | 'className' | 'type'>) => {
     const checkboxId = useId();
 
     return (
@@ -62,6 +63,7 @@ const Checkbox = ({
                 type="checkbox"
                 value={value}
                 defaultChecked={defaultChecked}
+                autoComplete={autoComplete}
                 disabled={disabled}
                 data-component="form"
                 data-element="field"

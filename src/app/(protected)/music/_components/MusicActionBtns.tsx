@@ -71,7 +71,7 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
                         <button
                             type="button"
                             onClick={removeCachedData}
-                            className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize hover:text-white">
+                            className="hover:bg-highlight hover:text-on-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize">
                             Remove Cached Data
                         </button>
                     </li>
@@ -79,7 +79,7 @@ const MusicActionBtns = ({ className, context }: { className?: string; context: 
                         <button
                             type="button"
                             popoverTarget="download-popover"
-                            className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize hover:text-white">
+                            className="hover:bg-highlight hover:text-on-highlight block w-full cursor-pointer px-4 py-2 text-sm capitalize">
                             Download {context.type}
                         </button>
                     </li>

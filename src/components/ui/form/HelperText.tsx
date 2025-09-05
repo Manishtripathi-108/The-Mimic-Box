@@ -1,11 +1,11 @@
 import cn from '@/lib/utils/cn';
 
-const HelperText = ({ children, className }: { children?: React.ReactNode; className?: string }) => {
-    if (!children) return null;
+const HelperText = ({ text, children, className, ...props }: { text?: string } & React.ComponentProps<'p'>) => {
+    if (!children && !text) return null;
 
     return (
-        <p data-component="form" data-element="helper" className={cn('text-text-secondary mt-1 text-xs', className)}>
-            {children}
+        <p data-component="form" data-element="helper-text" className={cn('text-text-secondary mt-1 text-xs', className)} {...props}>
+            {children || text}
         </p>
     );
 };

@@ -6,7 +6,18 @@ import { DISABLED, FOCUS_RING, SVG_UTILS } from '@/lib/styles/tailwind.helpers';
 import { T_IconType } from '@/lib/types/client.types';
 import cn from '@/lib/utils/cn';
 
-type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'highlight' | 'accent' | 'danger' | 'outline' | 'ghost' | 'link' | 'transparent';
+type ButtonVariant =
+    | 'primary'
+    | 'secondary'
+    | 'tertiary'
+    | 'highlight'
+    | 'accent'
+    | 'success'
+    | 'danger'
+    | 'outline'
+    | 'ghost'
+    | 'link'
+    | 'transparent';
 
 type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 
@@ -36,12 +47,13 @@ const BASE_CLASSES =
     'inline-flex items-center justify-center gap-2 text-sm font-medium whitespace-nowrap transition-all transform outline-none cursor-pointer shadow-floating-xs active:shadow-pressed-xs [&:hover:not(.active)]:scale-105 [&:focus:not(.active)]:scale-105';
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-    primary: 'bg-primary text-text-secondary hover:text-text-primary hover:bg-primary/90',
+    primary: 'bg-primary text-text-secondary hover:text-text-primary hover:bg-primary/80',
     secondary: 'bg-secondary text-text-secondary hover:text-text-primary hover:bg-secondary/80',
     tertiary: 'bg-tertiary text-text-secondary hover:text-text-primary hover:bg-tertiary/80',
-    highlight: 'from-highlight bg-linear-150 from-25% to-[#003032] to-75% text-gray-100 hover:text-white dark:to-[#1a676a]',
-    accent: 'from-accent bg-linear-150 from-25% to-[#af1e32] to-75% text-gray-100 hover:text-white hover:text-gray-200 dark:to-[#ff0022]',
-    danger: 'bg-linear-150 from-danger from-25% to-red-900 to-75% text-gray-100 hover:text-white dark:to-[#ff0022]',
+    highlight: 'from-highlight bg-linear-150 from-25% to-highlight/80 to-75% text-on-highlight/80 hover:text-on-highlight',
+    accent: 'from-accent bg-linear-150 from-25% to-accent/80 to-75% text-on-accent/80 hover:text-on-accent',
+    success: 'from-success bg-linear-150 from-25% to-success/80 to-75% text-on-success/80 hover:text-on-success',
+    danger: 'from-danger bg-linear-150 from-25% to-danger/80 to-75% text-on-danger/80 hover:text-on-danger',
     outline: 'shadow-none border text-text-secondary hover:text-text-primary hover:border-text-primary',
     ghost: 'shadow-none text-text-secondary hover:text-text-primary hover:shadow-floating-xs hover:bg-secondary',
     transparent: 'shadow-none hover:text-text-primary text-text-secondary',

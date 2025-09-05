@@ -17,11 +17,11 @@ export type RadioProps = {
 const colorStyles = {
     primary: 'text-text-primary checked:bg-primary',
     secondary: 'text-text-primary checked:bg-secondary',
-    accent: 'text-white checked:bg-accent',
-    danger: 'text-white checked:bg-danger',
-    warning: 'text-white checked:bg-warning',
-    success: 'text-white checked:bg-success',
-    highlight: 'text-white checked:bg-highlight',
+    accent: 'text-on-accent checked:bg-accent',
+    danger: 'text-on-danger checked:bg-danger',
+    warning: 'text-on-warning checked:bg-warning',
+    success: 'text-on-success checked:bg-success',
+    highlight: 'text-on-highlight checked:bg-highlight',
 };
 
 const Radio = ({
@@ -32,9 +32,10 @@ const Radio = ({
     disabled,
     children,
     className,
+    autoComplete = 'on',
     color = 'primary',
     ...props
-}: RadioProps & Omit<React.ComponentProps<'input'>, 'className'>) => {
+}: RadioProps & Omit<React.ComponentProps<'input'>, 'className' | 'type'>) => {
     const radioId = useId();
 
     return (
@@ -51,6 +52,7 @@ const Radio = ({
                 type="radio"
                 value={value}
                 defaultChecked={defaultChecked}
+                autoComplete={autoComplete}
                 disabled={disabled}
                 data-component="form"
                 data-element="field"

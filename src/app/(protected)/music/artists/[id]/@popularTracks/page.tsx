@@ -1,6 +1,6 @@
 import { spotifyGetArtistTopTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -8,7 +8,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const res = await spotifyGetArtistTopTracks(id);
 
     if (!res.success || !res.payload) {
-        return <ErrorMessage message={res.message || 'Failed to fetch popular tracks'} />;
+        return <ErrorAlert text={res.message || 'Failed to fetch popular tracks'} />;
     }
 
     const tracks = res.payload;

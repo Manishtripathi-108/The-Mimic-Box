@@ -10,8 +10,8 @@ function Textarea({ className, autoComplete = 'on', ...props }: React.ComponentP
             data-field-type="textarea"
             className={cn(
                 'scrollbar-thin min-h-20',
-                'placeholder:text-text-secondary',
-                'selection:bg-tertiary selection:text-text-primary',
+                'placeholder:text-text-secondary/50',
+                'selection:bg-highlight selection:text-on-highlight',
                 'bg-primary text-text-primary shadow-floating-xs focus:shadow-pressed-xs flex h-10 w-full min-w-0 rounded-xl border border-transparent px-3 py-1 text-base outline-hidden transition-[color,_box-shadow,_border] duration-1000 outline-none md:text-sm',
                 DATA_INVALID,
                 DISABLED,

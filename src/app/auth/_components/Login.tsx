@@ -13,7 +13,7 @@ import { loginAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import APP_ROUTES from '@/constants/routes/app.routes';
 import { DEFAULT_AUTH_REDIRECT } from '@/constants/routes/auth.routes';
 import useToggle from '@/hooks/useToggle';
@@ -93,7 +93,7 @@ const LoginInForm = () => {
                     </Link>
 
                     {/* Server Error Messages */}
-                    <ErrorMessage
+                    <ErrorAlert
                         message={
                             errors.root?.message
                                 ? errors.root.message

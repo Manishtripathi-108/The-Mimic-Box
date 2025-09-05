@@ -1,13 +1,13 @@
 import { spotifyGetRecentTracks } from '@/actions/spotify.actions';
 import MusicTrackCard from '@/app/(protected)/music/_components/MusicTrackCard';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async () => {
     const res = await spotifyGetRecentTracks(6);
 
     if (!res.success || !res.payload) {
-        return <ErrorMessage message={res.message || 'Failed to fetch recently played tracks'} />;
+        return <ErrorAlert text={res.message || 'Failed to fetch recently played tracks'} />;
     }
 
     const playHistory = res.payload.items;

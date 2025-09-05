@@ -18,7 +18,7 @@ const InputWithIcon = ({ icon, iconPosition = 'left', className, ...props }: Inp
                     iconPosition === 'left' ? 'left-3' : 'right-3',
                     'text-text-secondary pointer-events-none absolute inset-y-0 flex items-center transition-colors',
                     'peer-hover:text-text-primary peer-focus:text-text-primary',
-                    'peer-data-[invalid=true]:text-danger peer-invalid:text-danger peer-user-invalid:text-danger peer-user-valid:text-success',
+                    'peer-data-[invalid=true]:text-danger peer-user-invalid:text-danger peer-user-valid:text-success',
                     'peer-placeholder-shown:text-text-secondary peer-[not(:placeholder-shown)]:text-text-primary',
                     'peer-disabled:opacity-50'
                 )}>

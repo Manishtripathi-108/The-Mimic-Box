@@ -7,7 +7,7 @@ const Label = ({ className, ...props }: React.ComponentProps<'label'>) => {
             data-element="label"
             className={cn(
                 // base
-                'inline-flex items-center gap-2 text-sm leading-none font-medium capitalize select-none',
+                'text-text-secondary inline-flex items-center gap-2 text-sm leading-none font-medium capitalize select-none',
 
                 // input valid state
                 '[&:has(+_input:user-valid)]:text-success',
@@ -22,6 +22,7 @@ const Label = ({ className, ...props }: React.ComponentProps<'label'>) => {
                 '[&:has(+_input:not(:placeholder-shown))]:text-text-primary',
                 '[&:has(+_input[data-invalid=true])]:text-danger',
                 '[&:has(+_input:user-invalid)]:text-danger',
+                '[&:has(+_input:required)]:text-warning',
 
                 className
             )}

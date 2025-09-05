@@ -1,13 +1,13 @@
 import { spotifyGetUserTopArtists } from '@/actions/spotify.actions';
 import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
 import LinkCard from '@/components/ui/LinkCard';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async () => {
     const res = await spotifyGetUserTopArtists();
     if (!res.success || !res.payload) {
-        return <ErrorMessage message={res.message || 'Failed to fetch top artists'} />;
+        return <ErrorAlert text={res.message || 'Failed to fetch top artists'} />;
     }
 
     return (

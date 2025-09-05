@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useId } from 'react';
 
 import cn from '@/lib/utils/cn';
@@ -10,7 +12,14 @@ export type SwitchProps = {
     className?: string;
 };
 
-const Switch = ({ id, checked, disabled, onChange, className, ...props }: SwitchProps & Omit<React.ComponentProps<'button'>, 'onChange'>) => {
+const Switch = ({
+    id,
+    checked,
+    disabled,
+    onChange,
+    className,
+    ...props
+}: SwitchProps & Omit<React.ComponentProps<'button'>, 'onChange' | 'type'>) => {
     const switchId = useId();
 
     return (

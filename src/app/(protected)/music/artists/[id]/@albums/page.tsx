@@ -1,6 +1,6 @@
 import { spotifyGetArtistAlbums } from '@/actions/spotify.actions';
 import LinkCard from '@/components/ui/LinkCard';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -8,7 +8,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const response = await spotifyGetArtistAlbums(id);
 
     if (!response.success || !response.payload) {
-        return <ErrorMessage message={response.message || 'Failed to fetch artist albums.'} />;
+        return <ErrorAlert text={response.message || 'Failed to fetch artist albums.'} />;
     }
 
     const albums = response.payload.items;

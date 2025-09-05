@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 import { spotifyGetArtist } from '@/actions/spotify.actions';
 import MusicMediaHeader from '@/app/(protected)/music/_components/MusicMediaHeader';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> => {
     const { id } = await params;
@@ -39,7 +39,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const res = await spotifyGetArtist(id);
 
     if (!res.success || !res.payload) {
-        return <ErrorMessage message={res.message || 'Failed to fetch artist details'} />;
+        return <ErrorAlert text={res.message || 'Failed to fetch artist details'} />;
     }
 
     const { name, images, followers, popularity } = res.payload;

@@ -1,3 +1,5 @@
+'use client';
+
 import { memo } from 'react';
 
 import { DATA_INVALID, DISABLED } from '@/lib/styles/tailwind.helpers';
@@ -115,6 +117,7 @@ const Slider: React.FC<SliderProps> = ({
     thumbSize,
     variant = 'accent',
     className,
+    autoComplete = 'on',
     ...rest
 }) => {
     const colors = SLIDER_VARIANT_COLORS[variant];
@@ -136,6 +139,7 @@ const Slider: React.FC<SliderProps> = ({
             max={max}
             step={step}
             value={value}
+            autoComplete={autoComplete}
             defaultValue={value === undefined ? defaultValue : undefined}
             onInput={onInput}
             aria-valuemin={min}

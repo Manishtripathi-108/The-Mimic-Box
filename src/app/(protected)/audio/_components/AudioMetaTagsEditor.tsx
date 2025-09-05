@@ -15,7 +15,7 @@ import CardContainer from '@/components/ui/CardContainer';
 import FormInput from '@/components/ui/FormInput';
 import FromTextarea from '@/components/ui/FromTextarea';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import { META_TAGS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -140,7 +140,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                         )}
                     />
 
-                    <ErrorMessage message={errors.cover?.message?.toString()} className="absolute bottom-2 left-2" />
+                    <ErrorAlert text={errors.cover?.message?.toString()} className="absolute bottom-2 left-2" />
                 </div>
 
                 {/* Metadata Inputs */}
@@ -187,7 +187,7 @@ const AudioMetaTagsEditor: React.FC<Props> = ({ metaTags, coverImage, audioFileN
                         {showAllTags ? 'Show Less Tags' : 'Show All Tags'}
                     </Button>
 
-                    <ErrorMessage message={errors.root?.message} className="order-last col-span-full" />
+                    <ErrorAlert text={errors.root?.message} className="order-last col-span-full" />
 
                     {/* Form Buttons */}
                     <div className="order-last col-span-full flex w-full justify-end gap-3 pt-6">

@@ -17,7 +17,7 @@ import FormSelect from '@/components/ui/FormSelect';
 import Modal, { closeModal, openModal } from '@/components/ui/Modals';
 import TabSwitcher from '@/components/ui/TabSwitcher';
 import Checkbox from '@/components/ui/form/Checkbox';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import { AUDIO_ADVANCED_SETTINGS_DEFAULTS, AUDIO_BITRATE_OPTIONS } from '@/constants/client.constants';
 import AUDIO_ROUTES from '@/constants/external-routes/audio.routes';
 import useSafeApiCall from '@/hooks/useSafeApiCall';
@@ -238,7 +238,7 @@ const AudioFileConverter = () => {
                                 </div>
                             )}
 
-                            <ErrorMessage message={errors.root?.message} />
+                            <ErrorAlert text={errors.root?.message} />
 
                             <Button className="w-full" icon="plus" onClick={() => document.getElementById('file-upload')?.click()}>
                                 Add More Files

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
-import { ErrorMessage } from '@hookform/error-message';
+import { ErrorAlert } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -106,7 +106,7 @@ const Page = () => {
                                 aria-invalid={!!errors.name}
                             />
                         </div>
-                        <ErrorMessage as="p" className="text-danger text-xs" errors={errors} name="name" aria-live="polite" />
+                        <ErrorAlert as="p" className="text-danger text-xs" errors={errors} name="name" aria-live="polite" />
                     </div>
 
                     {/* Email Field (Read-only) */}
@@ -126,7 +126,7 @@ const Page = () => {
                                 aria-invalid={!!errors.email}
                             />
                         </div>
-                        <ErrorMessage as="p" className="text-danger text-xs" errors={errors} name="email" aria-live="polite" />
+                        <ErrorAlert as="p" className="text-danger text-xs" errors={errors} name="email" aria-live="polite" />
                     </div>
 
                     {/* Profile Image Upload */}
@@ -150,10 +150,10 @@ const Page = () => {
                             </div>
                         )}
                         <input type="file" onChange={handleImageChange} className="form-field" />
-                        <ErrorMessage as="p" className="text-danger text-xs" errors={errors} name="image" aria-live="polite" />
+                        <ErrorAlert as="p" className="text-danger text-xs" errors={errors} name="image" aria-live="polite" />
                     </div>
 
-                    <ErrorMessage
+                    <ErrorAlert
                         as="p"
                         errors={errors}
                         name="root.serverError"

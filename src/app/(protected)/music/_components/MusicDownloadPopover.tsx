@@ -73,7 +73,7 @@ const MusicDownloadPopover = ({ className, context, downloadCurrent = false, onC
                         <button
                             type="button"
                             disabled={isPending}
-                            className="hover:bg-highlight block w-full cursor-pointer px-4 py-2 hover:text-white"
+                            className="hover:bg-highlight hover:text-on-highlight block w-full cursor-pointer px-4 py-2"
                             onClick={() => handleDownloadTracks(quality)}>
                             {quality}
                         </button>

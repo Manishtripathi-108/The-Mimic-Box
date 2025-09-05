@@ -12,7 +12,7 @@ import { registerAction } from '@/actions/auth.actions';
 import { Button } from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
 import Icon from '@/components/ui/Icon';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import { DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import useToggle from '@/hooks/useToggle';
 import { registerSchema } from '@/lib/schema/auth.validations';
@@ -111,7 +111,7 @@ const RegisterForm = () => {
                     />
 
                     {/* Server Error Messages */}
-                    <ErrorMessage message={errors.root?.message} />
+                    <ErrorAlert text={errors.root?.message} />
 
                     <hr className="my-5" />
 

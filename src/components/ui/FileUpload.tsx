@@ -3,7 +3,7 @@
 import FileUploadItem from '@/components/ui/FileUploadItem';
 import Icon from '@/components/ui/Icon';
 import Waves from '@/components/ui/Waves';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import cn from '@/lib/utils/cn';
 
@@ -67,7 +67,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                         Drop file{maxFiles > 1 ? 's' : ''} here. {maxSizeMB}MB maximum file size
                     </p>
                     <p className="text-text-secondary text-sm">{description}</p>
-                    <ErrorMessage message={error || errorMessage} />
+                    <ErrorAlert text={error || errorMessage} />
                 </div>
             </div>
 

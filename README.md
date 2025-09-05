@@ -66,7 +66,7 @@ Below are the icons representing the core technologies used in this project:
 ## Usage Examples
 
 - **API Endpoints**: The application provides several API routes under `/api/` for authentication, media data, and more.
-- **Components**: Reusable UI components like `FileUpload`, `ErrorMessage`, and `ProfileDropdown` are available in the `src/components/` directory.
+- **Components**: Reusable UI components like `FileUpload`, `ErrorAlert`, and `ProfileDropdown` are available in the `src/components/` directory.
 - **Hooks**: Custom hooks like `useAudioPlayer` and `useSafeApiCall` simplify state management and API interactions.
 
 ## Folder Structure

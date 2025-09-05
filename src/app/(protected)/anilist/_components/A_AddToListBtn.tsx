@@ -93,7 +93,7 @@ const A_AddToListBtn = ({ mediaId, type, className }: Props) => {
                                 }
                             }}
                             onClick={() => handleAddToList(option)}
-                            className="hover:bg-highlight hover:text-text-primary cursor-pointer px-4 py-2 capitalize">
+                            className="hover:bg-highlight hover:text-on-highlight cursor-pointer px-4 py-2 capitalize">
                             {option.toLowerCase()}
                         </li>
                     ))}

@@ -9,7 +9,7 @@ import { getLyrics } from '@/actions/lrclib.actions';
 import { Button } from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
 import { Tabs, TabsContent, TabsIndicator, TabsList, TabsPanel, TabsTrigger } from '@/components/ui/Tabs';
-import ErrorMessage from '@/components/ui/form/ErrorMessage';
+import ErrorAlert from '@/components/ui/form/ErrorAlert';
 import { LYRICS_UNAVAILABLE_MESSAGES } from '@/constants/client.constants';
 import { LyricsQuerySchema } from '@/lib/schema/audio.validations';
 import type { T_LyricsQuery, T_LyricsRecord } from '@/lib/types/common.types';
@@ -179,7 +179,7 @@ const SearchLyrics = ({ defaultParams = {}, onSelect }: { defaultParams?: Partia
                     </div>
                 )}
 
-                <ErrorMessage message={errors.root?.message} />
+                <ErrorAlert text={errors.root?.message} />
 
                 <div className="flex items-center justify-end gap-6 pt-2">
                     <Button onClick={() => reset()} disabled={isSubmitting} variant="danger">
