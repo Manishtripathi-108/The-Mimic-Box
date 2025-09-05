@@ -3,7 +3,7 @@ import ErrorText from '@/components/ui/form/ErrorText';
 import cn from '@/lib/utils/cn';
 
 const ErrorAlert = ({ text, children, className, ...props }: { text?: string | null } & React.ComponentProps<'p'>) => {
-    if (!text && !children) return null;
+    if (!text || !children) return null;
 
     return (
         <ErrorText
