@@ -1,7 +1,7 @@
 import cn from '@/lib/utils/cn';
 
 const ErrorText = ({ text, children, className, ...props }: { text?: string | null } & React.ComponentProps<'p'>) => {
-    if (!text || !children) return null;
+    if (!text && !children) return null;
 
     return (
         <p
