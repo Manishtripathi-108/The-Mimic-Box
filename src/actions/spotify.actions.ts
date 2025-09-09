@@ -139,7 +139,10 @@ export const spotifyGetEntityTracks = async (id: string, type: 'album' | 'playli
 
         if (!tracks.length) throw new Error('No valid tracks found');
 
-        await syncProviderTracks({ type: 'spotify', tracks });
+        // Fire in background, don’t block response
+        syncProviderTracks({ type: 'spotify', tracks }).catch((err) => {
+            console.error('Background sync failed:', err);
+        });
 
         return createSuccess('Tracks fetched!', tracks);
     } catch (err) {
