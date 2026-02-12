@@ -1,118 +1,118 @@
 # The Mimic Box
 
-## Project Overview
+## Overview
 
-The Mimic Box is a Next.js-based application designed to provide a seamless user experience for managing and interacting with various media services. It integrates with platforms like Spotify, JioSaavn, and Anilist to offer features such as media playback, user authentication, and data synchronization. The project is built with scalability and modern web development practices in mind.
+The Mimic Box is a Next.js (App Router) media and gaming hub that blends account-based experiences with streaming services and media utilities. It integrates with Spotify, JioSaavn, and AniList for discovery and syncing, ships with an audio player, supports uploads and processing, and includes a PWA setup with offline-ready assets.
 
-## Features
+## Key Features
 
-- **User Authentication**: Secure login and account linking using NextAuth.
-- **Media Playback**: Audio player with advanced settings and media session integration.
-- **Third-Party Integrations**: Spotify, JioSaavn, and Anilist APIs for fetching and managing media data.
-- **File Uploads**: Support for file uploads with progress tracking.
-- **Responsive Design**: Optimized for both desktop and mobile devices.
-- **Error Handling**: Centralized error management for a robust user experience.
+- Auth and account linking with NextAuth
+- Media discovery and sync across Spotify, JioSaavn, and AniList
+- Audio player with media session support
+- File uploads with progress tracking
+- PWA service worker via Serwist
+- Prisma + PostgreSQL data layer
+- Responsive UI and reusable component system
 
-## Technology Stack
+## Tech Stack
 
-- **Framework**: Next.js 15.2.2
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **State Management**: React Context API
-- **APIs**: Spotify, JioSaavn, Anilist
-- **Database**: Prisma ORM with PostgreSQL
-- **Utilities**: Axios, Zod, Fluent-FFmpeg
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- Tailwind CSS
+- Prisma ORM + PostgreSQL
+- NextAuth (v5 beta)
+- Serwist (PWA)
+- FFmpeg (WASM) for client-side audio processing
+- Socket.IO (real-time)
 
-## Badges
+## Project Structure
 
-Below are the icons representing the core technologies used in this project:
+- `src/app/` App Router routes, layouts, and metadata
+- `src/components/` Reusable UI and view components
+- `src/actions/` Server actions
+- `src/hooks/` Custom React hooks
+- `src/lib/` Utilities, services, schemas, and styles
+- `src/contexts/` Context providers
+- `src/reducers/` Reducers for complex state
+- `prisma/` Database schema and migrations
+- `public/` Static assets and PWA artifacts
 
-- ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-- ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-- ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-- ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-- ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
-- ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
-- ![Zod](https://img.shields.io/badge/Zod-4A90E2?style=for-the-badge&logo=zod&logoColor=white)
-- ![Fluent-FFmpeg](https://img.shields.io/badge/Fluent--FFmpeg-FF0000?style=for-the-badge&logo=ffmpeg&logoColor=white)
+## Requirements
 
-## Prerequisites
+- Node.js 18+
+- npm 9+ (or yarn/pnpm if you prefer)
+- PostgreSQL database
 
-- Node.js (v18 or higher)
-- npm or yarn
+## Getting Started
 
-## Installation
-
-1. Clone the repository:
+1. Create environment file:
     ```bash
-    git clone https://github.com/Manishtripathi-108/The-Mimic-Box.git
-    cd themimicbox
+    copy .env.example .env
     ```
-2. Install dependencies:
+2. Fill in required environment variables (at minimum `DATABASE_URL`).
+3. Install dependencies (runs Prisma generate and migrate deploy via `postinstall`):
     ```bash
     npm install
     ```
-3. Set up environment variables:
-    - Copy `.env.example` to `.env` and fill in the required values.
-
-## Running the Project Locally
-
-1. Start the development server:
+4. Start the dev server:
     ```bash
     npm run dev
     ```
-2. Open your browser and navigate to `http://localhost:3000`.
+5. Open `http://localhost:3000`.
 
-## Usage Examples
+## Environment Variables
 
-- **API Endpoints**: The application provides several API routes under `/api/` for authentication, media data, and more.
-- **Components**: Reusable UI components like `FileUpload`, `ErrorAlert`, and `ProfileDropdown` are available in the `src/components/` directory.
-- **Hooks**: Custom hooks like `useAudioPlayer` and `useSafeApiCall` simplify state management and API interactions.
+Use [.env.example](.env.example) as a template.
 
-## Folder Structure
-
-- **`src/`**: Contains the main application code.
-    - **`pages/`**: Defines the routes and UI for the application.
-    - **`components/`**: Reusable React components.
-    - **`hooks/`**: Custom React hooks for state and logic management.
-    - **`lib/`**: Utility functions, configurations, and services.
-    - **`public/`**: Static assets like images and icons.
-    - **`prisma/`**: Database schema and migrations.
+| Variable                              | Description                        |
+| ------------------------------------- | ---------------------------------- |
+| `NEXT_PUBLIC_APP_NAME`                | App display name                   |
+| `NEXT_PUBLIC_URL`                     | Base URL for the app               |
+| `DATABASE_URL`                        | PostgreSQL connection string       |
+| `AUTH_SECRET`                         | NextAuth secret                    |
+| `AUTH_GOOGLE_ID`                      | Google OAuth client id             |
+| `AUTH_GOOGLE_SECRET`                  | Google OAuth client secret         |
+| `AUTH_GITHUB_ID`                      | GitHub OAuth client id             |
+| `AUTH_GITHUB_SECRET`                  | GitHub OAuth client secret         |
+| `AUTH_ANILIST_ID`                     | AniList OAuth client id            |
+| `AUTH_ANILIST_SECRET`                 | AniList OAuth client secret        |
+| `AUTH_SPOTIFY_ID`                     | Spotify OAuth client id            |
+| `AUTH_SPOTIFY_SECRET`                 | Spotify OAuth client secret        |
+| `AUTH_SPOTIFY_SCOPES`                 | Spotify OAuth scopes               |
+| `SMTP_USER`                           | SMTP username for email            |
+| `SMTP_PASS`                           | SMTP password for email            |
+| `CLOUDINARY_CLOUD_NAME`               | Cloudinary cloud name              |
+| `CLOUDINARY_API_KEY`                  | Cloudinary API key                 |
+| `CLOUDINARY_API_SECRET`               | Cloudinary API secret              |
+| `NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL` | External base URL for audio assets |
 
 ## Scripts
 
-- `npm run dev`: Start the development server.
-- `npm run build`: Build the application for production.
-- `npm run start`: Start the production server.
-- `npm run lint`: Run ESLint to check for code quality issues.
-- `npm run format`: Format the codebase using Prettier.
+- `npm run dev` Start dev server
+- `npm run build` Production build
+- `npm run start` Run production server
+- `npm run lint` Lint the codebase
+- `npm run format` Format with Prettier
+- `npm run db:generate` Generate Prisma client
+- `npm run db:mig:dev` Create a new migration
+- `npm run db:mig:deploy` Apply migrations
+- `npm run db:mig:reset` Reset database (dev only)
+- `npm run db:push` Push schema to database
+- `npm run db:pull` Pull schema from database
+- `npm run db:seed` Seed database
+- `npm run db:studio` Open Prisma Studio
 
-## Contribution Guidelines
+## PWA Notes
 
-We welcome contributions to The Mimic Box! To get started:
+The service worker is built with Serwist and pre-caches key assets, including FFmpeg WASM files located in `public/download/`. The source worker lives at `src/app/sw.ts`, with output emitted to `public/sw.js` at build time.
 
-1. **Fork the Repository**: Create a personal fork of the repository on GitHub.
-2. **Clone the Repository**: Clone your forked repository to your local machine:
-    ```bash
-    git clone https://github.com/Manishtripathi-108/The-Mimic-Box.git
-    cd themimicbox
-    ```
-3. **Create a Branch**: Create a new branch for your feature or bug fix:
-    ```bash
-    git checkout -b feature/your-feature-name
-    ```
-4. **Make Changes**: Implement your changes and ensure they follow the project's coding standards.
-5. **Test Your Changes**: Run the application locally and verify your changes work as expected.
-6. **Commit Your Changes**: Commit your changes with a descriptive commit message:
-    ```bash
-    git commit -m "Add a brief description of your changes"
-    ```
-7. **Push Your Changes**: Push your branch to your forked repository:
-    ```bash
-    git push origin feature/your-feature-name
-    ```
-8. **Create a Pull Request**: Open a pull request from your branch to the main repository's `main` branch.
+## Contributing
+
+1. Fork the repo
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request against `main`
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
+MIT - see [LICENSE](LICENSE).

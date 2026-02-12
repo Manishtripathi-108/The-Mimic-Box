@@ -210,19 +210,11 @@ const HomePageView = ({ session }: HomePageViewProps) => {
                             </p>
                         </div>
                         <div className="flex shrink-0 gap-3">
-                            <Button asChild>
-                                <a
-                                    href={APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC}
-                                    className="shadow-floating-xs bg-highlight text-on-highlight hover:shadow-raised-sm rounded-xl px-6 py-3 font-semibold transition-all hover:scale-105">
-                                    Play Classic
-                                </a>
+                            <Button asChild variant="highlight" size="lg">
+                                <a href={APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC}>Play Classic</a>
                             </Button>
-                            <Button asChild>
-                                <a
-                                    href={APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE}
-                                    className="shadow-floating-xs bg-accent text-on-accent hover:shadow-raised-sm rounded-xl px-6 py-3 font-semibold transition-all hover:scale-105">
-                                    Play Ultimate
-                                </a>
+                            <Button asChild variant="accent" size="lg">
+                                <a href={APP_ROUTES.GAMES.TIC_TAC_TOE.ULTIMATE}>Play Ultimate</a>
                             </Button>
                         </div>
                     </div>
