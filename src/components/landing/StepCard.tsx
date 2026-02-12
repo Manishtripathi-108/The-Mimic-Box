@@ -29,7 +29,7 @@ const StepCard = ({ stepNumber, title, description, image, index = 0 }: StepCard
             </div>
 
             {/* Image Container */}
-            <div className="shadow-floating-md bg-secondary relative w-full overflow-hidden rounded-2xl pt-4">
+            <div className="shadow-floating-md bg-secondary relative w-full overflow-hidden rounded-2xl">
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-t-xl">
                     <Image src={image.src} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
                 </div>

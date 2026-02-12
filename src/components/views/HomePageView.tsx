@@ -5,7 +5,6 @@ import { Session } from 'next-auth';
 import { ActivityCard, HighlightCard, QuickActionTile, WelcomeBanner } from '@/components/home';
 import { Footer } from '@/components/landing';
 import { Button } from '@/components/ui/Button';
-import HorizontalScrollSection from '@/components/ui/HorizontalScrollSection';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
 type HomePageViewProps = {
@@ -49,7 +48,7 @@ const trendingItems = [
         subtitle: 'Your most played',
         href: APP_ROUTES.MUSIC.PLAYLISTS,
         image: {
-            src: 'https://picsum.photos/400/400?random=1',
+            src: '/images/Top_Playlists.png',
             alt: 'Album cover art placeholder for your top playlist with colorful abstract music visualization',
         },
         icon: 'playlist' as const,
@@ -59,7 +58,7 @@ const trendingItems = [
         subtitle: 'Popular this season',
         href: APP_ROUTES.ANILIST.USER.ANIME,
         image: {
-            src: 'https://picsum.photos/400/400?random=2',
+            src: '/images/trending_anime.jpg',
             alt: 'Anime cover art placeholder showing a dynamic action scene from a popular anime series',
         },
         icon: 'anime' as const,
@@ -69,7 +68,7 @@ const trendingItems = [
         subtitle: 'Quick fun games',
         href: APP_ROUTES.GAMES.TIC_TAC_TOE.CLASSIC,
         image: {
-            src: 'https://picsum.photos/400/400?random=3',
+            src: '/images/classic_game.jpg',
             alt: 'Game preview placeholder showing a tic-tac-toe board with colorful game pieces',
         },
         icon: 'game' as const,
@@ -79,7 +78,7 @@ const trendingItems = [
         subtitle: 'Find any song lyrics',
         href: APP_ROUTES.AUDIO.SEARCH_LYRICS,
         image: {
-            src: 'https://picsum.photos/400/400?random=4',
+            src: '/images/lyrics_search.png',
             alt: 'Lyrics search placeholder showing musical notes and text lines representing song lyrics',
         },
         icon: 'lyrics' as const,
@@ -89,7 +88,7 @@ const trendingItems = [
         subtitle: 'Convert audio formats',
         href: APP_ROUTES.AUDIO.CONVERTER,
         image: {
-            src: 'https://picsum.photos/400/400?random=5',
+            src: '/images/audio_converter.png',
             alt: 'Audio converter placeholder showing audio waveform transforming between different formats',
         },
         icon: 'musicConvert' as const,
@@ -99,7 +98,7 @@ const trendingItems = [
         subtitle: 'Clean your playlists',
         href: APP_ROUTES.TUNE_SYNC.REMOVE_DUPLICATES.ROOT,
         image: {
-            src: 'https://picsum.photos/400/400?random=6',
+            src: '/images/tune_sync.png',
             alt: 'Tune sync placeholder showing playlist items being organized and duplicates being removed',
         },
         icon: 'refresh' as const,
@@ -113,7 +112,7 @@ const recentActivity = [
         time: 'Just now',
         href: APP_ROUTES.ROOT,
         image: {
-            src: 'https://picsum.photos/100/100?random=7',
+            src: '/images/welcome.png',
             alt: 'Activity thumbnail placeholder showing a welcome celebration icon',
         },
     },
@@ -123,7 +122,7 @@ const recentActivity = [
         time: 'Pending',
         href: APP_ROUTES.USER.PROFILE,
         image: {
-            src: 'https://picsum.photos/100/100?random=8',
+            src: '/images/music_service.png',
             alt: 'Activity thumbnail placeholder showing Spotify logo for account connection',
         },
     },
@@ -133,7 +132,7 @@ const recentActivity = [
         time: 'Pending',
         href: APP_ROUTES.USER.PROFILE,
         image: {
-            src: 'https://picsum.photos/100/100?random=9',
+            src: '/images/anime_service.png',
             alt: 'Activity thumbnail placeholder showing AniList logo for account connection',
         },
     },
@@ -165,19 +164,22 @@ const HomePageView = ({ session }: HomePageViewProps) => {
                 </section>
 
                 {/* Trending / Highlights */}
-                <HorizontalScrollSection title="Explore Features">
-                    {trendingItems.map((item, index) => (
-                        <HighlightCard
-                            key={item.title}
-                            title={item.title}
-                            subtitle={item.subtitle}
-                            href={item.href}
-                            image={item.image}
-                            icon={item.icon}
-                            index={index}
-                        />
-                    ))}
-                </HorizontalScrollSection>
+                <section>
+                    <h2 className="text-highlight font-alegreya mb-4 px-2 text-2xl font-semibold tracking-wide">Explore Features</h2>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {trendingItems.map((item, index) => (
+                            <HighlightCard
+                                key={item.title}
+                                title={item.title}
+                                subtitle={item.subtitle}
+                                href={item.href}
+                                image={item.image}
+                                icon={item.icon}
+                                index={index}
+                            />
+                        ))}
+                    </div>
+                </section>
 
                 {/* Recent Activity */}
                 <section>

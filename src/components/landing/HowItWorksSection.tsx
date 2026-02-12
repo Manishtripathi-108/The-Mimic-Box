@@ -10,7 +10,7 @@ const steps = [
         title: 'Create Your Account',
         description: 'Sign up in seconds with email or Google. No credit card required — everything is free.',
         image: {
-            src: 'https://picsum.photos/600/400?random=11',
+            src: '/images/create_account.png',
             alt: 'Step illustration showing the simple sign up form with email and Google authentication options',
         },
     },
@@ -19,7 +19,7 @@ const steps = [
         title: 'Connect Your Services',
         description: 'Link your Spotify, AniList, and other accounts to unlock the full power of Mimic Box.',
         image: {
-            src: 'https://picsum.photos/600/400?random=12',
+            src: '/images/connect_services.png',
             alt: 'Step illustration showing account linking interface with Spotify, AniList, and other service icons',
         },
     },
@@ -28,7 +28,7 @@ const steps = [
         title: 'Start Exploring',
         description: 'Stream music, track anime, play games, and enjoy a unified entertainment experience.',
         image: {
-            src: 'https://picsum.photos/600/400?random=13',
+            src: '/images/start_exploring.png',
             alt: 'Step illustration showing the main dashboard with music player, anime list, and game options',
         },
     },

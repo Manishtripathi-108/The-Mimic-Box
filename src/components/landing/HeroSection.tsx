@@ -73,7 +73,7 @@ const HeroSection = () => {
                         className="relative">
                         <div className="shadow-raised-lg relative aspect-[4/3] overflow-hidden rounded-3xl">
                             <Image
-                                src="https://picsum.photos/800/600?random=10"
+                                src="/images/hero.png"
                                 alt="Hero illustration showing the Mimic Box dashboard with music streaming, anime tracking, and gaming features displayed across multiple device screens"
                                 fill
                                 priority
