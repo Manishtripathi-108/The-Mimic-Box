@@ -48,7 +48,7 @@ const trendingItems = [
         subtitle: 'Your most played',
         href: APP_ROUTES.MUSIC.PLAYLISTS,
         image: {
-            src: '/images/Top_Playlists.png',
+            src: '/images/top_playlists.png',
             alt: 'Album cover art placeholder for your top playlist with colorful abstract music visualization',
         },
         icon: 'playlist' as const,
@@ -166,7 +166,7 @@ const HomePageView = ({ session }: HomePageViewProps) => {
                 {/* Trending / Highlights */}
                 <section>
                     <h2 className="text-highlight font-alegreya mb-4 px-2 text-2xl font-semibold tracking-wide">Explore Features</h2>
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
                         {trendingItems.map((item, index) => (
                             <HighlightCard
                                 key={item.title}

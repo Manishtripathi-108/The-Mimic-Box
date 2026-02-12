@@ -27,7 +27,7 @@ const HighlightCard = ({ title, subtitle, image, href, icon, index = 0 }: Highli
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
-            className="group relative w-44 shrink-0 sm:w-48">
+            className="group relative w-full">
             <Link href={href} className="block focus:outline-none" title={title} aria-label={title}>
                 {/* Image Container */}
                 <div className="shadow-floating-sm group-hover:shadow-raised-md group-focus:shadow-raised-md relative aspect-square overflow-hidden rounded-2xl transition-shadow duration-300">
@@ -57,7 +57,7 @@ const HighlightCard = ({ title, subtitle, image, href, icon, index = 0 }: Highli
 
 export const HighlightCardSkeleton = () => {
     return (
-        <div className="w-44 shrink-0 animate-pulse sm:w-48">
+        <div className="w-full animate-pulse">
             <div className="bg-secondary aspect-square rounded-2xl" />
             <div className="mt-3 px-1">
                 <div className="bg-secondary h-5 w-3/4 rounded" />
