@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 import { Button } from '@/components/ui/Button';
 import APP_ROUTES from '@/constants/routes/app.routes';
