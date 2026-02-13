@@ -30,9 +30,9 @@ const Label = ({ className, ...props }: React.ComponentProps<'label'>) => {
                 '[&:has(+_select[data-invalid=true])]:text-danger [&:has(+_select:user-invalid)]:text-danger',
 
                 // input + textarea + select required
-                '[&:has(+_input:required)]:text-warning',
-                '[&:has(+_textarea:required)]:text-warning',
-                '[&:has(+_select:required)]:text-warning',
+                // '[&:has(+_input:required)]:text-warning',
+                // '[&:has(+_textarea:required)]:text-warning',
+                // '[&:has(+_select:required)]:text-warning',
 
                 className
             )}

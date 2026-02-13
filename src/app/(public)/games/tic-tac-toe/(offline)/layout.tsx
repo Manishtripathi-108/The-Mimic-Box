@@ -7,6 +7,7 @@ import { AnimatePresence } from 'motion/react';
 import MatchResultModal from '@/app/(public)/games/tic-tac-toe/_components/MatchResultModal';
 import ScoreBoard from '@/app/(public)/games/tic-tac-toe/_components/ScoreBoard';
 import SetPlayerNamesModal from '@/app/(public)/games/tic-tac-toe/_components/SetPlayerNamesModal';
+import TicTacToeRules from '@/app/(public)/games/tic-tac-toe/_components/TicTacToeRules';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
 import { ConfirmationModal, openModal } from '@/components/ui/Modals';
@@ -72,6 +73,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     Change <span className="hidden md:inline">Player</span> Name
                 </Button>
             </footer>
+
+            {/* Rules */}
+            <TicTacToeRules variant={gameMode} />
 
             {/* Modals */}
             <SetPlayerNamesModal />

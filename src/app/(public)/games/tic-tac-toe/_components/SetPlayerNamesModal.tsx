@@ -31,7 +31,7 @@ const SetPlayerNamesModal = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isValid },
     } = useForm<PlayerFormValues>({
         resolver: zodResolver(playerFormSchema),
         defaultValues: {
@@ -47,7 +47,7 @@ const SetPlayerNamesModal = () => {
     };
 
     return (
-        <Modal modalId="SetPlayerNamesModal" showCloseButton={false} className="w-full max-w-96">
+        <Modal modalId="SetPlayerNamesModal" showCloseButton={isValid} shouldClose={isValid} className="w-full max-w-96 sm:p-2">
             <form onSubmit={handleSubmit(onSubmit)} className="p-6">
                 <h2 className="text-highlight font-alegreya mb-4 text-center text-xl font-bold tracking-wide">Set Player Names</h2>
 

@@ -47,9 +47,9 @@ const BASE_CLASSES =
     'inline-flex items-center justify-center gap-2 text-sm font-medium whitespace-nowrap transition-all transform outline-none cursor-pointer shadow-floating-xs active:shadow-pressed-xs [&:hover:not(.active)]:scale-105 [&:focus:not(.active)]:scale-105';
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-    primary: 'bg-primary text-text-secondary hover:text-text-primary hover:bg-primary/80',
-    secondary: 'bg-secondary text-text-secondary hover:text-text-primary hover:bg-secondary/80',
-    tertiary: 'bg-tertiary text-text-secondary hover:text-text-primary hover:bg-tertiary/80',
+    primary: 'bg-primary text-text-secondary hover:text-text-primary',
+    secondary: 'bg-secondary text-text-secondary hover:text-text-primary',
+    tertiary: 'bg-tertiary text-text-secondary hover:text-text-primary',
     highlight: 'from-highlight bg-linear-150 from-25% to-highlight/80 to-75% text-on-highlight/80 hover:text-on-highlight',
     accent: 'from-accent bg-linear-150 from-25% to-accent/80 to-75% text-on-accent/80 hover:text-on-accent',
     success: 'from-success bg-linear-150 from-25% to-success/80 to-75% text-on-success/80 hover:text-on-success',

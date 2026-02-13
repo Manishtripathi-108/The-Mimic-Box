@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import TicTacToeRules from '@/app/(public)/games/tic-tac-toe/_components/TicTacToeRules';
 import { useTicTacToeContext } from '@/app/(public)/games/tic-tac-toe/_lib/TicTacToeContext';
 import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
@@ -103,8 +104,8 @@ const OnlineGameSetup = () => {
     const [isJoinForm, setIsJoinForm] = useState(true);
 
     return (
-        <div className="h-calc-full-height flex items-center justify-center">
-            <div className="shadow-floating-sm bg-gradient-secondary-to-tertiary relative max-h-full w-full max-w-md rounded-2xl p-8 md:p-10">
+        <div className="min-h-calc-full-height flex flex-col items-center justify-center gap-6 px-4 py-8">
+            <div className="shadow-floating-sm bg-gradient-secondary-to-tertiary relative w-full max-w-md rounded-2xl p-8 md:p-10">
                 <Icon icon="game" className="text-danger mx-auto mb-4 h-12 w-12" />
                 <h2 className="text-highlight font-aladin mb-3 text-center text-4xl font-bold tracking-widest">Play Online</h2>
                 <h3 className="text-text-primary mb-5 text-center font-normal tracking-wider">Join a room or create a new one to start playing</h3>
@@ -120,7 +121,9 @@ const OnlineGameSetup = () => {
                 </div>
 
                 {isJoinForm ? <JoinRoomForm roomId={roomId || undefined} /> : <CreateRoomForm />}
-            </div>{' '}
+            </div>
+
+            <TicTacToeRules variant="online" />
         </div>
     );
 };

@@ -8,11 +8,11 @@ import cn from '@/lib/utils/cn';
 type ModalProps = React.ComponentProps<'dialog'> & {
     modalId: string;
     showCloseButton?: boolean;
-    shouldClose?: () => boolean;
+    shouldClose?: boolean | (() => boolean);
     onClose?: () => void;
 };
 
-type ConfirmationModalProps = ModalProps & {
+type ConfirmationModalProps = Exclude<ModalProps, 'showCloseButton'> & {
     icon: T_IconType;
     iconClassName?: string;
     onConfirm: () => void;
@@ -34,13 +34,13 @@ export const openModal = (modalId: string) => {
 
 const Modal = ({ modalId, className = '', showCloseButton = true, children, shouldClose = () => true, onClose, ...props }: ModalProps) => {
     const handleBackdropClick = (e: React.MouseEvent) => {
-        if (e.target === e.currentTarget && shouldClose()) {
+        if (e.target === e.currentTarget && (typeof shouldClose === 'function' ? shouldClose() : shouldClose)) {
             closeModal(modalId);
         }
     };
 
     const handleCloseClick = () => {
-        if (shouldClose()) {
+        if (typeof shouldClose === 'function' ? shouldClose() : shouldClose) {
             closeModal(modalId);
         }
     };
@@ -64,14 +64,12 @@ const Modal = ({ modalId, className = '', showCloseButton = true, children, shou
             {...props}>
             <div className="shadow-floating-md w-full max-w-full overflow-hidden rounded-xl">
                 {showCloseButton && (
-                    <button
+                    <Button
                         title="Close Modal"
-                        type="button"
-                        className="text-text-secondary hover:text-text-primary bg-secondary absolute top-2 right-2 z-20 cursor-pointer rounded-full p-1 text-lg select-none"
+                        icon="close"
+                        className="absolute top-2 right-2 z-20"
                         onClick={handleCloseClick}
-                        aria-label="Close Modal">
-                        <Icon icon="close" className="size-6" />
-                    </button>
+                        aria-label="Close Modal"></Button>
                 )}
                 <div className="scrollbar-thin max-h-[calc(100dvh-6rem)] w-full max-w-full overflow-y-auto overscroll-x-none">{children}</div>
             </div>
@@ -96,16 +94,16 @@ export const ConfirmationModal = ({
     const handleCancelClick = () => {
         if (onCancel) onCancel();
 
-        if (shouldClose()) closeModal(modalId);
+        if (typeof shouldClose === 'function' ? shouldClose() : shouldClose) closeModal(modalId);
     };
 
     const handleConfirmClick = () => {
         onConfirm();
-        if (shouldClose()) closeModal(modalId);
+        if (typeof shouldClose === 'function' ? shouldClose() : shouldClose) closeModal(modalId);
     };
 
     return (
-        <Modal modalId={modalId} shouldClose={shouldClose} className="max-w-md" onClose={onClose} {...props}>
+        <Modal modalId={modalId} shouldClose={shouldClose} className="max-w-md" onClose={onClose} showCloseButton={false} {...props}>
             <div className="relative max-h-full w-full max-w-md p-8 text-center md:p-10">
                 <Icon icon={icon} className={cn('text-danger mx-auto mb-4 size-12', iconClassName)} />
                 <h3 className="text-text-primary mb-5 text-lg font-normal">{children}</h3>

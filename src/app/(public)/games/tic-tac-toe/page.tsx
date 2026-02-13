@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 
 import Link from 'next/link';
 
+import TicTacToeRules from '@/app/(public)/games/tic-tac-toe/_components/TicTacToeRules';
 import { Button } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import APP_ROUTES from '@/constants/routes/app.routes';
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 const Page = () => {
     return (
-        <main className="h-calc-full-height bg-primary flex flex-col items-center justify-center p-6">
+        <main className="min-h-calc-full-height bg-primary flex flex-col items-center justify-center gap-6 px-6 py-8">
             <div className="shadow-floating-sm text-text-primary bg-gradient-secondary-to-tertiary w-full max-w-lg rounded-2xl border p-6">
                 {/* Header */}
                 <h1 className="text-highlight font-alegreya mb-6 flex items-center justify-center gap-3 text-3xl font-medium tracking-wide">
@@ -46,6 +47,8 @@ const Page = () => {
                     <Link href={APP_ROUTES.GAMES.TIC_TAC_TOE.ONLINE}>Play Online</Link>
                 </Button>
             </div>
+
+            <TicTacToeRules />
         </main>
     );
 };
