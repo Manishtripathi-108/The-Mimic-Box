@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer,
 
 import toast from 'react-hot-toast';
 
+import useKeyboardControls from '@/hooks/useKeyboardControls.hook';
 import useMediaSession from '@/hooks/useMediaSession.hook.';
 import { T_AudioPlayerState, T_AudioPlayerTrack, T_AudioSourceContext } from '@/lib/types/client.types';
 import { audioPlayerInitialState, audioPlayerReducer } from '@/reducers/audioPlayer.reducer';
@@ -318,6 +319,20 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
             getAudioElement: () => audioRef.current,
         }
     );
+
+    // Keyboard Controls
+    useKeyboardControls({
+        togglePlay,
+        playNext,
+        playPrevious,
+        toggleMute,
+        toggleLoop,
+        toggleShuffle,
+        setVolume,
+        seekTo,
+        getAudioElement: () => audioRef.current,
+        volume: audioState.volume,
+    });
 
     return (
         <AudioPlayerContext.Provider
