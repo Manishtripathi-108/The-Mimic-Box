@@ -17,7 +17,7 @@ import cn from '@/lib/utils/cn';
 const ITEMS_PER_BATCH = 30;
 
 const MusicQueue = ({ className, onClose }: { className?: string; onClose?: () => void }) => {
-    const { clearQueue, playbackContext, queue } = useAudioPlayerContext();
+    const { clearQueue, playbackContext, currentTrack, queue } = useAudioPlayerContext();
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
     const total = queue?.length || 0;
 
@@ -32,8 +32,6 @@ const MusicQueue = ({ className, onClose }: { className?: string; onClose?: () =
     }, [total, visibleCount]);
 
     const rootRef = useRef<HTMLDivElement>(null);
-
-    if (!queue || queue.length === 0) return null;
 
     return (
         <Card
@@ -55,51 +53,59 @@ const MusicQueue = ({ className, onClose }: { className?: string; onClose?: () =
                 </CardAction>
             </CardHeader>
 
-            <CardContent id="queue-content" ref={rootRef} className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
-                {queue.slice(0, visibleCount).map((track) => (
-                    <div
-                        key={track.id}
-                        className="from-secondary to-tertiary text-text-secondary shadow-floating-xs flex items-center rounded-xl bg-linear-120 p-1 transition-transform hover:scale-101">
-                        <MusicTrackPlayBtn id={track.id} context={playbackContext!} />
+            {!queue || queue.length === 0 ? (
+                <CardContent className="flex h-32 items-center justify-center p-4">
+                    <p className="text-text-secondary text-center text-sm">Your music queue is empty. Start playing some tracks to see them here!</p>
+                </CardContent>
+            ) : (
+                <CardContent id="queue-content" ref={rootRef} className="sm:scrollbar-thin h-full flex-1 space-y-2 overflow-y-auto p-4">
+                    {queue.slice(0, visibleCount).map((track) => (
+                        <div
+                            key={track.id}
+                            className="from-secondary to-tertiary text-text-secondary shadow-floating-xs flex items-center gap-2 rounded-xl bg-linear-120 p-2 transition-transform hover:scale-101">
+                            <MusicTrackPlayBtn id={track.id} context={playbackContext!} />
 
-                        <div className="flex items-center gap-3 overflow-hidden">
-                            <Image
-                                src={track.covers?.[0]?.url || '/fallback-cover.jpg'}
-                                alt={`Album cover for ${track.title || 'Unknown Title'}`}
-                                width={40}
-                                height={40}
-                                className="size-9 shrink-0 rounded-md object-cover"
-                            />
+                            <div className="flex items-center gap-3 overflow-hidden">
+                                <Image
+                                    src={track.covers?.[0]?.url || '/fallback-cover.jpg'}
+                                    alt={`Album cover for ${track.title || 'Unknown Title'}`}
+                                    width={40}
+                                    height={40}
+                                    className="size-9 shrink-0 rounded-md object-cover"
+                                />
 
-                            <div className="min-w-0">
-                                <p className="text-text-primary truncate" title={track.title}>
-                                    {track.title}
-                                </p>
-                                <p className="text-text-secondary truncate text-sm" title={track.artists}>
-                                    {track.artists || 'Unknown Artist'}
-                                </p>
+                                <div className="min-w-0">
+                                    <p
+                                        className={`truncate  ${track.id === currentTrack?.id ? 'text-highlight font-bold' : 'text-text-primary'}`}
+                                        title={track.title}>
+                                        {track.title}
+                                    </p>
+                                    <p className="text-text-secondary truncate text-sm" title={track.artists}>
+                                        {track.artists || 'Unknown Artist'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
 
-                {visibleCount < total && (
-                    <InView
-                        as="div"
-                        onChange={(inView) => {
-                            if (inView) loadMoreItems();
-                        }}
-                        threshold={0.5}
-                        root={rootRef.current}
-                        role="status"
-                        id="loading-more-queue-tracks"
-                        aria-live="polite"
-                        className="text-text-secondary flex items-center justify-center gap-2 py-2 text-center text-sm">
-                        <Icon icon="loading" className="text-accent size-8" />
-                        <span className="sr-only">Loading more tracks...</span>
-                    </InView>
-                )}
-            </CardContent>
+                    {visibleCount < total && (
+                        <InView
+                            as="div"
+                            onChange={(inView) => {
+                                if (inView) loadMoreItems();
+                            }}
+                            threshold={0.5}
+                            root={rootRef.current}
+                            role="status"
+                            id="loading-more-queue-tracks"
+                            aria-live="polite"
+                            className="text-text-secondary flex items-center justify-center gap-2 py-2 text-center text-sm">
+                            <Icon icon="loading" className="text-accent size-8" />
+                            <span className="sr-only">Loading more tracks...</span>
+                        </InView>
+                    )}
+                </CardContent>
+            )}
         </Card>
     );
 };
