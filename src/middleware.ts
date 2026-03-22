@@ -4,10 +4,20 @@ import authConfig from '@/auth.config';
 import { API_AUTH_PREFIX } from '@/constants/routes/api.routes';
 import { AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { PUBLIC_ROUTES } from '@/constants/routes/public.routes';
+import { JS_FALLBACK_ROUTE, SPOTIFY_BLOCKED_PREFIXES } from '@/constants/routes/spotify-blocked.routes';
 
 const { auth } = NextAuth(authConfig);
 
 const ENABLE_LOGGING = false;
+
+const parseBool = (value: string | undefined, defaultValue: boolean): boolean => {
+    if (value === undefined) return defaultValue;
+    return value.toLowerCase() === 'true';
+};
+
+const spotifyPremiumMember = parseBool(process.env.SPOTIFY_PREMIUM_MEMBER, false);
+const enforceSpotifyPremiumRequirement = parseBool(process.env.SPOTIFY_ENFORCE_PREMIUM_REQUIREMENT, true);
+const isSpotifyAccessEnabled = !enforceSpotifyPremiumRequirement || spotifyPremiumMember;
 
 // Comprehensive bot/crawler regex
 const BOT_REGEX =
@@ -21,6 +31,8 @@ export default auth((req) => {
     const isApiAuthRoute = pathname.startsWith(API_AUTH_PREFIX);
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
     const isAuthRoute = AUTH_ROUTES.includes(pathname);
+    const isJsRoute = pathname.startsWith('/music/js');
+    const isBlockedSpotifyRoute = SPOTIFY_BLOCKED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
     // bot detection — allow bots for SEO/social previews
     const isBot = BOT_REGEX.test(userAgent);
@@ -54,6 +66,11 @@ export default auth((req) => {
     if (!isAuthenticated && !isPublicRoute) {
         const callbackUrl = encodeURIComponent(`${pathname}${search}`);
         return redirectTo(`${DEFAULT_AUTH_ROUTE}?callbackUrl=${callbackUrl}`);
+    }
+
+    // Premium policy redirect: do not allow Spotify-specific pages when premium access is disabled
+    if (!isSpotifyAccessEnabled && isBlockedSpotifyRoute && !isJsRoute) {
+        return redirectTo(JS_FALLBACK_ROUTE);
     }
 
     // All good — allow request

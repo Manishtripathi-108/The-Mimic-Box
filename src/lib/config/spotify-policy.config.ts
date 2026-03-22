@@ -20,7 +20,7 @@ export const spotifyPolicyConfig = {
 export const spotifyPolicyNotice = {
     title: 'Spotify policy update in effect',
     description:
-        'Spotify Development Mode now requires a Premium account and deprecated multiple endpoints. Spotify features are deactivated in this app until Premium mode is explicitly enabled.',
+        'Spotify Development Mode now requires a Premium account and several legacy endpoints were removed. Spotify features in this app are currently deactivated under these policy rules.',
 } as const;
 
 export const getSpotifyPolicyBannerState = () => ({

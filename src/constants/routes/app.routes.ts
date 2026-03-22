@@ -78,6 +78,7 @@ const APP_ROUTES = {
         TRACKS: (id: string) => `/music/tracks/${id}`,
         ARTISTS: (id: string) => `/music/artists/${id}`,
         JS: {
+            ROOT: '/music/js',
             TRACKS: (id: string) => `/music/js/tracks/${id}`,
             ARTISTS: (id: string) => `/music/js/artists/${id}`,
             ALBUMS: (id: string) => `/music/js/albums/${id}`,

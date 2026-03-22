@@ -25,7 +25,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
                 <AudioDownloadProvider>
                     <DownloadModal />
                     <MusicSearch />
-                    <SpotifyPolicyNotice />
+                    <SpotifyPolicyNotice className='mt-4' />
                     <main className="mt-4 w-full pb-16">{children}</main>
                     <MusicMiniPlayer />
                 </AudioDownloadProvider>
