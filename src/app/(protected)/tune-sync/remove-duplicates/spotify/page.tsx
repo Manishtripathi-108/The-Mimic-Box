@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { spotifyGetUserPlaylists } from '@/actions/spotify.actions';
 import ErrorCard from '@/components/layout/ErrorCard';
 import { NoDataCard } from '@/components/layout/NoDataCard';
+import SpotifyPolicyNotice from '@/components/layout/SpotifyPolicyNotice';
 import LinkCard from '@/components/ui/LinkCard';
 import APP_ROUTES from '@/constants/routes/app.routes';
 
@@ -31,6 +32,7 @@ const Page = async () => {
 
     return (
         <main className="bg-primary p-2 sm:p-6">
+            <SpotifyPolicyNotice />
             <h1 className="text-highlight font-alegreya mb-6 text-center text-3xl font-bold sm:text-4xl">Choose a Playlists to remove duplicates</h1>
             {sortedPlaylists.length === 0 ? (
                 <NoDataCard className="w-full max-w-2xl" message="You don't have any playlists yet." />

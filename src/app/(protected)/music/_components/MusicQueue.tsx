@@ -76,7 +76,7 @@ const MusicQueue = ({ className, onClose }: { className?: string; onClose?: () =
 
                                 <div className="min-w-0">
                                     <p
-                                        className={`truncate  ${track.id === currentTrack?.id ? 'text-highlight font-bold' : 'text-text-primary'}`}
+                                        className={`truncate ${track.id === currentTrack?.id ? 'text-highlight font-bold' : 'text-text-primary'}`}
                                         title={track.title}>
                                         {track.title}
                                     </p>

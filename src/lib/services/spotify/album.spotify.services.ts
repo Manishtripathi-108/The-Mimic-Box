@@ -1,5 +1,6 @@
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
+import { ensureSpotifyFeatureAvailable } from '@/lib/services/spotify/spotifyPolicy.guard';
 import { T_SpotifyAlbum, T_SpotifyPaging, T_SpotifySimplifiedTrack } from '@/lib/types/spotify.types';
 import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
 import { safeAwait } from '@/lib/utils/safeAwait.utils';
@@ -10,7 +11,9 @@ import { withAuthHeader } from '@/lib/utils/server.utils';
  */
 export const getAlbum = async (accessToken: string, albumId: string) => {
     const [error, response] = await safeAwait(
-        spotifyConfig.get<T_SpotifyAlbum>(spotifyApiRoutes.albums.getAlbum(albumId), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.get<T_SpotifyAlbum>(spotifyApiRoutes.albums.getAlbum(albumId), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     return error || !response
@@ -22,6 +25,9 @@ export const getAlbum = async (accessToken: string, albumId: string) => {
  * Service: Fetch details for multiple Spotify albums by an array of album IDs.
  */
 export const getAlbums = async (accessToken: string, albumIds: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('album.getAlbums');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.get<{ albums: T_SpotifyAlbum[] }>(spotifyApiRoutes.albums.getAlbums(albumIds), {
             headers: withAuthHeader(accessToken),
@@ -95,7 +101,9 @@ export const removeAlbums = async (accessToken: string, albumIds: string[]) => {
  */
 export const checkSavedAlbums = async (accessToken: string, albumIds: string[]) => {
     const [error, response] = await safeAwait(
-        spotifyConfig.get<boolean>(spotifyApiRoutes.albums.checkSavedAlbums(albumIds), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.get<boolean>(spotifyApiRoutes.albums.checkSavedAlbums(albumIds), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     return error || !response
@@ -107,6 +115,9 @@ export const checkSavedAlbums = async (accessToken: string, albumIds: string[]) 
  * Service: Fetch new album releases from Spotify.
  */
 export const getNewReleases = async (accessToken: string, limit?: number) => {
+    const blocked = ensureSpotifyFeatureAvailable('album.getNewReleases');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.get<T_SpotifyPaging<T_SpotifyAlbum>>(spotifyApiRoutes.albums.getNewReleases(), {
             headers: withAuthHeader(accessToken),

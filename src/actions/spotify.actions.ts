@@ -3,12 +3,16 @@
 import { auth } from '@/auth';
 import { syncProviderTracks } from '@/lib/services/music/tracks.music.services';
 import spotifyServices from '@/lib/services/spotify/index.spotify.services';
+import { ensureSpotifyFeatureAvailable, ensureSpotifyPremiumAccess, ensureSpotifyUrlAvailable } from '@/lib/services/spotify/spotifyPolicy.guard';
 import { T_SpotifyPaging, T_SpotifySimplifiedTrack, T_SpotifyTrack } from '@/lib/types/spotify.types';
 import { createError, createSuccess, createUnauthorized, createValidationError } from '@/lib/utils/createResponse.utils';
 import { extractRecentPlaylists } from '@/lib/utils/server.utils';
 
 // Wrapper for checking Spotify auth token
-const withSpotifyAuth = async <T>(callback: (accessToken: string) => Promise<T>) => {
+const withSpotifyAuth = async <T>(callback: (accessToken: string) => Promise<T>, featureName = 'Spotify integration') => {
+    const policyBlocked = ensureSpotifyPremiumAccess(featureName);
+    if (policyBlocked) return policyBlocked;
+
     const session = await auth();
     const accessToken = session?.user?.linkedAccounts?.spotify?.accessToken;
 
@@ -22,12 +26,15 @@ const withSpotifyAuth = async <T>(callback: (accessToken: string) => Promise<T>)
 /* ---------------------------------- User ---------------------------------- */
 export const spotifyGetUserPlaylists = async () => withSpotifyAuth((token) => spotifyServices.playlists.getMyPlaylists(token));
 
-export const spotifyGetUserTopArtists = async (limit = 50) => withSpotifyAuth((token) => spotifyServices.users.getTopArtists(token, limit));
+export const spotifyGetUserTopArtists = async (limit = 50) =>
+    withSpotifyAuth((token) => spotifyServices.users.getTopArtists(token, limit), 'spotifyGetUserTopArtists');
 
-export const spotifyGetUserTopTracks = async (limit = 50) => withSpotifyAuth((token) => spotifyServices.users.getTopTracks(token, limit));
+export const spotifyGetUserTopTracks = async (limit = 50) =>
+    withSpotifyAuth((token) => spotifyServices.users.getTopTracks(token, limit), 'spotifyGetUserTopTracks');
 
 /* --------------------------------- Player --------------------------------- */
-export const spotifyGetRecentTracks = async (limit = 50) => withSpotifyAuth((token) => spotifyServices.player.getRecentTracks(token, limit));
+export const spotifyGetRecentTracks = async (limit = 50) =>
+    withSpotifyAuth((token) => spotifyServices.player.getRecentTracks(token, limit), 'spotifyGetRecentTracks');
 
 export const spotifyGetRecentPlaylists = async () =>
     withSpotifyAuth(async (token) => {
@@ -43,44 +50,59 @@ export const spotifyGetRecentPlaylists = async () =>
         );
 
         return createSuccess('Recently played playlists fetched!', playlists.filter(Boolean));
-    });
+    }, 'spotifyGetRecentPlaylists');
 
 /* -------------------------------- Playlist -------------------------------- */
 export const spotifyGetPlaylist = async (playlistId: string) =>
     withSpotifyAuth(async (token) => {
         const res = await spotifyServices.playlists.getPlaylist(token, playlistId);
         return res.success ? createSuccess('Playlist fetched!', res.payload) : res;
-    });
+    }, 'spotifyGetPlaylist');
 
 export const spotifyAddToPlaylist = async (playlistId: string, tracks: { uris: string[]; position?: number }) =>
     withSpotifyAuth(async (token) => {
         const res = await spotifyServices.playlists.addItems(token, playlistId, tracks);
         return res.success ? createSuccess('Tracks added to playlist!', res.payload) : res;
-    });
+    }, 'spotifyAddToPlaylist');
 
 /* ---------------------------------- Album --------------------------------- */
-export const spotifyGetAlbum = async (albumId: string) => withSpotifyAuth((token) => spotifyServices.albums.getAlbum(token, albumId));
+export const spotifyGetAlbum = async (albumId: string) =>
+    withSpotifyAuth((token) => spotifyServices.albums.getAlbum(token, albumId), 'spotifyGetAlbum');
 
 /* ---------------------------------- Track --------------------------------- */
-export const spotifyGetTrack = async (trackId: string) => withSpotifyAuth((token) => spotifyServices.tracks.getTrack(token, trackId));
+export const spotifyGetTrack = async (trackId: string) =>
+    withSpotifyAuth((token) => spotifyServices.tracks.getTrack(token, trackId), 'spotifyGetTrack');
 
-export const spotifyGetTracks = async (ids: string[]) => withSpotifyAuth((token) => spotifyServices.tracks.getTracks(token, ids));
+export const spotifyGetTracks = async (ids: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('track.getTracks');
+    if (blocked) return blocked;
+
+    return withSpotifyAuth((token) => spotifyServices.tracks.getTracks(token, ids), 'spotifyGetTracks');
+};
 
 /* --------------------------------- Artist --------------------------------- */
-export const spotifyGetArtist = async (artistId: string) => withSpotifyAuth((token) => spotifyServices.artists.getArtist(token, artistId));
+export const spotifyGetArtist = async (artistId: string) =>
+    withSpotifyAuth((token) => spotifyServices.artists.getArtist(token, artistId), 'spotifyGetArtist');
 
-export const spotifyGetArtistTopTracks = async (artistId: string) =>
-    withSpotifyAuth((token) => spotifyServices.artists.getArtistTopTracks(token, artistId));
+export const spotifyGetArtistTopTracks = async (artistId: string) => {
+    const blocked = ensureSpotifyFeatureAvailable('artist.topTracks');
+    if (blocked) return blocked;
+
+    return withSpotifyAuth((token) => spotifyServices.artists.getArtistTopTracks(token, artistId), 'spotifyGetArtistTopTracks');
+};
 
 export const spotifyGetArtistAlbums = async (artistId: string, limit = 10) =>
-    withSpotifyAuth((token) => spotifyServices.artists.getArtistAlbums(token, artistId, limit));
+    withSpotifyAuth((token) => spotifyServices.artists.getArtistAlbums(token, artistId, limit), 'spotifyGetArtistAlbums');
 
 /* ------------------------------ Generic Fetch ----------------------------- */
 export const spotifyGetByUrl = async <T>(url: string) =>
     withSpotifyAuth(async (token) => {
+        const endpointBlocked = ensureSpotifyUrlAvailable(url);
+        if (endpointBlocked) return endpointBlocked;
+
         const [error, res] = await spotifyServices.fetchSpotifyData<T>({ token, url });
         return error ? createError('Failed to fetch Spotify data', { error }) : createSuccess('Data fetched!', res);
-    });
+    }, 'spotifyGetByUrl');
 
 /* --------------------------- Paginated Fetching --------------------------- */
 export const spotifyGetPaginatedItems = async <T>(token: string, initialPage: T_SpotifyPaging<T>): Promise<T[]> => {
@@ -99,6 +121,9 @@ export const spotifyGetPaginatedItems = async <T>(token: string, initialPage: T_
 
 /* ------------------------- Tracks from Any Entity ------------------------- */
 export const spotifyGetEntityTracks = async (id: string, type: 'album' | 'playlist' | 'track' | 'artist') => {
+    const policyBlocked = ensureSpotifyPremiumAccess('spotifyGetEntityTracks');
+    if (policyBlocked) return policyBlocked;
+
     const token = await auth().then((session) => session?.user?.linkedAccounts?.spotify?.accessToken);
 
     if (!token) return createUnauthorized('Spotify access token not found');
@@ -128,6 +153,9 @@ export const spotifyGetEntityTracks = async (id: string, type: 'album' | 'playli
                 break;
             }
             case 'artist': {
+                const blocked = ensureSpotifyFeatureAvailable('artist.topTracks');
+                if (blocked) return blocked;
+
                 const res = await spotifyServices.artists.getArtistTopTracks(token, id);
                 if (!res.success) throw new Error(res.message);
                 tracks = res.payload;

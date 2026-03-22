@@ -303,7 +303,7 @@ const spotifyApiRoutes = {
          * @param limit - (Optional) Maximum number of items to return (default 20, max 100).
          * @param offset - (Optional) The index of the first item to return.
          */
-        getPlaylistItems: (id: string) => `/playlists/${id}/tracks`,
+        getPlaylistItems: (id: string) => `/playlists/${id}/items`,
 
         /**
          * Update the playlist's name, description, or visibility.
@@ -327,7 +327,7 @@ const spotifyApiRoutes = {
          * @data insert_before - The position to insert the moved items into.
          * @data range_length - Number of items to move (default is 1).
          */
-        replaceItems: (id: string, uris?: string[]) => `/playlists/${id}/tracks${uris?.length ? `?uris=${uris.join(',')}` : ''}`,
+        replaceItems: (id: string, uris?: string[]) => `/playlists/${id}/items${uris?.length ? `?uris=${uris.join(',')}` : ''}`,
 
         /**
          * Add new tracks or episodes to a playlist.
@@ -338,7 +338,7 @@ const spotifyApiRoutes = {
          * @data uris - A list of Spotify URIs to add to the playlist.
          * @data position - Where in the playlist the new items should go (0 = start).
          */
-        addItems: (id: string) => `/playlists/${id}/tracks`,
+        addItems: (id: string) => `/playlists/${id}/items`,
 
         /**
          * Remove specific tracks or episodes from a playlist.
@@ -347,7 +347,7 @@ const spotifyApiRoutes = {
          * @data tracks - A list of objects with the URIs of items to remove.
          * @data snapshot_id - (Optional) The current version ID of the playlist for safe updates.
          */
-        removeItems: (id: string) => `/playlists/${id}/tracks`,
+        removeItems: (id: string) => `/playlists/${id}/items`,
 
         /**
          * Get playlists of the current logged-in user.
@@ -367,11 +367,10 @@ const spotifyApiRoutes = {
         getUserPlaylists: (userId: string) => `/users/${userId}/playlists`,
 
         /**
-         * Create a new playlist for a specific user.
+         * Create a new playlist for the current user.
          * @method POST
-         * @param userId - The ID of the user to create the playlist for.
          */
-        createPlaylist: (userId: string) => `/users/${userId}/playlists`,
+        createPlaylist: () => `/me/playlists`,
 
         /**
          * Get the current cover image of a playlist.

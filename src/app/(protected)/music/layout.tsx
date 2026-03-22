@@ -3,6 +3,7 @@ import MusicSearch from '@/app/(protected)/music/_components/MusicSearch';
 import { auth } from '@/auth';
 import AccountLinkCTA from '@/components/layout/AccountLinkCTA';
 import DownloadModal from '@/components/layout/DownloadModal';
+import SpotifyPolicyNotice from '@/components/layout/SpotifyPolicyNotice';
 import { AudioDownloadProvider } from '@/contexts/AudioDownload.context';
 import { AudioPlayerProvider } from '@/contexts/AudioPlayer.context';
 
@@ -24,6 +25,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
                 <AudioDownloadProvider>
                     <DownloadModal />
                     <MusicSearch />
+                    <SpotifyPolicyNotice />
                     <main className="mt-4 w-full pb-16">{children}</main>
                     <MusicMiniPlayer />
                 </AudioDownloadProvider>

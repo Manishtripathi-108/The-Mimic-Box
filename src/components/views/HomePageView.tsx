@@ -166,7 +166,7 @@ const HomePageView = ({ session }: HomePageViewProps) => {
                 {/* Trending / Highlights */}
                 <section>
                     <h2 className="text-highlight font-alegreya mb-4 px-2 text-2xl font-semibold tracking-wide">Explore Features</h2>
-                    <div className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
                         {trendingItems.map((item, index) => (
                             <HighlightCard
                                 key={item.title}

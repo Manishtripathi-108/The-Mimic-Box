@@ -1,5 +1,6 @@
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
+import { ensureSpotifyFeatureAvailable } from '@/lib/services/spotify/spotifyPolicy.guard';
 import { T_SpotifyRemove } from '@/lib/types/common.types';
 import { T_SpotifyPaging, T_SpotifyPlaylist, T_SpotifyPlaylistTrack, T_SpotifySimplifiedPlaylist } from '@/lib/types/spotify.types';
 import { chunkArray } from '@/lib/utils/core.utils';
@@ -40,6 +41,9 @@ export const getPlaylistItems = async (accessToken: string, playlistId: string, 
  * Service: Fetch playlists for a specific Spotify user by user ID.
  */
 export const getUserPlaylists = async (accessToken: string, userId: string) => {
+    const blocked = ensureSpotifyFeatureAvailable('playlist.getUserPlaylists');
+    if (blocked) return blocked;
+
     const headers = withAuthHeader(accessToken);
     const [error, response] = await safeAwait(
         spotifyConfig.get<T_SpotifyPaging<T_SpotifySimplifiedPlaylist>>(spotifyApiRoutes.playlists.getUserPlaylists(userId), { headers })
@@ -56,7 +60,9 @@ export const getUserPlaylists = async (accessToken: string, userId: string) => {
 export const getMyPlaylists = async (accessToken: string) => {
     const headers = withAuthHeader(accessToken);
     const [error, response] = await safeAwait(
-        spotifyConfig.get<T_SpotifyPaging<T_SpotifySimplifiedPlaylist>>(spotifyApiRoutes.playlists.getMyPlaylists(), { headers })
+        spotifyConfig.get<T_SpotifyPaging<T_SpotifySimplifiedPlaylist>>(spotifyApiRoutes.playlists.getMyPlaylists(), {
+            headers,
+        })
     );
 
     return error || !response
@@ -79,7 +85,9 @@ export const changeDetails = async (
 ) => {
     const headers = withAuthHeader(accessToken);
     const [error, response] = await safeAwait(
-        spotifyConfig.put<T_SpotifyPlaylist>(spotifyApiRoutes.playlists.changePlaylistDetails(playlistId), data, { headers })
+        spotifyConfig.put<T_SpotifyPlaylist>(spotifyApiRoutes.playlists.changePlaylistDetails(playlistId), data, {
+            headers,
+        })
     );
 
     return error || !response
@@ -227,13 +235,10 @@ export const removeItems = async (accessToken: string, playlistId: string, data:
  */
 export const createPlaylist = async (
     accessToken: string,
-    userId: string,
     data: { name: string; description?: string; public?: boolean; collaborative?: boolean }
 ) => {
     const headers = withAuthHeader(accessToken);
-    const [error, response] = await safeAwait(
-        spotifyConfig.post<T_SpotifyPlaylist>(spotifyApiRoutes.playlists.createPlaylist(userId), data, { headers })
-    );
+    const [error, response] = await safeAwait(spotifyConfig.post<T_SpotifyPlaylist>(spotifyApiRoutes.playlists.createPlaylist(), data, { headers }));
     return error || !response ? createError('Failed to create playlist', { error }) : createSuccess('Playlist created successfully!', response.data);
 };
 

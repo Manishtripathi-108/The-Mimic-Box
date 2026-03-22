@@ -64,27 +64,31 @@ The Mimic Box is a Next.js (App Router) media and gaming hub that blends account
 
 Use [.env.example](.env.example) as a template.
 
-| Variable                              | Description                        |
-| ------------------------------------- | ---------------------------------- |
-| `NEXT_PUBLIC_APP_NAME`                | App display name                   |
-| `NEXT_PUBLIC_URL`                     | Base URL for the app               |
-| `DATABASE_URL`                        | PostgreSQL connection string       |
-| `AUTH_SECRET`                         | NextAuth secret                    |
-| `AUTH_GOOGLE_ID`                      | Google OAuth client id             |
-| `AUTH_GOOGLE_SECRET`                  | Google OAuth client secret         |
-| `AUTH_GITHUB_ID`                      | GitHub OAuth client id             |
-| `AUTH_GITHUB_SECRET`                  | GitHub OAuth client secret         |
-| `AUTH_ANILIST_ID`                     | AniList OAuth client id            |
-| `AUTH_ANILIST_SECRET`                 | AniList OAuth client secret        |
-| `AUTH_SPOTIFY_ID`                     | Spotify OAuth client id            |
-| `AUTH_SPOTIFY_SECRET`                 | Spotify OAuth client secret        |
-| `AUTH_SPOTIFY_SCOPES`                 | Spotify OAuth scopes               |
-| `SMTP_USER`                           | SMTP username for email            |
-| `SMTP_PASS`                           | SMTP password for email            |
-| `CLOUDINARY_CLOUD_NAME`               | Cloudinary cloud name              |
-| `CLOUDINARY_API_KEY`                  | Cloudinary API key                 |
-| `CLOUDINARY_API_SECRET`               | Cloudinary API secret              |
-| `NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL` | External base URL for audio assets |
+| Variable                              | Description                                           |
+| ------------------------------------- | ----------------------------------------------------- |
+| `NEXT_PUBLIC_APP_NAME`                | App display name                                      |
+| `NEXT_PUBLIC_URL`                     | Base URL for the app                                  |
+| `DATABASE_URL`                        | PostgreSQL connection string                          |
+| `AUTH_SECRET`                         | NextAuth secret                                       |
+| `AUTH_GOOGLE_ID`                      | Google OAuth client id                                |
+| `AUTH_GOOGLE_SECRET`                  | Google OAuth client secret                            |
+| `AUTH_GITHUB_ID`                      | GitHub OAuth client id                                |
+| `AUTH_GITHUB_SECRET`                  | GitHub OAuth client secret                            |
+| `AUTH_ANILIST_ID`                     | AniList OAuth client id                               |
+| `AUTH_ANILIST_SECRET`                 | AniList OAuth client secret                           |
+| `AUTH_SPOTIFY_ID`                     | Spotify OAuth client id                               |
+| `AUTH_SPOTIFY_SECRET`                 | Spotify OAuth client secret                           |
+| `AUTH_SPOTIFY_SCOPES`                 | Spotify OAuth scopes                                  |
+| `SPOTIFY_PREMIUM_MEMBER`              | Set `true` if your dev account is Premium             |
+| `SPOTIFY_ENFORCE_PREMIUM_REQUIREMENT` | Enforce Premium requirement gate for Spotify features |
+| `SPOTIFY_SHOW_POLICY_NOTICE`          | Show in-app Spotify policy update banner              |
+| `SPOTIFY_DISABLE_REMOVED_ENDPOINTS`   | Block Spotify endpoints removed in Feb 2026           |
+| `SMTP_USER`                           | SMTP username for email                               |
+| `SMTP_PASS`                           | SMTP password for email                               |
+| `CLOUDINARY_CLOUD_NAME`               | Cloudinary cloud name                                 |
+| `CLOUDINARY_API_KEY`                  | Cloudinary API key                                    |
+| `CLOUDINARY_API_SECRET`               | Cloudinary API secret                                 |
+| `NEXT_PUBLIC_EXTERNAL_AUDIO_BASE_URL` | External base URL for audio assets                    |
 
 ## Scripts
 

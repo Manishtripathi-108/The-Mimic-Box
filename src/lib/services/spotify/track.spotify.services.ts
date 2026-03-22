@@ -1,5 +1,6 @@
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
+import { ensureSpotifyFeatureAvailable } from '@/lib/services/spotify/spotifyPolicy.guard';
 import { T_SpotifyTrack } from '@/lib/types/spotify.types';
 import { chunkArray } from '@/lib/utils/core.utils';
 import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
@@ -11,7 +12,9 @@ import { withAuthHeader } from '@/lib/utils/server.utils';
  */
 export const getTrack = async (accessToken: string, trackId: string) => {
     const [error, response] = await safeAwait(
-        spotifyConfig.get<T_SpotifyTrack>(spotifyApiRoutes.tracks.getTrack(trackId), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.get<T_SpotifyTrack>(spotifyApiRoutes.tracks.getTrack(trackId), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     return error || !response
@@ -23,8 +26,13 @@ export const getTrack = async (accessToken: string, trackId: string) => {
  * Service: Fetch details for multiple Spotify tracks by an array of track IDs.
  */
 export const getTracks = async (accessToken: string, trackIds: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('track.getTracks');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
-        spotifyConfig.get<{ tracks: T_SpotifyTrack[] }>(spotifyApiRoutes.tracks.getTracks(trackIds), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.get<{ tracks: T_SpotifyTrack[] }>(spotifyApiRoutes.tracks.getTracks(trackIds), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     return error || !response
@@ -111,7 +119,9 @@ export const checkSavedTracks = async (accessToken: string, trackIds: string[]) 
 
     const promises = chunks.map(async (chunk) => {
         const [error, response] = await safeAwait(
-            spotifyConfig.get<boolean[]>(spotifyApiRoutes.tracks.checkSavedTracks(chunk), { headers: withAuthHeader(accessToken) })
+            spotifyConfig.get<boolean[]>(spotifyApiRoutes.tracks.checkSavedTracks(chunk), {
+                headers: withAuthHeader(accessToken),
+            })
         );
 
         if (error || !response) {
@@ -124,7 +134,9 @@ export const checkSavedTracks = async (accessToken: string, trackIds: string[]) 
     const results = await Promise.all(promises);
 
     if (results.some((result) => !result?.success)) {
-        return createError('Failed to check saved tracks', { error: results.find((result) => !result?.success)?.error });
+        return createError('Failed to check saved tracks', {
+            error: results.find((result) => !result?.success)?.error,
+        });
     }
 
     return createSuccess(

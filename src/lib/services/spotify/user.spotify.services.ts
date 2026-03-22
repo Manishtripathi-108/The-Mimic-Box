@@ -2,6 +2,7 @@ import { isAxiosError } from 'axios';
 
 import spotifyApiRoutes from '@/constants/external-routes/spotify.routes';
 import spotifyConfig from '@/lib/config/spotify.config';
+import { ensureSpotifyFeatureAvailable } from '@/lib/services/spotify/spotifyPolicy.guard';
 import { T_ErrorCode } from '@/lib/types/response.types';
 import { T_SpotifyArtist, T_SpotifyPaging, T_SpotifyPrivateUser, T_SpotifyTrack } from '@/lib/types/spotify.types';
 import { createError, createSuccess } from '@/lib/utils/createResponse.utils';
@@ -13,7 +14,9 @@ import { withAuthHeader } from '@/lib/utils/server.utils';
  */
 export const getMe = async (accessToken: string) => {
     const [error, data] = await safeAwait(
-        spotifyConfig.get<T_SpotifyPrivateUser>(spotifyApiRoutes.users.getMyProfile(), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.get<T_SpotifyPrivateUser>(spotifyApiRoutes.users.getMyProfile(), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     if (error || !data?.data) {
@@ -45,8 +48,13 @@ export const getMe = async (accessToken: string) => {
  * Service: Fetch a Spotify user's profile by user ID.
  */
 export const getUser = async (accessToken: string, userId: string) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.getUser');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
-        spotifyConfig.get<T_SpotifyPrivateUser>(spotifyApiRoutes.users.getUser(userId), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.get<T_SpotifyPrivateUser>(spotifyApiRoutes.users.getUser(userId), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     return error || !response
@@ -90,6 +98,9 @@ export const getTopArtists = async (accessToken: string, limit?: number) => {
  * Service: Follow one or more Spotify users.
  */
 export const followUsers = async (accessToken: string, userId: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.following');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.put(spotifyApiRoutes.users.follow('user', userId), {}, { headers: withAuthHeader(accessToken) })
     );
@@ -101,6 +112,9 @@ export const followUsers = async (accessToken: string, userId: string[]) => {
  * Service: Unfollow one or more Spotify users.
  */
 export const unfollowUsers = async (accessToken: string, userId: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.following');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.delete(spotifyApiRoutes.users.unfollow('user', userId), { headers: withAuthHeader(accessToken) })
     );
@@ -112,6 +126,9 @@ export const unfollowUsers = async (accessToken: string, userId: string[]) => {
  * Service: Follow one or more Spotify artists.
  */
 export const followArtists = async (accessToken: string, artistIds: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.following');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.put(spotifyApiRoutes.users.follow('artist', artistIds), {}, { headers: withAuthHeader(accessToken) })
     );
@@ -123,8 +140,13 @@ export const followArtists = async (accessToken: string, artistIds: string[]) =>
  * Service: Unfollow one or more Spotify artists.
  */
 export const unfollowArtists = async (accessToken: string, artistIds: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.following');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
-        spotifyConfig.delete(spotifyApiRoutes.users.unfollow('artist', artistIds), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.delete(spotifyApiRoutes.users.unfollow('artist', artistIds), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     return error || !response
@@ -136,6 +158,9 @@ export const unfollowArtists = async (accessToken: string, artistIds: string[]) 
  * Service: Follow a Spotify playlist by playlist ID.
  */
 export const followPlaylist = async (accessToken: string, playlistId: string) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.followPlaylist');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.put(spotifyApiRoutes.users.followPlaylist(playlistId), {}, { headers: withAuthHeader(accessToken) })
     );
@@ -147,8 +172,13 @@ export const followPlaylist = async (accessToken: string, playlistId: string) =>
  * Service: Unfollow a Spotify playlist by playlist ID.
  */
 export const unfollowPlaylist = async (accessToken: string, playlistId: string) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.followPlaylist');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
-        spotifyConfig.delete(spotifyApiRoutes.users.unfollowPlaylist(playlistId), { headers: withAuthHeader(accessToken) })
+        spotifyConfig.delete(spotifyApiRoutes.users.unfollowPlaylist(playlistId), {
+            headers: withAuthHeader(accessToken),
+        })
     );
 
     return error || !response
@@ -176,6 +206,9 @@ export const getFollowedArtists = async (accessToken: string, limit?: number) =>
  * Service: Check if the current user is following specific Spotify users.
  */
 export const checkFollowingUsers = async (accessToken: string, userIds: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.following');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.get<boolean[]>(spotifyApiRoutes.users.checkFollowing('user', userIds), {
             headers: withAuthHeader(accessToken),
@@ -191,6 +224,9 @@ export const checkFollowingUsers = async (accessToken: string, userIds: string[]
  * Service: Check if the current user is following specific Spotify artists.
  */
 export const checkFollowingArtists = async (accessToken: string, artistIds: string[]) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.following');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.get<boolean[]>(spotifyApiRoutes.users.checkFollowing('artist', artistIds), {
             headers: withAuthHeader(accessToken),
@@ -206,6 +242,9 @@ export const checkFollowingArtists = async (accessToken: string, artistIds: stri
  * Service: Check if the current user is following a specific Spotify playlist.
  */
 export const checkFollowingPlaylist = async (accessToken: string, playlistId: string) => {
+    const blocked = ensureSpotifyFeatureAvailable('user.followPlaylist');
+    if (blocked) return blocked;
+
     const [error, response] = await safeAwait(
         spotifyConfig.get<boolean>(spotifyApiRoutes.users.checkFollowingPlaylist(playlistId), {
             headers: withAuthHeader(accessToken),

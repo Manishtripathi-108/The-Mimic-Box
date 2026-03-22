@@ -2,6 +2,7 @@
 
 import { auth } from '@/auth';
 import { removeItems } from '@/lib/services/spotify/playlist.spotify.services';
+import { ensureSpotifyPremiumAccess } from '@/lib/services/spotify/spotifyPolicy.guard';
 import { T_RemoveDuplicates } from '@/lib/types/common.types';
 import { createUnauthorized, createValidationError } from '@/lib/utils/createResponse.utils';
 
@@ -13,6 +14,10 @@ export const deduplicatePlaylistItems = async ({ playlistId, data, source }: T_R
 
     switch (source) {
         case 'spotify':
+            {
+                const policyBlocked = ensureSpotifyPremiumAccess('deduplicatePlaylistItems');
+                if (policyBlocked) return policyBlocked;
+            }
             if (!session.user.linkedAccounts?.spotify?.accessToken) return createUnauthorized('Spotify access token not found.');
 
             return await removeItems(session.user.linkedAccounts.spotify.accessToken, playlistId, data);
