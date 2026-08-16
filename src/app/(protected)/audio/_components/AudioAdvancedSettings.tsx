@@ -45,22 +45,22 @@ const AudioAdvancedSettings = ({ values, onApply }: { values?: T_AudioAdvanceSet
     const onSubmit = (data: T_AudioAdvanceSettings) => onApply(data);
 
     return (
-        <form className="w-full max-w-sm space-y-4 p-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="w-sm space-y-4 p-6" onSubmit={handleSubmit(onSubmit)}>
             <Tabs defaultValue="Audio">
                 <TabsList className="mx-auto w-full">
-                    <TabsTrigger value="Audio" className="h-10">
+                    <TabsTrigger type='button' value="Audio" className="h-10">
                         Audio
                     </TabsTrigger>
-                    <TabsTrigger value="Effects" className="h-10">
+                    <TabsTrigger type='button' value="Effects" className="h-10">
                         Effects
                     </TabsTrigger>
-                    <TabsTrigger value="Trim" className="h-10">
+                    <TabsTrigger type='button' value="Trim" className="h-10">
                         Trim
                     </TabsTrigger>
                     <TabsIndicator />
                 </TabsList>
 
-                <TabsContent className="min-h-52 w-full">
+                <TabsContent className="min-h-56 w-full">
                     {/* Audio Tab */}
                     <TabsPanel value="Audio" className="grid w-full grid-cols-2 gap-4 p-0">
                         <FormField label="Format" error={errors.audio?.format?.message}>
