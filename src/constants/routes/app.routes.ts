@@ -79,6 +79,10 @@ const APP_ROUTES = {
         ARTISTS: (id: string) => `/music/artists/${id}`,
         JS: {
             ROOT: '/music/js',
+            SEARCH: (query: string = ''): string => {
+                const trimmedQuery = query.trim();
+                return `/music/js/search?q=${encodeURIComponent(trimmedQuery)}`;
+            },
             TRACKS: (id: string) => `/music/js/tracks/${id}`,
             ARTISTS: (id: string) => `/music/js/artists/${id}`,
             ALBUMS: (id: string) => `/music/js/albums/${id}`,

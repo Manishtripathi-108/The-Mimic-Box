@@ -84,12 +84,11 @@ const MusicSearch = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         flushDebounce();
-        // Todo: make search page and uncomment this 😘
-        return;
         if (!search.trim()) return;
 
         close();
-        router.push(APP_ROUTES.MUSIC.SEARCH(search.trim()));
+        setResults(null);
+        router.push(APP_ROUTES.MUSIC.JS.SEARCH(search.trim()));
     };
 
     const nonEmptySections = results ? Object.entries(results).filter(([, section]) => section.results.length > 0) : [];
@@ -141,7 +140,7 @@ const MusicSearch = () => {
                                                     <Image
                                                         width={40}
                                                         height={40}
-                                                        src={item.image[0]?.url}
+                                                        src={item.image[0]?.url || ''}
                                                         alt={item.title}
                                                         className="object-cover"
                                                     />

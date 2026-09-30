@@ -5,19 +5,11 @@ import { API_AUTH_PREFIX } from '@/constants/routes/api.routes';
 import { AUTH_ROUTES, DEFAULT_AUTH_REDIRECT, DEFAULT_AUTH_ROUTE } from '@/constants/routes/auth.routes';
 import { PUBLIC_ROUTES } from '@/constants/routes/public.routes';
 import { JS_FALLBACK_ROUTE, SPOTIFY_BLOCKED_PREFIXES } from '@/constants/routes/spotify-blocked.routes';
+import { spotifyPolicyConfig } from '@/lib/config/spotify-policy.config';
 
 const { auth } = NextAuth(authConfig);
 
 const ENABLE_LOGGING = false;
-
-const parseBool = (value: string | undefined, defaultValue: boolean): boolean => {
-    if (value === undefined) return defaultValue;
-    return value.toLowerCase() === 'true';
-};
-
-const spotifyPremiumMember = parseBool(process.env.SPOTIFY_PREMIUM_MEMBER, false);
-const enforceSpotifyPremiumRequirement = parseBool(process.env.SPOTIFY_ENFORCE_PREMIUM_REQUIREMENT, true);
-const isSpotifyAccessEnabled = !enforceSpotifyPremiumRequirement || spotifyPremiumMember;
 
 // Comprehensive bot/crawler regex
 const BOT_REGEX =
@@ -69,7 +61,7 @@ export default auth((req) => {
     }
 
     // Premium policy redirect: do not allow Spotify-specific pages when premium access is disabled
-    if (!isSpotifyAccessEnabled && isBlockedSpotifyRoute && !isJsRoute) {
+    if (!spotifyPolicyConfig.isSpotifyAccessEnabled && isBlockedSpotifyRoute && !isJsRoute) {
         return redirectTo(JS_FALLBACK_ROUTE);
     }
 

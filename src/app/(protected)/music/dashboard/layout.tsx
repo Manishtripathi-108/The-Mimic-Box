@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: 'Music Dashboard',
     description: 'Your personalized music dashboard with top tracks, playlists, and more.',
-    keywords: ['Music', 'Music', 'Dashboard', 'Top Tracks', 'Playlists', 'Recently Played', 'Top Artists', 'Mimic Box Music Dashboard'],
+    keywords: ['Music', 'Dashboard', 'Top Tracks', 'Playlists', 'Recently Played', 'Top Artists', 'Mimic Box Music Dashboard'],
 };
 
 const Layout = async ({
